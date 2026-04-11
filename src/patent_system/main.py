@@ -148,12 +148,12 @@ def main() -> None:
                     "Workflow execution is disabled until the LLM backend is available."
                 )
 
-        create_layout(topic_repo)
+        create_layout(topic_repo, conn)
 
     # 7. Launch NiceGUI app
     logger.info("Launching NiceGUI web interface")
-    ui.run(title="Patent Analysis & Drafting System", port=settings.nicegui_port, reload=False)
+    ui.run(title="Patent Analysis & Drafting System", port=settings.nicegui_port, reload=settings.nicegui_reload)
 
 
-if __name__ == "__main__":
+if __name__ in {"__main__", "__mp_main__"}:
     main()

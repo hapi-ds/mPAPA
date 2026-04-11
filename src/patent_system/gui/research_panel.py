@@ -9,10 +9,11 @@ Requirements: 16.4, 3.5, 3.6
 from __future__ import annotations
 
 import logging
-from datetime import datetime
 from typing import Any
 
 from nicegui import ui
+
+from patent_system.agents.prior_art_search import prior_art_search_node
 
 logger = logging.getLogger(__name__)
 
@@ -35,85 +36,86 @@ def _sort_results(
     results: list[dict[str, Any]],
     criterion: str,
 ) -> list[dict[str, Any]]:
-    """Sort search results by the given criterion.
-
-    Args:
-        results: List of result dicts with keys title, discovered_date, source,
-                 and optionally relevance_score and citation_count.
-        criterion: One of 'discovery_date', 'relevance', or 'citation_count'.
-
-    Returns:
-        A new list sorted by the chosen criterion (descending).
-    """
+    """Sort search results by the given criterion."""
     if criterion == "discovery_date":
-        return sorted(
-            results,
-            key=lambda r: r.get("discovered_date", ""),
-            reverse=True,
-        )
+        return sorted(results, key=lambda r: r.get("discovered_date", ""), reverse=True)
     if criterion == "relevance":
-        return sorted(
-            results,
-            key=lambda r: r.get("relevance_score", 0),
-            reverse=True,
-        )
+        return sorted(results, key=lambda r: r.get("relevance_score", 0), reverse=True)
     if criterion == "citation_count":
-        return sorted(
-            results,
-            key=lambda r: r.get("citation_count", 0),
-            reverse=True,
-        )
+        return sorted(results, key=lambda r: r.get("citation_count", 0), reverse=True)
     return list(results)
 
 
 def create_research_panel(container: Any, topic_id: int) -> None:
-    """Populate *container* with the Research panel UI components.
-
-    The panel contains:
-    - A search query input field
-    - A "Start Research" button (wired in task 12.1)
-    - A sort dropdown (discovery date / relevance / citation count)
-    - A sortable results table (title, discovery date, source)
-
-    Args:
-        container: A NiceGUI container element (e.g. ``ui.column``) to
-            populate.  The container is cleared before adding content.
-        topic_id: The active topic ID whose research results are shown.
-    """
+    """Populate *container* with the Research panel UI components."""
     container.clear()
 
-    # Panel-local state
     panel_state: dict[str, Any] = {
-        "results": [],          # raw result dicts
+        "results": [],
         "sort_criterion": "discovery_date",
     }
 
     with container:
         ui.label("Prior Art Research").classes("text-h6 q-mb-sm")
 
-        # --- Search input + button (Req 16.4) ---
         with ui.row().classes("w-full items-end gap-2"):
             search_input = ui.input(
                 label="Search query",
                 placeholder="Enter search terms…",
             ).classes("flex-grow")
 
+            status_label = ui.label("").classes("text-caption")
+
             def _on_start_research() -> None:
-                """Placeholder handler — actual search wired in task 12.1."""
                 query = search_input.value.strip() if search_input.value else ""
-                logger.info(
-                    "Start Research clicked for topic %d, query=%r",
-                    topic_id,
-                    query,
-                )
+                if not query:
+                    ui.notify("Please enter a search query.", type="warning")
+                    return
 
-            ui.button("Start Research", on_click=_on_start_research).props(
-                "color=primary"
-            )
+                status_label.set_text("Searching…")
+                logger.info("Start Research for topic %d, query=%r", topic_id, query)
 
-        # --- Sort controls (Req 3.6) ---
+                # Build a minimal workflow state with the query as disclosure
+                state = {
+                    "topic_id": topic_id,
+                    "invention_disclosure": {"technical_problem": query},
+                    "interview_messages": [],
+                    "prior_art_results": [],
+                    "failed_sources": [],
+                    "novelty_analysis": None,
+                    "claims_text": "",
+                    "description_text": "",
+                    "review_feedback": "",
+                    "review_approved": False,
+                    "iteration_count": 0,
+                    "current_step": "",
+                }
+
+                result = prior_art_search_node(state)
+
+                results = result.get("prior_art_results", [])
+                failed = result.get("failed_sources", [])
+
+                panel_state["results"] = results
+                _refresh_table()
+
+                # Status feedback
+                parts = []
+                parts.append(f"{len(results)} result(s) found")
+                if failed:
+                    parts.append(f"{len(failed)} source(s) unavailable: {', '.join(failed)}")
+                status_label.set_text(" · ".join(parts))
+
+                if not results:
+                    ui.notify(
+                        "No results found. External data source connectors are not yet implemented.",
+                        type="info",
+                        close_button=True,
+                    )
+
+            ui.button("Start Research", on_click=_on_start_research).props("color=primary")
+
         def _on_sort_change(e: Any) -> None:
-            """Re-sort the results table when the criterion changes."""
             panel_state["sort_criterion"] = e.value
             _refresh_table()
 
@@ -124,7 +126,6 @@ def create_research_panel(container: Any, topic_id: int) -> None:
             on_change=_on_sort_change,
         ).classes("w-48 q-mt-sm")
 
-        # --- Results table (Req 3.5) ---
         table = ui.table(
             columns=RESULT_COLUMNS,
             rows=[],
@@ -132,23 +133,12 @@ def create_research_panel(container: Any, topic_id: int) -> None:
         ).classes("w-full q-mt-md")
 
         def _refresh_table() -> None:
-            """Re-sort and update the table rows."""
-            sorted_rows = _sort_results(
-                panel_state["results"],
-                panel_state["sort_criterion"],
-            )
+            sorted_rows = _sort_results(panel_state["results"], panel_state["sort_criterion"])
             table.rows = sorted_rows
             table.update()
 
         def set_results(results: list[dict[str, Any]]) -> None:
-            """Public helper to inject search results into the panel.
-
-            Each dict should contain at least ``title``, ``discovered_date``,
-            and ``source``.  Optional keys: ``relevance_score``,
-            ``citation_count``.
-            """
             panel_state["results"] = list(results)
             _refresh_table()
 
-        # Expose helper on the container so callers can push results later.
         container.set_results = set_results  # type: ignore[attr-defined]

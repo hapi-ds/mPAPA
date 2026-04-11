@@ -40,6 +40,7 @@ class AppSettings(BaseSettings):
 
     # Web server
     nicegui_port: int = 8080
+    nicegui_reload: bool = False
 
     # Logging
     log_file_path: Path = Path("logs/patent_system.log")

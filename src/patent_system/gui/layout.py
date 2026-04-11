@@ -14,16 +14,20 @@ import sqlite3
 
 from nicegui import ui
 
-from patent_system.db.repository import TopicRepository
+from patent_system.db.repository import ChatHistoryRepository, TopicRepository
+from patent_system.gui.chat_panel import create_chat_panel
+from patent_system.gui.draft_panel import create_draft_panel
+from patent_system.gui.research_panel import create_research_panel
 
 logger = logging.getLogger(__name__)
 
 
-def create_layout(topic_repo: TopicRepository) -> None:
+def create_layout(topic_repo: TopicRepository, conn: sqlite3.Connection) -> None:
     """Set up the full page layout with header, drawer, and tabs.
 
     Args:
         topic_repo: Repository for topic CRUD operations.
+        conn: SQLite connection for creating per-request repositories.
     """
     # Shared state across the layout
     state: dict = {
@@ -160,25 +164,16 @@ def create_layout(topic_repo: TopicRepository) -> None:
                 )
 
     def _on_topic_selected(topic_id: int) -> None:
-        """Load data for the selected topic into the tab panels (Req 1.4).
-
-        Placeholder — actual panel content will be implemented in tasks 10.2-10.4.
-        """
+        """Load data for the selected topic into the tab panels (Req 1.4)."""
         topic = topic_repo.get_by_id(topic_id)
         if topic is None:
             return
 
-        research_container.clear()
-        with research_container:
-            ui.label(f"Research for: {topic.name}").classes("text-subtitle1")
+        chat_repo = ChatHistoryRepository(conn)
 
-        chat_container.clear()
-        with chat_container:
-            ui.label(f"Chat for: {topic.name}").classes("text-subtitle1")
-
-        draft_container.clear()
-        with draft_container:
-            ui.label(f"Draft for: {topic.name}").classes("text-subtitle1")
+        create_research_panel(research_container, topic_id)
+        create_chat_panel(chat_container, topic_id, chat_repo)
+        create_draft_panel(draft_container, topic_id)
 
     # Initial load of topic list (Req 1.3)
     _refresh_topic_list()
