@@ -68,7 +68,52 @@ def test_empty_topic_returns_no_messages(chat_repo: ChatHistoryRepository) -> No
 
 def test_chat_panel_module_importable() -> None:
     """The chat_panel module can be imported without errors."""
-    from patent_system.gui.chat_panel import create_chat_panel, _render_message
+    from patent_system.gui.chat_panel import (
+        build_chat_prompt,
+        create_chat_panel,
+        _render_message,
+    )
 
     assert callable(create_chat_panel)
     assert callable(_render_message)
+    assert callable(build_chat_prompt)
+
+
+class TestBuildChatPrompt:
+    """Unit tests for the build_chat_prompt helper (Req 5.2)."""
+
+    def test_prompt_contains_question(self) -> None:
+        """The prompt always contains the user question."""
+        from patent_system.gui.chat_panel import build_chat_prompt
+
+        prompt = build_chat_prompt([], "What is patent novelty?")
+        assert "What is patent novelty?" in prompt
+
+    def test_prompt_with_context_docs(self) -> None:
+        """Context document texts appear in the prompt."""
+        from patent_system.gui.chat_panel import build_chat_prompt
+
+        docs = [
+            {"text": "Prior art document about widgets."},
+            {"text": "Another document about gadgets."},
+        ]
+        prompt = build_chat_prompt(docs, "Compare these inventions")
+        assert "Prior art document about widgets." in prompt
+        assert "Another document about gadgets." in prompt
+        assert "Compare these inventions" in prompt
+
+    def test_prompt_no_context_includes_note(self) -> None:
+        """When no context docs, prompt includes a 'no context' note."""
+        from patent_system.gui.chat_panel import build_chat_prompt
+
+        prompt = build_chat_prompt([], "Tell me about patents")
+        assert "No prior art context" in prompt
+        assert "Tell me about patents" in prompt
+
+    def test_prompt_with_context_does_not_include_no_context_note(self) -> None:
+        """When context docs are present, no 'no context' note appears."""
+        from patent_system.gui.chat_panel import build_chat_prompt
+
+        docs = [{"text": "Some document."}]
+        prompt = build_chat_prompt(docs, "Question?")
+        assert "No prior art context" not in prompt

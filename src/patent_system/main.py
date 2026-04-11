@@ -20,8 +20,11 @@ from patent_system.agents.graph import build_patent_workflow
 from patent_system.config import AppSettings
 from patent_system.db.repository import TopicRepository
 from patent_system.db.schema import get_connection
+from patent_system.dspy_modules.modules import configure_dspy
 from patent_system.gui.layout import create_layout
 from patent_system.logging_config import setup_logging
+from patent_system.monitoring.scheduler import MonitoringScheduler
+from patent_system.rag.engine import RAGEngine
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +55,7 @@ def check_lm_studio_connectivity(base_url: str, timeout: float = 5.0) -> bool:
 # ---------------------------------------------------------------------------
 
 _compiled_workflow = None
+_configured_lm = None
 _workflow_paused = False
 
 
@@ -111,6 +115,7 @@ def restore_checkpoint(thread_id: str) -> dict | None:
 def main() -> None:
     """Start the Patent Analysis & Drafting System."""
     global _compiled_workflow  # noqa: PLW0603
+    global _configured_lm  # noqa: PLW0603
 
     # 1. Initialize AppSettings (Req 19.1-19.4)
     settings = AppSettings()
@@ -119,16 +124,24 @@ def main() -> None:
     setup_logging(settings)
     logger.info("Patent Analysis & Drafting System starting")
 
-    # 3. Create database connection (Req 15.1, 15.2)
+    # 3. Configure DSPy to use LM Studio (Req 2.1, 2.2, 2.9)
+    _configured_lm = configure_dspy(settings)
+    logger.info("DSPy configured with LM Studio at %s", settings.lm_studio_base_url)
+
+    # 3b. Create RAG Engine instance (Req 4.1, 4.2, 4.4, 4.5)
+    rag_engine = RAGEngine(settings)
+    logger.info("RAG engine initialized with model %s", settings.embedding_model_name)
+
+    # 4. Create database connection (Req 15.1, 15.2)
     conn = get_connection(settings.database_path)
     topic_repo = TopicRepository(conn)
 
-    # 4. Build LangGraph workflow with SqliteSaver checkpointer (Req 9.1, 9.2)
+    # 5. Build LangGraph workflow with SqliteSaver checkpointer (Req 9.1, 9.2)
     checkpointer = SqliteSaver(conn)
-    _compiled_workflow = build_patent_workflow(checkpointer)
+    _compiled_workflow = build_patent_workflow(checkpointer, rag_engine=rag_engine)
     logger.info("LangGraph workflow compiled")
 
-    # 5. Verify LM Studio connectivity (Req 11.1, 11.3)
+    # 6. Verify LM Studio connectivity (Req 11.1, 11.3)
     lm_studio_reachable = check_lm_studio_connectivity(
         settings.lm_studio_base_url,
     )
@@ -137,7 +150,19 @@ def main() -> None:
             "LM Studio is unreachable at %s", settings.lm_studio_base_url
         )
 
-    # 6. Build the NiceGUI page
+    # 6b. Start background monitoring scheduler (Req 7.5)
+    scheduler = MonitoringScheduler(
+        interval_hours=settings.monitoring_interval_hours,
+        conn=conn,
+        rag_engine=rag_engine,
+    )
+    scheduler.start()
+    logger.info(
+        "Monitoring scheduler started (interval=%dh)",
+        settings.monitoring_interval_hours,
+    )
+
+    # 7. Build the NiceGUI page
     @ui.page("/")
     def index() -> None:
         # Show error banner if LM Studio is unreachable (Req 11.3)
@@ -148,9 +173,9 @@ def main() -> None:
                     "Workflow execution is disabled until the LLM backend is available."
                 )
 
-        create_layout(topic_repo, conn)
+        create_layout(topic_repo, conn, rag_engine=rag_engine, settings=settings, workflow=_compiled_workflow)
 
-    # 7. Launch NiceGUI app
+    # 8. Launch NiceGUI app
     logger.info("Launching NiceGUI web interface")
     ui.run(title="Patent Analysis & Drafting System", port=settings.nicegui_port, reload=settings.nicegui_reload)
 

@@ -4,8 +4,10 @@ import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
+import requests.exceptions
 
 from patent_system.agents.consistency_review import consistency_review_node
+from patent_system.exceptions import LLMConnectionError
 
 
 def _make_state(**overrides):
@@ -156,3 +158,25 @@ class TestConsistencyReviewNode:
         assert any(
             "ConsistencyReviewerAgent" in r.message for r in caplog.records
         )
+
+    @patch("patent_system.agents.consistency_review.dspy")
+    @patch("patent_system.agents.consistency_review.ReviewConsistencyModule")
+    def test_raises_llm_connection_error_on_connection_failure(
+        self, mock_module_cls, mock_dspy
+    ):
+        mock_instance = MagicMock()
+        mock_instance.side_effect = requests.exceptions.ConnectionError(
+            "Connection refused"
+        )
+        mock_module_cls.return_value = mock_instance
+
+        mock_lm = MagicMock()
+        mock_lm.kwargs = {"api_base": "http://localhost:1234"}
+        mock_dspy.settings.lm = mock_lm
+
+        state = _make_state(
+            claims_text="Claim 1",
+            description_text="Description text",
+        )
+        with pytest.raises(LLMConnectionError, match="localhost:1234"):
+            consistency_review_node(state)

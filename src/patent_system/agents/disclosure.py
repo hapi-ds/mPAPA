@@ -11,11 +11,17 @@ import logging
 import time
 from typing import Any
 
+import dspy
+import httpx
+import litellm.exceptions
+import requests.exceptions
+
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import (
     InterviewQuestionModule,
     StructureDisclosureModule,
 )
+from patent_system.exceptions import LLMConnectionError
 from patent_system.logging_config import log_agent_invocation
 
 logger = logging.getLogger(__name__)
@@ -64,19 +70,31 @@ def disclosure_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     # Generate interview questions for each topic area
     questions: list[str] = []
-    for topic in _INTERVIEW_TOPICS:
-        context_with_topic = f"{invention_context}\nCurrent topic: {topic}"
-        result = interview_module(
-            conversation_history=conversation_history,
-            invention_context=context_with_topic,
-        )
-        questions.append(result.next_question)
-        # Accumulate into conversation history for subsequent questions
-        conversation_history += f"\nQ ({topic}): {result.next_question}"
+    try:
+        for topic in _INTERVIEW_TOPICS:
+            context_with_topic = f"{invention_context}\nCurrent topic: {topic}"
+            result = interview_module(
+                conversation_history=conversation_history,
+                invention_context=context_with_topic,
+            )
+            questions.append(result.next_question)
+            # Accumulate into conversation history for subsequent questions
+            conversation_history += f"\nQ ({topic}): {result.next_question}"
 
-    # Structure the disclosure from the full transcript
-    transcript = conversation_history
-    structure_result = structure_module(transcript=transcript)
+        # Structure the disclosure from the full transcript
+        transcript = conversation_history
+        structure_result = structure_module(transcript=transcript)
+    except (
+        requests.exceptions.ConnectionError,
+        httpx.ConnectError,
+        litellm.exceptions.APIConnectionError,
+        ConnectionError,
+        OSError,
+    ) as exc:
+        base_url = dspy.settings.lm.kwargs.get("api_base", "unknown") if dspy.settings.lm else "unknown"
+        raise LLMConnectionError(
+            f"LM Studio unreachable at {base_url}: {exc}"
+        ) from exc
 
     # Parse the structured disclosure JSON
     disclosure_json_str = structure_result.disclosure_json

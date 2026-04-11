@@ -12,8 +12,14 @@ import logging
 import time
 from typing import Any
 
+import dspy
+import httpx
+import litellm.exceptions
+import requests.exceptions
+
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import ReviewConsistencyModule
+from patent_system.exceptions import LLMConnectionError
 from patent_system.logging_config import log_agent_invocation
 
 logger = logging.getLogger(__name__)
@@ -46,7 +52,19 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     # Run the DSPy review module
     review_module = ReviewConsistencyModule()
-    prediction = review_module(claims=claims, description=description)
+    try:
+        prediction = review_module(claims=claims, description=description)
+    except (
+        requests.exceptions.ConnectionError,
+        httpx.ConnectError,
+        litellm.exceptions.APIConnectionError,
+        ConnectionError,
+        OSError,
+    ) as exc:
+        base_url = dspy.settings.lm.kwargs.get("api_base", "unknown") if dspy.settings.lm else "unknown"
+        raise LLMConnectionError(
+            f"LM Studio unreachable at {base_url}: {exc}"
+        ) from exc
 
     feedback = prediction.feedback
     approved = prediction.approved

@@ -15,8 +15,14 @@ import logging
 import time
 from typing import Any
 
+import dspy
+import httpx
+import litellm.exceptions
+import requests.exceptions
+
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DraftDescriptionModule
+from patent_system.exceptions import LLMConnectionError
 from patent_system.logging_config import log_agent_invocation
 
 logger = logging.getLogger(__name__)
@@ -98,11 +104,23 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     # Generate description via DSPy
     draft_module = DraftDescriptionModule()
-    prediction = draft_module(
-        claims=claims,
-        prior_art_summary=prior_art_summary,
-        invention_disclosure=disclosure_text,
-    )
+    try:
+        prediction = draft_module(
+            claims=claims,
+            prior_art_summary=prior_art_summary,
+            invention_disclosure=disclosure_text,
+        )
+    except (
+        requests.exceptions.ConnectionError,
+        httpx.ConnectError,
+        litellm.exceptions.APIConnectionError,
+        ConnectionError,
+        OSError,
+    ) as exc:
+        base_url = dspy.settings.lm.kwargs.get("api_base", "unknown") if dspy.settings.lm else "unknown"
+        raise LLMConnectionError(
+            f"LM Studio unreachable at {base_url}: {exc}"
+        ) from exc
     description_text = prediction.description_text
 
     duration_ms = (time.monotonic() - start) * 1000

@@ -4,23 +4,67 @@ Provides a scrollable chat history with distinct styling for user and
 assistant messages, a text input field, and a "Send" button.  Messages
 are persisted via ``ChatHistoryRepository``.
 
-The actual RAG integration and LLM response generation will be wired in
-task 12.1.  For now the send button saves the user message and displays
-a placeholder assistant response.
+RAG context is retrieved via ``RAGEngine.query()`` and combined with the
+user question into a prompt sent to LM Studio via the globally configured
+``dspy.LM`` instance.
 
-Requirements: 16.5, 8.1, 8.2, 8.3, 8.4
+Requirements: 16.5, 8.1, 8.2, 8.3, 8.4, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+import dspy
+import httpx
+import litellm.exceptions
+import requests.exceptions
 from nicegui import ui
 
 from patent_system.db.repository import ChatHistoryRepository
 
+if TYPE_CHECKING:
+    from patent_system.config import AppSettings
+    from patent_system.rag.engine import RAGEngine
+
 logger = logging.getLogger(__name__)
+
+
+def build_chat_prompt(context_docs: list[dict], question: str) -> str:
+    """Build a chat prompt from RAG context documents and a user question.
+
+    The prompt includes all retrieved context texts followed by the user
+    question.  When no context documents are available, a note is added
+    indicating that no prior art context was found.
+
+    This function is extracted as a module-level helper so it can be
+    independently tested (Property 7).
+
+    Args:
+        context_docs: List of dicts, each containing at least a
+            ``"text"`` key with the document content.
+        question: The user's question text.
+
+    Returns:
+        The assembled prompt string ready to send to the LLM.
+    """
+    parts: list[str] = []
+
+    if context_docs:
+        parts.append(
+            "Use the following context documents to answer the question.\n"
+        )
+        for i, doc in enumerate(context_docs, 1):
+            parts.append(f"[Document {i}]\n{doc['text']}\n")
+    else:
+        parts.append(
+            "No prior art context is available for this topic. "
+            "Answer the question based on your general knowledge.\n"
+        )
+
+    parts.append(f"Question: {question}")
+    return "\n".join(parts)
 
 
 def _render_message(role: str, text: str) -> None:
@@ -50,6 +94,9 @@ def create_chat_panel(
     container: Any,
     topic_id: int,
     chat_repo: ChatHistoryRepository,
+    *,
+    rag_engine: RAGEngine | None = None,
+    settings: AppSettings | None = None,
 ) -> None:
     """Populate *container* with the AI Chat panel UI components.
 
@@ -68,6 +115,10 @@ def create_chat_panel(
             populate.  The container is cleared before adding content.
         topic_id: The active topic ID whose chat history is shown.
         chat_repo: Repository for chat message persistence.
+        rag_engine: Optional RAG engine for retrieving context documents
+            relevant to the active topic (Req 5.1).
+        settings: Optional application settings for LLM configuration
+            (Req 5.2).
     """
     container.clear()
 
@@ -97,7 +148,7 @@ def create_chat_panel(
             ).classes("flex-grow")
 
             def _on_send() -> None:
-                """Handle send: persist user message, show placeholder response."""
+                """Handle send: query RAG, call LLM, display response."""
                 text = message_input.value.strip() if message_input.value else ""
                 if not text:
                     return
@@ -116,14 +167,56 @@ def create_chat_panel(
                 # Clear input
                 message_input.value = ""
 
-                # Placeholder assistant response (real RAG wired in task 12.1)
-                placeholder = (
-                    "Thank you for your question. "
-                    "RAG-powered responses will be available once the AI "
-                    "backend is connected."
-                )
+                # --- RAG retrieval (Req 5.1) ---
+                context_docs: list[dict] = []
+                if rag_engine is not None:
+                    try:
+                        context_docs = rag_engine.query(topic_id, text)
+                    except Exception:
+                        logger.exception(
+                            "RAG query failed for topic %d", topic_id
+                        )
+
+                # --- Build prompt and call LLM (Req 5.2, 5.4, 5.6) ---
+                prompt = build_chat_prompt(context_docs, text)
+
                 try:
-                    chat_repo.save_message(topic_id, "assistant", placeholder)
+                    lm = dspy.settings.lm
+                    if lm is None:
+                        raise ConnectionError("DSPy LM is not configured")
+                    response = lm(prompt)
+                    # dspy.LM returns a list of strings; take the first
+                    if isinstance(response, list):
+                        assistant_text = response[0] if response else ""
+                    else:
+                        assistant_text = str(response)
+                except (
+                    requests.exceptions.ConnectionError,
+                    httpx.ConnectError,
+                    litellm.exceptions.APIConnectionError,
+                    ConnectionError,
+                    OSError,
+                ) as exc:
+                    # LM Studio unreachable — show error, do NOT persist (Req 5.5)
+                    logger.error(
+                        "LM Studio unreachable for chat topic %d: %s",
+                        topic_id,
+                        exc,
+                    )
+                    error_msg = (
+                        "⚠️ The LLM backend is currently unavailable. "
+                        "Please ensure LM Studio is running and try again."
+                    )
+                    with chat_messages_container:
+                        _render_message("assistant", error_msg)
+                    scroll_area.scroll_to(percent=1.0)
+                    return
+
+                # --- Display and persist assistant response (Req 5.3) ---
+                try:
+                    chat_repo.save_message(
+                        topic_id, "assistant", assistant_text
+                    )
                 except Exception:
                     logger.exception(
                         "Failed to save assistant message for topic %d",
@@ -131,7 +224,7 @@ def create_chat_panel(
                     )
 
                 with chat_messages_container:
-                    _render_message("assistant", placeholder)
+                    _render_message("assistant", assistant_text)
 
                 # Scroll to bottom
                 scroll_area.scroll_to(percent=1.0)

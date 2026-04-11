@@ -11,9 +11,15 @@ Requirements: 16.6, 5.3, 5.4, 7.3, 7.4, 10.1, 10.6, 9.4, 2.5, 4.3
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+from langgraph.errors import GraphInterrupt
 from nicegui import ui
+
+from patent_system.agents.state import PatentWorkflowState
+
+if TYPE_CHECKING:
+    from langgraph.graph.state import CompiledStateGraph
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +32,16 @@ WORKFLOW_STEPS: list[str] = [
     "Consistency Review",
     "Description Drafting",
 ]
+
+# Map node current_step values to WORKFLOW_STEPS display names
+_STEP_DISPLAY_NAMES: dict[str, str] = {
+    "disclosure": "Disclosure",
+    "prior_art_search": "Prior Art Search",
+    "novelty_analysis": "Novelty Analysis",
+    "claims_drafting": "Claims Drafting",
+    "consistency_review": "Consistency Review",
+    "description_drafting": "Description Drafting",
+}
 
 
 def can_export(claims: str, description: str) -> bool:
@@ -46,7 +62,12 @@ def can_export(claims: str, description: str) -> bool:
     return True
 
 
-def create_draft_panel(container: Any, topic_id: int) -> None:
+def create_draft_panel(
+    container: Any,
+    topic_id: int,
+    *,
+    workflow: CompiledStateGraph | None = None,
+) -> None:
     """Populate *container* with the Patent Draft panel UI components.
 
     The panel contains:
@@ -98,10 +119,134 @@ def create_draft_panel(container: Any, topic_id: int) -> None:
 
         # --- Generate Patent Draft button (Req 16.6) ---
         def _on_generate() -> None:
-            """Placeholder handler — actual generation wired in task 12.1."""
+            """Invoke the compiled workflow and update the UI with results.
+
+            Builds an initial PatentWorkflowState, invokes the workflow
+            with a thread config for checkpointing, updates the stepper
+            UI, and populates the claims/description textareas.
+
+            Handles GraphInterrupt (human_review) by notifying the user
+            and enabling the claims editor, and general exceptions by
+            showing an error notification with the failed step name.
+
+            Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
+            """
+            if workflow is None:
+                ui.notify(
+                    "Workflow not available — please restart the application.",
+                    type="negative",
+                )
+                logger.warning(
+                    "Generate clicked but workflow is None for topic %d",
+                    topic_id,
+                )
+                return
+
             logger.info(
                 "Generate Patent Draft clicked for topic %d", topic_id
             )
+
+            # Build initial state with all required keys (Req 6.1)
+            initial_state: PatentWorkflowState = {
+                "topic_id": topic_id,
+                "invention_disclosure": None,
+                "interview_messages": [],
+                "prior_art_results": [],
+                "failed_sources": [],
+                "novelty_analysis": None,
+                "claims_text": "",
+                "description_text": "",
+                "review_feedback": "",
+                "review_approved": False,
+                "iteration_count": 0,
+                "current_step": "disclosure",
+            }
+
+            config = {"configurable": {"thread_id": f"topic-{topic_id}"}}
+
+            try:
+                result = workflow.invoke(initial_state, config)
+
+                # Update stepper UI from current_step (Req 6.2)
+                step_key = result.get("current_step", "")
+                display_name = _STEP_DISPLAY_NAMES.get(step_key, "")
+                if display_name:
+                    step_index = WORKFLOW_STEPS.index(display_name)
+                    set_current_step(display_name)
+                    # Advance stepper to the completed step
+                    for _i in range(step_index + 1):
+                        stepper.next()
+
+                # Populate claims textarea (Req 6.3)
+                claims_result = result.get("claims_text", "")
+                if claims_result:
+                    set_claims(claims_result)
+
+                # Populate description textarea (Req 6.4)
+                description_result = result.get("description_text", "")
+                if description_result:
+                    set_description(description_result)
+
+                logger.info(
+                    "Workflow completed for topic %d at step '%s'",
+                    topic_id,
+                    step_key,
+                )
+
+            except GraphInterrupt:
+                # Human review interrupt (Req 6.6)
+                logger.info(
+                    "Workflow interrupted for human review on topic %d",
+                    topic_id,
+                )
+                ui.notify(
+                    "Human review required: please review and edit the "
+                    "claims before resuming the workflow.",
+                    type="warning",
+                    close_button=True,
+                )
+                # Populate claims from the latest checkpoint state
+                try:
+                    snapshot = workflow.get_state(config)
+                    if snapshot and snapshot.values:
+                        checkpoint_claims = snapshot.values.get(
+                            "claims_text", ""
+                        )
+                        if checkpoint_claims:
+                            set_claims(checkpoint_claims)
+                        # Update stepper to consistency review (last
+                        # completed step before human_review)
+                        cs = snapshot.values.get(
+                            "current_step", "consistency_review"
+                        )
+                        display = _STEP_DISPLAY_NAMES.get(
+                            cs, "Consistency Review"
+                        )
+                        set_current_step(display)
+                except Exception:
+                    logger.debug(
+                        "Could not read checkpoint state after interrupt",
+                        exc_info=True,
+                    )
+                # Enable claims editor for manual editing
+                if claims_textarea is not None:
+                    claims_textarea.enabled = True
+                claims_expansion.open()
+
+            except Exception as exc:
+                # General error handling (Req 6.5)
+                failed_step = panel_state.get("current_step", "unknown")
+                logger.exception(
+                    "Workflow failed for topic %d at step '%s': %s",
+                    topic_id,
+                    failed_step,
+                    exc,
+                )
+                ui.notify(
+                    f"Workflow failed at step '{failed_step}': {exc}",
+                    type="negative",
+                    close_button=True,
+                )
 
         ui.button(
             "Generate Patent Draft",

@@ -4,13 +4,18 @@ Queries DEPATISnet, Google Patents, Google Scholar, ArXiv, and PubMed
 for prior art related to the invention disclosure. Uses source-specific
 parsers to structure results and handles source failures gracefully.
 
-Requirements: 3.1, 3.2, 3.3, 3.4, 3.7
+Requirements: 1.1, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 3.1, 3.2, 3.3, 3.4, 3.7
 """
 
 import logging
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime
+from html.parser import HTMLParser
 from typing import Any
+from urllib.error import URLError
+from urllib.parse import quote_plus, urlencode
+from urllib.request import Request, urlopen
 
 from patent_system.exceptions import SourceUnavailableError
 from patent_system.logging_config import log_agent_invocation, log_external_request
@@ -69,42 +74,373 @@ def _derive_search_terms(disclosure: dict | None) -> list[str]:
     return terms if terms else [""]
 
 
+# Source endpoints mapping source names to their base URLs.
+_SOURCE_ENDPOINTS: dict[str, str] = {
+    "ArXiv": "export.arxiv.org/api/query",
+    "PubMed": "eutils.ncbi.nlm.nih.gov/entrez/eutils",
+    "Google Scholar": "scholar.google.com/scholar",
+    "Google Patents": "patents.google.com",
+    "DEPATISnet": "depatisnet.dpma.de/DepatisNet/depatisnet",
+}
+
+_HTTP_TIMEOUT = 15  # seconds
+
+
+def _http_get(url: str) -> str:
+    """Perform an HTTP GET request and return the response body as a string.
+
+    Args:
+        url: The full URL to request.
+
+    Returns:
+        Response body decoded as UTF-8.
+
+    Raises:
+        URLError: On network errors.
+        OSError: On connection failures.
+    """
+    req = Request(url, headers={"User-Agent": "mPAPA/1.0 (Patent Research Tool)"})
+    with urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+        return resp.read().decode("utf-8")
+
+
+def _query_arxiv(search_terms: list[str]) -> dict:
+    """Query ArXiv API and parse Atom XML into results dict.
+
+    Args:
+        search_terms: List of search term strings.
+
+    Returns:
+        Dict with ``results`` key containing parsed paper entries.
+    """
+    query = "+AND+".join(quote_plus(t) for t in search_terms if t)
+    if not query:
+        query = quote_plus("")
+    url = f"http://{_SOURCE_ENDPOINTS['ArXiv']}?search_query=all:{query}&max_results=10"
+
+    log_external_request(
+        logger=logger, source="ArXiv", query=", ".join(search_terms),
+        status="requesting", response_time_ms=0,
+    )
+
+    xml_text = _http_get(url)
+
+    # Parse Atom XML
+    ns = {"atom": "http://www.w3.org/2005/Atom"}
+    root = ET.fromstring(xml_text)
+    results: list[dict] = []
+    for entry in root.findall("atom:entry", ns):
+        entry_id = entry.findtext("atom:id", default="", namespaces=ns)
+        title = entry.findtext("atom:title", default="", namespaces=ns).strip()
+        abstract = entry.findtext("atom:summary", default="", namespaces=ns).strip()
+        if title:
+            results.append({"doi": entry_id, "title": title, "abstract": abstract})
+
+    return {"results": results}
+
+
+def _query_pubmed(search_terms: list[str]) -> dict:
+    """Query PubMed via E-utilities (esearch + efetch) and parse XML results.
+
+    Two-step process:
+    1. esearch to get PMIDs matching the query.
+    2. efetch to retrieve article details for those PMIDs.
+
+    Args:
+        search_terms: List of search term strings.
+
+    Returns:
+        Dict with ``results`` key containing parsed paper entries.
+    """
+    base = _SOURCE_ENDPOINTS["PubMed"]
+    query = " ".join(t for t in search_terms if t)
+    if not query:
+        query = ""
+
+    # Step 1: esearch to get IDs
+    esearch_params = urlencode({
+        "db": "pubmed", "term": query, "retmax": "10", "retmode": "xml",
+    })
+    esearch_url = f"https://{base}/esearch.fcgi?{esearch_params}"
+
+    log_external_request(
+        logger=logger, source="PubMed", query=", ".join(search_terms),
+        status="requesting", response_time_ms=0,
+    )
+
+    esearch_xml = _http_get(esearch_url)
+    esearch_root = ET.fromstring(esearch_xml)
+    id_list = esearch_root.findall(".//Id")
+    pmids = [id_el.text for id_el in id_list if id_el.text]
+
+    if not pmids:
+        return {"results": []}
+
+    # Step 2: efetch to get details
+    efetch_params = urlencode({
+        "db": "pubmed", "id": ",".join(pmids), "retmode": "xml",
+    })
+    efetch_url = f"https://{base}/efetch.fcgi?{efetch_params}"
+    efetch_xml = _http_get(efetch_url)
+
+    efetch_root = ET.fromstring(efetch_xml)
+    results: list[dict] = []
+    for article in efetch_root.findall(".//PubmedArticle"):
+        pmid_el = article.find(".//PMID")
+        title_el = article.find(".//ArticleTitle")
+        abstract_el = article.find(".//AbstractText")
+
+        pmid = pmid_el.text if pmid_el is not None and pmid_el.text else ""
+        title = title_el.text if title_el is not None and title_el.text else ""
+        abstract = abstract_el.text if abstract_el is not None and abstract_el.text else ""
+
+        if title:
+            results.append({"doi": pmid, "title": title, "abstract": abstract})
+
+    return {"results": results}
+
+
+class _SimpleHTMLTextExtractor(HTMLParser):
+    """Minimal HTML parser that extracts text content from tags."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._text_parts: list[str] = []
+
+    def handle_data(self, data: str) -> None:
+        self._text_parts.append(data)
+
+    def get_text(self) -> str:
+        return " ".join(self._text_parts)
+
+
+def _query_google_scholar(search_terms: list[str]) -> dict:
+    """Query Google Scholar and parse HTML results.
+
+    Args:
+        search_terms: List of search term strings.
+
+    Returns:
+        Dict with ``results`` key containing parsed paper entries.
+    """
+    query = "+".join(quote_plus(t) for t in search_terms if t)
+    if not query:
+        query = quote_plus("")
+    url = f"https://{_SOURCE_ENDPOINTS['Google Scholar']}?q={query}&hl=en"
+
+    log_external_request(
+        logger=logger, source="Google Scholar", query=", ".join(search_terms),
+        status="requesting", response_time_ms=0,
+    )
+
+    html_text = _http_get(url)
+
+    # Parse HTML — extract result entries from gs_ri divs
+    results: list[dict] = []
+    # Simple extraction: split on result class markers
+    parts = html_text.split('class="gs_ri"')
+    for part in parts[1:]:  # skip the first chunk before any result
+        title = ""
+        abstract = ""
+        # Extract title from <h3> tag
+        h3_start = part.find("<h3")
+        if h3_start != -1:
+            h3_end = part.find("</h3>", h3_start)
+            if h3_end != -1:
+                h3_html = part[h3_start:h3_end]
+                extractor = _SimpleHTMLTextExtractor()
+                extractor.feed(h3_html)
+                title = extractor.get_text().strip()
+        # Extract snippet/abstract from gs_rs div
+        gs_rs_start = part.find('class="gs_rs"')
+        if gs_rs_start != -1:
+            div_end = part.find("</div>", gs_rs_start)
+            if div_end != -1:
+                snippet_html = part[gs_rs_start:div_end]
+                extractor = _SimpleHTMLTextExtractor()
+                extractor.feed(snippet_html)
+                abstract = extractor.get_text().strip()
+        if title:
+            results.append({"doi": "", "title": title, "abstract": abstract})
+
+    return {"results": results}
+
+
+def _query_google_patents(search_terms: list[str]) -> dict:
+    """Query Google Patents and parse HTML results.
+
+    Args:
+        search_terms: List of search term strings.
+
+    Returns:
+        Dict with ``results`` key containing parsed patent entries.
+    """
+    query = "+".join(quote_plus(t) for t in search_terms if t)
+    if not query:
+        query = quote_plus("")
+    url = f"https://{_SOURCE_ENDPOINTS['Google Patents']}/?q={query}"
+
+    log_external_request(
+        logger=logger, source="Google Patents", query=", ".join(search_terms),
+        status="requesting", response_time_ms=0,
+    )
+
+    html_text = _http_get(url)
+
+    # Parse HTML — extract patent results from search-result items
+    results: list[dict] = []
+    parts = html_text.split("search-result")
+    for part in parts[1:]:
+        patent_number = ""
+        title = ""
+        abstract = ""
+        # Try to extract patent number from data attributes or text
+        pn_marker = 'data-result="'
+        pn_start = part.find(pn_marker)
+        if pn_start != -1:
+            pn_end = part.find('"', pn_start + len(pn_marker))
+            patent_number = part[pn_start + len(pn_marker):pn_end].strip()
+        # Extract title
+        title_start = part.find("<h3")
+        if title_start != -1:
+            title_end = part.find("</h3>", title_start)
+            if title_end != -1:
+                extractor = _SimpleHTMLTextExtractor()
+                extractor.feed(part[title_start:title_end])
+                title = extractor.get_text().strip()
+        # Extract abstract/snippet
+        abs_marker = 'class="abstract"'
+        abs_start = part.find(abs_marker)
+        if abs_start == -1:
+            abs_marker = 'class="snippet"'
+            abs_start = part.find(abs_marker)
+        if abs_start != -1:
+            abs_end = part.find("</", abs_start + len(abs_marker))
+            if abs_end != -1:
+                extractor = _SimpleHTMLTextExtractor()
+                extractor.feed(part[abs_start:abs_end])
+                abstract = extractor.get_text().strip()
+        if title or patent_number:
+            results.append({
+                "patent_number": patent_number or "UNKNOWN",
+                "title": title or "Untitled",
+                "abstract": abstract,
+            })
+
+    return {"results": results}
+
+
+def _query_depatisnet(search_terms: list[str]) -> dict:
+    """Query DEPATISnet and parse HTML results.
+
+    Args:
+        search_terms: List of search term strings.
+
+    Returns:
+        Dict with ``results`` key containing parsed patent entries.
+    """
+    query = " ".join(t for t in search_terms if t)
+    params = urlencode({
+        "action": "bibdat",
+        "docid": "",
+        "query": query,
+    })
+    url = f"https://{_SOURCE_ENDPOINTS['DEPATISnet']}?{params}"
+
+    log_external_request(
+        logger=logger, source="DEPATISnet", query=", ".join(search_terms),
+        status="requesting", response_time_ms=0,
+    )
+
+    html_text = _http_get(url)
+
+    # Parse HTML — extract patent results from table rows
+    results: list[dict] = []
+    rows = html_text.split("<tr")
+    for row in rows[1:]:  # skip header/preamble
+        cells: list[str] = []
+        cell_parts = row.split("<td")
+        for cell in cell_parts[1:]:
+            end = cell.find("</td>")
+            if end != -1:
+                extractor = _SimpleHTMLTextExtractor()
+                extractor.feed(cell[:end])
+                cells.append(extractor.get_text().strip())
+        # Expect at least patent_number, title columns
+        if len(cells) >= 2 and cells[0]:
+            results.append({
+                "patent_number": cells[0],
+                "title": cells[1] if len(cells) > 1 else "Untitled",
+                "abstract": cells[2] if len(cells) > 2 else "",
+            })
+
+    return {"results": results}
+
+
+# Dispatch table mapping source names to their query functions.
+_SOURCE_QUERY_FUNCTIONS: dict[str, Any] = {
+    "ArXiv": _query_arxiv,
+    "PubMed": _query_pubmed,
+    "Google Scholar": _query_google_scholar,
+    "Google Patents": _query_google_patents,
+    "DEPATISnet": _query_depatisnet,
+}
+
+
 def _query_source(source_name: str, search_terms: list[str]) -> dict:
     """Query an external data source with the given search terms.
 
-    This is a placeholder HTTP call that can be mocked in tests.
-    In production, this would make actual HTTP requests to the
-    respective APIs.
+    Dispatches to source-specific query functions that make real HTTP
+    requests to the respective APIs. Only search terms derived from
+    ``_derive_search_terms()`` are transmitted — no invention disclosure
+    content is sent.
 
     Args:
         source_name: Name of the data source to query.
         search_terms: List of search term strings.
 
     Returns:
-        Raw response dict from the source API.
+        Raw response dict with a ``results`` key from the source API.
 
     Raises:
-        SourceUnavailableError: If the source is unreachable.
+        SourceUnavailableError: If the source is unreachable or returns
+            an error.
     """
-    # Placeholder: in production, this would perform real HTTP calls.
-    # For now, return an empty result set. Tests will mock this function.
-    return {"results": []}
+    query_fn = _SOURCE_QUERY_FUNCTIONS.get(source_name)
+    if query_fn is None:
+        raise SourceUnavailableError(
+            source_name, ValueError(f"Unknown source: {source_name}")
+        )
+
+    try:
+        return query_fn(search_terms)
+    except SourceUnavailableError:
+        raise
+    except (URLError, OSError, ET.ParseError, ValueError) as exc:
+        raise SourceUnavailableError(source_name, exc) from exc
 
 
-def prior_art_search_node(state: PatentWorkflowState) -> dict[str, Any]:
+def prior_art_search_node(
+    state: PatentWorkflowState,
+    rag_engine: Any | None = None,
+) -> dict[str, Any]:
     """Run the Prior Art Search Agent.
 
     1. Derives search terms from the invention disclosure in state.
     2. Queries each source (DEPATISnet, Google Patents, Google Scholar,
-       ArXiv, PubMed) using placeholder HTTP calls.
+       ArXiv, PubMed) using real HTTP calls.
     3. Uses source-specific parsers to structure results.
     4. Handles source failures gracefully: catches exceptions, logs via
        log_external_request, adds to failed_sources list, continues
        with remaining sources.
-    5. Returns dict with prior_art_results, failed_sources, current_step.
+    5. Indexes results in the RAG engine if available.
+    6. Returns dict with prior_art_results, failed_sources, current_step.
 
     Args:
         state: The current workflow state.
+        rag_engine: Optional RAG engine for indexing search results.
+            When provided, parsed results are converted to document
+            format and indexed under the topic ID from state.
 
     Returns:
         Dict with ``prior_art_results`` (list of serialized records),
@@ -167,6 +503,38 @@ def prior_art_search_node(state: PatentWorkflowState) -> dict[str, Any]:
                 source_name,
                 exc,
             )
+
+    # Index results in RAG engine if available
+    if rag_engine is not None and all_results:
+        topic_id = state.get("topic_id")
+        if topic_id is not None:
+            rag_docs = []
+            for record in all_results:
+                title = record.get("title", "")
+                abstract = record.get("abstract", "")
+                text = f"{title} {abstract}".strip()
+                if not text:
+                    continue
+                metadata = {
+                    k: v
+                    for k, v in record.items()
+                    if k not in ("title", "abstract", "embedding")
+                }
+                rag_docs.append({"text": text, "metadata": metadata})
+            if rag_docs:
+                try:
+                    rag_engine.index_documents(topic_id, rag_docs)
+                    logger.info(
+                        "Indexed %d documents in RAG for topic %d",
+                        len(rag_docs),
+                        topic_id,
+                    )
+                except Exception:
+                    logger.warning(
+                        "Failed to index documents in RAG for topic %d",
+                        topic_id,
+                        exc_info=True,
+                    )
 
     duration_ms = (time.monotonic() - start) * 1000
 

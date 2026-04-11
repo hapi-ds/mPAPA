@@ -3,15 +3,26 @@
 Builds a StateGraph wiring the agent sequence:
   disclosure → prior_art_search → novelty_analysis → claims_drafting
   → consistency_review → (conditional: loop / human_review / description_drafting)
-
-Placeholder node functions are used for each agent step; real
-implementations will be wired in later tasks.
 """
+
+from __future__ import annotations
+
+import functools
+from typing import TYPE_CHECKING
 
 from langgraph.graph import END, StateGraph
 from langgraph.types import interrupt
 
+from patent_system.agents.claims_drafting import claims_drafting_node
+from patent_system.agents.consistency_review import consistency_review_node
+from patent_system.agents.description_drafting import description_drafting_node
+from patent_system.agents.disclosure import disclosure_node
+from patent_system.agents.novelty_analysis import novelty_analysis_node
+from patent_system.agents.prior_art_search import prior_art_search_node
 from patent_system.agents.state import PatentWorkflowState
+
+if TYPE_CHECKING:
+    from patent_system.agents.novelty_analysis import RAGQueryable
 
 
 # ---------------------------------------------------------------------------
@@ -33,35 +44,6 @@ def should_revise_or_proceed(state: PatentWorkflowState) -> str:
     return "human_review"
 
 
-# ---------------------------------------------------------------------------
-# Placeholder agent node functions (replaced by real agents in later tasks)
-# ---------------------------------------------------------------------------
-
-def _disclosure_node(state: PatentWorkflowState) -> dict:
-    """Placeholder for the Invention Disclosure Agent."""
-    return {"current_step": "disclosure"}
-
-
-def _prior_art_search_node(state: PatentWorkflowState) -> dict:
-    """Placeholder for the Prior Art Search Agent."""
-    return {"current_step": "prior_art_search"}
-
-
-def _novelty_analysis_node(state: PatentWorkflowState) -> dict:
-    """Placeholder for the Novelty Analysis Agent."""
-    return {"current_step": "novelty_analysis"}
-
-
-def _claims_drafting_node(state: PatentWorkflowState) -> dict:
-    """Placeholder for the Claims Drafting Agent."""
-    return {"current_step": "claims_drafting"}
-
-
-def _consistency_review_node(state: PatentWorkflowState) -> dict:
-    """Placeholder for the Consistency Reviewer Agent."""
-    return {"current_step": "consistency_review"}
-
-
 def _human_review_node(state: PatentWorkflowState) -> dict:
     """Human-in-the-loop review node.
 
@@ -73,22 +55,20 @@ def _human_review_node(state: PatentWorkflowState) -> dict:
     return {"current_step": "human_review"}
 
 
-def _description_drafting_node(state: PatentWorkflowState) -> dict:
-    """Placeholder for the Description Drafter Agent."""
-    return {"current_step": "description_drafting"}
-
-
 # ---------------------------------------------------------------------------
 # Graph builder
 # ---------------------------------------------------------------------------
 
-def build_patent_workflow(checkpointer):
+def build_patent_workflow(checkpointer, rag_engine: RAGQueryable | None = None):
     """Build and compile the patent drafting workflow graph.
 
     Args:
         checkpointer: A LangGraph checkpointer instance (e.g.
             ``SqliteSaver``) used to persist workflow state between
             steps.
+        rag_engine: Optional RAG engine passed to the novelty analysis
+            node via ``functools.partial``.  When *None*, the node
+            falls back to its internal placeholder.
 
     Returns:
         A compiled LangGraph ``CompiledStateGraph`` ready for
@@ -96,14 +76,24 @@ def build_patent_workflow(checkpointer):
     """
     graph = StateGraph(PatentWorkflowState)
 
+    # Bind rag_engine to novelty_analysis_node via partial
+    bound_novelty_node = functools.partial(
+        novelty_analysis_node, rag_engine=rag_engine
+    )
+
+    # Bind rag_engine to prior_art_search_node via partial
+    bound_prior_art_node = functools.partial(
+        prior_art_search_node, rag_engine=rag_engine
+    )
+
     # Register nodes
-    graph.add_node("disclosure", _disclosure_node)
-    graph.add_node("prior_art_search", _prior_art_search_node)
-    graph.add_node("novelty_analysis", _novelty_analysis_node)
-    graph.add_node("claims_drafting", _claims_drafting_node)
-    graph.add_node("consistency_review", _consistency_review_node)
+    graph.add_node("disclosure", disclosure_node)
+    graph.add_node("prior_art_search", bound_prior_art_node)
+    graph.add_node("novelty_analysis", bound_novelty_node)
+    graph.add_node("claims_drafting", claims_drafting_node)
+    graph.add_node("consistency_review", consistency_review_node)
     graph.add_node("human_review", _human_review_node)
-    graph.add_node("description_drafting", _description_drafting_node)
+    graph.add_node("description_drafting", description_drafting_node)
 
     # Linear edges: disclosure → prior_art_search → novelty_analysis
     #               → claims_drafting → consistency_review

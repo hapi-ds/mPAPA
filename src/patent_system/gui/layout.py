@@ -11,23 +11,40 @@ from __future__ import annotations
 
 import logging
 import sqlite3
+from typing import TYPE_CHECKING
 
 from nicegui import ui
 
+from patent_system.config import AppSettings
 from patent_system.db.repository import ChatHistoryRepository, TopicRepository
 from patent_system.gui.chat_panel import create_chat_panel
 from patent_system.gui.draft_panel import create_draft_panel
 from patent_system.gui.research_panel import create_research_panel
+from patent_system.rag.engine import RAGEngine
+
+if TYPE_CHECKING:
+    from langgraph.graph.state import CompiledStateGraph
 
 logger = logging.getLogger(__name__)
 
 
-def create_layout(topic_repo: TopicRepository, conn: sqlite3.Connection) -> None:
+def create_layout(
+    topic_repo: TopicRepository,
+    conn: sqlite3.Connection,
+    *,
+    rag_engine: RAGEngine | None = None,
+    settings: AppSettings | None = None,
+    workflow: CompiledStateGraph | None = None,
+) -> None:
     """Set up the full page layout with header, drawer, and tabs.
 
     Args:
         topic_repo: Repository for topic CRUD operations.
         conn: SQLite connection for creating per-request repositories.
+        rag_engine: Optional RAG engine for document retrieval in chat
+            and draft panels.
+        settings: Optional application settings for LLM configuration
+            in chat and draft panels.
     """
     # Shared state across the layout
     state: dict = {
@@ -172,8 +189,14 @@ def create_layout(topic_repo: TopicRepository, conn: sqlite3.Connection) -> None
         chat_repo = ChatHistoryRepository(conn)
 
         create_research_panel(research_container, topic_id)
-        create_chat_panel(chat_container, topic_id, chat_repo)
-        create_draft_panel(draft_container, topic_id)
+        create_chat_panel(
+            chat_container,
+            topic_id,
+            chat_repo,
+            rag_engine=rag_engine,
+            settings=settings,
+        )
+        create_draft_panel(draft_container, topic_id, workflow=workflow)
 
     # Initial load of topic list (Req 1.3)
     _refresh_topic_list()
