@@ -15,6 +15,7 @@ dependencies = [
     "python-docx",
     "pydantic-settings",
     "llama-index-embeddings-huggingface>=0.7.0",
+    "langgraph-checkpoint-sqlite>=3.0.3",
 ]
 
 [dependency-groups]
