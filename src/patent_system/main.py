@@ -152,7 +152,7 @@ def main() -> None:
 
     # 7. Launch NiceGUI app
     logger.info("Launching NiceGUI web interface")
-    ui.run(title="Patent Analysis & Drafting System", reload=False)
+    ui.run(title="Patent Analysis & Drafting System", port=settings.nicegui_port, reload=False)
 
 
 if __name__ == "__main__":

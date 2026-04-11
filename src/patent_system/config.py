@@ -38,6 +38,9 @@ class AppSettings(BaseSettings):
     # Monitoring
     monitoring_interval_hours: int = 24
 
+    # Web server
+    nicegui_port: int = 8080
+
     # Logging
     log_file_path: Path = Path("logs/patent_system.log")
     log_level: str = "INFO"
