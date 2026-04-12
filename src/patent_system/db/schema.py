@@ -85,6 +85,15 @@ CREATE TABLE IF NOT EXISTS source_preferences (
     FOREIGN KEY (topic_id) REFERENCES topics(id),
     UNIQUE(topic_id, source_name)
 );
+
+CREATE TABLE IF NOT EXISTS patent_drafts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL UNIQUE,
+    claims_text TEXT NOT NULL DEFAULT '',
+    description_text TEXT NOT NULL DEFAULT '',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (topic_id) REFERENCES topics(id)
+);
 """
 
 _initialized_databases: set[str] = set()

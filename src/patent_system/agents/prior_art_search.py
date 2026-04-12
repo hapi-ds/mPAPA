@@ -20,7 +20,7 @@ from urllib.request import Request, urlopen
 from patent_system.exceptions import SourceUnavailableError
 from patent_system.logging_config import log_agent_invocation, log_external_request
 from patent_system.parsers.arxiv_parser import ArXivParser
-from patent_system.parsers.depatisnet import DEPATISnetParser
+from patent_system.parsers.epo_ops import EPOOPSParser
 from patent_system.parsers.google_patents import GooglePatentsParser
 from patent_system.parsers.google_scholar import GoogleScholarParser
 from patent_system.parsers.pubmed import PubMedParser
@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 # Source registry: maps source name to (query function, parser instance)
 _SOURCE_REGISTRY: dict[str, dict[str, Any]] = {
-    "DEPATISnet": {"parser": DEPATISnetParser(), "type": "patent"},
+    "EPO OPS": {"parser": EPOOPSParser(), "type": "patent"},
     "Google Patents": {"parser": GooglePatentsParser(), "type": "patent"},
     "Google Scholar": {"parser": GoogleScholarParser(), "type": "paper"},
     "ArXiv": {"parser": ArXivParser(), "type": "paper"},
@@ -42,8 +42,10 @@ _SOURCE_REGISTRY: dict[str, dict[str, Any]] = {
 def _derive_search_terms(disclosure: dict | None) -> list[str]:
     """Derive search terms from an invention disclosure.
 
-    Extracts keywords from the technical problem, novel features,
-    and implementation details fields.
+    Uses the novel_features list as focused search terms. Falls back to
+    a truncated version of the technical_problem if no features are
+    provided. The implementation_details field is excluded — it contains
+    prior art text, not search keywords.
 
     Args:
         disclosure: The invention disclosure dict, or None.
@@ -57,19 +59,21 @@ def _derive_search_terms(disclosure: dict | None) -> list[str]:
 
     terms: list[str] = []
 
-    technical_problem = disclosure.get("technical_problem", "")
-    if technical_problem:
-        terms.append(technical_problem)
-
+    # Use novel_features as the primary search terms (short, focused)
     novel_features = disclosure.get("novel_features", [])
     if isinstance(novel_features, list):
         for feature in novel_features:
-            if feature:
-                terms.append(str(feature))
+            if feature and isinstance(feature, str) and feature.strip():
+                terms.append(str(feature).strip())
 
-    implementation_details = disclosure.get("implementation_details", "")
-    if implementation_details:
-        terms.append(implementation_details)
+    # If no features, fall back to a truncated technical_problem
+    if not terms:
+        technical_problem = disclosure.get("technical_problem", "")
+        if technical_problem:
+            # Truncate to first 200 chars to keep URLs reasonable
+            truncated = technical_problem[:200].strip()
+            if truncated:
+                terms.append(truncated)
 
     return terms if terms else [""]
 
@@ -80,13 +84,15 @@ _SOURCE_ENDPOINTS: dict[str, str] = {
     "PubMed": "eutils.ncbi.nlm.nih.gov/entrez/eutils",
     "Google Scholar": "scholar.google.com/scholar",
     "Google Patents": "patents.google.com",
-    "DEPATISnet": "depatisnet.dpma.de/DepatisNet/depatisnet",
 }
 
 _HTTP_TIMEOUT = 15  # seconds
 
 # Default maximum results per source (overridden by AppSettings.search_max_results_per_source)
 _DEFAULT_MAX_RESULTS = 10
+
+# EPO OPS client (lazily initialized)
+_epo_ops_client = None
 
 
 def _http_get(url: str) -> str:
@@ -182,9 +188,9 @@ def _query_pubmed(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESUL
         Dict with ``results`` key containing parsed paper entries.
     """
     base = _SOURCE_ENDPOINTS["PubMed"]
-    query = " ".join(t for t in search_terms if t)
-    if not query:
-        query = ""
+    # Join multiple terms with OR so PubMed searches for any of them
+    parts = [f"({t})" for t in search_terms if t and t.strip()]
+    query = " OR ".join(parts) if parts else ""
 
     # Step 1: esearch to get IDs
     esearch_params = urlencode({
@@ -313,111 +319,156 @@ def _query_google_scholar(search_terms: list[str], max_results: int = _DEFAULT_M
 
 
 def _query_google_patents(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
-    """Query Google Patents and parse HTML results.
+    """Query Google Patents via their JSON XHR endpoint.
 
     Args:
         search_terms: List of search term strings.
+        max_results: Maximum number of results to return.
 
     Returns:
         Dict with ``results`` key containing parsed patent entries.
     """
-    query = "+".join(quote_plus(t) for t in search_terms if t)
+    query = " ".join(t for t in search_terms if t)
     if not query:
-        query = quote_plus("")
-    url = f"https://{_SOURCE_ENDPOINTS['Google Patents']}/?q={query}"
+        return {"results": []}
+
+    encoded_q = quote_plus(query)
+    url = f"https://{_SOURCE_ENDPOINTS['Google Patents']}/xhr/query?url=q%3D{encoded_q}&exp="
 
     log_external_request(
         logger=logger, source="Google Patents", query=", ".join(search_terms),
         status="requesting", response_time_ms=0,
     )
 
-    html_text = _http_get(url)
+    json_text = _http_get(url)
 
-    # Parse HTML — extract patent results from search-result items
+    import json
+    try:
+        data = json.loads(json_text)
+    except (json.JSONDecodeError, ValueError):
+        return {"results": []}
+
     results: list[dict] = []
-    parts = html_text.split("search-result")
-    for part in parts[1:]:
-        patent_number = ""
+    cluster = data.get("results", {}).get("cluster", [])
+    for group in cluster:
+        for item in group.get("result", []):
+            patent = item.get("patent", {})
+            title = patent.get("title", "").strip()
+            snippet = patent.get("snippet", "").strip()
+            patent_id = item.get("id", "")
+            # id format: "patent/US10852294B2/en"
+            patent_number = patent_id.replace("patent/", "").replace("/en", "").strip()
+            if title:
+                results.append({
+                    "patent_number": patent_number or "UNKNOWN",
+                    "title": title,
+                    "abstract": snippet,
+                })
+            if len(results) >= max_results:
+                break
+        if len(results) >= max_results:
+            break
+
+    return {"results": results[:max_results]}
+
+
+def _query_epo_ops(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
+    """Query EPO Open Patent Services (OPS) published-data search.
+
+    Uses the python-epo-ops-client library with OAuth2 authentication.
+    Requires PATENT_EPO_OPS_KEY and PATENT_EPO_OPS_SECRET in settings.
+
+    Args:
+        search_terms: List of search term strings.
+        max_results: Maximum number of results to return.
+
+    Returns:
+        Dict with ``results`` key containing parsed patent entries.
+    """
+    import xml.etree.ElementTree as _ET
+
+    import epo_ops
+
+    global _epo_ops_client
+
+    if _epo_ops_client is None:
+        from patent_system.config import AppSettings
+        settings = AppSettings()
+        if not settings.epo_ops_key or not settings.epo_ops_secret:
+            raise SourceUnavailableError(
+                "EPO OPS",
+                ValueError("EPO OPS credentials not configured. Set PATENT_EPO_OPS_KEY and PATENT_EPO_OPS_SECRET in .env"),
+            )
+        _epo_ops_client = epo_ops.Client(
+            key=settings.epo_ops_key,
+            secret=settings.epo_ops_secret,
+            accept_type="xml",
+        )
+
+    # Build CQL query: search in title and abstract
+    cql_parts = []
+    for term in search_terms:
+        if term and term.strip():
+            escaped = term.strip().replace('"', '')
+            cql_parts.append(f'ti="{escaped}" OR ab="{escaped}"')
+    cql = " OR ".join(cql_parts) if cql_parts else '""'
+
+    log_external_request(
+        logger=logger, source="EPO OPS", query=", ".join(search_terms),
+        status="requesting", response_time_ms=0,
+    )
+
+    response = _epo_ops_client.published_data_search(
+        cql, range_begin=1, range_end=max_results, constituents=["biblio"],
+    )
+
+    # Parse XML response
+    ns = {
+        "ops": "http://ops.epo.org",
+        "exch": "http://www.epo.org/exchange",
+    }
+    root = _ET.fromstring(response.text)
+
+    results: list[dict] = []
+    for doc in root.findall(".//exch:exchange-document", ns):
+        # Patent number
+        country = doc.get("country", "")
+        doc_number = doc.get("doc-number", "")
+        kind = doc.get("kind", "")
+        patent_number = f"{country}{doc_number}{kind}".strip()
+
+        # Title — prefer English
         title = ""
+        for title_el in doc.findall(".//exch:invention-title", ns):
+            lang = title_el.get("lang", "")
+            text = title_el.text or ""
+            if lang == "en" and text:
+                title = text.strip()
+                break
+            if not title and text:
+                title = text.strip()
+
+        # Abstract — prefer English
         abstract = ""
-        # Try to extract patent number from data attributes or text
-        pn_marker = 'data-result="'
-        pn_start = part.find(pn_marker)
-        if pn_start != -1:
-            pn_end = part.find('"', pn_start + len(pn_marker))
-            patent_number = part[pn_start + len(pn_marker):pn_end].strip()
-        # Extract title
-        title_start = part.find("<h3")
-        if title_start != -1:
-            title_end = part.find("</h3>", title_start)
-            if title_end != -1:
-                extractor = _SimpleHTMLTextExtractor()
-                extractor.feed(part[title_start:title_end])
-                title = extractor.get_text().strip()
-        # Extract abstract/snippet
-        abs_marker = 'class="abstract"'
-        abs_start = part.find(abs_marker)
-        if abs_start == -1:
-            abs_marker = 'class="snippet"'
-            abs_start = part.find(abs_marker)
-        if abs_start != -1:
-            abs_end = part.find("</", abs_start + len(abs_marker))
-            if abs_end != -1:
-                extractor = _SimpleHTMLTextExtractor()
-                extractor.feed(part[abs_start:abs_end])
-                abstract = extractor.get_text().strip()
+        for abs_el in doc.findall(".//exch:abstract", ns):
+            lang = abs_el.get("lang", "")
+            # Collect all <p> text within the abstract
+            paragraphs = []
+            for p in abs_el.findall(".//exch:p", ns):
+                if p.text:
+                    paragraphs.append(p.text.strip())
+            text = " ".join(paragraphs)
+            if lang == "en" and text:
+                abstract = text
+                break
+            if not abstract and text:
+                abstract = text
+
         if title or patent_number:
             results.append({
                 "patent_number": patent_number or "UNKNOWN",
                 "title": title or "Untitled",
                 "abstract": abstract,
-            })
-
-    return {"results": results[:max_results]}
-
-
-def _query_depatisnet(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
-    """Query DEPATISnet and parse HTML results.
-
-    Args:
-        search_terms: List of search term strings.
-
-    Returns:
-        Dict with ``results`` key containing parsed patent entries.
-    """
-    query = " ".join(t for t in search_terms if t)
-    params = urlencode({
-        "action": "bibdat",
-        "docid": "",
-        "query": query,
-    })
-    url = f"https://{_SOURCE_ENDPOINTS['DEPATISnet']}?{params}"
-
-    log_external_request(
-        logger=logger, source="DEPATISnet", query=", ".join(search_terms),
-        status="requesting", response_time_ms=0,
-    )
-
-    html_text = _http_get(url)
-
-    # Parse HTML — extract patent results from table rows
-    results: list[dict] = []
-    rows = html_text.split("<tr")
-    for row in rows[1:]:  # skip header/preamble
-        cells: list[str] = []
-        cell_parts = row.split("<td")
-        for cell in cell_parts[1:]:
-            end = cell.find("</td>")
-            if end != -1:
-                extractor = _SimpleHTMLTextExtractor()
-                extractor.feed(cell[:end])
-                cells.append(extractor.get_text().strip())
-        # Expect at least patent_number, title columns
-        if len(cells) >= 2 and cells[0]:
-            results.append({
-                "patent_number": cells[0],
-                "title": cells[1] if len(cells) > 1 else "Untitled",
-                "abstract": cells[2] if len(cells) > 2 else "",
             })
 
     return {"results": results[:max_results]}
@@ -429,7 +480,7 @@ _SOURCE_QUERY_FUNCTIONS: dict[str, Any] = {
     "PubMed": _query_pubmed,
     "Google Scholar": _query_google_scholar,
     "Google Patents": _query_google_patents,
-    "DEPATISnet": _query_depatisnet,
+    "EPO OPS": _query_epo_ops,
 }
 
 

@@ -17,6 +17,7 @@ EXPECTED_TABLES = {
     "invention_disclosures",
     "disclosure_search_terms",
     "source_preferences",
+    "patent_drafts",
 }
 
 

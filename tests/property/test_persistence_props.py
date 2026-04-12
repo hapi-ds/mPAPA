@@ -53,7 +53,7 @@ _chat_role = st.sampled_from(["user", "assistant"])
 
 # Patent sources
 _patent_source = st.sampled_from(
-    ["DEPATISnet", "Google Patents", "ArXiv", "PubMed", "Google Scholar"]
+    ["EPO OPS", "Google Patents", "ArXiv", "PubMed", "Google Scholar"]
 )
 
 # Non-existent IDs (very large to avoid collisions with auto-increment)
@@ -294,7 +294,7 @@ class TestForeignKeyConstraintEnforcement:
                 patent_number="US0000000",
                 title="Bad FK Patent",
                 abstract="Abstract",
-                source="DEPATISnet",
+                source="EPO OPS",
             )
             repo = PatentRepository(conn)
             with pytest.raises(sqlite3.IntegrityError):

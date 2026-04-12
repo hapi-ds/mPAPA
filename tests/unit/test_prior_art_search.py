@@ -61,9 +61,11 @@ class TestDeriveSearchTerms:
         assert "parallel pipeline" in terms
 
     def test_extracts_implementation_details(self):
+        """implementation_details is excluded (it's prior art text, not search terms)."""
         disclosure = {"implementation_details": "Uses CUDA kernels"}
         terms = _derive_search_terms(disclosure)
-        assert "Uses CUDA kernels" in terms
+        # No novel_features and no technical_problem → empty fallback
+        assert terms == [""]
 
     def test_full_disclosure(self):
         disclosure = {
@@ -72,7 +74,8 @@ class TestDeriveSearchTerms:
             "implementation_details": "Detail B",
         }
         terms = _derive_search_terms(disclosure)
-        assert len(terms) == 3
+        # Only novel_features are used when present
+        assert terms == ["Feature A"]
 
 
 # ---------------------------------------------------------------------------
@@ -97,7 +100,7 @@ class TestPriorArtSearchNode:
     def test_collects_results_from_patent_sources(self, mock_query):
         """Patent source results are parsed and serialized."""
         def side_effect(source_name, terms, **kwargs):
-            if source_name == "DEPATISnet":
+            if source_name == "EPO OPS":
                 return {
                     "results": [
                         {"patent_number": "DE123", "title": "Test Patent", "abstract": "Abstract"}
@@ -135,7 +138,7 @@ class TestPriorArtSearchNode:
     def test_handles_source_failure_gracefully(self, mock_query):
         """Failed sources are logged and added to failed_sources list."""
         def side_effect(source_name, terms, **kwargs):
-            if source_name == "DEPATISnet":
+            if source_name == "EPO OPS":
                 raise ConnectionError("timeout")
             return {"results": []}
 
@@ -143,14 +146,14 @@ class TestPriorArtSearchNode:
         state = _make_state()
         result = prior_art_search_node(state)
 
-        assert "DEPATISnet" in result["failed_sources"]
+        assert "EPO OPS" in result["failed_sources"]
         assert result["current_step"] == "prior_art_search"
 
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_continues_after_source_failure(self, mock_query):
         """Results from remaining sources are still collected after a failure."""
         def side_effect(source_name, terms, **kwargs):
-            if source_name == "DEPATISnet":
+            if source_name == "EPO OPS":
                 raise ConnectionError("timeout")
             if source_name == "Google Patents":
                 return {
@@ -164,14 +167,14 @@ class TestPriorArtSearchNode:
         state = _make_state()
         result = prior_art_search_node(state)
 
-        assert "DEPATISnet" in result["failed_sources"]
+        assert "EPO OPS" in result["failed_sources"]
         assert any(r.get("patent_number") == "US456" for r in result["prior_art_results"])
 
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_multiple_source_failures(self, mock_query):
         """Multiple failed sources are all tracked."""
         def side_effect(source_name, terms, **kwargs):
-            if source_name in ("DEPATISnet", "ArXiv", "PubMed"):
+            if source_name in ("EPO OPS", "ArXiv", "PubMed"):
                 raise SourceUnavailableError(source_name, ConnectionError("down"))
             return {"results": []}
 
@@ -179,7 +182,7 @@ class TestPriorArtSearchNode:
         state = _make_state()
         result = prior_art_search_node(state)
 
-        assert set(result["failed_sources"]) == {"DEPATISnet", "ArXiv", "PubMed"}
+        assert set(result["failed_sources"]) == {"EPO OPS", "ArXiv", "PubMed"}
 
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_logs_agent_invocation(self, mock_query, caplog):
@@ -219,7 +222,8 @@ class TestPriorArtSearchNode:
         # Verify _query_source was called with derived terms
         for call in mock_query.call_args_list:
             terms = call[0][1]
-            assert "Quantum computing optimization" in terms
+            # novel_features are used as search terms
+            assert "qubit error correction" in terms
 
 
 # ---------------------------------------------------------------------------

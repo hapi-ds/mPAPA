@@ -41,6 +41,10 @@ class AppSettings(BaseSettings):
     # Search
     search_max_results_per_source: int = 10
 
+    # EPO Open Patent Services (OPS)
+    epo_ops_key: str = ""
+    epo_ops_secret: str = ""
+
     # Web server
     nicegui_port: int = 8080
     nicegui_reload: bool = False

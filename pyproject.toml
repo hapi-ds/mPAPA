@@ -15,6 +15,7 @@ dependencies = [
     "python-docx",
     "pydantic-settings",
     "langgraph-checkpoint-sqlite>=3.0.3",
+    "python-epo-ops-client>=4.2.1",
 ]
 
 [dependency-groups]

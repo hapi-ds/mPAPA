@@ -251,6 +251,48 @@ def create_research_panel(
         except Exception:
             logger.exception("Failed to load disclosure for topic %d", topic_id)
 
+    # Index saved results in RAG and compute relevance on load
+    if panel_state["results"] and rag_engine is not None:
+        def _index_and_score_saved() -> None:
+            try:
+                rag_docs = []
+                for rec in panel_state["results"]:
+                    title = rec.get("title", "")
+                    abstract = rec.get("abstract", "")
+                    full_text = rec.get("full_text")
+                    doc_text = _build_rag_document_text(abstract, full_text)
+                    text = f"{title} {doc_text}".strip() if title else doc_text
+                    if text:
+                        metadata = _sanitize_metadata({
+                            k: v for k, v in rec.items()
+                            if k not in ("title", "abstract", "full_text", "embedding")
+                        })
+                        rag_docs.append({"text": text, "metadata": metadata})
+                if rag_docs:
+                    rag_engine.index_documents(topic_id, rag_docs)
+
+                # Compute relevance if disclosure exists
+                desc = saved_disclosure["primary_description"] if saved_disclosure else None
+                if desc:
+                    rag_results = rag_engine.query(topic_id, desc, top_k=50)
+                    score_map: dict[str, float] = {}
+                    for rr in rag_results:
+                        rr_text = rr.get("text", "")
+                        rr_score = rr.get("score", 0.0) or 0.0
+                        for rec in panel_state["results"]:
+                            rec_title = rec.get("title", "")
+                            if rec_title and rec_title in rr_text and rec_title not in score_map:
+                                score_map[rec_title] = rr_score
+                    for rec in panel_state["results"]:
+                        title = rec.get("title", "")
+                        if title in score_map:
+                            rec["relevance_score"] = round(score_map[title] * 100, 1)
+            except Exception:
+                logger.debug("Failed to index/score saved results", exc_info=True)
+
+        import threading
+        threading.Thread(target=_index_and_score_saved, daemon=True).start()
+
     # Load saved source preferences (Req 3.5)
     saved_prefs: dict[str, bool] | None = None
     if source_pref_repo is not None:
@@ -455,104 +497,127 @@ def create_research_panel(
                 if not _is_duplicate(rec, panel_state["results"]):
                     new_results.append(rec)
 
-            # Persist search session and results to DB (Req 5.1)
-            if conn is not None:
-                try:
-                    session_repo = ResearchSessionRepository(conn)
-                    patent_repo = PatentRepository(conn)
-                    paper_repo = ScientificPaperRepository(conn)
-                    session_id = session_repo.create(topic_id, query=description)
-                    for rec in new_results:
-                        source_name = rec.get("source", "unknown")
-                        is_paper = source_name in _PAPER_SOURCES
-                        title = rec.get("title", "Untitled")
-                        abstract = rec.get("abstract", "")
-                        full_text = rec.get("full_text")
+            status_label.set_text(f"Saving {len(new_results)} results…")
 
-                        if is_paper:
-                            from patent_system.db.models import ScientificPaperRecord as SPR
-
-                            paper_record = SPR(
-                                session_id=session_id,
-                                doi=rec.get("doi", ""),
-                                title=title,
-                                abstract=abstract,
-                                full_text=full_text,
-                                pdf_path=rec.get("pdf_path"),
-                                source=source_name,
-                            )
-                            row_id = paper_repo.create(session_id, paper_record)
-                            rec["id"] = row_id
-                            rec["record_type"] = "paper"
-                            repo_for_emb = paper_repo
-                        else:
-                            from patent_system.db.models import PatentRecord as PR
-
-                            patent_record = PR(
-                                session_id=session_id,
-                                patent_number=rec.get("patent_number", "UNKNOWN"),
-                                title=title,
-                                abstract=abstract,
-                                full_text=full_text,
-                                source=source_name,
-                            )
-                            row_id = patent_repo.create(session_id, patent_record)
-                            rec["id"] = row_id
-                            rec["record_type"] = "patent"
-                            repo_for_emb = patent_repo
-
-                        # Generate and store embedding for the record
-                        if rag_engine is not None:
-                            try:
-                                emb_text = f"{title} {abstract or ''}"
-                                if full_text:
-                                    emb_text += f" {full_text}"
-                                emb = rag_engine._embedding_service.generate_embedding(emb_text)
-                                if emb is not None:
-                                    repo_for_emb.update_embedding(row_id, emb)
-                            except Exception:
-                                logger.debug(
-                                    "Failed to generate embedding for record %d",
-                                    row_id,
-                                    exc_info=True,
-                                )
-                except Exception:
-                    logger.exception(
-                        "Failed to persist search results for topic %d", topic_id
-                    )
-                    ui.notify(
-                        "Failed to save search results to database.",
-                        type="negative",
-                    )
-
-            # Index results in RAG with full text (Req 5.3)
-            if rag_engine is not None and new_results:
-                rag_docs = []
-                for rec in new_results:
-                    title = rec.get("title", "")
-                    abstract = rec.get("abstract", "")
-                    full_text = rec.get("full_text")
-                    doc_text = _build_rag_document_text(abstract, full_text)
-                    text = f"{title} {doc_text}".strip() if title else doc_text
-                    if text:
-                        metadata = _sanitize_metadata({
-                            k: v
-                            for k, v in rec.items()
-                            if k not in ("title", "abstract", "full_text", "embedding")
-                        })
-                        rag_docs.append({"text": text, "metadata": metadata})
-                if rag_docs:
+            # Run persistence, embeddings, and RAG indexing in a background
+            # thread so the event loop stays responsive.
+            def _persist_and_index() -> None:
+                """Persist results to DB, generate embeddings, index in RAG."""
+                # Persist search session and results to DB (Req 5.1)
+                if conn is not None:
                     try:
-                        rag_engine.index_documents(topic_id, rag_docs)
-                        logger.info(
-                            "Indexed %d docs in RAG for topic %d",
-                            len(rag_docs),
-                            topic_id,
-                        )
+                        session_repo = ResearchSessionRepository(conn)
+                        patent_repo = PatentRepository(conn)
+                        paper_repo = ScientificPaperRepository(conn)
+                        session_id = session_repo.create(topic_id, query=description)
+                        for rec in new_results:
+                            source_name = rec.get("source", "unknown")
+                            is_paper = source_name in _PAPER_SOURCES
+                            title = rec.get("title", "Untitled")
+                            abstract = rec.get("abstract", "")
+                            full_text = rec.get("full_text")
+
+                            if is_paper:
+                                from patent_system.db.models import ScientificPaperRecord as SPR
+
+                                paper_record = SPR(
+                                    session_id=session_id,
+                                    doi=rec.get("doi", ""),
+                                    title=title,
+                                    abstract=abstract,
+                                    full_text=full_text,
+                                    pdf_path=rec.get("pdf_path"),
+                                    source=source_name,
+                                )
+                                row_id = paper_repo.create(session_id, paper_record)
+                                rec["id"] = row_id
+                                rec["record_type"] = "paper"
+                                repo_for_emb = paper_repo
+                            else:
+                                from patent_system.db.models import PatentRecord as PR
+
+                                patent_record = PR(
+                                    session_id=session_id,
+                                    patent_number=rec.get("patent_number", "UNKNOWN"),
+                                    title=title,
+                                    abstract=abstract,
+                                    full_text=full_text,
+                                    source=source_name,
+                                )
+                                row_id = patent_repo.create(session_id, patent_record)
+                                rec["id"] = row_id
+                                rec["record_type"] = "patent"
+                                repo_for_emb = patent_repo
+
+                            # Generate and store embedding
+                            if rag_engine is not None:
+                                try:
+                                    emb_text = f"{title} {abstract or ''}"
+                                    if full_text:
+                                        emb_text += f" {full_text}"
+                                    emb = rag_engine._embedding_service.generate_embedding(emb_text)
+                                    if emb is not None:
+                                        repo_for_emb.update_embedding(row_id, emb)
+                                except Exception:
+                                    logger.debug(
+                                        "Failed to generate embedding for record %d",
+                                        row_id,
+                                        exc_info=True,
+                                    )
                     except Exception:
                         logger.exception(
-                            "Failed to index in RAG for topic %d", topic_id
+                            "Failed to persist search results for topic %d", topic_id
                         )
+
+                # Index results in RAG with full text (Req 5.3)
+                if rag_engine is not None and new_results:
+                    rag_docs = []
+                    for rec in new_results:
+                        title = rec.get("title", "")
+                        abstract = rec.get("abstract", "")
+                        full_text = rec.get("full_text")
+                        doc_text = _build_rag_document_text(abstract, full_text)
+                        text = f"{title} {doc_text}".strip() if title else doc_text
+                        if text:
+                            metadata = _sanitize_metadata({
+                                k: v
+                                for k, v in rec.items()
+                                if k not in ("title", "abstract", "full_text", "embedding")
+                            })
+                            rag_docs.append({"text": text, "metadata": metadata})
+                    if rag_docs:
+                        try:
+                            rag_engine.index_documents(topic_id, rag_docs)
+                            logger.info(
+                                "Indexed %d docs in RAG for topic %d",
+                                len(rag_docs),
+                                topic_id,
+                            )
+                        except Exception:
+                            logger.exception(
+                                "Failed to index in RAG for topic %d", topic_id
+                            )
+
+                # Compute relevance scores
+                if rag_engine is not None and description:
+                    try:
+                        rag_results = rag_engine.query(topic_id, description, top_k=50)
+                        score_map: dict[str, float] = {}
+                        for rr in rag_results:
+                            rr_text = rr.get("text", "")
+                            rr_score = rr.get("score", 0.0) or 0.0
+                            for rec in new_results + panel_state["results"]:
+                                rec_title = rec.get("title", "")
+                                if rec_title and rec_title in rr_text and rec_title not in score_map:
+                                    score_map[rec_title] = rr_score
+                        for rec in new_results + panel_state["results"]:
+                            title = rec.get("title", "")
+                            if title in score_map:
+                                rec["relevance_score"] = round(score_map[title] * 100, 1)
+                    except Exception:
+                        logger.debug("Failed to compute relevance scores", exc_info=True)
+
+            await asyncio.to_thread(_persist_and_index)
 
             # Append new (non-duplicate) results to existing ones
             panel_state["results"].extend(new_results)
@@ -633,6 +698,10 @@ def create_research_panel(
                         with ui.row().classes("w-full items-center justify-between"):
                             ui.label(title).classes("text-subtitle1 font-bold")
                             with ui.row().classes("items-center gap-1"):
+                                relevance = rec.get("relevance_score")
+                                if relevance is not None:
+                                    color = "positive" if relevance >= 70 else "warning" if relevance >= 40 else "grey"
+                                    ui.badge(f"{relevance}%", color=color).props("outline")
                                 has_full_text = bool(rec.get("full_text"))
                                 if has_full_text:
                                     ui.badge("Full Text", color="positive").props("outline")

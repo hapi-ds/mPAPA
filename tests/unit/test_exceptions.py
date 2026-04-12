@@ -37,8 +37,8 @@ class TestSourceUnavailableError:
 
     def test_stores_source_name(self) -> None:
         original = ConnectionError("timeout")
-        err = SourceUnavailableError("DEPATISnet", original)
-        assert err.source_name == "DEPATISnet"
+        err = SourceUnavailableError("EPO OPS", original)
+        assert err.source_name == "EPO OPS"
 
     def test_stores_original_error(self) -> None:
         original = ConnectionError("timeout")

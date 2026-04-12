@@ -364,6 +364,37 @@ class ChatHistoryRepository:
             raise
 
 
+class PatentDraftRepository:
+    """CRUD operations for per-topic patent draft text (claims + description)."""
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def upsert(self, topic_id: int, claims_text: str, description_text: str) -> None:
+        """Save or update the draft for a topic."""
+        try:
+            self._conn.execute(
+                """INSERT OR REPLACE INTO patent_drafts
+                   (topic_id, claims_text, description_text)
+                   VALUES (?, ?, ?)""",
+                (topic_id, claims_text, description_text),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPSERT", "patent_drafts", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> dict | None:
+        """Load the draft for a topic. Returns dict with claims_text and description_text, or None."""
+        row = self._conn.execute(
+            "SELECT claims_text, description_text FROM patent_drafts WHERE topic_id = ?",
+            (topic_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return {"claims_text": row[0], "description_text": row[1]}
+
+
 class InventionDisclosureRepository:
     """CRUD operations for per-topic invention disclosures.
 

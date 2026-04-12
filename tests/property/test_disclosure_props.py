@@ -51,7 +51,7 @@ _search_term = st.text(
 _search_terms = st.lists(_search_term, min_size=0, max_size=20)
 
 # The 5 known source names
-_SOURCE_NAMES = ["ArXiv", "PubMed", "Google Scholar", "Google Patents", "DEPATISnet"]
+_SOURCE_NAMES = ["ArXiv", "PubMed", "Google Scholar", "Google Patents", "EPO OPS"]
 
 # Boolean map for all 5 sources
 _source_preferences = st.fixed_dictionaries(

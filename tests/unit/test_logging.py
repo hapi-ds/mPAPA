@@ -130,10 +130,10 @@ class TestLogExternalRequest:
         self, json_logger: tuple[logging.Logger, Path]
     ) -> None:
         logger, log_file = json_logger
-        log_external_request(logger, "DEPATISnet", "query_x", "200", 456.7)
+        log_external_request(logger, "EPO OPS", "query_x", "200", 456.7)
         entry = _read_last_entry(log_file)
         assert entry["event_type"] == "external_request"
-        assert entry["source"] == "DEPATISnet"
+        assert entry["source"] == "EPO OPS"
         assert entry["query"] == "query_x"
         assert entry["status"] == "200"
         assert entry["response_time"] == 456.7

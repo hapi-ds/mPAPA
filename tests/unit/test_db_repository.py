@@ -104,7 +104,7 @@ class TestPatentRepository:
             patent_number="US1234567",
             title="Test Patent",
             abstract="An abstract",
-            source="DEPATISnet",
+            source="EPO OPS",
         )
 
     def test_create_returns_id(
@@ -378,7 +378,7 @@ class TestSourcePreferenceRepository:
             "PubMed": False,
             "Google Scholar": True,
             "Google Patents": False,
-            "DEPATISnet": True,
+            "EPO OPS": True,
         }
         repo.save(topic.id, prefs)  # type: ignore[arg-type]
         result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]

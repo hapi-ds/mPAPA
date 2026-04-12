@@ -9,7 +9,7 @@ import logging
 import pytest
 
 from patent_system.db.models import PatentRecord, ScientificPaperRecord
-from patent_system.parsers.depatisnet import DEPATISnetParser
+from patent_system.parsers.epo_ops import EPOOPSParser
 from patent_system.parsers.google_patents import GooglePatentsParser
 from patent_system.parsers.google_scholar import GoogleScholarParser
 from patent_system.parsers.arxiv_parser import ArXivParser
@@ -17,14 +17,14 @@ from patent_system.parsers.pubmed import PubMedParser
 
 
 # ---------------------------------------------------------------------------
-# DEPATISnet
+# EPO OPS
 # ---------------------------------------------------------------------------
 
-class TestDEPATISnetParser:
-    """Tests for the DEPATISnet parser."""
+class TestEPOOPSParser:
+    """Tests for the EPO OPS parser."""
 
     def setup_method(self) -> None:
-        self.parser = DEPATISnetParser()
+        self.parser = EPOOPSParser()
 
     def test_parse_valid_patents(self) -> None:
         raw = {
@@ -37,7 +37,7 @@ class TestDEPATISnetParser:
         assert len(records) == 2
         assert all(isinstance(r, PatentRecord) for r in records)
         assert records[0].patent_number == "DE102020001A1"
-        assert records[0].source == "DEPATISnet"
+        assert records[0].source == "EPO OPS"
         assert records[1].title == "Gadget"
 
     def test_parse_paper_returns_empty(self) -> None:

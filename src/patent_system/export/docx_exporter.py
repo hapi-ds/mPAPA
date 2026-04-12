@@ -63,16 +63,21 @@ class DOCXExporter:
 
         return template_path
 
-    def export(self, claims: str, description: str, output_path: Path) -> Path:
-        """Generate a .docx file with claims and description sections.
-
-        Uses the configured template if available, otherwise starts with a blank
-        document.
+    def export(
+        self,
+        claims: str,
+        description: str,
+        output_path: Path,
+        references: list[dict] | None = None,
+    ) -> Path:
+        """Generate a .docx file with claims, description, and references.
 
         Args:
             claims: The patent claims text.
             description: The patent description text.
             output_path: Destination path for the generated .docx file.
+            references: Optional list of dicts with 'title', 'abstract',
+                'source', and optionally 'patent_number' or 'doi' keys.
 
         Returns:
             The output_path where the document was saved.
@@ -89,6 +94,24 @@ class DOCXExporter:
 
         doc.add_heading("Description", level=1)
         doc.add_paragraph(description)
+
+        if references:
+            doc.add_heading("References", level=1)
+            for i, ref in enumerate(references, 1):
+                title = ref.get("title", "Untitled")
+                source = ref.get("source", "")
+                record_id = ref.get("patent_number") or ref.get("doi") or ""
+                abstract = ref.get("abstract", "")
+
+                heading = f"[{i}] {title}"
+                if source:
+                    heading += f" ({source})"
+                if record_id and record_id != "UNKNOWN":
+                    heading += f" — {record_id}"
+
+                doc.add_heading(heading, level=2)
+                if abstract:
+                    doc.add_paragraph(abstract)
 
         # Ensure parent directories exist
         output_path.parent.mkdir(parents=True, exist_ok=True)

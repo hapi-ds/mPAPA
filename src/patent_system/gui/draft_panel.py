@@ -21,6 +21,7 @@ from nicegui import ui
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.db.repository import (
     InventionDisclosureRepository,
+    PatentDraftRepository,
     PatentRepository,
     ResearchSessionRepository,
     ScientificPaperRepository,
@@ -105,6 +106,18 @@ def create_draft_panel(
         "description": "",
         "current_step": "Disclosure",
     }
+
+    # Load saved draft from DB
+    draft_repo: PatentDraftRepository | None = None
+    if conn is not None:
+        draft_repo = PatentDraftRepository(conn)
+        try:
+            saved_draft = draft_repo.get_by_topic(topic_id)
+            if saved_draft:
+                panel_state["claims"] = saved_draft["claims_text"]
+                panel_state["description"] = saved_draft["description_text"]
+        except Exception:
+            logger.exception("Failed to load saved draft for topic %d", topic_id)
 
     with container:
         ui.label("Patent Draft").classes("text-h6 q-mb-sm")
@@ -450,11 +463,12 @@ def create_draft_panel(
                 label="Patent Claims",
                 placeholder="Claims will be generated here…",
                 value=panel_state["claims"],
-            ).classes("w-full").props("outlined autogrow")
+            ).classes("w-full").props('outlined autogrow input-style="min-height: 300px"')
 
             def _on_claims_change(e: Any) -> None:
                 panel_state["claims"] = e.value if e.value else ""
                 _update_export_state()
+                _save_draft()
                 logger.debug(
                     "Claims updated for topic %d (%d chars)",
                     topic_id,
@@ -473,11 +487,12 @@ def create_draft_panel(
                 label="Patent Description",
                 placeholder="Description will be generated here…",
                 value=panel_state["description"],
-            ).classes("w-full").props("outlined autogrow")
+            ).classes("w-full").props('outlined autogrow input-style="min-height: 400px"')
 
             def _on_description_change(e: Any) -> None:
                 panel_state["description"] = e.value if e.value else ""
                 _update_export_state()
+                _save_draft()
                 logger.debug(
                     "Description updated for topic %d (%d chars)",
                     topic_id,
@@ -493,10 +508,84 @@ def create_draft_panel(
 
         # --- Export to DOCX button (Req 10.1, 10.6) ---
         def _on_export() -> None:
-            """Placeholder handler — actual export wired in task 12.1."""
-            logger.info(
-                "Export to DOCX clicked for topic %d", topic_id
-            )
+            """Generate a DOCX file with references and trigger browser download."""
+            claims = panel_state["claims"]
+            description = panel_state["description"]
+
+            if not can_export(claims, description):
+                ui.notify("Claims and description must not be empty.", type="warning")
+                return
+
+            from datetime import date
+            from pathlib import Path
+            from re import sub as re_sub
+
+            from patent_system.export.docx_exporter import DOCXExporter
+
+            try:
+                # Use settings if available, otherwise defaults
+                template_dir = Path("src/patent_system/export/templates")
+                template_name = None
+                try:
+                    from patent_system.config import AppSettings
+                    _settings = AppSettings()
+                    template_dir = _settings.docx_template_dir
+                    template_name = _settings.docx_template_name
+                except Exception:
+                    pass
+
+                # Load topic name for filename
+                topic_name = f"topic_{topic_id}"
+                if conn is not None:
+                    try:
+                        from patent_system.db.repository import TopicRepository
+                        topic = TopicRepository(conn).get_by_id(topic_id)
+                        if topic:
+                            # Sanitize for filename
+                            topic_name = re_sub(r'[^\w\s-]', '', topic.name).strip().replace(' ', '_')
+                    except Exception:
+                        pass
+
+                # Load references from both patent and paper tables
+                references: list[dict] = []
+                if conn is not None:
+                    try:
+                        session_repo = ResearchSessionRepository(conn)
+                        patent_repo = PatentRepository(conn)
+                        paper_repo = ScientificPaperRepository(conn)
+                        sessions = session_repo.get_by_topic(topic_id)
+                        for session in sessions:
+                            for rec in patent_repo.get_by_session(session["id"]):
+                                references.append({
+                                    "title": rec.title,
+                                    "abstract": rec.abstract or "",
+                                    "source": rec.source,
+                                    "patent_number": rec.patent_number,
+                                })
+                            for rec in paper_repo.get_by_session(session["id"]):
+                                references.append({
+                                    "title": rec.title,
+                                    "abstract": rec.abstract or "",
+                                    "source": rec.source,
+                                    "doi": rec.doi,
+                                })
+                    except Exception:
+                        logger.exception("Failed to load references for export")
+
+                today = date.today().isoformat()
+                filename = f"{topic_name}_{today}.docx"
+                output_path = Path(f"data/export/{filename}")
+
+                exporter = DOCXExporter(template_dir, template_name)
+                exporter.export(claims, description, output_path, references=references)
+
+                ui.download(str(output_path))
+                ui.notify("DOCX exported successfully.", type="positive")
+                logger.info("Exported DOCX for topic %d to %s", topic_id, output_path)
+
+            except Exception as exc:
+                logger.exception("Failed to export DOCX for topic %d", topic_id)
+                ui.notify(f"Export failed: {exc}", type="negative")
 
         export_button = ui.button(
             "Export to DOCX",
@@ -521,12 +610,25 @@ def create_draft_panel(
         _update_export_state()
 
         # Expose helpers on the container for external wiring
+        def _save_draft() -> None:
+            """Persist current claims and description to DB."""
+            if draft_repo is not None:
+                try:
+                    draft_repo.upsert(
+                        topic_id,
+                        panel_state["claims"],
+                        panel_state["description"],
+                    )
+                except Exception:
+                    logger.debug("Failed to auto-save draft for topic %d", topic_id, exc_info=True)
+
         def set_claims(text: str) -> None:
             """Set claims text programmatically."""
             panel_state["claims"] = text
             if claims_textarea is not None:
                 claims_textarea.value = text
             _update_export_state()
+            _save_draft()
 
         def set_description(text: str) -> None:
             """Set description text programmatically."""
@@ -534,6 +636,7 @@ def create_draft_panel(
             if description_textarea is not None:
                 description_textarea.value = text
             _update_export_state()
+            _save_draft()
 
         def set_current_step(step_name: str) -> None:
             """Update the workflow step indicator."""

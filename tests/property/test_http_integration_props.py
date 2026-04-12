@@ -44,6 +44,10 @@ _search_terms_list = st.lists(_search_term, min_size=1, max_size=5)
 
 _source_name = st.sampled_from(ALL_SOURCES)
 
+# Sources that use _http_get (urlopen) — excludes EPO OPS which uses its own client
+_HTTP_SOURCES = [s for s in ALL_SOURCES if s != "EPO OPS"]
+_http_source_name = st.sampled_from(_HTTP_SOURCES) if _HTTP_SOURCES else _source_name
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -75,7 +79,7 @@ class TestSourceURLConstruction:
     **Validates: Requirements 1.1**
     """
 
-    @given(source=_source_name, terms=_search_terms_list)
+    @given(source=_http_source_name, terms=_search_terms_list)
     @settings(max_examples=100)
     def test_url_contains_base_endpoint(
         self,
@@ -112,7 +116,7 @@ class TestSourceURLConstruction:
                 f"URLs: {all_urls}"
             )
 
-    @given(source=_source_name, terms=_search_terms_list)
+    @given(source=_http_source_name, terms=_search_terms_list)
     @settings(max_examples=100)
     def test_url_contains_encoded_search_terms(
         self,
@@ -161,7 +165,7 @@ from patent_system.agents.prior_art_search import (
 from patent_system.exceptions import SourceUnavailableError
 
 # Strategies for generating valid raw response dicts per source type.
-# Patent sources (DEPATISnet, Google Patents) use patent_number/title/abstract.
+# Patent sources (EPO OPS, Google Patents) use patent_number/title/abstract.
 # Paper sources (ArXiv, PubMed, Google Scholar) use doi/title/abstract.
 
 _nonempty_text = st.text(
@@ -195,7 +199,7 @@ _paper_response = st.fixed_dictionaries({
 })
 
 # Map each source to the correct response strategy
-_PATENT_SOURCES = {"DEPATISnet", "Google Patents"}
+_PATENT_SOURCES = {"EPO OPS", "Google Patents"}
 _PAPER_SOURCES = {"ArXiv", "PubMed", "Google Scholar"}
 
 
