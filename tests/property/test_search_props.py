@@ -66,7 +66,7 @@ def _build_query_side_effect(unreachable: list[str]):
     # Source type lookup from the registry
     source_types = {name: info["type"] for name, info in _SOURCE_REGISTRY.items()}
 
-    def side_effect(source_name: str, search_terms: list[str]) -> dict:
+    def side_effect(source_name: str, search_terms: list[str], **kwargs) -> dict:
         if source_name in unreachable:
             raise SourceUnavailableError(
                 source_name, ConnectionError(f"{source_name} is down")

@@ -40,6 +40,10 @@ class StructuredFormatter(logging.Formatter):
         if hasattr(record, "extra_fields"):
             entry.update(record.extra_fields)
 
+        # Include exception traceback when present.
+        if record.exc_info and record.exc_info[1] is not None:
+            entry["exception"] = self.formatException(record.exc_info)
+
         return json.dumps(entry, default=str)
 
 

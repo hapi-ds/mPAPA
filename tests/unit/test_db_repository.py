@@ -222,3 +222,164 @@ class TestChatHistoryRepository:
         repo = ChatHistoryRepository(in_memory_db)
         with pytest.raises(sqlite3.IntegrityError):
             repo.save_message(99999, "user", "bad message")
+
+
+# ---------------------------------------------------------------------------
+# InventionDisclosureRepository
+# ---------------------------------------------------------------------------
+
+
+class TestInventionDisclosureRepository:
+    """Tests for InventionDisclosureRepository."""
+
+    def test_upsert_creates_disclosure_and_returns_id(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        topic = TopicRepository(in_memory_db).create("Disclosure Topic")
+        repo = InventionDisclosureRepository(in_memory_db)
+        disc_id = repo.upsert(topic.id, "A novel widget", ["widget", "gadget"])  # type: ignore[arg-type]
+        assert isinstance(disc_id, int)
+        assert disc_id > 0
+
+    def test_get_by_topic_returns_correct_data(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        topic = TopicRepository(in_memory_db).create("Disclosure Topic")
+        repo = InventionDisclosureRepository(in_memory_db)
+        repo.upsert(topic.id, "A novel widget", ["widget", "gadget"])  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result is not None
+        assert result["primary_description"] == "A novel widget"
+        assert result["search_terms"] == ["widget", "gadget"]
+
+    def test_get_by_topic_returns_none_when_missing(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        repo = InventionDisclosureRepository(in_memory_db)
+        assert repo.get_by_topic(9999) is None
+
+    def test_upsert_replaces_existing_disclosure(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        topic = TopicRepository(in_memory_db).create("Disclosure Topic")
+        repo = InventionDisclosureRepository(in_memory_db)
+        repo.upsert(topic.id, "First description", ["term1"])  # type: ignore[arg-type]
+        repo.upsert(topic.id, "Updated description", ["term2", "term3"])  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result is not None
+        assert result["primary_description"] == "Updated description"
+        assert result["search_terms"] == ["term2", "term3"]
+
+    def test_upsert_with_empty_search_terms(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        topic = TopicRepository(in_memory_db).create("Disclosure Topic")
+        repo = InventionDisclosureRepository(in_memory_db)
+        repo.upsert(topic.id, "Description only", [])  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result is not None
+        assert result["primary_description"] == "Description only"
+        assert result["search_terms"] == []
+
+    def test_upsert_preserves_term_order(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        topic = TopicRepository(in_memory_db).create("Disclosure Topic")
+        repo = InventionDisclosureRepository(in_memory_db)
+        terms = ["zebra", "apple", "mango", "banana"]
+        repo.upsert(topic.id, "Ordered terms", terms)  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result is not None
+        assert result["search_terms"] == terms
+
+    def test_upsert_invalid_topic_raises(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import InventionDisclosureRepository
+
+        repo = InventionDisclosureRepository(in_memory_db)
+        with pytest.raises(sqlite3.IntegrityError):
+            repo.upsert(99999, "Bad topic", ["term"])
+
+
+# ---------------------------------------------------------------------------
+# SourcePreferenceRepository
+# ---------------------------------------------------------------------------
+
+
+class TestSourcePreferenceRepository:
+    """Tests for SourcePreferenceRepository."""
+
+    def test_save_and_get_preferences(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import SourcePreferenceRepository
+
+        topic = TopicRepository(in_memory_db).create("Pref Topic")
+        repo = SourcePreferenceRepository(in_memory_db)
+        prefs = {"ArXiv": True, "PubMed": False, "Google Scholar": True}
+        repo.save(topic.id, prefs)  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result == prefs
+
+    def test_get_by_topic_returns_none_when_missing(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import SourcePreferenceRepository
+
+        repo = SourcePreferenceRepository(in_memory_db)
+        assert repo.get_by_topic(9999) is None
+
+    def test_save_replaces_existing_preferences(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import SourcePreferenceRepository
+
+        topic = TopicRepository(in_memory_db).create("Pref Topic")
+        repo = SourcePreferenceRepository(in_memory_db)
+        repo.save(topic.id, {"ArXiv": True, "PubMed": True})  # type: ignore[arg-type]
+        repo.save(topic.id, {"ArXiv": False, "Google Patents": True})  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result == {"ArXiv": False, "Google Patents": True}
+
+    def test_save_empty_preferences(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import SourcePreferenceRepository
+
+        topic = TopicRepository(in_memory_db).create("Pref Topic")
+        repo = SourcePreferenceRepository(in_memory_db)
+        repo.save(topic.id, {})  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        # Empty dict means no rows → returns None
+        assert result is None
+
+    def test_save_boolean_values_preserved(
+        self, in_memory_db: sqlite3.Connection
+    ) -> None:
+        from patent_system.db.repository import SourcePreferenceRepository
+
+        topic = TopicRepository(in_memory_db).create("Pref Topic")
+        repo = SourcePreferenceRepository(in_memory_db)
+        prefs = {
+            "ArXiv": True,
+            "PubMed": False,
+            "Google Scholar": True,
+            "Google Patents": False,
+            "DEPATISnet": True,
+        }
+        repo.save(topic.id, prefs)  # type: ignore[arg-type]
+        result = repo.get_by_topic(topic.id)  # type: ignore[arg-type]
+        assert result == prefs

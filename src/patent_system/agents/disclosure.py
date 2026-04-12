@@ -55,6 +55,19 @@ def disclosure_node(state: PatentWorkflowState) -> dict[str, Any]:
         Dict with ``invention_disclosure`` (parsed JSON dict) and
         ``current_step`` set to ``"disclosure"``.
     """
+    # Pass-through: if a pre-populated disclosure with a non-empty
+    # technical_problem already exists, return it as-is without
+    # invoking the LLM interview.  (Requirement 7.5)
+    existing_disclosure = state.get("invention_disclosure")
+    if (
+        isinstance(existing_disclosure, dict)
+        and existing_disclosure.get("technical_problem")
+    ):
+        return {
+            "invention_disclosure": existing_disclosure,
+            "current_step": "disclosure",
+        }
+
     start = time.monotonic()
 
     interview_module = InterviewQuestionModule()

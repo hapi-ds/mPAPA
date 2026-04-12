@@ -26,7 +26,7 @@ class AppSettings(BaseSettings):
     model_chat: str = "default"
 
     # Embedding
-    embedding_model_name: str = "BAAI/bge-large-en-v1.5"
+    embedding_model_name: str = "text-embedding-nomic-embed-text-v1.5"
 
     # Database
     database_path: Path = Path("data/patent_system.db")
@@ -37,6 +37,9 @@ class AppSettings(BaseSettings):
 
     # Monitoring
     monitoring_interval_hours: int = 24
+
+    # Search
+    search_max_results_per_source: int = 10
 
     # Web server
     nicegui_port: int = 8080

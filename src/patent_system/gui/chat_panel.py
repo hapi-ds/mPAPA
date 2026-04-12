@@ -13,6 +13,7 @@ Requirements: 16.5, 8.1, 8.2, 8.3, 8.4, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -22,7 +23,7 @@ import litellm.exceptions
 import requests.exceptions
 from nicegui import ui
 
-from patent_system.db.repository import ChatHistoryRepository
+from patent_system.db.repository import ChatHistoryRepository, InventionDisclosureRepository
 
 if TYPE_CHECKING:
     from patent_system.config import AppSettings
@@ -31,12 +32,20 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def build_chat_prompt(context_docs: list[dict], question: str) -> str:
+def build_chat_prompt(
+    context_docs: list[dict],
+    question: str,
+    invention_context: dict | None = None,
+) -> str:
     """Build a chat prompt from RAG context documents and a user question.
 
     The prompt includes all retrieved context texts followed by the user
     question.  When no context documents are available, a note is added
     indicating that no prior art context was found.
+
+    When *invention_context* is provided, the invention description and
+    search terms are prepended before the RAG document section so the LLM
+    has full awareness of the user's invention.
 
     This function is extracted as a module-level helper so it can be
     independently tested (Property 7).
@@ -45,11 +54,25 @@ def build_chat_prompt(context_docs: list[dict], question: str) -> str:
         context_docs: List of dicts, each containing at least a
             ``"text"`` key with the document content.
         question: The user's question text.
+        invention_context: Optional dict with keys
+            ``"primary_description"`` (str) and ``"search_terms"``
+            (list[str]).  When provided, the description and terms are
+            prepended to the prompt.
 
     Returns:
         The assembled prompt string ready to send to the LLM.
     """
     parts: list[str] = []
+
+    # Prepend invention context when available (Req 8.2)
+    if invention_context is not None:
+        desc = invention_context.get("primary_description", "")
+        terms = invention_context.get("search_terms", [])
+        if desc:
+            parts.append(f"Invention Description:\n{desc}\n")
+        if terms:
+            terms_formatted = "\n".join(f"- {t}" for t in terms)
+            parts.append(f"Search Terms:\n{terms_formatted}\n")
 
     if context_docs:
         parts.append(
@@ -97,6 +120,7 @@ def create_chat_panel(
     *,
     rag_engine: RAGEngine | None = None,
     settings: AppSettings | None = None,
+    disclosure_repo: InventionDisclosureRepository | None = None,
 ) -> None:
     """Populate *container* with the AI Chat panel UI components.
 
@@ -119,8 +143,27 @@ def create_chat_panel(
             relevant to the active topic (Req 5.1).
         settings: Optional application settings for LLM configuration
             (Req 5.2).
+        disclosure_repo: Optional repository for loading invention
+            disclosure data to include as context in chat prompts
+            (Req 8.1, 8.3).
     """
     container.clear()
+
+    # Load invention context from disclosure repo (Req 8.1, 8.3)
+    invention_context: dict | None = None
+    if disclosure_repo is not None:
+        try:
+            disclosure = disclosure_repo.get_by_topic(topic_id)
+            if disclosure is not None:
+                invention_context = {
+                    "primary_description": disclosure["primary_description"],
+                    "search_terms": disclosure.get("search_terms", []),
+                }
+        except Exception:
+            logger.exception(
+                "Failed to load disclosure for chat context, topic %d",
+                topic_id,
+            )
 
     with container:
         ui.label("AI Chat").classes("text-h6 q-mb-sm")
@@ -174,20 +217,24 @@ def create_chat_panel(
                 context_docs: list[dict] = []
                 if rag_engine is not None:
                     try:
-                        context_docs = rag_engine.query(topic_id, text)
+                        context_docs = await asyncio.to_thread(
+                            rag_engine.query, topic_id, text,
+                        )
                     except Exception:
                         logger.exception(
                             "RAG query failed for topic %d", topic_id
                         )
 
-                # --- Build prompt and call LLM (Req 5.2, 5.4, 5.6) ---
-                prompt = build_chat_prompt(context_docs, text)
+                # --- Build prompt and call LLM (Req 5.2, 5.4, 5.6, 8.2) ---
+                prompt = build_chat_prompt(
+                    context_docs, text, invention_context=invention_context
+                )
 
                 try:
                     lm = dspy.settings.lm
                     if lm is None:
                         raise ConnectionError("DSPy LM is not configured")
-                    response = lm(prompt)
+                    response = await asyncio.to_thread(lm, prompt)
                     # dspy.LM returns list[dict | str]; extract text content
                     if isinstance(response, list) and response:
                         item = response[0]
@@ -239,3 +286,19 @@ def create_chat_panel(
                 scroll_area.scroll_to(percent=1.0)
 
             ui.button("Send", on_click=_on_send).props("color=primary")
+
+            def _on_clear_chat() -> None:
+                """Delete all chat messages for this topic."""
+                try:
+                    chat_repo.delete_by_topic(topic_id)
+                    logger.info("Cleared chat history for topic %d", topic_id)
+                except Exception:
+                    logger.exception("Failed to clear chat for topic %d", topic_id)
+                    ui.notify("Failed to clear chat history.", type="negative")
+                    return
+                chat_messages_container.clear()
+                ui.notify("Chat history cleared.", type="info")
+
+            ui.button(
+                "Clear Chat", on_click=_on_clear_chat, icon="delete_sweep",
+            ).props("flat color=negative size=sm")

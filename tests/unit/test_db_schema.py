@@ -8,7 +8,16 @@ import pytest
 from patent_system.db.schema import SCHEMA_SQL, get_connection, init_schema, _initialized_databases
 
 
-EXPECTED_TABLES = {"topics", "research_sessions", "patents", "scientific_papers", "chat_history"}
+EXPECTED_TABLES = {
+    "topics",
+    "research_sessions",
+    "patents",
+    "scientific_papers",
+    "chat_history",
+    "invention_disclosures",
+    "disclosure_search_terms",
+    "source_preferences",
+}
 
 
 class TestInitSchema:

@@ -16,7 +16,12 @@ from typing import TYPE_CHECKING
 from nicegui import ui
 
 from patent_system.config import AppSettings
-from patent_system.db.repository import ChatHistoryRepository, TopicRepository
+from patent_system.db.repository import (
+    ChatHistoryRepository,
+    InventionDisclosureRepository,
+    SourcePreferenceRepository,
+    TopicRepository,
+)
 from patent_system.gui.chat_panel import create_chat_panel
 from patent_system.gui.draft_panel import create_draft_panel
 from patent_system.gui.research_panel import create_research_panel
@@ -187,16 +192,30 @@ def create_layout(
             return
 
         chat_repo = ChatHistoryRepository(conn)
+        disclosure_repo = InventionDisclosureRepository(conn)
+        source_pref_repo = SourcePreferenceRepository(conn)
 
-        create_research_panel(research_container, topic_id, conn=conn, rag_engine=rag_engine)
+        create_research_panel(
+            research_container,
+            topic_id,
+            conn=conn,
+            rag_engine=rag_engine,
+            disclosure_repo=disclosure_repo,
+            source_pref_repo=source_pref_repo,
+            max_results_per_source=settings.search_max_results_per_source if settings else 10,
+        )
         create_chat_panel(
             chat_container,
             topic_id,
             chat_repo,
             rag_engine=rag_engine,
             settings=settings,
+            disclosure_repo=disclosure_repo,
         )
-        create_draft_panel(draft_container, topic_id, workflow=workflow, conn=conn)
+        create_draft_panel(
+            draft_container, topic_id, workflow=workflow, conn=conn,
+            disclosure_repo=disclosure_repo,
+        )
 
     # Initial load of topic list (Req 1.3)
     _refresh_topic_list()

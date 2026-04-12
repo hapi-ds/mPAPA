@@ -96,7 +96,7 @@ class TestPriorArtSearchNode:
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_collects_results_from_patent_sources(self, mock_query):
         """Patent source results are parsed and serialized."""
-        def side_effect(source_name, terms):
+        def side_effect(source_name, terms, **kwargs):
             if source_name == "DEPATISnet":
                 return {
                     "results": [
@@ -115,7 +115,7 @@ class TestPriorArtSearchNode:
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_collects_results_from_paper_sources(self, mock_query):
         """Paper source results are parsed and serialized."""
-        def side_effect(source_name, terms):
+        def side_effect(source_name, terms, **kwargs):
             if source_name == "ArXiv":
                 return {
                     "results": [
@@ -134,7 +134,7 @@ class TestPriorArtSearchNode:
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_handles_source_failure_gracefully(self, mock_query):
         """Failed sources are logged and added to failed_sources list."""
-        def side_effect(source_name, terms):
+        def side_effect(source_name, terms, **kwargs):
             if source_name == "DEPATISnet":
                 raise ConnectionError("timeout")
             return {"results": []}
@@ -149,7 +149,7 @@ class TestPriorArtSearchNode:
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_continues_after_source_failure(self, mock_query):
         """Results from remaining sources are still collected after a failure."""
-        def side_effect(source_name, terms):
+        def side_effect(source_name, terms, **kwargs):
             if source_name == "DEPATISnet":
                 raise ConnectionError("timeout")
             if source_name == "Google Patents":
@@ -170,7 +170,7 @@ class TestPriorArtSearchNode:
     @patch("patent_system.agents.prior_art_search._query_source")
     def test_multiple_source_failures(self, mock_query):
         """Multiple failed sources are all tracked."""
-        def side_effect(source_name, terms):
+        def side_effect(source_name, terms, **kwargs):
             if source_name in ("DEPATISnet", "ArXiv", "PubMed"):
                 raise SourceUnavailableError(source_name, ConnectionError("down"))
             return {"results": []}

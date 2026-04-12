@@ -1,24 +1,45 @@
 """Research panel UI for the Patent Analysis & Drafting System.
 
-Provides the search query input, "Start Research" button, sort controls,
-and a sortable results table displaying prior art search results.
+Provides the structured invention disclosure form (primary description +
+dynamic additional search terms), source selection checkboxes, "Start
+Research" button, sort controls, and a sortable results table displaying
+prior art search results.
 
-Requirements: 16.4, 3.5, 3.6
+Requirements: 16.4, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 2.3, 2.4, 2.5,
+              3.1, 3.2, 3.5, 3.6, 4.1, 5.1, 5.2, 5.3, 6.1, 6.2
 """
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import sqlite3
+from datetime import datetime
 from typing import Any
 
 from nicegui import ui
 
-from patent_system.agents.prior_art_search import prior_art_search_node
-from patent_system.db.repository import PatentRepository, ResearchSessionRepository
-from patent_system.db.schema import get_connection
+from patent_system.agents.prior_art_search import (
+    _SOURCE_REGISTRY,
+    prior_art_search_node,
+)
+from patent_system.db.repository import (
+    InventionDisclosureRepository,
+    PatentRepository,
+    ResearchSessionRepository,
+    ScientificPaperRepository,
+    SourcePreferenceRepository,
+)
 
 logger = logging.getLogger(__name__)
+
+# Source names that produce scientific papers (vs patents)
+_PAPER_SOURCES = {
+    name for name, info in _SOURCE_REGISTRY.items() if info["type"] == "paper"
+}
+
+# Maximum number of additional search terms (Req 1.5)
+_MAX_SEARCH_TERMS = 20
 
 # Sort criteria options (Req 3.6)
 SORT_OPTIONS: dict[str, str] = {
@@ -37,17 +58,110 @@ _SOURCE_URLS: dict[str, str] = {
 }
 
 
+def _is_duplicate(result: dict, existing: list[dict]) -> bool:
+    """Check if a result already exists by matching title + source (case-insensitive, stripped).
+
+    Args:
+        result: A search result dict with 'title' and 'source' keys.
+        existing: List of previously saved record dicts.
+
+    Returns:
+        True if a duplicate is found, False otherwise.
+    """
+    title = result.get("title", "").strip().lower()
+    source = result.get("source", "").strip().lower()
+    for existing_rec in existing:
+        if (
+            existing_rec.get("title", "").strip().lower() == title
+            and existing_rec.get("source", "").strip().lower() == source
+        ):
+            return True
+    return False
+
+
+def _build_disclosure_dict(primary_description: str, search_terms: list[str]) -> dict:
+    """Construct an invention_disclosure dict from user inputs.
+
+    Args:
+        primary_description: The primary invention description text.
+        search_terms: List of additional search term strings (may contain empty strings).
+
+    Returns:
+        Dict with 'technical_problem' set to primary_description and
+        'novel_features' set to the list of non-empty search terms.
+    """
+    return {
+        "technical_problem": primary_description,
+        "novel_features": [t for t in search_terms if t],
+    }
+
+
+def _sanitize_metadata(raw: dict[str, Any]) -> dict[str, str | int | float]:
+    """Sanitize a metadata dict for LlamaIndex compatibility.
+
+    LlamaIndex metadata values must be str, int, or float. This function
+    converts datetime objects to ISO strings and drops None values.
+    """
+    clean: dict[str, str | int | float] = {}
+    for k, v in raw.items():
+        if v is None:
+            continue
+        if isinstance(v, (str, int, float)):
+            clean[k] = v
+        elif isinstance(v, datetime):
+            clean[k] = v.isoformat()
+        elif isinstance(v, bool):
+            clean[k] = int(v)
+        else:
+            clean[k] = str(v)
+    return clean
+
+
+def _build_rag_document_text(abstract: str, full_text: str | None) -> str:
+    """Construct the document text for RAG indexing.
+
+    Combines abstract and full_text (when available) into a single string
+    for indexing in the RAG engine.
+
+    Args:
+        abstract: The abstract/summary text of the document.
+        full_text: The full text of the document, or None if unavailable.
+
+    Returns:
+        Combined text string containing both abstract and full_text when
+        available, separated by a newline.
+    """
+    parts = []
+    if abstract:
+        parts.append(abstract)
+    if full_text:
+        parts.append(full_text)
+    return "\n".join(parts)
+
+
 def _build_source_url(record: dict[str, Any]) -> str | None:
     """Build a URL to the original source for a search result record."""
     source = record.get("source", "")
     template = _SOURCE_URLS.get(source)
     if not template:
         return None
-    # Use patent_number for patent sources, doi for paper sources
     record_id = record.get("patent_number") or record.get("doi") or ""
     if not record_id or record_id == "UNKNOWN":
         return None
     return template.format(id=record_id)
+
+
+def _normalize_date_key(value: Any) -> str:
+    """Coerce a discovered_date value to a comparable string.
+
+    Handles datetime objects, ISO strings, and missing/None values so
+    that mixed-type lists can be sorted without a TypeError.
+    """
+    if value is None:
+        return ""
+    if isinstance(value, datetime):
+        return value.isoformat()
+    return str(value)
 
 
 def _sort_results(
@@ -56,7 +170,7 @@ def _sort_results(
 ) -> list[dict[str, Any]]:
     """Sort search results by the given criterion."""
     if criterion == "discovery_date":
-        return sorted(results, key=lambda r: r.get("discovered_date", ""), reverse=True)
+        return sorted(results, key=lambda r: _normalize_date_key(r.get("discovered_date")), reverse=True)
     if criterion == "relevance":
         return sorted(results, key=lambda r: r.get("relevance_score", 0), reverse=True)
     if criterion == "citation_count":
@@ -64,137 +178,409 @@ def _sort_results(
     return list(results)
 
 
+
 def create_research_panel(
     container: Any,
     topic_id: int,
     conn: sqlite3.Connection | None = None,
     rag_engine: Any | None = None,
+    disclosure_repo: InventionDisclosureRepository | None = None,
+    source_pref_repo: SourcePreferenceRepository | None = None,
+    max_results_per_source: int = 10,
 ) -> None:
-    """Populate *container* with the Research panel UI components."""
+    """Populate *container* with the Research panel UI components.
+
+    Args:
+        container: The NiceGUI container element to populate.
+        topic_id: The active topic ID.
+        conn: SQLite connection for creating per-request repositories.
+        rag_engine: Optional RAG engine for document indexing.
+        disclosure_repo: Repository for invention disclosure persistence.
+        source_pref_repo: Repository for source preference persistence.
+        max_results_per_source: Maximum results to fetch per source.
+    """
     container.clear()
 
     panel_state: dict[str, Any] = {
         "results": [],
         "sort_criterion": "discovery_date",
+        "term_inputs": [],  # list of ui.input references for additional terms
+        "source_checkboxes": {},  # source_name -> ui.checkbox reference
     }
 
-    # Load previously saved results from DB
+    # Load previously saved results from DB (Req 5.2)
     if conn is not None:
         try:
             session_repo = ResearchSessionRepository(conn)
             patent_repo = PatentRepository(conn)
+            paper_repo = ScientificPaperRepository(conn)
             sessions = session_repo.get_by_topic(topic_id)
             saved_results: list[dict[str, Any]] = []
             for session in sessions:
-                records = patent_repo.get_by_session(session["id"])
-                for rec in records:
+                for rec in patent_repo.get_by_session(session["id"]):
                     saved_results.append({
+                        "id": rec.id,
+                        "record_type": "patent",
                         "title": rec.title,
                         "abstract": rec.abstract,
+                        "full_text": rec.full_text,
                         "source": rec.source,
                         "patent_number": rec.patent_number,
+                        "discovered_date": rec.discovered_date.isoformat() if rec.discovered_date else "",
+                    })
+                for rec in paper_repo.get_by_session(session["id"]):
+                    saved_results.append({
+                        "id": rec.id,
+                        "record_type": "paper",
+                        "title": rec.title,
+                        "abstract": rec.abstract,
+                        "full_text": rec.full_text,
+                        "source": rec.source,
+                        "doi": rec.doi,
                         "discovered_date": rec.discovered_date.isoformat() if rec.discovered_date else "",
                     })
             panel_state["results"] = saved_results
         except Exception:
             logger.exception("Failed to load saved results for topic %d", topic_id)
 
+    # Load saved disclosure data (Req 2.4)
+    saved_disclosure: dict | None = None
+    if disclosure_repo is not None:
+        try:
+            saved_disclosure = disclosure_repo.get_by_topic(topic_id)
+        except Exception:
+            logger.exception("Failed to load disclosure for topic %d", topic_id)
+
+    # Load saved source preferences (Req 3.5)
+    saved_prefs: dict[str, bool] | None = None
+    if source_pref_repo is not None:
+        try:
+            saved_prefs = source_pref_repo.get_by_topic(topic_id)
+        except Exception:
+            logger.exception("Failed to load source prefs for topic %d", topic_id)
+
     with container:
         ui.label("Prior Art Research").classes("text-h6 q-mb-sm")
 
-        with ui.row().classes("w-full items-end gap-2"):
-            search_input = ui.input(
-                label="Search query",
-                placeholder="Enter search terms…",
-            ).classes("flex-grow")
+        # --- Primary Invention Description (Req 1.1) ---
+        primary_input = ui.textarea(
+            label="Primary Invention Description",
+            placeholder="Describe your invention…",
+            value=saved_disclosure["primary_description"] if saved_disclosure else "",
+        ).classes("w-full")
 
-            status_label = ui.label("").classes("text-caption")
+        # --- Additional Search Terms (Req 1.2, 1.3, 1.4, 1.5) ---
+        ui.label("Additional Search Terms").classes("text-subtitle2 q-mt-md")
+        terms_container = ui.column().classes("w-full gap-1")
 
-            def _on_start_research() -> None:
-                query = search_input.value.strip() if search_input.value else ""
-                if not query:
-                    ui.notify("Please enter a search query.", type="warning")
+        def _render_terms() -> None:
+            """Re-render the dynamic term input list."""
+            terms_container.clear()
+            with terms_container:
+                for idx, term_val in enumerate(panel_state["term_inputs"]):
+                    _idx = idx  # capture for closure
+                    with ui.row().classes("w-full items-center gap-1"):
+                        inp = ui.input(
+                            placeholder=f"Search term {_idx + 1}",
+                            value=term_val,
+                            on_change=lambda e, i=_idx: _on_term_change(i, e.value),
+                        ).classes("flex-grow")
+                        ui.button(
+                            icon="remove",
+                            on_click=lambda _, i=_idx: _remove_term(i),
+                        ).props("flat dense color=negative")
+
+        def _on_term_change(idx: int, value: str) -> None:
+            """Update the term value in panel_state when user edits."""
+            if 0 <= idx < len(panel_state["term_inputs"]):
+                panel_state["term_inputs"][idx] = value
+
+        def _add_term() -> None:
+            """Append a new empty term input (Req 1.3, 1.5)."""
+            if len(panel_state["term_inputs"]) >= _MAX_SEARCH_TERMS:
+                ui.notify(
+                    f"Maximum of {_MAX_SEARCH_TERMS} additional search terms reached.",
+                    type="warning",
+                )
+                return
+            panel_state["term_inputs"].append("")
+            _render_terms()
+
+        def _remove_term(idx: int) -> None:
+            """Remove a term input by index (Req 1.4)."""
+            if 0 <= idx < len(panel_state["term_inputs"]):
+                panel_state["term_inputs"].pop(idx)
+                _render_terms()
+
+        # Populate saved terms (Req 2.4)
+        if saved_disclosure and saved_disclosure.get("search_terms"):
+            panel_state["term_inputs"] = list(saved_disclosure["search_terms"])
+
+        _render_terms()
+
+        ui.button("Add Term", icon="add", on_click=_add_term).props("flat dense")
+
+        # --- Source Selection Checkboxes (Req 3.1, 3.2, 3.5, 3.6) ---
+        ui.label("Sources").classes("text-subtitle2 q-mt-md")
+
+        source_names = list(_SOURCE_REGISTRY.keys())
+
+        # Default all checked when no saved preference (Req 3.2)
+        if saved_prefs is None:
+            current_prefs = {name: True for name in source_names}
+        else:
+            current_prefs = {name: saved_prefs.get(name, True) for name in source_names}
+
+        with ui.row().classes("w-full gap-4 flex-wrap"):
+            for src_name in source_names:
+                def _make_checkbox_handler(name: str):
+                    def _on_change(e: Any) -> None:
+                        new_val = e.value
+                        # Prevent deselecting the last remaining source (Req 3.6)
+                        enabled_count = sum(
+                            1 for sn in source_names
+                            if current_prefs.get(sn, True)
+                        )
+                        if not new_val and enabled_count <= 1:
+                            ui.notify(
+                                "At least one source must remain selected.",
+                                type="warning",
+                            )
+                            # Re-check the checkbox
+                            panel_state["source_checkboxes"][name].set_value(True)
+                            return
+
+                        current_prefs[name] = new_val
+
+                        # Save preference (Req 3.4)
+                        if source_pref_repo is not None:
+                            try:
+                                source_pref_repo.save(topic_id, current_prefs)
+                            except Exception:
+                                logger.exception(
+                                    "Failed to save source prefs for topic %d", topic_id
+                                )
+                                ui.notify("Failed to save source preference.", type="negative")
+                    return _on_change
+
+                cb = ui.checkbox(
+                    src_name,
+                    value=current_prefs.get(src_name, True),
+                    on_change=_make_checkbox_handler(src_name),
+                )
+                panel_state["source_checkboxes"][src_name] = cb
+
+        # --- Status and Start Research ---
+        status_label = ui.label("").classes("text-caption q-mt-sm")
+
+        async def _on_start_research() -> None:
+            """Handle the Start Research button click.
+
+            Validates input, saves disclosure, runs search with selected
+            sources, deduplicates results, persists records, and indexes
+            in RAG.
+
+            Requirements: 1.6, 1.7, 2.3, 2.5, 4.1, 5.1, 5.2, 5.3, 6.1, 6.2
+            """
+            # Validate primary description (Req 1.7)
+            description = primary_input.value.strip() if primary_input.value else ""
+            if not description:
+                ui.notify(
+                    "Please enter a primary invention description.",
+                    type="warning",
+                )
+                return
+
+            # Gather additional search terms
+            terms = list(panel_state["term_inputs"])
+
+            # Save disclosure (Req 2.3)
+            if disclosure_repo is not None:
+                try:
+                    disclosure_repo.upsert(topic_id, description, terms)
+                except Exception:
+                    logger.exception(
+                        "Failed to save disclosure for topic %d", topic_id
+                    )
+                    ui.notify(
+                        "Failed to save invention disclosure. Your data is retained in the form.",
+                        type="negative",
+                    )
                     return
 
-                status_label.set_text("Searching…")
-                logger.info("Start Research for topic %d, query=%r", topic_id, query)
+            status_label.set_text("Searching…")
+            logger.info("Start Research for topic %d", topic_id)
 
-                # Build a minimal workflow state with the query as disclosure
-                state = {
-                    "topic_id": topic_id,
-                    "invention_disclosure": {"technical_problem": query},
-                    "interview_messages": [],
-                    "prior_art_results": [],
-                    "failed_sources": [],
-                    "novelty_analysis": None,
-                    "claims_text": "",
-                    "description_text": "",
-                    "review_feedback": "",
-                    "review_approved": False,
-                    "iteration_count": 0,
-                    "current_step": "",
-                }
+            # Build disclosure dict (Req 1.6)
+            invention_disclosure = _build_disclosure_dict(description, terms)
 
-                result = prior_art_search_node(state)
+            # Determine enabled sources (Req 4.1)
+            selected_sources = [
+                name for name, enabled in current_prefs.items() if enabled
+            ]
 
-                results = result.get("prior_art_results", [])
-                failed = result.get("failed_sources", [])
+            # Build workflow state
+            state = {
+                "topic_id": topic_id,
+                "invention_disclosure": invention_disclosure,
+                "interview_messages": [],
+                "prior_art_results": [],
+                "failed_sources": [],
+                "novelty_analysis": None,
+                "claims_text": "",
+                "description_text": "",
+                "review_feedback": "",
+                "review_approved": False,
+                "iteration_count": 0,
+                "current_step": "",
+            }
 
-                # Persist the search session and results to DB
-                if conn is not None:
-                    try:
-                        session_repo = ResearchSessionRepository(conn)
-                        patent_repo = PatentRepository(conn)
-                        session_id = session_repo.create(topic_id, query=query)
-                        for rec in results:
+            # Run the blocking search in a background thread so the
+            # NiceGUI event loop stays responsive and the WebSocket
+            # connection is not dropped.
+            result = await asyncio.to_thread(
+                prior_art_search_node,
+                state,
+                rag_engine=rag_engine,
+                selected_sources=selected_sources,
+                max_results_per_source=max_results_per_source,
+            )
+
+            results = result.get("prior_art_results", [])
+            failed = result.get("failed_sources", [])
+
+            # Deduplicate against existing records (Req 6.1, 6.2)
+            new_results: list[dict[str, Any]] = []
+            for rec in results:
+                if not _is_duplicate(rec, panel_state["results"]):
+                    new_results.append(rec)
+
+            # Persist search session and results to DB (Req 5.1)
+            if conn is not None:
+                try:
+                    session_repo = ResearchSessionRepository(conn)
+                    patent_repo = PatentRepository(conn)
+                    paper_repo = ScientificPaperRepository(conn)
+                    session_id = session_repo.create(topic_id, query=description)
+                    for rec in new_results:
+                        source_name = rec.get("source", "unknown")
+                        is_paper = source_name in _PAPER_SOURCES
+                        title = rec.get("title", "Untitled")
+                        abstract = rec.get("abstract", "")
+                        full_text = rec.get("full_text")
+
+                        if is_paper:
+                            from patent_system.db.models import ScientificPaperRecord as SPR
+
+                            paper_record = SPR(
+                                session_id=session_id,
+                                doi=rec.get("doi", ""),
+                                title=title,
+                                abstract=abstract,
+                                full_text=full_text,
+                                pdf_path=rec.get("pdf_path"),
+                                source=source_name,
+                            )
+                            row_id = paper_repo.create(session_id, paper_record)
+                            rec["id"] = row_id
+                            rec["record_type"] = "paper"
+                            repo_for_emb = paper_repo
+                        else:
                             from patent_system.db.models import PatentRecord as PR
+
                             patent_record = PR(
                                 session_id=session_id,
-                                patent_number=rec.get("patent_number", rec.get("doi", "UNKNOWN")),
-                                title=rec.get("title", "Untitled"),
-                                abstract=rec.get("abstract", ""),
-                                source=rec.get("source", "unknown"),
+                                patent_number=rec.get("patent_number", "UNKNOWN"),
+                                title=title,
+                                abstract=abstract,
+                                full_text=full_text,
+                                source=source_name,
                             )
-                            patent_repo.create(session_id, patent_record)
-                    except Exception:
-                        logger.exception("Failed to persist search results for topic %d", topic_id)
+                            row_id = patent_repo.create(session_id, patent_record)
+                            rec["id"] = row_id
+                            rec["record_type"] = "patent"
+                            repo_for_emb = patent_repo
 
-                # Index results in RAG so AI Chat can use them
-                if rag_engine is not None and results:
-                    rag_docs = []
-                    for rec in results:
-                        title = rec.get("title", "")
-                        abstract = rec.get("abstract", "")
-                        text = f"{title} {abstract}".strip()
-                        if text:
-                            rag_docs.append({"text": text, "metadata": rec})
-                    if rag_docs:
-                        try:
-                            rag_engine.index_documents(topic_id, rag_docs)
-                            logger.info("Indexed %d docs in RAG for topic %d", len(rag_docs), topic_id)
-                        except Exception:
-                            logger.exception("Failed to index in RAG for topic %d", topic_id)
-
-                # Append new results to existing ones
-                panel_state["results"].extend(results)
-                _refresh_table()
-
-                # Status feedback
-                parts = []
-                parts.append(f"{len(results)} result(s) found")
-                if failed:
-                    parts.append(f"{len(failed)} source(s) unavailable: {', '.join(failed)}")
-                status_label.set_text(" · ".join(parts))
-
-                if not results:
+                        # Generate and store embedding for the record
+                        if rag_engine is not None:
+                            try:
+                                emb_text = f"{title} {abstract or ''}"
+                                if full_text:
+                                    emb_text += f" {full_text}"
+                                emb = rag_engine._embedding_service.generate_embedding(emb_text)
+                                if emb is not None:
+                                    repo_for_emb.update_embedding(row_id, emb)
+                            except Exception:
+                                logger.debug(
+                                    "Failed to generate embedding for record %d",
+                                    row_id,
+                                    exc_info=True,
+                                )
+                except Exception:
+                    logger.exception(
+                        "Failed to persist search results for topic %d", topic_id
+                    )
                     ui.notify(
-                        "No results found. External data source connectors are not yet implemented.",
-                        type="info",
-                        close_button=True,
+                        "Failed to save search results to database.",
+                        type="negative",
                     )
 
-            ui.button("Start Research", on_click=_on_start_research).props("color=primary")
+            # Index results in RAG with full text (Req 5.3)
+            if rag_engine is not None and new_results:
+                rag_docs = []
+                for rec in new_results:
+                    title = rec.get("title", "")
+                    abstract = rec.get("abstract", "")
+                    full_text = rec.get("full_text")
+                    doc_text = _build_rag_document_text(abstract, full_text)
+                    text = f"{title} {doc_text}".strip() if title else doc_text
+                    if text:
+                        metadata = _sanitize_metadata({
+                            k: v
+                            for k, v in rec.items()
+                            if k not in ("title", "abstract", "full_text", "embedding")
+                        })
+                        rag_docs.append({"text": text, "metadata": metadata})
+                if rag_docs:
+                    try:
+                        rag_engine.index_documents(topic_id, rag_docs)
+                        logger.info(
+                            "Indexed %d docs in RAG for topic %d",
+                            len(rag_docs),
+                            topic_id,
+                        )
+                    except Exception:
+                        logger.exception(
+                            "Failed to index in RAG for topic %d", topic_id
+                        )
 
+            # Append new (non-duplicate) results to existing ones
+            panel_state["results"].extend(new_results)
+            _refresh_table()
+
+            # Status feedback
+            parts = []
+            parts.append(f"{len(new_results)} new result(s) found")
+            if len(results) - len(new_results) > 0:
+                parts.append(f"{len(results) - len(new_results)} duplicate(s) skipped")
+            if failed:
+                parts.append(
+                    f"{len(failed)} source(s) unavailable: {', '.join(failed)}"
+                )
+            status_label.set_text(" · ".join(parts))
+
+            if not new_results:
+                ui.notify(
+                    "No new results found.",
+                    type="info",
+                    close_button=True,
+                )
+
+        ui.button(
+            "Start Research", on_click=_on_start_research
+        ).props("color=primary").classes("q-mt-sm")
+
+        # --- Sort control ---
         def _on_sort_change(e: Any) -> None:
             panel_state["sort_criterion"] = e.value
             _refresh_table()
@@ -206,7 +592,28 @@ def create_research_panel(
             on_change=_on_sort_change,
         ).classes("w-48 q-mt-sm")
 
+        # --- Results display ---
         results_container = ui.column().classes("w-full q-mt-md gap-2")
+
+        def _delete_result(rec: dict[str, Any]) -> None:
+            """Delete a result from the database and panel state."""
+            db_id = rec.get("id")
+            if db_id is not None and conn is not None:
+                try:
+                    if rec.get("record_type") == "paper":
+                        ScientificPaperRepository(conn).delete(db_id)
+                    else:
+                        PatentRepository(conn).delete(db_id)
+                    logger.info("Deleted record %d for topic %d", db_id, topic_id)
+                except Exception:
+                    logger.exception("Failed to delete record %d", db_id)
+                    ui.notify("Failed to delete record from database.", type="negative")
+                    return
+
+            # Remove from panel state by identity match
+            panel_state["results"] = [r for r in panel_state["results"] if r is not rec]
+            _refresh_table()
+            ui.notify("Result deleted.", type="info")
 
         def _render_results(results: list[dict[str, Any]]) -> None:
             """Render search results as expandable cards with source links."""
@@ -223,38 +630,48 @@ def create_research_panel(
                     source_url = _build_source_url(rec)
 
                     with ui.card().classes("w-full"):
-                        # Title + source badge
                         with ui.row().classes("w-full items-center justify-between"):
                             ui.label(title).classes("text-subtitle1 font-bold")
-                            ui.badge(source).props("color=primary outline")
+                            with ui.row().classes("items-center gap-1"):
+                                has_full_text = bool(rec.get("full_text"))
+                                if has_full_text:
+                                    ui.badge("Full Text", color="positive").props("outline")
+                                else:
+                                    ui.badge("Abstract Only", color="grey").props("outline")
+                                ui.badge(source).props("color=primary outline")
+                                ui.button(
+                                    icon="delete",
+                                    on_click=lambda _, r=rec: _delete_result(r),
+                                ).props("flat dense color=negative size=sm")
 
-                        # Record ID and source link
                         if record_id and record_id != "UNKNOWN":
                             with ui.row().classes("items-center gap-2"):
                                 ui.label(record_id).classes("text-caption text-grey")
                                 if source_url:
-                                    ui.link("Open in " + source, source_url, new_tab=True).classes(
-                                        "text-caption"
-                                    )
+                                    ui.link(
+                                        "Open in " + source, source_url, new_tab=True
+                                    ).classes("text-caption")
 
-                        # Abstract — truncated with expansion
                         if abstract:
-                            # Show first 200 chars, expand for full text
                             short = abstract[:200]
                             if len(abstract) > 200:
                                 with ui.expansion(
                                     short + "…", icon="description"
                                 ).classes("w-full text-body2"):
-                                    ui.label(abstract).classes(
-                                        "text-body2"
-                                    ).style("white-space: pre-wrap; word-break: break-word;")
+                                    ui.label(abstract).classes("text-body2").style(
+                                        "white-space: pre-wrap; word-break: break-word;"
+                                    )
                             else:
                                 ui.label(abstract).classes(
                                     "text-body2 text-grey-8"
-                                ).style("white-space: pre-wrap; word-break: break-word;")
+                                ).style(
+                                    "white-space: pre-wrap; word-break: break-word;"
+                                )
 
         def _refresh_table() -> None:
-            sorted_rows = _sort_results(panel_state["results"], panel_state["sort_criterion"])
+            sorted_rows = _sort_results(
+                panel_state["results"], panel_state["sort_criterion"]
+            )
             _render_results(sorted_rows)
 
         def set_results(results: list[dict[str, Any]]) -> None:

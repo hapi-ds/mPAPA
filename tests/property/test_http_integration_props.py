@@ -11,6 +11,7 @@ search terms.
 """
 
 from unittest.mock import MagicMock, patch
+from typing import Any
 from urllib.parse import quote_plus
 
 from hypothesis import given, settings
@@ -261,7 +262,7 @@ class TestParserDataFlowIntegrity:
         # Mock _query_source: return the generated response for the target
         # source, raise SourceUnavailableError for all others so they don't
         # contribute records.
-        def mock_query_source(name: str, terms: list[str]) -> dict:
+        def mock_query_source(name: str, terms: list[str], **kwargs: Any) -> dict:
             if name == source_name:
                 return raw_response
             raise SourceUnavailableError(name, RuntimeError("mocked failure"))
@@ -355,7 +356,7 @@ class TestSearchAgentFaultTolerance:
                 return {"results": [{"patent_number": "P1", "title": "T", "abstract": "A"}]}
             return {"results": [{"doi": "D1", "title": "T", "abstract": "A"}]}
 
-        def mock_query_source(name: str, terms: list[str]) -> dict:
+        def mock_query_source(name: str, terms: list[str], **kwargs: Any) -> dict:
             if name in failing_sources:
                 raise SourceUnavailableError(name, RuntimeError("mocked failure"))
             return _valid_response(name)
@@ -405,7 +406,7 @@ class TestSearchAgentFaultTolerance:
                 {"doi": f"DOI-{source_name}", "title": f"Title-{source_name}", "abstract": "A"},
             ]}
 
-        def mock_query_source(name: str, terms: list[str]) -> dict:
+        def mock_query_source(name: str, terms: list[str], **kwargs: Any) -> dict:
             if name in failing_sources:
                 raise SourceUnavailableError(name, RuntimeError("mocked failure"))
             return _valid_response(name)
@@ -504,7 +505,7 @@ class TestPrivacyDerivedSearchTerms:
         # Collect all search_terms arguments passed to _query_source
         captured_terms: list[list[str]] = []
 
-        def mock_query_source(source_name: str, search_terms: list[str]) -> dict:
+        def mock_query_source(source_name: str, search_terms: list[str], **kwargs: Any) -> dict:
             captured_terms.append(search_terms)
             # Return a minimal valid response so the node doesn't error
             return {"results": []}
@@ -553,7 +554,7 @@ class TestPrivacyDerivedSearchTerms:
 
         captured_terms: list[list[str]] = []
 
-        def mock_query_source(source_name: str, search_terms: list[str]) -> dict:
+        def mock_query_source(source_name: str, search_terms: list[str], **kwargs: Any) -> dict:
             captured_terms.append(search_terms)
             return {"results": []}
 

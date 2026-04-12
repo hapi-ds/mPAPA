@@ -94,7 +94,9 @@ class TestLLMConnectionErrorPropagation:
         error: Exception,
     ) -> None:
         """disclosure_node raises LLMConnectionError containing base URL."""
-        state = _build_state()
+        # Use empty technical_problem so the pass-through path is NOT taken
+        # and the LLM interview code path is exercised.
+        state = _build_state(invention_disclosure=None)
         mock_lm = _make_mock_lm(base_url)
 
         with (

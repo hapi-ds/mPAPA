@@ -37,6 +37,7 @@ class DEPATISnetParser(BaseSourceParser):
                     patent_number=entry["patent_number"],
                     title=entry["title"],
                     abstract=entry["abstract"],
+                    full_text=entry.get("full_text"),
                     source=SOURCE_NAME,
                 )
                 records.append(record)

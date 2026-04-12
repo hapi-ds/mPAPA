@@ -41,6 +41,8 @@ class ArXivParser(BaseSourceParser):
                     doi=entry["doi"],
                     title=entry["title"],
                     abstract=entry["abstract"],
+                    full_text=entry.get("full_text"),
+                    pdf_path=entry.get("pdf_path"),
                     source=SOURCE_NAME,
                 )
                 records.append(record)

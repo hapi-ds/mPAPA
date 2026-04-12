@@ -19,7 +19,12 @@ from langgraph.errors import GraphInterrupt
 from nicegui import ui
 
 from patent_system.agents.state import PatentWorkflowState
-from patent_system.db.repository import PatentRepository, ResearchSessionRepository
+from patent_system.db.repository import (
+    InventionDisclosureRepository,
+    PatentRepository,
+    ResearchSessionRepository,
+    ScientificPaperRepository,
+)
 
 if TYPE_CHECKING:
     from langgraph.graph.state import CompiledStateGraph
@@ -71,6 +76,7 @@ def create_draft_panel(
     *,
     workflow: CompiledStateGraph | None = None,
     conn: sqlite3.Connection | None = None,
+    disclosure_repo: InventionDisclosureRepository | None = None,
 ) -> None:
     """Populate *container* with the Patent Draft panel UI components.
 
@@ -133,7 +139,7 @@ def create_draft_panel(
             and enabling the claims editor, and general exceptions by
             showing an error notification with the failed step name.
 
-            Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
+            Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.1, 7.2, 7.3, 7.4
             """
             if workflow is None:
                 ui.notify(
@@ -150,6 +156,29 @@ def create_draft_panel(
                 "Generate Patent Draft clicked for topic %d", topic_id
             )
 
+            # Load stored disclosure (Req 7.1, 7.2, 7.4)
+            saved_disclosure: dict | None = None
+            if disclosure_repo is not None:
+                try:
+                    saved_disclosure = disclosure_repo.get_by_topic(topic_id)
+                except Exception:
+                    logger.exception(
+                        "Failed to load disclosure for topic %d", topic_id
+                    )
+
+            if saved_disclosure is None:
+                ui.notify(
+                    "No invention disclosure found. Please complete the "
+                    "Research tab first.",
+                    type="warning",
+                    close_button=True,
+                )
+                logger.warning(
+                    "No saved disclosure for topic %d — aborting draft generation",
+                    topic_id,
+                )
+                return
+
             ui.notify(
                 "Generating patent draft… this may take a moment.",
                 type="info",
@@ -158,28 +187,39 @@ def create_draft_panel(
                 close_button=True,
             )
 
-            # Build invention disclosure from saved research data
-            disclosure: dict[str, Any] | None = None
+            # Build invention disclosure from stored data (Req 7.1, 7.2, 7.3)
+            disclosure: dict[str, Any] = {
+                "technical_problem": saved_disclosure["primary_description"],
+                "novel_features": saved_disclosure.get("search_terms", []),
+                "implementation_details": "",
+                "potential_variations": [],
+            }
+
+            # Concatenate abstracts and full texts from both tables (Req 7.3)
             if conn is not None:
                 try:
                     session_repo = ResearchSessionRepository(conn)
                     patent_repo = PatentRepository(conn)
+                    paper_repo = ScientificPaperRepository(conn)
                     sessions = session_repo.get_by_topic(topic_id)
-                    queries = [s["query"] for s in sessions if s.get("query")]
-                    abstracts: list[str] = []
+                    text_parts: list[str] = []
                     for session in sessions:
                         for rec in patent_repo.get_by_session(session["id"]):
                             if rec.abstract:
-                                abstracts.append(rec.abstract)
-                    if queries or abstracts:
-                        disclosure = {
-                            "technical_problem": "; ".join(queries) if queries else "Not specified",
-                            "novel_features": queries[:5],
-                            "implementation_details": "\n".join(abstracts[:10]),
-                            "potential_variations": [],
-                        }
+                                text_parts.append(rec.abstract)
+                            if rec.full_text:
+                                text_parts.append(rec.full_text)
+                        for rec in paper_repo.get_by_session(session["id"]):
+                            if rec.abstract:
+                                text_parts.append(rec.abstract)
+                            if rec.full_text:
+                                text_parts.append(rec.full_text)
+                    if text_parts:
+                        disclosure["implementation_details"] = "\n".join(text_parts)
                 except Exception:
-                    logger.exception("Failed to load research data for topic %d", topic_id)
+                    logger.exception(
+                        "Failed to load prior art for topic %d", topic_id
+                    )
 
             # Build initial state with all required keys (Req 6.1)
             initial_state: PatentWorkflowState = {

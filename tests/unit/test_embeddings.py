@@ -22,14 +22,14 @@ class TestEmbeddingServiceLazyInit:
 
 
 class TestGenerateEmbedding:
-    """Tests for generate_embedding using a mocked HuggingFace model."""
+    """Tests for generate_embedding using a mocked embedding model."""
 
     @patch("patent_system.rag.embeddings.EmbeddingService._ensure_model")
     def test_returns_packed_bytes(self, mock_ensure: MagicMock) -> None:
         service = EmbeddingService()
         fake_vector = [0.1, 0.2, 0.3]
         service._model = MagicMock()
-        service._model.get_text_embedding.return_value = fake_vector
+        service._model._get_text_embedding.return_value = fake_vector
 
         result = service.generate_embedding("hello world")
 
@@ -42,7 +42,7 @@ class TestGenerateEmbedding:
     def test_returns_none_on_failure(self, mock_ensure: MagicMock) -> None:
         service = EmbeddingService()
         service._model = MagicMock()
-        service._model.get_text_embedding.side_effect = RuntimeError("boom")
+        service._model._get_text_embedding.side_effect = RuntimeError("boom")
 
         result = service.generate_embedding("hello")
 
@@ -66,7 +66,7 @@ class TestGenerateEmbeddingForRecord:
         service = EmbeddingService()
         fake_vector = [1.0, 2.0]
         service._model = MagicMock()
-        service._model.get_text_embedding.return_value = fake_vector
+        service._model._get_text_embedding.return_value = fake_vector
 
         record = PatentRecord(
             patent_number="US123",
@@ -77,7 +77,7 @@ class TestGenerateEmbeddingForRecord:
         result = service.generate_embedding_for_record(record)
 
         assert result is not None
-        service._model.get_text_embedding.assert_called_once_with(
+        service._model._get_text_embedding.assert_called_once_with(
             "My Patent A great invention"
         )
 
@@ -86,7 +86,7 @@ class TestGenerateEmbeddingForRecord:
         service = EmbeddingService()
         fake_vector = [3.0, 4.0]
         service._model = MagicMock()
-        service._model.get_text_embedding.return_value = fake_vector
+        service._model._get_text_embedding.return_value = fake_vector
 
         record = ScientificPaperRecord(
             doi="10.1234/test",
@@ -97,7 +97,7 @@ class TestGenerateEmbeddingForRecord:
         result = service.generate_embedding_for_record(record)
 
         assert result is not None
-        service._model.get_text_embedding.assert_called_once_with(
+        service._model._get_text_embedding.assert_called_once_with(
             "My Paper Interesting findings"
         )
 
@@ -105,7 +105,7 @@ class TestGenerateEmbeddingForRecord:
     def test_returns_none_on_failure(self, mock_ensure: MagicMock) -> None:
         service = EmbeddingService()
         service._model = MagicMock()
-        service._model.get_text_embedding.side_effect = ValueError("bad input")
+        service._model._get_text_embedding.side_effect = ValueError("bad input")
 
         record = PatentRecord(
             patent_number="US999",

@@ -84,6 +84,25 @@ class InventionDisclosure(BaseModel):
     potential_variations: list[str]
 
 
+class InventionDisclosureRecord(BaseModel):
+    """Persisted invention disclosure for a topic."""
+
+    id: int | None = None
+    topic_id: int
+    primary_description: str
+    search_terms: list[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=_utc_now)
+
+
+class SourcePreference(BaseModel):
+    """Per-topic source selection preference."""
+
+    id: int | None = None
+    topic_id: int
+    source_name: str
+    enabled: bool = True
+
+
 class NoveltyAnalysisResult(BaseModel):
     """Structured output from the novelty analysis agent."""
 

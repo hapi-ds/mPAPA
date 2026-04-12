@@ -60,6 +60,31 @@ CREATE TABLE IF NOT EXISTS chat_history (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (topic_id) REFERENCES topics(id)
 );
+
+CREATE TABLE IF NOT EXISTS invention_disclosures (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL UNIQUE,
+    primary_description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (topic_id) REFERENCES topics(id)
+);
+
+CREATE TABLE IF NOT EXISTS disclosure_search_terms (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    disclosure_id INTEGER NOT NULL,
+    term TEXT NOT NULL,
+    sort_order INTEGER NOT NULL,
+    FOREIGN KEY (disclosure_id) REFERENCES invention_disclosures(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS source_preferences (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL,
+    source_name TEXT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT 1,
+    FOREIGN KEY (topic_id) REFERENCES topics(id),
+    UNIQUE(topic_id, source_name)
+);
 """
 
 _initialized_databases: set[str] = set()

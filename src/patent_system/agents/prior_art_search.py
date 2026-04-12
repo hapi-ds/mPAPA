@@ -85,6 +85,9 @@ _SOURCE_ENDPOINTS: dict[str, str] = {
 
 _HTTP_TIMEOUT = 15  # seconds
 
+# Default maximum results per source (overridden by AppSettings.search_max_results_per_source)
+_DEFAULT_MAX_RESULTS = 10
+
 
 def _http_get(url: str) -> str:
     """Perform an HTTP GET request and return the response body as a string.
@@ -93,7 +96,8 @@ def _http_get(url: str) -> str:
         url: The full URL to request.
 
     Returns:
-        Response body decoded as UTF-8.
+        Response body decoded using the charset declared by the server,
+        falling back to UTF-8, then Latin-1 as a last resort.
 
     Raises:
         URLError: On network errors.
@@ -101,14 +105,27 @@ def _http_get(url: str) -> str:
     """
     req = Request(url, headers={"User-Agent": "mPAPA/1.0 (Patent Research Tool)"})
     with urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
-        return resp.read().decode("utf-8")
+        raw = resp.read()
+        # Respect the Content-Type charset when available
+        charset = resp.headers.get_content_charset()
+        if charset:
+            try:
+                return raw.decode(charset)
+            except (UnicodeDecodeError, LookupError):
+                pass
+        # Try UTF-8 first, fall back to Latin-1 (never fails)
+        try:
+            return raw.decode("utf-8")
+        except UnicodeDecodeError:
+            return raw.decode("latin-1")
 
 
-def _query_arxiv(search_terms: list[str]) -> dict:
+def _query_arxiv(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query ArXiv API and parse Atom XML into results dict.
 
     Args:
         search_terms: List of search term strings.
+        max_results: Maximum number of results to return.
 
     Returns:
         Dict with ``results`` key containing parsed paper entries.
@@ -116,7 +133,7 @@ def _query_arxiv(search_terms: list[str]) -> dict:
     query = "+AND+".join(quote_plus(t) for t in search_terms if t)
     if not query:
         query = quote_plus("")
-    url = f"http://{_SOURCE_ENDPOINTS['ArXiv']}?search_query=all:{query}&max_results=10"
+    url = f"http://{_SOURCE_ENDPOINTS['ArXiv']}?search_query=all:{query}&max_results={max_results}"
 
     log_external_request(
         logger=logger, source="ArXiv", query=", ".join(search_terms),
@@ -133,13 +150,25 @@ def _query_arxiv(search_terms: list[str]) -> dict:
         entry_id = entry.findtext("atom:id", default="", namespaces=ns)
         title = entry.findtext("atom:title", default="", namespaces=ns).strip()
         abstract = entry.findtext("atom:summary", default="", namespaces=ns).strip()
+        # ArXiv provides a PDF link; extract it for potential full-text retrieval
+        pdf_link = ""
+        for link_el in entry.findall("atom:link", ns):
+            if link_el.get("title") == "pdf":
+                pdf_link = link_el.get("href", "")
+                break
         if title:
-            results.append({"doi": entry_id, "title": title, "abstract": abstract})
+            results.append({
+                "doi": entry_id,
+                "title": title,
+                "abstract": abstract,
+                "full_text": abstract,  # ArXiv summary is the full abstract
+                "pdf_path": pdf_link,
+            })
 
     return {"results": results}
 
 
-def _query_pubmed(search_terms: list[str]) -> dict:
+def _query_pubmed(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query PubMed via E-utilities (esearch + efetch) and parse XML results.
 
     Two-step process:
@@ -159,7 +188,7 @@ def _query_pubmed(search_terms: list[str]) -> dict:
 
     # Step 1: esearch to get IDs
     esearch_params = urlencode({
-        "db": "pubmed", "term": query, "retmax": "10", "retmode": "xml",
+        "db": "pubmed", "term": query, "retmax": str(max_results), "retmode": "xml",
     })
     esearch_url = f"https://{base}/esearch.fcgi?{esearch_params}"
 
@@ -194,8 +223,25 @@ def _query_pubmed(search_terms: list[str]) -> dict:
         title = title_el.text if title_el is not None and title_el.text else ""
         abstract = abstract_el.text if abstract_el is not None and abstract_el.text else ""
 
+        # Collect all AbstractText elements (structured abstracts have
+        # multiple sections like Background, Methods, Results, etc.)
+        abstract_parts: list[str] = []
+        for abs_el in article.findall(".//AbstractText"):
+            label = abs_el.get("Label", "")
+            text = abs_el.text or ""
+            if label and text:
+                abstract_parts.append(f"{label}: {text}")
+            elif text:
+                abstract_parts.append(text)
+        full_abstract = "\n".join(abstract_parts) if abstract_parts else abstract
+
         if title:
-            results.append({"doi": pmid, "title": title, "abstract": abstract})
+            results.append({
+                "doi": pmid,
+                "title": title,
+                "abstract": abstract,
+                "full_text": full_abstract if full_abstract != abstract else None,
+            })
 
     return {"results": results}
 
@@ -214,7 +260,7 @@ class _SimpleHTMLTextExtractor(HTMLParser):
         return " ".join(self._text_parts)
 
 
-def _query_google_scholar(search_terms: list[str]) -> dict:
+def _query_google_scholar(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query Google Scholar and parse HTML results.
 
     Args:
@@ -263,10 +309,10 @@ def _query_google_scholar(search_terms: list[str]) -> dict:
         if title:
             results.append({"doi": "", "title": title, "abstract": abstract})
 
-    return {"results": results}
+    return {"results": results[:max_results]}
 
 
-def _query_google_patents(search_terms: list[str]) -> dict:
+def _query_google_patents(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query Google Patents and parse HTML results.
 
     Args:
@@ -327,10 +373,10 @@ def _query_google_patents(search_terms: list[str]) -> dict:
                 "abstract": abstract,
             })
 
-    return {"results": results}
+    return {"results": results[:max_results]}
 
 
-def _query_depatisnet(search_terms: list[str]) -> dict:
+def _query_depatisnet(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query DEPATISnet and parse HTML results.
 
     Args:
@@ -374,7 +420,7 @@ def _query_depatisnet(search_terms: list[str]) -> dict:
                 "abstract": cells[2] if len(cells) > 2 else "",
             })
 
-    return {"results": results}
+    return {"results": results[:max_results]}
 
 
 # Dispatch table mapping source names to their query functions.
@@ -387,7 +433,7 @@ _SOURCE_QUERY_FUNCTIONS: dict[str, Any] = {
 }
 
 
-def _query_source(source_name: str, search_terms: list[str]) -> dict:
+def _query_source(source_name: str, search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query an external data source with the given search terms.
 
     Dispatches to source-specific query functions that make real HTTP
@@ -398,6 +444,7 @@ def _query_source(source_name: str, search_terms: list[str]) -> dict:
     Args:
         source_name: Name of the data source to query.
         search_terms: List of search term strings.
+        max_results: Maximum number of results to return per source.
 
     Returns:
         Raw response dict with a ``results`` key from the source API.
@@ -413,7 +460,7 @@ def _query_source(source_name: str, search_terms: list[str]) -> dict:
         )
 
     try:
-        return query_fn(search_terms)
+        return query_fn(search_terms, max_results=max_results)
     except SourceUnavailableError:
         raise
     except (URLError, OSError, ET.ParseError, ValueError) as exc:
@@ -423,6 +470,8 @@ def _query_source(source_name: str, search_terms: list[str]) -> dict:
 def prior_art_search_node(
     state: PatentWorkflowState,
     rag_engine: Any | None = None,
+    selected_sources: list[str] | None = None,
+    max_results_per_source: int = _DEFAULT_MAX_RESULTS,
 ) -> dict[str, Any]:
     """Run the Prior Art Search Agent.
 
@@ -436,11 +485,20 @@ def prior_art_search_node(
     5. Indexes results in the RAG engine if available.
     6. Returns dict with prior_art_results, failed_sources, current_step.
 
+    When ``selected_sources`` is provided and non-empty, only the
+    sources whose names appear in the list are queried. When ``None``
+    or empty, all sources in ``_SOURCE_REGISTRY`` are queried
+    (backward compatible).
+
     Args:
         state: The current workflow state.
         rag_engine: Optional RAG engine for indexing search results.
             When provided, parsed results are converted to document
             format and indexed under the topic ID from state.
+        selected_sources: Optional list of source names to query.
+            When provided and non-empty, only matching entries in
+            ``_SOURCE_REGISTRY`` are iterated. When ``None`` or empty,
+            all sources are queried.
 
     Returns:
         Dict with ``prior_art_results`` (list of serialized records),
@@ -455,13 +513,23 @@ def prior_art_search_node(
     all_results: list[dict] = []
     failed_sources: list[str] = []
 
-    for source_name, source_info in _SOURCE_REGISTRY.items():
+    # Filter sources when selected_sources is provided and non-empty
+    if selected_sources:
+        sources_to_query = {
+            name: info
+            for name, info in _SOURCE_REGISTRY.items()
+            if name in selected_sources
+        }
+    else:
+        sources_to_query = _SOURCE_REGISTRY
+
+    for source_name, source_info in sources_to_query.items():
         parser = source_info["parser"]
         source_type = source_info["type"]
         req_start = time.monotonic()
 
         try:
-            raw_response = _query_source(source_name, search_terms)
+            raw_response = _query_source(source_name, search_terms, max_results=max_results_per_source)
             req_duration = (time.monotonic() - req_start) * 1000
 
             log_external_request(
@@ -515,11 +583,18 @@ def prior_art_search_node(
                 text = f"{title} {abstract}".strip()
                 if not text:
                     continue
-                metadata = {
-                    k: v
-                    for k, v in record.items()
-                    if k not in ("title", "abstract", "embedding")
-                }
+                metadata: dict[str, str | int | float] = {}
+                for k, v in record.items():
+                    if k in ("title", "abstract", "embedding"):
+                        continue
+                    if v is None:
+                        continue
+                    if isinstance(v, (str, int, float)):
+                        metadata[k] = v
+                    elif isinstance(v, datetime):
+                        metadata[k] = v.isoformat()
+                    else:
+                        metadata[k] = str(v)
                 rag_docs.append({"text": text, "metadata": metadata})
             if rag_docs:
                 try:
@@ -541,7 +616,7 @@ def prior_art_search_node(
     log_agent_invocation(
         logger=logger,
         name="PriorArtSearchAgent",
-        input_summary=f"search_terms={search_terms}, sources={list(_SOURCE_REGISTRY.keys())}",
+        input_summary=f"search_terms={search_terms}, sources={list(sources_to_query.keys())}",
         output_summary=f"results={len(all_results)}, failed={failed_sources}",
         duration_ms=duration_ms,
     )

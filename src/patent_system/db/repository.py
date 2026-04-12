@@ -12,7 +12,7 @@ import logging
 import sqlite3
 from datetime import datetime, timezone
 
-from patent_system.db.models import ChatMessage, PatentRecord, Topic
+from patent_system.db.models import ChatMessage, PatentRecord, ScientificPaperRecord, Topic
 from patent_system.logging_config import log_db_error
 
 logger = logging.getLogger(__name__)
@@ -156,6 +156,106 @@ class PatentRepository:
             log_db_error(logger, "UPDATE", "patents", str(exc))
             raise
 
+    def delete(self, patent_id: int) -> None:
+        """Delete a patent record by its ID.
+
+        Args:
+            patent_id: The row ID of the patent to delete.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            self._conn.execute("DELETE FROM patents WHERE id = ?", (patent_id,))
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "DELETE", "patents", str(exc))
+            raise
+
+
+class ScientificPaperRepository:
+    """CRUD operations for scientific paper records."""
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def create(self, session_id: int, record: ScientificPaperRecord) -> int:
+        """Insert a scientific paper record and return the new row ID.
+
+        Raises:
+            sqlite3.IntegrityError: If session_id references a non-existent session.
+        """
+        try:
+            cursor = self._conn.execute(
+                """INSERT INTO scientific_papers
+                   (session_id, doi, title, abstract, full_text,
+                    pdf_path, source, discovered_date, embedding)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    session_id,
+                    record.doi,
+                    record.title,
+                    record.abstract,
+                    record.full_text,
+                    record.pdf_path,
+                    record.source,
+                    record.discovered_date.isoformat(),
+                    record.embedding,
+                ),
+            )
+            self._conn.commit()
+            return cursor.lastrowid  # type: ignore[return-value]
+        except sqlite3.Error as exc:
+            log_db_error(logger, "INSERT", "scientific_papers", str(exc))
+            raise
+
+    def get_by_session(self, session_id: int) -> list[ScientificPaperRecord]:
+        """Return all scientific paper records for a given research session."""
+        rows = self._conn.execute(
+            """SELECT id, session_id, doi, title, abstract,
+                      full_text, pdf_path, source, discovered_date, embedding
+               FROM scientific_papers WHERE session_id = ?""",
+            (session_id,),
+        ).fetchall()
+        return [
+            ScientificPaperRecord(
+                id=r[0],
+                session_id=r[1],
+                doi=r[2],
+                title=r[3],
+                abstract=r[4],
+                full_text=r[5],
+                pdf_path=r[6],
+                source=r[7],
+                discovered_date=_parse_timestamp(r[8]),
+                embedding=r[9],
+            )
+            for r in rows
+        ]
+
+    def update_embedding(self, paper_id: int, embedding: bytes) -> None:
+        """Update the embedding BLOB for a scientific paper record."""
+        try:
+            self._conn.execute(
+                "UPDATE scientific_papers SET embedding = ? WHERE id = ?",
+                (embedding, paper_id),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "scientific_papers", str(exc))
+            raise
+
+    def delete(self, paper_id: int) -> None:
+        """Delete a scientific paper record by its ID."""
+        try:
+            self._conn.execute(
+                "DELETE FROM scientific_papers WHERE id = ?", (paper_id,),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "DELETE", "scientific_papers", str(exc))
+            raise
+
 
 class ResearchSessionRepository:
     """CRUD operations for research sessions."""
@@ -239,6 +339,200 @@ class ChatHistoryRepository:
             )
             for r in rows
         ]
+
+    def delete_by_topic(self, topic_id: int) -> int:
+        """Delete all chat messages for a topic.
+
+        Args:
+            topic_id: The topic whose chat history to clear.
+
+        Returns:
+            Number of deleted rows.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            cursor = self._conn.execute(
+                "DELETE FROM chat_history WHERE topic_id = ?",
+                (topic_id,),
+            )
+            self._conn.commit()
+            return cursor.rowcount
+        except sqlite3.Error as exc:
+            log_db_error(logger, "DELETE", "chat_history", str(exc))
+            raise
+
+
+class InventionDisclosureRepository:
+    """CRUD operations for per-topic invention disclosures.
+
+    Requirements: 2.3, 2.4, 9.1, 9.3
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def upsert(
+        self,
+        topic_id: int,
+        primary_description: str,
+        search_terms: list[str],
+    ) -> int:
+        """Upsert disclosure and replace all search terms atomically.
+
+        Uses INSERT OR REPLACE on the invention_disclosures table (topic_id
+        has a UNIQUE constraint). Existing search terms are deleted first,
+        then new ones are inserted with sort_order preserving list order.
+
+        Args:
+            topic_id: The topic ID to associate the disclosure with.
+            primary_description: The main invention description text.
+            search_terms: Ordered list of additional search term strings.
+
+        Returns:
+            The disclosure row ID.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            cursor = self._conn.cursor()
+            cursor.execute("BEGIN")
+
+            # Upsert the disclosure row. INSERT OR REPLACE works because
+            # topic_id has a UNIQUE constraint.
+            cursor.execute(
+                """INSERT OR REPLACE INTO invention_disclosures
+                   (topic_id, primary_description)
+                   VALUES (?, ?)""",
+                (topic_id, primary_description),
+            )
+            disclosure_id: int = cursor.lastrowid  # type: ignore[assignment]
+
+            # Atomically replace all search terms.
+            cursor.execute(
+                "DELETE FROM disclosure_search_terms WHERE disclosure_id = ?",
+                (disclosure_id,),
+            )
+            for sort_order, term in enumerate(search_terms):
+                cursor.execute(
+                    """INSERT INTO disclosure_search_terms
+                       (disclosure_id, term, sort_order)
+                       VALUES (?, ?, ?)""",
+                    (disclosure_id, term, sort_order),
+                )
+
+            self._conn.commit()
+            return disclosure_id
+        except sqlite3.Error as exc:
+            self._conn.rollback()
+            log_db_error(logger, "UPSERT", "invention_disclosures", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> dict | None:
+        """Load disclosure for a topic.
+
+        Args:
+            topic_id: The topic ID to look up.
+
+        Returns:
+            Dict with keys ``id``, ``primary_description``, and
+            ``search_terms`` (ordered by sort_order), or None if no
+            disclosure exists for the topic.
+        """
+        try:
+            row = self._conn.execute(
+                """SELECT id, primary_description
+                   FROM invention_disclosures WHERE topic_id = ?""",
+                (topic_id,),
+            ).fetchone()
+            if row is None:
+                return None
+
+            disclosure_id = row[0]
+            term_rows = self._conn.execute(
+                """SELECT term FROM disclosure_search_terms
+                   WHERE disclosure_id = ? ORDER BY sort_order ASC""",
+                (disclosure_id,),
+            ).fetchall()
+
+            return {
+                "id": disclosure_id,
+                "primary_description": row[1],
+                "search_terms": [r[0] for r in term_rows],
+            }
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "invention_disclosures", str(exc))
+            raise
+
+
+class SourcePreferenceRepository:
+    """CRUD operations for per-topic source selection preferences.
+
+    Requirements: 3.4, 3.5, 9.2
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def save(self, topic_id: int, preferences: dict[str, bool]) -> None:
+        """Replace all source preferences for a topic.
+
+        Deletes existing preferences and inserts the new mapping
+        within a single transaction.
+
+        Args:
+            topic_id: The topic ID to save preferences for.
+            preferences: Mapping of source_name → enabled boolean.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            cursor = self._conn.cursor()
+            cursor.execute("BEGIN")
+
+            cursor.execute(
+                "DELETE FROM source_preferences WHERE topic_id = ?",
+                (topic_id,),
+            )
+            for source_name, enabled in preferences.items():
+                cursor.execute(
+                    """INSERT INTO source_preferences
+                       (topic_id, source_name, enabled)
+                       VALUES (?, ?, ?)""",
+                    (topic_id, source_name, enabled),
+                )
+
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            self._conn.rollback()
+            log_db_error(logger, "REPLACE", "source_preferences", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> dict[str, bool] | None:
+        """Load source preferences for a topic.
+
+        Args:
+            topic_id: The topic ID to look up.
+
+        Returns:
+            Dict mapping source_name → enabled, or None if no
+            preferences are saved (caller should default to all-enabled).
+        """
+        try:
+            rows = self._conn.execute(
+                """SELECT source_name, enabled
+                   FROM source_preferences WHERE topic_id = ?""",
+                (topic_id,),
+            ).fetchall()
+            if not rows:
+                return None
+            return {r[0]: bool(r[1]) for r in rows}
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "source_preferences", str(exc))
+            raise
 
 
 # ---------------------------------------------------------------------------

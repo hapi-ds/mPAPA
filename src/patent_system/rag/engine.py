@@ -31,20 +31,20 @@ class RAGEngine:
         self._settings = settings
         self._embedding_service = EmbeddingService(
             model_name=settings.embedding_model_name,
+            api_base=settings.lm_studio_base_url,
+            api_key=settings.lm_studio_api_key,
         )
         self._indexes: dict[int, VectorStoreIndex] = {}
 
     def _ensure_embed_model(self) -> None:
-        """Lazily load the embedding model into LlamaIndex global settings."""
-        if Settings.embed_model is not None and not isinstance(
-            Settings.embed_model, str
-        ):
+        """Lazily set the LlamaIndex global embed model from our service."""
+        # Set our custom model directly — avoid accessing Settings.embed_model
+        # as a getter, because LlamaIndex's lazy resolution tries to load
+        # OpenAI and fails without OPENAI_API_KEY.
+        if getattr(self, "_embed_model_set", False):
             return
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-
-        Settings.embed_model = HuggingFaceEmbedding(
-            model_name=self._settings.embedding_model_name,
-        )
+        Settings.embed_model = self._embedding_service.get_llama_index_model()
+        self._embed_model_set = True
 
     def index_documents(self, topic_id: int, documents: list[dict]) -> None:
         """Index a batch of documents under the given topic.
@@ -115,11 +115,22 @@ class RAGEngine:
         )
         results = retriever.retrieve(query_text)
 
-        return [
-            {
-                "text": node.get_text(),
-                "score": node.get_score(),
-                "metadata": node.metadata,
-            }
-            for node in results
-        ]
+        output = []
+        for node in results:
+            try:
+                text = node.get_text()
+            except ValueError:
+                # Node is not a TextNode — fall back to content or skip
+                inner = getattr(node, "node", node)
+                text = getattr(inner, "text", "") or str(node)
+            score = node.get_score() if hasattr(node, "get_score") else 0.0
+            metadata = getattr(node, "metadata", None)
+            if metadata is None or callable(metadata):
+                inner = getattr(node, "node", node)
+                metadata = getattr(inner, "metadata", {})
+            output.append({
+                "text": text,
+                "score": score,
+                "metadata": metadata,
+            })
+        return output
