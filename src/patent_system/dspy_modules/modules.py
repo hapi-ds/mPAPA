@@ -82,7 +82,7 @@ class StructureDisclosureModule(dspy.Module):
 
 
 class DraftClaimsModule(dspy.Module):
-    """Draft patent claims in German/European legal format."""
+    """Draft patent claims in European patent format (English)."""
 
     def __init__(self, model_name: str | None = None) -> None:
         super().__init__()

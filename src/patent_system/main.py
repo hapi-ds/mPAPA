@@ -167,9 +167,9 @@ def main() -> None:
     def index() -> None:
         # Show error banner if LM Studio is unreachable (Req 11.3)
         if not lm_studio_reachable:
-            with ui.banner().classes("bg-negative text-white w-full"):
+            with ui.card().classes("bg-negative text-white w-full q-pa-sm q-mb-sm"):
                 ui.label(
-                    "LM Studio is unreachable. "
+                    "⚠ LM Studio is unreachable. "
                     "Workflow execution is disabled until the LLM backend is available."
                 )
 

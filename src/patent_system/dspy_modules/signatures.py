@@ -19,7 +19,7 @@ class StructureDisclosure(dspy.Signature):
 
 
 class DraftClaims(dspy.Signature):
-    """Draft patent claims in German/European legal format."""
+    """Draft patent claims in European patent format. Write in English."""
 
     invention_disclosure: str = dspy.InputField()
     novelty_analysis: str = dspy.InputField()

@@ -111,50 +111,90 @@ def create_draft_panel(
 
         # --- Workflow step indicator (Req 9.4) ---
         ui.label("Workflow Progress").classes("text-subtitle2 q-mt-sm")
-        with ui.stepper().props("flat").classes("w-full q-mb-md") as stepper:
-            for step_name in WORKFLOW_STEPS:
-                ui.step(step_name)
 
-        # --- Invention disclosure review/edit placeholder (Req 2.5, 4.3) ---
+        # Progress status label — shows current step in real time
+        progress_label = ui.label("").classes("text-caption text-grey q-mb-xs")
+        progress_bar = ui.linear_progress(value=0, show_value=False).classes("q-mb-sm")
+        progress_bar.set_visibility(False)
+        spinner = ui.spinner("dots", size="lg", color="primary").classes("q-mb-sm")
+        spinner.set_visibility(False)
+
+        # Step completion chips — one per workflow step
+        step_chips_container = ui.row().classes("w-full gap-1 q-mb-md flex-wrap")
+        step_chip_elements: dict[str, Any] = {}
+        with step_chips_container:
+            for step_name in WORKFLOW_STEPS:
+                chip = ui.chip(step_name, icon="radio_button_unchecked", color="grey-4").props("outline")
+                step_chip_elements[step_name] = chip
+
+        def _mark_step_done(step_display_name: str) -> None:
+            """Mark a step chip as completed."""
+            chip = step_chip_elements.get(step_display_name)
+            if chip is not None:
+                chip._props["icon"] = "check_circle"
+                chip._props["color"] = "positive"
+                chip.update()
+
+        def _mark_step_active(step_display_name: str) -> None:
+            """Mark a step chip as currently running."""
+            chip = step_chip_elements.get(step_display_name)
+            if chip is not None:
+                chip._props["icon"] = "hourglass_top"
+                chip._props["color"] = "primary"
+                chip.update()
+
+        # --- Instruction banner (hidden by default) ---
+        instruction_card = ui.card().classes("w-full q-mb-sm bg-yellow-1")
+        instruction_card.set_visibility(False)
+        with instruction_card:
+            with ui.row().classes("items-center gap-2"):
+                ui.icon("info", color="warning").classes("text-h5")
+                instruction_text = ui.label("").classes("text-body2")
+
+        # --- Invention disclosure review (Req 2.5, 4.3) ---
         with ui.expansion(
             "Invention Disclosure Review",
             icon="description",
-        ).classes("w-full q-mb-sm"):
-            ui.label(
-                "The invention disclosure details will appear here "
-                "once the disclosure interview is complete. "
-                "You will be able to review and edit the extracted "
-                "details before proceeding."
-            ).classes("text-grey q-pa-sm")
+        ).classes("w-full q-mb-sm") as disclosure_expansion:
+            # Load and display actual disclosure data
+            _disc = None
+            if disclosure_repo is not None:
+                try:
+                    _disc = disclosure_repo.get_by_topic(topic_id)
+                except Exception:
+                    pass
+
+            if _disc is not None:
+                ui.label("Primary Description").classes("text-subtitle2 q-mt-sm")
+                ui.label(_disc["primary_description"]).classes(
+                    "text-body2 q-pa-sm bg-grey-1 rounded"
+                ).style("white-space: pre-wrap;")
+                terms = _disc.get("search_terms", [])
+                if terms:
+                    ui.label("Search Terms").classes("text-subtitle2 q-mt-sm")
+                    with ui.row().classes("gap-1 flex-wrap"):
+                        for term in terms:
+                            ui.chip(term, color="primary").props("outline dense")
+            else:
+                ui.label(
+                    "No invention disclosure saved yet. "
+                    "Go to the Research tab to enter your invention description first."
+                ).classes("text-grey q-pa-sm")
 
         # --- Generate Patent Draft button (Req 16.6) ---
         async def _on_generate() -> None:
-            """Invoke the compiled workflow and update the UI with results.
-
-            Builds an initial PatentWorkflowState, invokes the workflow
-            with a thread config for checkpointing, updates the stepper
-            UI, and populates the claims/description textareas.
-
-            Handles GraphInterrupt (human_review) by notifying the user
-            and enabling the claims editor, and general exceptions by
-            showing an error notification with the failed step name.
-
-            Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.1, 7.2, 7.3, 7.4
-            """
+            """Invoke the compiled workflow with streaming progress updates."""
             if workflow is None:
                 ui.notify(
                     "Workflow not available — please restart the application.",
                     type="negative",
                 )
-                logger.warning(
-                    "Generate clicked but workflow is None for topic %d",
-                    topic_id,
-                )
                 return
 
-            logger.info(
-                "Generate Patent Draft clicked for topic %d", topic_id
-            )
+            logger.info("Generate Patent Draft clicked for topic %d", topic_id)
+
+            # Hide any previous instructions
+            instruction_card.set_visibility(False)
 
             # Load stored disclosure (Req 7.1, 7.2, 7.4)
             saved_disclosure: dict | None = None
@@ -162,32 +202,24 @@ def create_draft_panel(
                 try:
                     saved_disclosure = disclosure_repo.get_by_topic(topic_id)
                 except Exception:
-                    logger.exception(
-                        "Failed to load disclosure for topic %d", topic_id
-                    )
+                    logger.exception("Failed to load disclosure for topic %d", topic_id)
 
             if saved_disclosure is None:
                 ui.notify(
-                    "No invention disclosure found. Please complete the "
-                    "Research tab first.",
+                    "No invention disclosure found. Please complete the Research tab first.",
                     type="warning",
                     close_button=True,
                 )
-                logger.warning(
-                    "No saved disclosure for topic %d — aborting draft generation",
-                    topic_id,
-                )
                 return
 
-            ui.notify(
-                "Generating patent draft… this may take a moment.",
-                type="info",
-                spinner=True,
-                timeout=0,
-                close_button=True,
-            )
+            # Show progress
+            progress_label.set_text("Starting patent generation…")
+            progress_bar.set_visibility(True)
+            progress_bar.set_value(0)
+            spinner.set_visibility(True)
+            generate_button.disable()
 
-            # Build invention disclosure from stored data (Req 7.1, 7.2, 7.3)
+            # Build invention disclosure from stored data
             disclosure: dict[str, Any] = {
                 "technical_problem": saved_disclosure["primary_description"],
                 "novel_features": saved_disclosure.get("search_terms", []),
@@ -217,11 +249,8 @@ def create_draft_panel(
                     if text_parts:
                         disclosure["implementation_details"] = "\n".join(text_parts)
                 except Exception:
-                    logger.exception(
-                        "Failed to load prior art for topic %d", topic_id
-                    )
+                    logger.exception("Failed to load prior art for topic %d", topic_id)
 
-            # Build initial state with all required keys (Req 6.1)
             initial_state: PatentWorkflowState = {
                 "topic_id": topic_id,
                 "invention_disclosure": disclosure,
@@ -239,101 +268,173 @@ def create_draft_panel(
 
             config = {"configurable": {"thread_id": f"topic-{topic_id}"}}
 
+            # Check if there's an existing interrupted checkpoint to resume
+            existing_snapshot = await asyncio.to_thread(workflow.get_state, config)
+            is_resuming = (
+                existing_snapshot is not None
+                and hasattr(existing_snapshot, "next")
+                and existing_snapshot.next
+            )
+
+            if is_resuming:
+                # Resume from interrupt — update claims from editor if edited
+                logger.info("Resuming workflow from interrupt for topic %d", topic_id)
+                progress_label.set_text("Resuming workflow…")
+
+                # Inject edited claims into the checkpoint before resuming
+                if panel_state["claims"]:
+                    await asyncio.to_thread(
+                        workflow.update_state,
+                        config,
+                        {"claims_text": panel_state["claims"], "review_approved": True},
+                    )
+
+                stream_input = None  # None = resume from checkpoint
+            else:
+                stream_input = initial_state
+
+            total_steps = len(WORKFLOW_STEPS)
+
             try:
-                result = await asyncio.to_thread(workflow.invoke, initial_state, config)
+                import queue
 
-                # Update stepper UI from current_step (Req 6.2)
-                step_key = result.get("current_step", "")
-                display_name = _STEP_DISPLAY_NAMES.get(step_key, "")
-                if display_name:
-                    step_index = WORKFLOW_STEPS.index(display_name)
-                    set_current_step(display_name)
-                    # Advance stepper to the completed step
-                    for _i in range(step_index + 1):
-                        stepper.next()
+                event_queue: queue.Queue = queue.Queue()
+                stream_error: list[Exception] = []
 
-                # Populate claims textarea (Req 6.3)
-                claims_result = result.get("claims_text", "")
-                if claims_result:
-                    set_claims(claims_result)
+                def _run_stream() -> None:
+                    """Run workflow.stream in a thread, pushing events to queue."""
+                    try:
+                        for event in workflow.stream(stream_input, config):
+                            event_queue.put(event)
+                    except Exception as exc:
+                        stream_error.append(exc)
+                    finally:
+                        event_queue.put(None)  # sentinel
 
-                # Populate description textarea (Req 6.4)
-                description_result = result.get("description_text", "")
-                if description_result:
-                    set_description(description_result)
+                # Start streaming in background
+                loop = asyncio.get_event_loop()
+                stream_future = loop.run_in_executor(None, _run_stream)
 
-                # Open the editor sections so the user sees the results
-                claims_expansion.open()
-                description_expansion.open()
+                # Process events as they arrive, updating UI in real time
+                while True:
+                    # Poll the queue without blocking the event loop
+                    event = await asyncio.to_thread(event_queue.get)
+                    if event is None:
+                        break  # stream finished
 
-                ui.notify(
-                    "Patent draft generated successfully.",
-                    type="positive",
-                    close_button=True,
+                    for node_name, node_output in event.items():
+                        if node_name == "__end__":
+                            continue
+                        step_key = node_output.get("current_step", node_name) if isinstance(node_output, dict) else node_name
+                        display_name = _STEP_DISPLAY_NAMES.get(step_key, step_key)
+                        progress_label.set_text(f"Running: {display_name}…")
+
+                        if display_name in WORKFLOW_STEPS:
+                            step_idx = WORKFLOW_STEPS.index(display_name)
+                            progress_bar.set_value((step_idx + 1) / total_steps)
+                            # Mark previous steps as done, current as active
+                            for i, sn in enumerate(WORKFLOW_STEPS):
+                                if i < step_idx:
+                                    _mark_step_done(sn)
+                                elif i == step_idx:
+                                    _mark_step_done(sn)
+
+                        # Extract claims/description as they become available
+                        if isinstance(node_output, dict):
+                            if node_output.get("claims_text"):
+                                set_claims(node_output["claims_text"])
+                                claims_expansion.open()
+                            if node_output.get("description_text"):
+                                set_description(node_output["description_text"])
+                                description_expansion.open()
+
+                # Wait for the thread to finish
+                await stream_future
+
+                # Re-raise any error from the stream thread
+                if stream_error:
+                    raise stream_error[0]
+
+                # Check if the workflow was interrupted for human review
+                # (stream() doesn't raise GraphInterrupt — it just stops)
+                snapshot = await asyncio.to_thread(workflow.get_state, config)
+                is_interrupted = (
+                    snapshot is not None
+                    and hasattr(snapshot, "next")
+                    and snapshot.next
                 )
 
-                logger.info(
-                    "Workflow completed for topic %d at step '%s'",
-                    topic_id,
-                    step_key,
-                )
+                if is_interrupted:
+                    # Human review needed
+                    logger.info("Workflow paused for human review on topic %d", topic_id)
+                    spinner.set_visibility(False)
 
-            except GraphInterrupt:
-                # Human review interrupt (Req 6.6)
-                logger.info(
-                    "Workflow interrupted for human review on topic %d",
-                    topic_id,
-                )
-                ui.notify(
-                    "Human review required: please review and edit the "
-                    "claims before resuming the workflow.",
-                    type="warning",
-                    close_button=True,
-                )
-                # Populate claims from the latest checkpoint state
-                try:
-                    snapshot = workflow.get_state(config)
-                    if snapshot and snapshot.values:
-                        checkpoint_claims = snapshot.values.get(
-                            "claims_text", ""
-                        )
+                    if snapshot.values:
+                        checkpoint_claims = snapshot.values.get("claims_text", "")
                         if checkpoint_claims:
                             set_claims(checkpoint_claims)
-                        # Update stepper to consistency review (last
-                        # completed step before human_review)
-                        cs = snapshot.values.get(
-                            "current_step", "consistency_review"
-                        )
-                        display = _STEP_DISPLAY_NAMES.get(
-                            cs, "Consistency Review"
-                        )
-                        set_current_step(display)
-                except Exception:
-                    logger.debug(
-                        "Could not read checkpoint state after interrupt",
-                        exc_info=True,
+                            claims_expansion.open()
+
+                    progress_label.set_text("⏸ Paused — your review is needed")
+                    progress_bar.set_value(0.7)
+
+                    # Mark completed steps
+                    for sn in ["Disclosure", "Prior Art Search", "Novelty Analysis", "Claims Drafting"]:
+                        _mark_step_done(sn)
+                    _mark_step_active("Consistency Review")
+
+                    instruction_text.set_text(
+                        "The AI drafted claims and ran consistency checks, but needs your input. "
+                        "Please review and edit the claims in the Claims Editor below, then click "
+                        "'Generate Patent Draft' again to continue generating the full description."
                     )
-                # Enable claims editor for manual editing
+                    instruction_card.set_visibility(True)
+
+                    if claims_textarea is not None:
+                        claims_textarea.enabled = True
+
+                    ui.notify(
+                        "Review needed — please check the claims and click Generate again.",
+                        type="warning",
+                        close_button=True,
+                    )
+                else:
+                    # Workflow completed fully
+                    spinner.set_visibility(False)
+                    progress_label.set_text("✓ Patent draft complete")
+                    progress_bar.set_value(1.0)
+                    for sn in WORKFLOW_STEPS:
+                        _mark_step_done(sn)
+                    claims_expansion.open()
+                    description_expansion.open()
+
+                    ui.notify("Patent draft generated successfully.", type="positive", close_button=True)
+                    logger.info("Workflow completed for topic %d", topic_id)
+
+            except GraphInterrupt:
+                spinner.set_visibility(False)
+                logger.info("GraphInterrupt caught for topic %d", topic_id)
+                progress_label.set_text("⏸ Paused — your review is needed")
+                instruction_text.set_text(
+                    "The AI needs your input. Please review and edit the claims below, "
+                    "then click 'Generate Patent Draft' again to continue."
+                )
+                instruction_card.set_visibility(True)
                 if claims_textarea is not None:
                     claims_textarea.enabled = True
                 claims_expansion.open()
 
             except Exception as exc:
-                # General error handling (Req 6.5)
+                spinner.set_visibility(False)
                 failed_step = panel_state.get("current_step", "unknown")
-                logger.exception(
-                    "Workflow failed for topic %d at step '%s': %s",
-                    topic_id,
-                    failed_step,
-                    exc,
-                )
-                ui.notify(
-                    f"Workflow failed at step '{failed_step}': {exc}",
-                    type="negative",
-                    close_button=True,
-                )
+                logger.exception("Workflow failed for topic %d at step '%s': %s", topic_id, failed_step, exc)
+                progress_label.set_text(f"✗ Failed at {failed_step}")
+                ui.notify(f"Workflow failed: {exc}", type="negative", close_button=True)
 
-        ui.button(
+            finally:
+                generate_button.enable()
+
+        generate_button = ui.button(
             "Generate Patent Draft",
             on_click=_on_generate,
             icon="auto_fix_high",

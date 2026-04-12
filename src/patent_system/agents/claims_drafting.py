@@ -1,7 +1,7 @@
 """Claims Drafting Agent for the patent drafting pipeline.
 
 Uses the DSPy DraftClaimsModule to generate patent claims in
-German/European legal format from the invention disclosure and
+European patent format (English) from the invention disclosure and
 novelty analysis.
 
 Requirements: 5.1, 5.2, 5.4
@@ -65,7 +65,7 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
     """Run the Claims Drafting Agent.
 
     1. Uses DSPy ``DraftClaimsModule`` to generate claims in
-       German/European patent style.
+       European patent style (English).
     2. Takes ``invention_disclosure`` and ``novelty_analysis`` from
        state as input.
     3. Increments ``iteration_count``.
