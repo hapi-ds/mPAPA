@@ -63,13 +63,20 @@ class RAGEngine:
 
         self._ensure_embed_model()
 
-        nodes = [
-            Document(
-                text=doc["text"],
-                metadata=doc.get("metadata", {}),
+        from llama_index.core.schema import TextNode
+
+        _MAX_EMB_TEXT = 4000
+        nodes = []
+        for doc in documents:
+            text = doc["text"][:_MAX_EMB_TEXT] if len(doc.get("text", "")) > _MAX_EMB_TEXT else doc.get("text", "")
+            meta = doc.get("metadata", {})
+            node = TextNode(
+                text=text,
+                metadata=meta,
+                excluded_embed_metadata_keys=list(meta.keys()),
+                excluded_llm_metadata_keys=list(meta.keys()),
             )
-            for doc in documents
-        ]
+            nodes.append(node)
 
         if topic_id in self._indexes:
             self._indexes[topic_id].insert_nodes(nodes)
@@ -85,6 +92,70 @@ class RAGEngine:
                 len(nodes),
                 topic_id,
             )
+
+    def index_with_embeddings(
+        self, topic_id: int, documents: list[dict],
+    ) -> None:
+        """Build the index from documents that already have embeddings.
+
+        Each dict must contain ``"text"``, ``"metadata"``, and
+        ``"embedding"`` (list[float]) keys. Skips LM Studio calls
+        entirely — uses the pre-computed vectors directly.
+
+        Documents without an embedding are indexed normally (will
+        trigger embedding generation).
+
+        Args:
+            topic_id: The topic workspace to index into.
+            documents: List of dicts with text, metadata, and embedding.
+        """
+        if not documents:
+            return
+
+        self._ensure_embed_model()
+
+        from llama_index.core.schema import TextNode
+
+        # Max chars to send for embedding — prevents CUDA OOM on long docs
+        _MAX_EMB_TEXT = 4000
+
+        nodes_with_emb: list[TextNode] = []
+        nodes_without_emb: list[Document] = []
+
+        for doc in documents:
+            text = doc["text"][:_MAX_EMB_TEXT] if len(doc.get("text", "")) > _MAX_EMB_TEXT else doc.get("text", "")
+            meta = doc.get("metadata", {})
+            emb = doc.get("embedding")
+            if emb and isinstance(emb, list):
+                node = TextNode(
+                    text=text,
+                    metadata=meta,
+                    embedding=emb,
+                    excluded_embed_metadata_keys=list(meta.keys()),
+                    excluded_llm_metadata_keys=list(meta.keys()),
+                )
+                nodes_with_emb.append(node)
+            else:
+                node = TextNode(
+                    text=text,
+                    metadata=meta,
+                    excluded_embed_metadata_keys=list(meta.keys()),
+                    excluded_llm_metadata_keys=list(meta.keys()),
+                )
+                nodes_without_emb.append(node)
+
+        all_nodes = nodes_with_emb + nodes_without_emb  # type: ignore[operator]
+
+        if topic_id in self._indexes:
+            self._indexes[topic_id].insert_nodes(all_nodes)
+        else:
+            # Build index from nodes with pre-set embeddings
+            self._indexes[topic_id] = VectorStoreIndex(nodes=all_nodes)
+
+        logger.info(
+            "Indexed %d docs for topic %d (%d with stored embeddings, %d new)",
+            len(documents), topic_id, len(nodes_with_emb), len(nodes_without_emb),
+        )
 
     def query(
         self, topic_id: int, query_text: str, top_k: int = 5

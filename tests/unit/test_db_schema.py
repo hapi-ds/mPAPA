@@ -18,6 +18,7 @@ EXPECTED_TABLES = {
     "disclosure_search_terms",
     "source_preferences",
     "patent_drafts",
+    "local_documents",
 }
 
 

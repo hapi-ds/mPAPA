@@ -94,6 +94,17 @@ CREATE TABLE IF NOT EXISTS patent_drafts (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (topic_id) REFERENCES topics(id)
 );
+
+CREATE TABLE IF NOT EXISTS local_documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL,
+    filename TEXT NOT NULL,
+    content TEXT NOT NULL,
+    source TEXT NOT NULL DEFAULT 'Local Document',
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    embedding BLOB,
+    FOREIGN KEY (topic_id) REFERENCES topics(id)
+);
 """
 
 _initialized_databases: set[str] = set()

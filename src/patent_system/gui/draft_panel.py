@@ -246,6 +246,8 @@ def create_draft_panel(
                     session_repo = ResearchSessionRepository(conn)
                     patent_repo = PatentRepository(conn)
                     paper_repo = ScientificPaperRepository(conn)
+                    from patent_system.db.repository import LocalDocumentRepository
+                    local_doc_repo = LocalDocumentRepository(conn)
                     sessions = session_repo.get_by_topic(topic_id)
                     text_parts: list[str] = []
                     for session in sessions:
@@ -259,6 +261,10 @@ def create_draft_panel(
                                 text_parts.append(rec.abstract)
                             if rec.full_text:
                                 text_parts.append(rec.full_text)
+                    # Include local documents
+                    for doc in local_doc_repo.get_by_topic(topic_id):
+                        if doc["content"]:
+                            text_parts.append(doc["content"][:5000])
                     if text_parts:
                         disclosure["implementation_details"] = "\n".join(text_parts)
                 except Exception:
@@ -583,6 +589,26 @@ def create_draft_panel(
                                 })
                     except Exception:
                         logger.exception("Failed to load references for export")
+
+                # Include local documents as references
+                if conn is not None:
+                    try:
+                        from patent_system.db.repository import LocalDocumentRepository
+                        local_doc_repo = LocalDocumentRepository(conn)
+                        for doc in local_doc_repo.get_by_topic(topic_id):
+                            content = doc["content"]
+                            abstract = content[:500].strip()
+                            if len(content) > 500:
+                                abstract += "…"
+                            references.append({
+                                "title": doc["filename"],
+                                "abstract": abstract,
+                                "source": "Local Document",
+                                "has_full_text": True,
+                                "url": "",
+                            })
+                    except Exception:
+                        logger.exception("Failed to load local documents for export")
 
                 # Load chat history
                 chat_messages: list[dict] = []

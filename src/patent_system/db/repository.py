@@ -395,6 +395,58 @@ class PatentDraftRepository:
         return {"claims_text": row[0], "description_text": row[1]}
 
 
+class LocalDocumentRepository:
+    """CRUD operations for user-uploaded local documents."""
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def create(self, topic_id: int, filename: str, content: str) -> int:
+        """Insert a local document and return the new row ID."""
+        try:
+            cursor = self._conn.execute(
+                "INSERT INTO local_documents (topic_id, filename, content) VALUES (?, ?, ?)",
+                (topic_id, filename, content),
+            )
+            self._conn.commit()
+            return cursor.lastrowid  # type: ignore[return-value]
+        except sqlite3.Error as exc:
+            log_db_error(logger, "INSERT", "local_documents", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> list[dict]:
+        """Return all local documents for a topic."""
+        rows = self._conn.execute(
+            "SELECT id, filename, content, uploaded_at FROM local_documents WHERE topic_id = ?",
+            (topic_id,),
+        ).fetchall()
+        return [
+            {"id": r[0], "filename": r[1], "content": r[2], "uploaded_at": r[3]}
+            for r in rows
+        ]
+
+    def delete(self, doc_id: int) -> None:
+        """Delete a local document by ID."""
+        try:
+            self._conn.execute("DELETE FROM local_documents WHERE id = ?", (doc_id,))
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "DELETE", "local_documents", str(exc))
+            raise
+
+    def update_embedding(self, doc_id: int, embedding: bytes) -> None:
+        """Update the embedding for a local document."""
+        try:
+            self._conn.execute(
+                "UPDATE local_documents SET embedding = ? WHERE id = ?",
+                (embedding, doc_id),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "local_documents", str(exc))
+            raise
+
+
 class InventionDisclosureRepository:
     """CRUD operations for per-topic invention disclosures.
 

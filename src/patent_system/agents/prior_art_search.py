@@ -136,7 +136,7 @@ def _query_arxiv(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULT
     Returns:
         Dict with ``results`` key containing parsed paper entries.
     """
-    query = "+AND+".join(quote_plus(t) for t in search_terms if t)
+    query = "+OR+".join(quote_plus(t) for t in search_terms if t)
     if not query:
         query = quote_plus("")
     url = f"http://{_SOURCE_ENDPOINTS['ArXiv']}?search_query=all:{query}&max_results={max_results}"
@@ -267,59 +267,71 @@ class _SimpleHTMLTextExtractor(HTMLParser):
 
 
 def _query_google_scholar(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
-    """Query Google Scholar and parse HTML results.
+    """Query Google Scholar, one term at a time, and merge results.
 
     Args:
         search_terms: List of search term strings.
+        max_results: Maximum number of results to return.
 
     Returns:
         Dict with ``results`` key containing parsed paper entries.
     """
-    query = "+".join(quote_plus(t) for t in search_terms if t)
-    if not query:
-        query = quote_plus("")
-    url = f"https://{_SOURCE_ENDPOINTS['Google Scholar']}?q={query}&hl=en"
+    all_results: list[dict] = []
+    seen_titles: set[str] = set()
 
-    log_external_request(
-        logger=logger, source="Google Scholar", query=", ".join(search_terms),
-        status="requesting", response_time_ms=0,
-    )
+    for term in search_terms:
+        if not term or not term.strip():
+            continue
+        if len(all_results) >= max_results:
+            break
 
-    html_text = _http_get(url)
+        query = quote_plus(term.strip())
+        url = f"https://{_SOURCE_ENDPOINTS['Google Scholar']}?q={query}&hl=en"
 
-    # Parse HTML — extract result entries from gs_ri divs
-    results: list[dict] = []
-    # Simple extraction: split on result class markers
-    parts = html_text.split('class="gs_ri"')
-    for part in parts[1:]:  # skip the first chunk before any result
-        title = ""
-        abstract = ""
-        # Extract title from <h3> tag
-        h3_start = part.find("<h3")
-        if h3_start != -1:
-            h3_end = part.find("</h3>", h3_start)
-            if h3_end != -1:
-                h3_html = part[h3_start:h3_end]
-                extractor = _SimpleHTMLTextExtractor()
-                extractor.feed(h3_html)
-                title = extractor.get_text().strip()
-        # Extract snippet/abstract from gs_rs div
-        gs_rs_start = part.find('class="gs_rs"')
-        if gs_rs_start != -1:
-            div_end = part.find("</div>", gs_rs_start)
-            if div_end != -1:
-                snippet_html = part[gs_rs_start:div_end]
-                extractor = _SimpleHTMLTextExtractor()
-                extractor.feed(snippet_html)
-                abstract = extractor.get_text().strip()
-        if title:
-            results.append({"doi": "", "title": title, "abstract": abstract})
+        log_external_request(
+            logger=logger, source="Google Scholar", query=term,
+            status="requesting", response_time_ms=0,
+        )
 
-    return {"results": results[:max_results]}
+        try:
+            html_text = _http_get(url)
+        except Exception:
+            logger.debug("Google Scholar query failed for term: %s", term, exc_info=True)
+            continue
+
+        parts = html_text.split('class="gs_ri"')
+        for part in parts[1:]:
+            if len(all_results) >= max_results:
+                break
+            title = ""
+            abstract = ""
+            h3_start = part.find("<h3")
+            if h3_start != -1:
+                h3_end = part.find("</h3>", h3_start)
+                if h3_end != -1:
+                    extractor = _SimpleHTMLTextExtractor()
+                    extractor.feed(part[h3_start:h3_end])
+                    title = extractor.get_text().strip()
+            gs_rs_start = part.find('class="gs_rs"')
+            if gs_rs_start != -1:
+                div_end = part.find("</div>", gs_rs_start)
+                if div_end != -1:
+                    extractor = _SimpleHTMLTextExtractor()
+                    extractor.feed(part[gs_rs_start:div_end])
+                    abstract = extractor.get_text().strip()
+            title_key = title.lower().strip()
+            if title and title_key not in seen_titles:
+                seen_titles.add(title_key)
+                all_results.append({"doi": "", "title": title, "abstract": abstract})
+
+    return {"results": all_results[:max_results]}
 
 
 def _query_google_patents(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
     """Query Google Patents via their JSON XHR endpoint.
+
+    Queries each term separately and merges results to avoid URL length
+    limits and OR syntax issues.
 
     Args:
         search_terms: List of search term strings.
@@ -328,48 +340,51 @@ def _query_google_patents(search_terms: list[str], max_results: int = _DEFAULT_M
     Returns:
         Dict with ``results`` key containing parsed patent entries.
     """
-    query = " ".join(t for t in search_terms if t)
-    if not query:
-        return {"results": []}
-
-    encoded_q = quote_plus(query)
-    url = f"https://{_SOURCE_ENDPOINTS['Google Patents']}/xhr/query?url=q%3D{encoded_q}&exp="
-
-    log_external_request(
-        logger=logger, source="Google Patents", query=", ".join(search_terms),
-        status="requesting", response_time_ms=0,
-    )
-
-    json_text = _http_get(url)
-
     import json
-    try:
-        data = json.loads(json_text)
-    except (json.JSONDecodeError, ValueError):
-        return {"results": []}
 
-    results: list[dict] = []
-    cluster = data.get("results", {}).get("cluster", [])
-    for group in cluster:
-        for item in group.get("result", []):
-            patent = item.get("patent", {})
-            title = patent.get("title", "").strip()
-            snippet = patent.get("snippet", "").strip()
-            patent_id = item.get("id", "")
-            # id format: "patent/US10852294B2/en"
-            patent_number = patent_id.replace("patent/", "").replace("/en", "").strip()
-            if title:
-                results.append({
-                    "patent_number": patent_number or "UNKNOWN",
-                    "title": title,
-                    "abstract": snippet,
-                })
-            if len(results) >= max_results:
-                break
-        if len(results) >= max_results:
+    all_results: list[dict] = []
+    seen_ids: set[str] = set()
+
+    for term in search_terms:
+        if not term or not term.strip():
+            continue
+        if len(all_results) >= max_results:
             break
 
-    return {"results": results[:max_results]}
+        encoded_q = quote_plus(term.strip())
+        url = f"https://{_SOURCE_ENDPOINTS['Google Patents']}/xhr/query?url=q%3D{encoded_q}&exp="
+
+        log_external_request(
+            logger=logger, source="Google Patents", query=term,
+            status="requesting", response_time_ms=0,
+        )
+
+        try:
+            json_text = _http_get(url)
+            data = json.loads(json_text)
+        except Exception:
+            logger.debug("Google Patents query failed for term: %s", term, exc_info=True)
+            continue
+
+        cluster = data.get("results", {}).get("cluster", [])
+        for group in cluster:
+            for item in group.get("result", []):
+                if len(all_results) >= max_results:
+                    break
+                patent = item.get("patent", {})
+                title = patent.get("title", "").strip()
+                snippet = patent.get("snippet", "").strip()
+                patent_id = item.get("id", "")
+                patent_number = patent_id.replace("patent/", "").replace("/en", "").strip()
+                if title and patent_number not in seen_ids:
+                    seen_ids.add(patent_number)
+                    all_results.append({
+                        "patent_number": patent_number or "UNKNOWN",
+                        "title": title,
+                        "abstract": snippet,
+                    })
+
+    return {"results": all_results[:max_results]}
 
 
 def _query_epo_ops(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:

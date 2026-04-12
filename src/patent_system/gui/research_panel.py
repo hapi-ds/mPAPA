@@ -25,6 +25,7 @@ from patent_system.agents.prior_art_search import (
 )
 from patent_system.db.repository import (
     InventionDisclosureRepository,
+    LocalDocumentRepository,
     PatentRepository,
     ResearchSessionRepository,
     ScientificPaperRepository,
@@ -243,6 +244,26 @@ def create_research_panel(
         except Exception:
             logger.exception("Failed to load saved results for topic %d", topic_id)
 
+    # Load saved local documents
+    if conn is not None:
+        try:
+            doc_repo = LocalDocumentRepository(conn)
+            for doc in doc_repo.get_by_topic(topic_id):
+                text = doc["content"]
+                abstract = text[:500].strip()
+                if len(text) > 500:
+                    abstract += "…"
+                panel_state["results"].append({
+                    "id": doc["id"],
+                    "record_type": "local_document",
+                    "title": doc["filename"],
+                    "abstract": abstract,
+                    "full_text": text,
+                    "source": "Local Document",
+                })
+        except Exception:
+            logger.exception("Failed to load local documents for topic %d", topic_id)
+
     # Load saved disclosure data (Req 2.4)
     saved_disclosure: dict | None = None
     if disclosure_repo is not None:
@@ -251,43 +272,92 @@ def create_research_panel(
         except Exception:
             logger.exception("Failed to load disclosure for topic %d", topic_id)
 
-    # Index saved results in RAG and compute relevance on load
+    # Index saved results in RAG and compute relevance in background
+    # Uses stored embeddings from DB — no LM Studio calls needed
     if panel_state["results"] and rag_engine is not None:
-        try:
-            rag_docs = []
-            for rec in panel_state["results"]:
-                title = rec.get("title", "")
-                abstract = rec.get("abstract", "")
-                full_text = rec.get("full_text")
-                doc_text = _build_rag_document_text(abstract, full_text)
-                text = f"{title} {doc_text}".strip() if title else doc_text
-                if text:
+        _results_ref = panel_state["results"]
+        _desc_ref = saved_disclosure["primary_description"] if saved_disclosure else None
+
+        # Build a map of (record_type, id) → embedding bytes from DB
+        _emb_map: dict[tuple[str, int], bytes] = {}
+        if conn is not None:
+            try:
+                _pat_repo = PatentRepository(conn)
+                _paper_repo = ScientificPaperRepository(conn)
+                _session_repo = ResearchSessionRepository(conn)
+                sessions = _session_repo.get_by_topic(topic_id)
+                for session in sessions:
+                    for rec in _pat_repo.get_by_session(session["id"]):
+                        if rec.embedding and rec.id is not None:
+                            _emb_map[("patent", rec.id)] = rec.embedding
+                    for rec in _paper_repo.get_by_session(session["id"]):
+                        if rec.embedding and rec.id is not None:
+                            _emb_map[("paper", rec.id)] = rec.embedding
+                # Local documents
+                _doc_repo = LocalDocumentRepository(conn)
+                for doc in _doc_repo.get_by_topic(topic_id):
+                    row = conn.execute(
+                        "SELECT embedding FROM local_documents WHERE id = ?", (doc["id"],)
+                    ).fetchone()
+                    if row and row[0]:
+                        _emb_map[("local_document", doc["id"])] = row[0]
+            except Exception:
+                logger.debug("Failed to load stored embeddings", exc_info=True)
+
+        def _bg_index_and_score() -> None:
+            import struct
+            try:
+                rag_docs = []
+                for rec in _results_ref:
+                    title = rec.get("title", "")
+                    abstract = rec.get("abstract", "")
+                    full_text = rec.get("full_text")
+                    doc_text = _build_rag_document_text(abstract, full_text)
+                    text = f"{title} {doc_text}".strip() if title else doc_text
+                    if not text:
+                        continue
                     metadata = _sanitize_metadata({
                         k: v for k, v in rec.items()
                         if k not in ("title", "abstract", "full_text", "embedding")
                     })
-                    rag_docs.append({"text": text, "metadata": metadata})
-            if rag_docs:
-                rag_engine.index_documents(topic_id, rag_docs)
+                    doc_entry: dict[str, Any] = {"text": text, "metadata": metadata}
 
-            # Compute relevance if disclosure exists
-            desc = saved_disclosure["primary_description"] if saved_disclosure else None
-            if desc:
-                rag_results = rag_engine.query(topic_id, desc, top_k=50)
-                score_map: dict[str, float] = {}
-                for rr in rag_results:
-                    rr_text = rr.get("text", "")
-                    rr_score = rr.get("score", 0.0) or 0.0
-                    for rec in panel_state["results"]:
-                        rec_title = rec.get("title", "")
-                        if rec_title and rec_title in rr_text and rec_title not in score_map:
-                            score_map[rec_title] = rr_score
-                for rec in panel_state["results"]:
-                    title = rec.get("title", "")
-                    if title in score_map:
-                        rec["relevance_score"] = round(score_map[title] * 100, 1)
-        except Exception:
-            logger.debug("Failed to index/score saved results", exc_info=True)
+                    # Look up stored embedding
+                    rec_type = rec.get("record_type", "patent")
+                    rec_id = rec.get("id")
+                    if rec_id is not None:
+                        emb_bytes = _emb_map.get((rec_type, rec_id))
+                        if emb_bytes:
+                            n_floats = len(emb_bytes) // 4
+                            doc_entry["embedding"] = list(struct.unpack(f"{n_floats}f", emb_bytes))
+
+                    rag_docs.append(doc_entry)
+
+                if rag_docs:
+                    rag_engine.index_with_embeddings(topic_id, rag_docs)
+
+                if _desc_ref:
+                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=50)
+                    score_map: dict[str, float] = {}
+                    for rr in rag_results:
+                        rr_text = rr.get("text", "")
+                        rr_score = rr.get("score", 0.0) or 0.0
+                        for rec in _results_ref:
+                            rec_title = rec.get("title", "")
+                            if rec_title and rec_title in rr_text and rec_title not in score_map:
+                                score_map[rec_title] = rr_score
+                    for rec in _results_ref:
+                        title = rec.get("title", "")
+                        if title in score_map:
+                            rec["relevance_score"] = round(score_map[title] * 100, 1)
+            except Exception:
+                logger.debug("Failed to index/score saved results", exc_info=True)
+            finally:
+                _scoring_done[0] = True
+
+        import threading
+        _scoring_done = [False]
+        threading.Thread(target=_bg_index_and_score, daemon=True).start()
 
     # Load saved source preferences (Req 3.5)
     saved_prefs: dict[str, bool] | None = None
@@ -412,6 +482,132 @@ def create_research_panel(
                     on_change=_make_checkbox_handler(src_name),
                 )
                 panel_state["source_checkboxes"][src_name] = cb
+
+        # --- Local Document Upload ---
+        ui.label("Upload Local Documents").classes("text-subtitle2 q-mt-md")
+
+        def _extract_text(filename: str, content_bytes: bytes) -> str:
+            """Extract text from uploaded file bytes.
+
+            For PDFs, tries multiple extraction methods:
+            1. Standard text extraction
+            2. Text from annotations/widgets
+            3. Raw text blocks
+            If all fail, returns empty string (likely a scanned image PDF).
+            """
+            lower = filename.lower()
+            if lower.endswith(".txt"):
+                return content_bytes.decode("utf-8", errors="replace")
+            elif lower.endswith(".pdf"):
+                import fitz  # PyMuPDF
+                try:
+                    doc = fitz.open(stream=content_bytes, filetype="pdf")
+                    text_parts: list[str] = []
+                    for page in doc:
+                        # Method 1: standard text extraction
+                        text = page.get_text("text")
+                        if text and text.strip():
+                            text_parts.append(text)
+                            continue
+                        # Method 2: OCR fallback for scanned pages
+                        try:
+                            tp = page.get_textpage_ocr(full=True)
+                            ocr_text = page.get_text("text", textpage=tp)
+                            if ocr_text and ocr_text.strip():
+                                text_parts.append(ocr_text)
+                                continue
+                        except Exception:
+                            pass
+                    doc.close()
+                    result = "\n".join(text_parts)
+                    if not result.strip():
+                        logger.warning(
+                            "PDF '%s' — no text extracted even with OCR",
+                            filename,
+                        )
+                    return result
+                except Exception:
+                    logger.exception("Failed to parse PDF '%s'", filename)
+                    return ""
+            elif lower.endswith(".docx"):
+                import io
+                from docx import Document as DocxDoc
+                doc = DocxDoc(io.BytesIO(content_bytes))
+                return "\n".join(p.text for p in doc.paragraphs if p.text)
+            return ""
+
+        import_status = ui.label("").classes("text-caption text-grey")
+
+        async def _on_file_uploaded(e: Any) -> None:
+            """Process uploaded file — read async, then persist/embed in thread."""
+            if conn is None:
+                return
+            try:
+                f = e.file
+                filename = f.name
+                content_bytes = await f.read()
+                import_status.set_text(f"Importing {filename}…")
+
+                def _process() -> dict | None:
+                    """Run in thread: extract, persist, embed, index."""
+                    text = _extract_text(filename, content_bytes)
+                    if not text.strip():
+                        return None
+
+                    word_count = len(text.split())
+                    abstract = text[:500].strip()
+                    if len(text) > 500:
+                        abstract += "…"
+
+                    doc_repo = LocalDocumentRepository(conn)
+                    row_id = doc_repo.create(topic_id, filename, text)
+
+                    if rag_engine is not None:
+                        try:
+                            emb = rag_engine._embedding_service.generate_embedding(text[:2000])
+                            if emb:
+                                doc_repo.update_embedding(row_id, emb)
+                        except Exception:
+                            logger.debug("Embedding failed for %s", filename, exc_info=True)
+                        try:
+                            rag_engine.index_documents(topic_id, [
+                                {"text": f"{filename} {text[:4000]}", "metadata": {"source": "Local Document", "filename": filename}},
+                            ])
+                        except Exception:
+                            logger.debug("RAG index failed for %s", filename, exc_info=True)
+
+                    return {
+                        "id": row_id,
+                        "record_type": "local_document",
+                        "title": filename,
+                        "abstract": abstract,
+                        "full_text": text,
+                        "source": "Local Document",
+                        "word_count": word_count,
+                    }
+
+                result = await asyncio.to_thread(_process)
+
+                if result is None:
+                    import_status.set_text(
+                        f"⚠ No text in {filename} — may be a scanned/image PDF"
+                    )
+                    return
+
+                panel_state["results"].append(result)
+                import_status.set_text(f"✓ Imported {filename} ({result['word_count']:,} words)")
+                logger.info("Imported '%s' for topic %d (%d words)", filename, topic_id, result["word_count"])
+                _refresh_table()
+            except Exception:
+                logger.exception("Failed to import uploaded file")
+                import_status.set_text("⚠ Import failed")
+
+        ui.upload(
+            label="Upload PDF, DOCX, or TXT — files are imported automatically",
+            on_upload=_on_file_uploaded,
+            multiple=True,
+            auto_upload=True,
+        ).props('accept=".pdf,.docx,.txt"').classes("w-full").style("max-height: 100px;")
 
         # --- Status and Start Research ---
         status_label = ui.label("").classes("text-caption q-mt-sm")
@@ -666,8 +862,11 @@ def create_research_panel(
             db_id = rec.get("id")
             if db_id is not None and conn is not None:
                 try:
-                    if rec.get("record_type") == "paper":
+                    record_type = rec.get("record_type")
+                    if record_type == "paper":
                         ScientificPaperRepository(conn).delete(db_id)
+                    elif record_type == "local_document":
+                        LocalDocumentRepository(conn).delete(db_id)
                     else:
                         PatentRepository(conn).delete(db_id)
                     logger.info("Deleted record %d for topic %d", db_id, topic_id)
@@ -676,7 +875,6 @@ def create_research_panel(
                     ui.notify("Failed to delete record from database.", type="negative")
                     return
 
-            # Remove from panel state by identity match
             panel_state["results"] = [r for r in panel_state["results"] if r is not rec]
             _refresh_table()
             ui.notify("Result deleted.", type="info")
@@ -757,3 +955,12 @@ def create_research_panel(
         # Render any previously saved results
         if panel_state["results"]:
             _refresh_table()
+
+        # Auto-refresh once background scoring finishes
+        if rag_engine is not None and panel_state["results"]:
+            def _check_scoring() -> None:
+                if _scoring_done[0]:
+                    _refresh_table()
+                    _score_timer.deactivate()
+
+            _score_timer = ui.timer(1.0, _check_scoring)

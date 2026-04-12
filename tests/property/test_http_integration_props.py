@@ -147,7 +147,10 @@ class TestSourceURLConstruction:
             # Each non-empty search term should appear URL-encoded in at
             # least one of the request URLs.
             for term in terms:
-                encoded = quote_plus(term)
+                stripped = term.strip()
+                if not stripped:
+                    continue
+                encoded = quote_plus(stripped)
                 assert encoded in combined_url, (
                     f"Encoded term '{encoded}' (from '{term}') not found "
                     f"in any URL for source {source}. URLs: {all_urls}"
