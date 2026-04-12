@@ -54,7 +54,7 @@ _SOURCE_URLS: dict[str, str] = {
     "PubMed": "https://pubmed.ncbi.nlm.nih.gov/{id}",
     "Google Scholar": "https://scholar.google.com/scholar?q={id}",
     "Google Patents": "https://patents.google.com/patent/{id}",
-    "DEPATISnet": "https://depatisnet.dpma.de/DepatisNet/depatisnet?action=bibdat&docid={id}",
+    "EPO OPS": "https://worldwide.espacenet.com/patent/search?q={id}",
 }
 
 
@@ -253,45 +253,41 @@ def create_research_panel(
 
     # Index saved results in RAG and compute relevance on load
     if panel_state["results"] and rag_engine is not None:
-        def _index_and_score_saved() -> None:
-            try:
-                rag_docs = []
+        try:
+            rag_docs = []
+            for rec in panel_state["results"]:
+                title = rec.get("title", "")
+                abstract = rec.get("abstract", "")
+                full_text = rec.get("full_text")
+                doc_text = _build_rag_document_text(abstract, full_text)
+                text = f"{title} {doc_text}".strip() if title else doc_text
+                if text:
+                    metadata = _sanitize_metadata({
+                        k: v for k, v in rec.items()
+                        if k not in ("title", "abstract", "full_text", "embedding")
+                    })
+                    rag_docs.append({"text": text, "metadata": metadata})
+            if rag_docs:
+                rag_engine.index_documents(topic_id, rag_docs)
+
+            # Compute relevance if disclosure exists
+            desc = saved_disclosure["primary_description"] if saved_disclosure else None
+            if desc:
+                rag_results = rag_engine.query(topic_id, desc, top_k=50)
+                score_map: dict[str, float] = {}
+                for rr in rag_results:
+                    rr_text = rr.get("text", "")
+                    rr_score = rr.get("score", 0.0) or 0.0
+                    for rec in panel_state["results"]:
+                        rec_title = rec.get("title", "")
+                        if rec_title and rec_title in rr_text and rec_title not in score_map:
+                            score_map[rec_title] = rr_score
                 for rec in panel_state["results"]:
                     title = rec.get("title", "")
-                    abstract = rec.get("abstract", "")
-                    full_text = rec.get("full_text")
-                    doc_text = _build_rag_document_text(abstract, full_text)
-                    text = f"{title} {doc_text}".strip() if title else doc_text
-                    if text:
-                        metadata = _sanitize_metadata({
-                            k: v for k, v in rec.items()
-                            if k not in ("title", "abstract", "full_text", "embedding")
-                        })
-                        rag_docs.append({"text": text, "metadata": metadata})
-                if rag_docs:
-                    rag_engine.index_documents(topic_id, rag_docs)
-
-                # Compute relevance if disclosure exists
-                desc = saved_disclosure["primary_description"] if saved_disclosure else None
-                if desc:
-                    rag_results = rag_engine.query(topic_id, desc, top_k=50)
-                    score_map: dict[str, float] = {}
-                    for rr in rag_results:
-                        rr_text = rr.get("text", "")
-                        rr_score = rr.get("score", 0.0) or 0.0
-                        for rec in panel_state["results"]:
-                            rec_title = rec.get("title", "")
-                            if rec_title and rec_title in rr_text and rec_title not in score_map:
-                                score_map[rec_title] = rr_score
-                    for rec in panel_state["results"]:
-                        title = rec.get("title", "")
-                        if title in score_map:
-                            rec["relevance_score"] = round(score_map[title] * 100, 1)
-            except Exception:
-                logger.debug("Failed to index/score saved results", exc_info=True)
-
-        import threading
-        threading.Thread(target=_index_and_score_saved, daemon=True).start()
+                    if title in score_map:
+                        rec["relevance_score"] = round(score_map[title] * 100, 1)
+        except Exception:
+            logger.debug("Failed to index/score saved results", exc_info=True)
 
     # Load saved source preferences (Req 3.5)
     saved_prefs: dict[str, bool] | None = None
@@ -302,7 +298,12 @@ def create_research_panel(
             logger.exception("Failed to load source prefs for topic %d", topic_id)
 
     with container:
-        ui.label("Prior Art Research").classes("text-h6 q-mb-sm")
+        with ui.row().classes("w-full items-center justify-between q-mb-sm"):
+            ui.label("Prior Art Research").classes("text-h6")
+            result_count = len(panel_state["results"])
+            count_label = ui.label(
+                f"{result_count} result(s)" if result_count else "No results yet"
+            ).classes("text-caption text-grey")
 
         # --- Primary Invention Description (Req 1.1) ---
         primary_input = ui.textarea(
@@ -687,7 +688,7 @@ def create_research_panel(
                 if not results:
                     ui.label("No results yet.").classes("text-grey")
                     return
-                for rec in results:
+                for idx, rec in enumerate(results, 1):
                     title = rec.get("title", "Untitled")
                     abstract = rec.get("abstract", "")
                     source = rec.get("source", "unknown")
@@ -696,7 +697,9 @@ def create_research_panel(
 
                     with ui.card().classes("w-full"):
                         with ui.row().classes("w-full items-center justify-between"):
-                            ui.label(title).classes("text-subtitle1 font-bold")
+                            with ui.row().classes("items-center gap-2"):
+                                ui.badge(f"[{idx}]", color="dark").props("dense")
+                                ui.label(title).classes("text-subtitle1 font-bold")
                             with ui.row().classes("items-center gap-1"):
                                 relevance = rec.get("relevance_score")
                                 if relevance is not None:
@@ -742,6 +745,8 @@ def create_research_panel(
                 panel_state["results"], panel_state["sort_criterion"]
             )
             _render_results(sorted_rows)
+            n = len(panel_state["results"])
+            count_label.set_text(f"{n} result(s)" if n else "No results yet")
 
         def set_results(results: list[dict[str, Any]]) -> None:
             panel_state["results"] = list(results)

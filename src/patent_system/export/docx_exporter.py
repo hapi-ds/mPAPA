@@ -69,8 +69,9 @@ class DOCXExporter:
         description: str,
         output_path: Path,
         references: list[dict] | None = None,
+        chat_history: list[dict] | None = None,
     ) -> Path:
-        """Generate a .docx file with claims, description, and references.
+        """Generate a .docx file with claims, description, references, and chat.
 
         Args:
             claims: The patent claims text.
@@ -78,6 +79,7 @@ class DOCXExporter:
             output_path: Destination path for the generated .docx file.
             references: Optional list of dicts with 'title', 'abstract',
                 'source', and optionally 'patent_number' or 'doi' keys.
+            chat_history: Optional list of dicts with 'role' and 'message' keys.
 
         Returns:
             The output_path where the document was saved.
@@ -102,16 +104,63 @@ class DOCXExporter:
                 source = ref.get("source", "")
                 record_id = ref.get("patent_number") or ref.get("doi") or ""
                 abstract = ref.get("abstract", "")
+                has_full_text = ref.get("has_full_text", False)
+                url = ref.get("url", "")
+                relevance = ref.get("relevance_score")
 
-                heading = f"[{i}] {title}"
+                # Heading: [1] Title (Source)
+                heading_text = f"[{i}] {title}"
                 if source:
-                    heading += f" ({source})"
-                if record_id and record_id != "UNKNOWN":
-                    heading += f" — {record_id}"
+                    heading_text += f" ({source})"
+                doc.add_heading(heading_text, level=2)
 
-                doc.add_heading(heading, level=2)
+                # Metadata line: ID, relevance, full text indicator
+                meta_parts: list[str] = []
+                if record_id and record_id != "UNKNOWN":
+                    meta_parts.append(record_id)
+                if relevance is not None:
+                    meta_parts.append(f"Relevance: {relevance}%")
+                meta_parts.append("Full Text" if has_full_text else "Abstract Only")
+                if meta_parts:
+                    doc.add_paragraph(" · ".join(meta_parts)).runs[0].italic = True
+
+                # Clickable link
+                if url:
+                    p = doc.add_paragraph()
+                    from docx.oxml.ns import qn
+                    from docx.oxml import OxmlElement
+                    hyperlink = OxmlElement("w:hyperlink")
+                    hyperlink.set(qn("r:id"), p.part.relate_to(
+                        url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True,
+                    ))
+                    run_el = OxmlElement("w:r")
+                    rPr = OxmlElement("w:rPr")
+                    color = OxmlElement("w:color")
+                    color.set(qn("w:val"), "0563C1")
+                    rPr.append(color)
+                    u = OxmlElement("w:u")
+                    u.set(qn("w:val"), "single")
+                    rPr.append(u)
+                    run_el.append(rPr)
+                    text_el = OxmlElement("w:t")
+                    text_el.text = url
+                    run_el.append(text_el)
+                    hyperlink.append(run_el)
+                    p._element.append(hyperlink)
+
                 if abstract:
                     doc.add_paragraph(abstract)
+
+        if chat_history:
+            doc.add_heading("AI Chat Log", level=1)
+            for msg in chat_history:
+                role = msg.get("role", "unknown")
+                text = msg.get("message", "")
+                label = "You" if role == "user" else "Assistant"
+                p = doc.add_paragraph()
+                run = p.add_run(f"{label}: ")
+                run.bold = True
+                p.add_run(text)
 
         # Ensure parent directories exist
         output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -548,6 +548,8 @@ def create_draft_panel(
 
                 # Load references from both patent and paper tables
                 references: list[dict] = []
+                # URL templates for clickable links
+                from patent_system.gui.research_panel import _SOURCE_URLS
                 if conn is not None:
                     try:
                         session_repo = ResearchSessionRepository(conn)
@@ -556,28 +558,53 @@ def create_draft_panel(
                         sessions = session_repo.get_by_topic(topic_id)
                         for session in sessions:
                             for rec in patent_repo.get_by_session(session["id"]):
+                                record_id = rec.patent_number or ""
+                                url_tpl = _SOURCE_URLS.get(rec.source, "")
+                                url = url_tpl.format(id=record_id) if url_tpl and record_id and record_id != "UNKNOWN" else ""
                                 references.append({
                                     "title": rec.title,
                                     "abstract": rec.abstract or "",
                                     "source": rec.source,
                                     "patent_number": rec.patent_number,
+                                    "has_full_text": bool(rec.full_text),
+                                    "url": url,
                                 })
                             for rec in paper_repo.get_by_session(session["id"]):
+                                record_id = rec.doi or ""
+                                url_tpl = _SOURCE_URLS.get(rec.source, "")
+                                url = url_tpl.format(id=record_id) if url_tpl and record_id else ""
                                 references.append({
                                     "title": rec.title,
                                     "abstract": rec.abstract or "",
                                     "source": rec.source,
                                     "doi": rec.doi,
+                                    "has_full_text": bool(rec.full_text),
+                                    "url": url,
                                 })
                     except Exception:
                         logger.exception("Failed to load references for export")
+
+                # Load chat history
+                chat_messages: list[dict] = []
+                if conn is not None:
+                    try:
+                        from patent_system.db.repository import ChatHistoryRepository
+                        chat_repo = ChatHistoryRepository(conn)
+                        for msg in chat_repo.get_by_topic(topic_id):
+                            chat_messages.append({"role": msg.role, "message": msg.message})
+                    except Exception:
+                        logger.exception("Failed to load chat history for export")
 
                 today = date.today().isoformat()
                 filename = f"{topic_name}_{today}.docx"
                 output_path = Path(f"data/export/{filename}")
 
                 exporter = DOCXExporter(template_dir, template_name)
-                exporter.export(claims, description, output_path, references=references)
+                exporter.export(
+                    claims, description, output_path,
+                    references=references,
+                    chat_history=chat_messages if chat_messages else None,
+                )
 
                 ui.download(str(output_path))
                 ui.notify("DOCX exported successfully.", type="positive")
