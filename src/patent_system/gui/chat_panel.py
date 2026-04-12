@@ -147,7 +147,7 @@ def create_chat_panel(
                 placeholder="Ask about your patents and papers…",
             ).classes("flex-grow")
 
-            def _on_send() -> None:
+            async def _on_send() -> None:
                 """Handle send: query RAG, call LLM, display response."""
                 text = message_input.value.strip() if message_input.value else ""
                 if not text:
@@ -167,6 +167,9 @@ def create_chat_panel(
                 # Clear input
                 message_input.value = ""
 
+                # Force UI update before the potentially slow LLM call
+                await ui.context.client.connected()
+
                 # --- RAG retrieval (Req 5.1) ---
                 context_docs: list[dict] = []
                 if rag_engine is not None:
@@ -185,9 +188,15 @@ def create_chat_panel(
                     if lm is None:
                         raise ConnectionError("DSPy LM is not configured")
                     response = lm(prompt)
-                    # dspy.LM returns a list of strings; take the first
-                    if isinstance(response, list):
-                        assistant_text = response[0] if response else ""
+                    # dspy.LM returns list[dict | str]; extract text content
+                    if isinstance(response, list) and response:
+                        item = response[0]
+                        if isinstance(item, dict):
+                            assistant_text = item.get("text", "") or str(item)
+                        else:
+                            assistant_text = str(item)
+                    elif isinstance(response, list):
+                        assistant_text = ""
                     else:
                         assistant_text = str(response)
                 except (

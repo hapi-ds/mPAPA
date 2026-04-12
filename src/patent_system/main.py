@@ -177,7 +177,12 @@ def main() -> None:
 
     # 8. Launch NiceGUI app
     logger.info("Launching NiceGUI web interface")
-    ui.run(title="Patent Analysis & Drafting System", port=settings.nicegui_port, reload=settings.nicegui_reload)
+    ui.run(
+        title="Patent Analysis & Drafting System",
+        port=settings.nicegui_port,
+        reload=settings.nicegui_reload,
+        uvicorn_reload_excludes=".*, .py[cod], .sw.*, ~*, logs/*, data/*, *.log, *.db",
+    )
 
 
 if __name__ in {"__main__", "__mp_main__"}:

@@ -10,13 +10,16 @@ Requirements: 16.6, 5.3, 5.4, 7.3, 7.4, 10.1, 10.6, 9.4, 2.5, 4.3
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import sqlite3
 from typing import TYPE_CHECKING, Any
 
 from langgraph.errors import GraphInterrupt
 from nicegui import ui
 
 from patent_system.agents.state import PatentWorkflowState
+from patent_system.db.repository import PatentRepository, ResearchSessionRepository
 
 if TYPE_CHECKING:
     from langgraph.graph.state import CompiledStateGraph
@@ -67,6 +70,7 @@ def create_draft_panel(
     topic_id: int,
     *,
     workflow: CompiledStateGraph | None = None,
+    conn: sqlite3.Connection | None = None,
 ) -> None:
     """Populate *container* with the Patent Draft panel UI components.
 
@@ -118,7 +122,7 @@ def create_draft_panel(
             ).classes("text-grey q-pa-sm")
 
         # --- Generate Patent Draft button (Req 16.6) ---
-        def _on_generate() -> None:
+        async def _on_generate() -> None:
             """Invoke the compiled workflow and update the UI with results.
 
             Builds an initial PatentWorkflowState, invokes the workflow
@@ -146,10 +150,41 @@ def create_draft_panel(
                 "Generate Patent Draft clicked for topic %d", topic_id
             )
 
+            ui.notify(
+                "Generating patent draft… this may take a moment.",
+                type="info",
+                spinner=True,
+                timeout=0,
+                close_button=True,
+            )
+
+            # Build invention disclosure from saved research data
+            disclosure: dict[str, Any] | None = None
+            if conn is not None:
+                try:
+                    session_repo = ResearchSessionRepository(conn)
+                    patent_repo = PatentRepository(conn)
+                    sessions = session_repo.get_by_topic(topic_id)
+                    queries = [s["query"] for s in sessions if s.get("query")]
+                    abstracts: list[str] = []
+                    for session in sessions:
+                        for rec in patent_repo.get_by_session(session["id"]):
+                            if rec.abstract:
+                                abstracts.append(rec.abstract)
+                    if queries or abstracts:
+                        disclosure = {
+                            "technical_problem": "; ".join(queries) if queries else "Not specified",
+                            "novel_features": queries[:5],
+                            "implementation_details": "\n".join(abstracts[:10]),
+                            "potential_variations": [],
+                        }
+                except Exception:
+                    logger.exception("Failed to load research data for topic %d", topic_id)
+
             # Build initial state with all required keys (Req 6.1)
             initial_state: PatentWorkflowState = {
                 "topic_id": topic_id,
-                "invention_disclosure": None,
+                "invention_disclosure": disclosure,
                 "interview_messages": [],
                 "prior_art_results": [],
                 "failed_sources": [],
@@ -165,7 +200,7 @@ def create_draft_panel(
             config = {"configurable": {"thread_id": f"topic-{topic_id}"}}
 
             try:
-                result = workflow.invoke(initial_state, config)
+                result = await asyncio.to_thread(workflow.invoke, initial_state, config)
 
                 # Update stepper UI from current_step (Req 6.2)
                 step_key = result.get("current_step", "")
@@ -186,6 +221,16 @@ def create_draft_panel(
                 description_result = result.get("description_text", "")
                 if description_result:
                     set_description(description_result)
+
+                # Open the editor sections so the user sees the results
+                claims_expansion.open()
+                description_expansion.open()
+
+                ui.notify(
+                    "Patent draft generated successfully.",
+                    type="positive",
+                    close_button=True,
+                )
 
                 logger.info(
                     "Workflow completed for topic %d at step '%s'",

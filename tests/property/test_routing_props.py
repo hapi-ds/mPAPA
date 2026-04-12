@@ -1,6 +1,6 @@
 """Property-based tests for workflow routing correctness.
 
-Validates: Requirements 6.2, 6.3, 6.4, 6.5
+Validates: Requirements 3.3, 3.4
 """
 
 from hypothesis import given, settings
@@ -40,7 +40,7 @@ def _build_state(
 
 # ---------------------------------------------------------------------------
 # Property 6: Workflow routing correctness
-# Feature: patent-analysis-drafting, Property 6: Workflow routing correctness
+# Feature: placeholder-to-real-implementation, Property 6: Workflow routing correctness
 # ---------------------------------------------------------------------------
 
 
@@ -52,7 +52,7 @@ class TestWorkflowRoutingCorrectness:
     approved and iteration < 3, "human_review" when not approved and
     iteration >= 3.
 
-    **Validates: Requirements 6.2, 6.3, 6.4, 6.5**
+    **Validates: Requirements 3.3, 3.4**
     """
 
     @given(iteration_count=_iteration_count)

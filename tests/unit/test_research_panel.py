@@ -4,23 +4,38 @@ Requirements: 3.5, 3.6
 """
 
 from patent_system.gui.research_panel import (
-    RESULT_COLUMNS,
     SORT_OPTIONS,
     _sort_results,
+    _build_source_url,
 )
 
 
-# --- Sort options and columns sanity ---
+# --- Sort options and source URL sanity ---
 
 def test_sort_options_keys() -> None:
     """SORT_OPTIONS contains the three required criteria."""
     assert set(SORT_OPTIONS) == {"discovery_date", "relevance", "citation_count"}
 
 
-def test_result_columns_fields() -> None:
-    """Table columns include title, discovered_date, and source."""
-    fields = {c["field"] for c in RESULT_COLUMNS}
-    assert fields == {"title", "discovered_date", "source"}
+def test_build_source_url_arxiv() -> None:
+    """ArXiv records get a proper arxiv.org link."""
+    rec = {"source": "ArXiv", "doi": "2301.12345"}
+    url = _build_source_url(rec)
+    assert url is not None
+    assert "arxiv.org" in url
+    assert "2301.12345" in url
+
+
+def test_build_source_url_unknown_id() -> None:
+    """Records with UNKNOWN id return None."""
+    rec = {"source": "ArXiv", "doi": "UNKNOWN"}
+    assert _build_source_url(rec) is None
+
+
+def test_build_source_url_missing_source() -> None:
+    """Records with unknown source return None."""
+    rec = {"source": "SomeNewSource", "doi": "123"}
+    assert _build_source_url(rec) is None
 
 
 # --- _sort_results ---

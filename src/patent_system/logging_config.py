@@ -62,6 +62,13 @@ def setup_logging(settings: Any) -> None:
     root.setLevel(level)
     root.addHandler(handler)
 
+    # Prevent uvicorn's file-watcher messages from being written to the log
+    # file.  When reload is enabled the watcher logs "N change detected"
+    # which mutates the log file, triggering another change detection and
+    # creating an infinite feedback loop.
+    for _name in ("watchfiles.main", "watchfiles", "uvicorn"):
+        logging.getLogger(_name).propagate = False
+
 
 def _log_with_extras(
     logger: logging.Logger,

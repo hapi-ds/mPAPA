@@ -188,7 +188,7 @@ def create_layout(
 
         chat_repo = ChatHistoryRepository(conn)
 
-        create_research_panel(research_container, topic_id)
+        create_research_panel(research_container, topic_id, conn=conn, rag_engine=rag_engine)
         create_chat_panel(
             chat_container,
             topic_id,
@@ -196,7 +196,7 @@ def create_layout(
             rag_engine=rag_engine,
             settings=settings,
         )
-        create_draft_panel(draft_container, topic_id, workflow=workflow)
+        create_draft_panel(draft_container, topic_id, workflow=workflow, conn=conn)
 
     # Initial load of topic list (Req 1.3)
     _refresh_topic_list()

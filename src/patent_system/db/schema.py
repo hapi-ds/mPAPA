@@ -85,7 +85,7 @@ def get_connection(database_path: Path) -> sqlite3.Connection:
         A sqlite3.Connection with foreign keys enabled and schema initialized.
     """
     database_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(database_path))
+    conn = sqlite3.connect(str(database_path), check_same_thread=False)
     conn.execute("PRAGMA foreign_keys = ON")
 
     db_key = str(database_path.resolve())
