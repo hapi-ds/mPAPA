@@ -640,6 +640,42 @@ def create_research_panel(
 
             terms = list(panel_state["term_inputs"])
 
+            # Validate search terms and warn about problematic formatting
+            warnings: list[str] = []
+            for idx, t in enumerate(terms):
+                if not t or not t.strip():
+                    continue
+                if '"' in t and 'AND' in t:
+                    warnings.append(
+                        f"Term {idx + 1}: Contains quotes + AND — use simple phrases instead "
+                        f"(e.g. 'glycolytic flux inhibition' not '\"Glycolytic flux inhibition\" AND ...')"
+                    )
+                elif '"' in t:
+                    warnings.append(
+                        f"Term {idx + 1}: Contains quotes — they'll be stripped for some sources. "
+                        f"Use plain text instead."
+                    )
+                if '*' in t:
+                    warnings.append(
+                        f"Term {idx + 1}: Wildcards (*) not supported by all sources — will be removed."
+                    )
+                if "'" in t:
+                    warnings.append(
+                        f"Term {idx + 1}: Apostrophes may cause issues with patent databases."
+                    )
+                if len(t) > 100:
+                    warnings.append(
+                        f"Term {idx + 1}: Very long ({len(t)} chars) — may be truncated. "
+                        f"Consider splitting into shorter terms."
+                    )
+            if warnings:
+                ui.notify(
+                    "Search term tips:\n" + "\n".join(warnings),
+                    type="warning",
+                    close_button=True,
+                    timeout=10000,
+                )
+
             if disclosure_repo is not None:
                 try:
                     disclosure_repo.upsert(topic_id, description, terms)

@@ -154,7 +154,7 @@ def _http_get(url: str) -> str:
 
 
 def _query_arxiv(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
-    """Query ArXiv API and parse Atom XML into results dict.
+    """Query ArXiv API, one term at a time, and merge results.
 
     Args:
         search_terms: List of search term strings.
@@ -163,120 +163,154 @@ def _query_arxiv(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULT
     Returns:
         Dict with ``results`` key containing parsed paper entries.
     """
-    query = "+OR+".join(quote_plus(t) for t in search_terms if t)
-    if not query:
-        query = quote_plus("")
-    url = f"http://{_SOURCE_ENDPOINTS['ArXiv']}?search_query=all:{query}&max_results={max_results}"
-
-    log_external_request(
-        logger=logger, source="ArXiv", query=", ".join(search_terms),
-        status="requesting", response_time_ms=0,
-    )
-
-    xml_text = _http_get(url)
-
-    # Parse Atom XML
     ns = {"atom": "http://www.w3.org/2005/Atom"}
-    root = ET.fromstring(xml_text)
-    results: list[dict] = []
-    for entry in root.findall("atom:entry", ns):
-        entry_id = entry.findtext("atom:id", default="", namespaces=ns)
-        title = entry.findtext("atom:title", default="", namespaces=ns).strip()
-        abstract = entry.findtext("atom:summary", default="", namespaces=ns).strip()
-        # ArXiv provides a PDF link; extract it for potential full-text retrieval
-        pdf_link = ""
-        for link_el in entry.findall("atom:link", ns):
-            if link_el.get("title") == "pdf":
-                pdf_link = link_el.get("href", "")
-                break
-        if title:
-            results.append({
-                "doi": entry_id,
-                "title": title,
-                "abstract": abstract,
-                "full_text": abstract,  # ArXiv summary is the full abstract
-                "pdf_path": pdf_link,
-            })
+    all_results: list[dict] = []
+    seen_ids: set[str] = set()
 
-    return {"results": results}
+    for i, term in enumerate(search_terms):
+        if not term or not term.strip():
+            continue
+        if len(all_results) >= max_results:
+            break
+        if i > 0:
+            time.sleep(_get_request_delay())
+
+        query = quote_plus(term.strip())
+        remaining = max_results - len(all_results)
+        url = f"http://{_SOURCE_ENDPOINTS['ArXiv']}?search_query=all:{query}&max_results={remaining}"
+
+        log_external_request(
+            logger=logger, source="ArXiv", query=term,
+            status="requesting", response_time_ms=0,
+        )
+
+        try:
+            xml_text = _http_get(url)
+        except Exception:
+            logger.debug("ArXiv query failed for term: %s", term, exc_info=True)
+            continue
+
+        root = ET.fromstring(xml_text)
+        for entry in root.findall("atom:entry", ns):
+            if len(all_results) >= max_results:
+                break
+            entry_id = entry.findtext("atom:id", default="", namespaces=ns)
+            if entry_id in seen_ids:
+                continue
+            seen_ids.add(entry_id)
+            title = entry.findtext("atom:title", default="", namespaces=ns).strip()
+            abstract = entry.findtext("atom:summary", default="", namespaces=ns).strip()
+            pdf_link = ""
+            for link_el in entry.findall("atom:link", ns):
+                if link_el.get("title") == "pdf":
+                    pdf_link = link_el.get("href", "")
+                    break
+            if title:
+                all_results.append({
+                    "doi": entry_id,
+                    "title": title,
+                    "abstract": abstract,
+                    "full_text": abstract,
+                    "pdf_path": pdf_link,
+                })
+
+    return {"results": all_results}
 
 
 def _query_pubmed(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULTS) -> dict:
-    """Query PubMed via E-utilities (esearch + efetch) and parse XML results.
-
-    Two-step process:
-    1. esearch to get PMIDs matching the query.
-    2. efetch to retrieve article details for those PMIDs.
+    """Query PubMed, one term at a time, and merge results.
 
     Args:
         search_terms: List of search term strings.
+        max_results: Maximum number of results to return.
 
     Returns:
         Dict with ``results`` key containing parsed paper entries.
     """
     base = _SOURCE_ENDPOINTS["PubMed"]
-    # Join multiple terms with OR so PubMed searches for any of them
-    parts = [f"({t})" for t in search_terms if t and t.strip()]
-    query = " OR ".join(parts) if parts else ""
+    all_results: list[dict] = []
+    seen_pmids: set[str] = set()
 
-    # Step 1: esearch to get IDs
-    esearch_params = urlencode({
-        "db": "pubmed", "term": query, "retmax": str(max_results), "retmode": "xml",
-    })
-    esearch_url = f"https://{base}/esearch.fcgi?{esearch_params}"
+    for i, term in enumerate(search_terms):
+        if not term or not term.strip():
+            continue
+        if len(all_results) >= max_results:
+            break
+        if i > 0:
+            time.sleep(_get_request_delay())
 
-    log_external_request(
-        logger=logger, source="PubMed", query=", ".join(search_terms),
-        status="requesting", response_time_ms=0,
-    )
+        remaining = max_results - len(all_results)
+        esearch_params = urlencode({
+            "db": "pubmed", "term": term.strip(),
+            "retmax": str(remaining), "retmode": "xml",
+        })
+        esearch_url = f"https://{base}/esearch.fcgi?{esearch_params}"
 
-    esearch_xml = _http_get(esearch_url)
-    esearch_root = ET.fromstring(esearch_xml)
-    id_list = esearch_root.findall(".//Id")
-    pmids = [id_el.text for id_el in id_list if id_el.text]
+        log_external_request(
+            logger=logger, source="PubMed", query=term,
+            status="requesting", response_time_ms=0,
+        )
 
-    if not pmids:
-        return {"results": []}
+        try:
+            esearch_xml = _http_get(esearch_url)
+        except Exception:
+            logger.debug("PubMed esearch failed for term: %s", term, exc_info=True)
+            continue
 
-    # Step 2: efetch to get details
-    efetch_params = urlencode({
-        "db": "pubmed", "id": ",".join(pmids), "retmode": "xml",
-    })
-    efetch_url = f"https://{base}/efetch.fcgi?{efetch_params}"
-    efetch_xml = _http_get(efetch_url)
+        esearch_root = ET.fromstring(esearch_xml)
+        id_list = esearch_root.findall(".//Id")
+        pmids = [
+            id_el.text for id_el in id_list
+            if id_el.text and id_el.text not in seen_pmids
+        ]
 
-    efetch_root = ET.fromstring(efetch_xml)
-    results: list[dict] = []
-    for article in efetch_root.findall(".//PubmedArticle"):
-        pmid_el = article.find(".//PMID")
-        title_el = article.find(".//ArticleTitle")
-        abstract_el = article.find(".//AbstractText")
+        if not pmids:
+            continue
 
-        pmid = pmid_el.text if pmid_el is not None and pmid_el.text else ""
-        title = title_el.text if title_el is not None and title_el.text else ""
-        abstract = abstract_el.text if abstract_el is not None and abstract_el.text else ""
+        # efetch to get details
+        efetch_params = urlencode({
+            "db": "pubmed", "id": ",".join(pmids), "retmode": "xml",
+        })
+        efetch_url = f"https://{base}/efetch.fcgi?{efetch_params}"
 
-        # Collect all AbstractText elements (structured abstracts have
-        # multiple sections like Background, Methods, Results, etc.)
-        abstract_parts: list[str] = []
-        for abs_el in article.findall(".//AbstractText"):
-            label = abs_el.get("Label", "")
-            text = abs_el.text or ""
-            if label and text:
-                abstract_parts.append(f"{label}: {text}")
-            elif text:
-                abstract_parts.append(text)
-        full_abstract = "\n".join(abstract_parts) if abstract_parts else abstract
+        try:
+            efetch_xml = _http_get(efetch_url)
+        except Exception:
+            logger.debug("PubMed efetch failed for term: %s", term, exc_info=True)
+            continue
 
-        if title:
-            results.append({
-                "doi": pmid,
-                "title": title,
-                "abstract": abstract,
-                "full_text": full_abstract if full_abstract != abstract else None,
-            })
+        efetch_root = ET.fromstring(efetch_xml)
+        for article in efetch_root.findall(".//PubmedArticle"):
+            if len(all_results) >= max_results:
+                break
+            pmid_el = article.find(".//PMID")
+            pmid = pmid_el.text if pmid_el is not None and pmid_el.text else ""
+            if pmid in seen_pmids:
+                continue
+            seen_pmids.add(pmid)
 
-    return {"results": results}
+            title_el = article.find(".//ArticleTitle")
+            title = title_el.text if title_el is not None and title_el.text else ""
+
+            abstract_parts: list[str] = []
+            for abs_el in article.findall(".//AbstractText"):
+                label = abs_el.get("Label", "")
+                text = abs_el.text or ""
+                if label and text:
+                    abstract_parts.append(f"{label}: {text}")
+                elif text:
+                    abstract_parts.append(text)
+            abstract = "\n".join(abstract_parts) if abstract_parts else ""
+
+            if title:
+                all_results.append({
+                    "doi": pmid,
+                    "title": title,
+                    "abstract": abstract,
+                    "full_text": abstract if abstract else None,
+                })
+
+    return {"results": all_results}
 
 
 class _SimpleHTMLTextExtractor(HTMLParser):
@@ -451,73 +485,95 @@ def _query_epo_ops(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESU
             accept_type="xml",
         )
 
-    # Build CQL query: search in title and abstract
-    cql_parts = []
-    for term in search_terms:
-        if term and term.strip():
-            escaped = term.strip().replace('"', '')
-            cql_parts.append(f'ti="{escaped}" OR ab="{escaped}"')
-    cql = " OR ".join(cql_parts) if cql_parts else '""'
+    # Query each term separately and merge results (same pattern as
+    # Google Patents / Google Scholar) to avoid CQL length limits.
+    import re as _re
 
-    log_external_request(
-        logger=logger, source="EPO OPS", query=", ".join(search_terms),
-        status="requesting", response_time_ms=0,
-    )
-
-    response = _epo_ops_client.published_data_search(
-        cql, range_begin=1, range_end=max_results, constituents=["biblio"],
-    )
-
-    # Parse XML response
+    all_results: list[dict] = []
+    seen_numbers: set[str] = set()
     ns = {
         "ops": "http://ops.epo.org",
         "exch": "http://www.epo.org/exchange",
     }
-    root = _ET.fromstring(response.text)
 
-    results: list[dict] = []
-    for doc in root.findall(".//exch:exchange-document", ns):
-        # Patent number
-        country = doc.get("country", "")
-        doc_number = doc.get("doc-number", "")
-        kind = doc.get("kind", "")
-        patent_number = f"{country}{doc_number}{kind}".strip()
+    for i, term in enumerate(search_terms):
+        if not term or not term.strip():
+            continue
+        if len(all_results) >= max_results:
+            break
+        if i > 0:
+            time.sleep(_get_request_delay())
 
-        # Title — prefer English
-        title = ""
-        for title_el in doc.findall(".//exch:invention-title", ns):
-            lang = title_el.get("lang", "")
-            text = title_el.text or ""
-            if lang == "en" and text:
-                title = text.strip()
+        # Sanitize: strip quotes, apostrophes, wildcards for CQL safety
+        cleaned = _re.sub(r'["\'\*]', '', term.strip())
+        cleaned = _re.sub(r'\s+', ' ', cleaned).strip()
+        if not cleaned or len(cleaned) < 3:
+            continue
+        cleaned = cleaned[:100]
+        cql = f'ti="{cleaned}" OR ab="{cleaned}"'
+
+        log_external_request(
+            logger=logger, source="EPO OPS", query=term,
+            status="requesting", response_time_ms=0,
+        )
+
+        try:
+            remaining = max_results - len(all_results)
+            response = _epo_ops_client.published_data_search(
+                cql, range_begin=1, range_end=min(remaining, 10),
+                constituents=["biblio"],
+            )
+        except Exception:
+            logger.debug("EPO OPS query failed for term: %s", term, exc_info=True)
+            continue
+
+        root = _ET.fromstring(response.text)
+
+        for doc in root.findall(".//exch:exchange-document", ns):
+            if len(all_results) >= max_results:
                 break
-            if not title and text:
-                title = text.strip()
 
-        # Abstract — prefer English
-        abstract = ""
-        for abs_el in doc.findall(".//exch:abstract", ns):
-            lang = abs_el.get("lang", "")
-            # Collect all <p> text within the abstract
-            paragraphs = []
-            for p in abs_el.findall(".//exch:p", ns):
-                if p.text:
-                    paragraphs.append(p.text.strip())
-            text = " ".join(paragraphs)
-            if lang == "en" and text:
-                abstract = text
-                break
-            if not abstract and text:
-                abstract = text
+            country = doc.get("country", "")
+            doc_number = doc.get("doc-number", "")
+            kind = doc.get("kind", "")
+            patent_number = f"{country}{doc_number}{kind}".strip()
 
-        if title or patent_number:
-            results.append({
-                "patent_number": patent_number or "UNKNOWN",
-                "title": title or "Untitled",
-                "abstract": abstract,
-            })
+            if patent_number in seen_numbers:
+                continue
+            seen_numbers.add(patent_number)
 
-    return {"results": results[:max_results]}
+            title = ""
+            for title_el in doc.findall(".//exch:invention-title", ns):
+                lang = title_el.get("lang", "")
+                text = title_el.text or ""
+                if lang == "en" and text:
+                    title = text.strip()
+                    break
+                if not title and text:
+                    title = text.strip()
+
+            abstract = ""
+            for abs_el in doc.findall(".//exch:abstract", ns):
+                lang = abs_el.get("lang", "")
+                paragraphs = []
+                for p in abs_el.findall(".//exch:p", ns):
+                    if p.text:
+                        paragraphs.append(p.text.strip())
+                text = " ".join(paragraphs)
+                if lang == "en" and text:
+                    abstract = text
+                    break
+                if not abstract and text:
+                    abstract = text
+
+            if title or patent_number:
+                all_results.append({
+                    "patent_number": patent_number or "UNKNOWN",
+                    "title": title or "Untitled",
+                    "abstract": abstract,
+                })
+
+    return {"results": all_results[:max_results]}
 
 
 # Dispatch table mapping source names to their query functions.
