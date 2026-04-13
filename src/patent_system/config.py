@@ -41,6 +41,7 @@ class AppSettings(BaseSettings):
     # Search
     search_max_results_per_source: int = 10
     search_request_delay_seconds: float = 3.0
+    search_relevance_top_k: int = 200
 
     # EPO Open Patent Services (OPS)
     epo_ops_key: str = ""

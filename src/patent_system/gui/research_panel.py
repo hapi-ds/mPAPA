@@ -39,6 +39,19 @@ _PAPER_SOURCES = {
     name for name, info in _SOURCE_REGISTRY.items() if info["type"] == "paper"
 }
 
+_relevance_top_k: int | None = None
+
+
+def _get_relevance_top_k() -> int:
+    global _relevance_top_k
+    if _relevance_top_k is None:
+        try:
+            from patent_system.config import AppSettings
+            _relevance_top_k = AppSettings().search_relevance_top_k
+        except Exception:
+            _relevance_top_k = 200
+    return _relevance_top_k
+
 # Maximum number of additional search terms (Req 1.5)
 _MAX_SEARCH_TERMS = 20
 
@@ -337,14 +350,18 @@ def create_research_panel(
                     rag_engine.index_with_embeddings(topic_id, rag_docs)
 
                 if _desc_ref:
-                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=50)
+                    n_results = len(_results_ref)
+                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=max(n_results, _get_relevance_top_k()))
                     score_map: dict[str, float] = {}
                     for rr in rag_results:
                         rr_text = rr.get("text", "")
                         rr_score = rr.get("score", 0.0) or 0.0
                         for rec in _results_ref:
                             rec_title = rec.get("title", "")
-                            if rec_title and rec_title in rr_text and rec_title not in score_map:
+                            if not rec_title or rec_title in score_map:
+                                continue
+                            # Match: title appears at the start of the RAG text
+                            if rr_text.startswith(rec_title) or rec_title in rr_text:
                                 score_map[rec_title] = rr_score
                     for rec in _results_ref:
                         title = rec.get("title", "")
@@ -764,16 +781,20 @@ def create_research_panel(
                 if rag_engine is not None and description:
                     search_state["status"] = "Computing relevance…"
                     try:
-                        rag_results = rag_engine.query(topic_id, description, top_k=50)
+                        all_recs = new_results + panel_state["results"]
+                        n_total = len(all_recs)
+                        rag_results = rag_engine.query(topic_id, description, top_k=max(n_total, _get_relevance_top_k()))
                         score_map: dict[str, float] = {}
                         for rr in rag_results:
                             rr_text = rr.get("text", "")
                             rr_score = rr.get("score", 0.0) or 0.0
-                            for rec in new_results + panel_state["results"]:
+                            for rec in all_recs:
                                 rec_title = rec.get("title", "")
-                                if rec_title and rec_title in rr_text and rec_title not in score_map:
+                                if not rec_title or rec_title in score_map:
+                                    continue
+                                if rr_text.startswith(rec_title) or rec_title in rr_text:
                                     score_map[rec_title] = rr_score
-                        for rec in new_results + panel_state["results"]:
+                        for rec in all_recs:
                             title = rec.get("title", "")
                             if title in score_map:
                                 rec["relevance_score"] = round(score_map[title] * 100, 1)
