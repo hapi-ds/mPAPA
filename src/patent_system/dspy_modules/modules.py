@@ -9,11 +9,16 @@ import dspy
 
 from patent_system.config import AppSettings
 from patent_system.dspy_modules.signatures import (
+    AnalyzeLegalClarification,
+    AnalyzeMarketPotential,
+    AnalyzeNovelty,
     DraftClaims,
     DraftDescription,
     InventionInterviewQuestion,
     ReviewConsistency,
     StructureDisclosure,
+    SummarizeDisclosure,
+    SummarizePriorArt,
 )
 
 
@@ -156,4 +161,174 @@ class DraftDescriptionModule(dspy.Module):
             claims=claims,
             prior_art_summary=prior_art_summary,
             invention_disclosure=invention_disclosure,
+        )
+
+
+class MarketPotentialModule(dspy.Module):
+    """Assess economic viability and market potential of an invention."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(AnalyzeMarketPotential)
+        self.model_name = model_name
+
+    def forward(
+        self,
+        invention_disclosure: str,
+        claims_text: str,
+        novelty_analysis: str,
+    ) -> dspy.Prediction:
+        """Assess market potential of the invention.
+
+        Args:
+            invention_disclosure: Structured invention disclosure text.
+            claims_text: Drafted patent claims.
+            novelty_analysis: Novelty analysis against prior art.
+
+        Returns:
+            A DSPy Prediction with a market_assessment field.
+        """
+        return self.predict(
+            invention_disclosure=invention_disclosure,
+            claims_text=claims_text,
+            novelty_analysis=novelty_analysis,
+        )
+
+
+class LegalClarificationModule(dspy.Module):
+    """Assess IP ownership, employment agreements, and prior art conflicts."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(AnalyzeLegalClarification)
+        self.model_name = model_name
+
+    def forward(
+        self,
+        invention_disclosure: str,
+        claims_text: str,
+        prior_art_summary: str,
+        novelty_analysis: str,
+    ) -> dspy.Prediction:
+        """Assess legal and IP ownership aspects.
+
+        Args:
+            invention_disclosure: Structured invention disclosure text.
+            claims_text: Drafted patent claims.
+            prior_art_summary: Summary of prior art search results.
+            novelty_analysis: Novelty analysis against prior art.
+
+        Returns:
+            A DSPy Prediction with a legal_assessment field.
+        """
+        return self.predict(
+            invention_disclosure=invention_disclosure,
+            claims_text=claims_text,
+            prior_art_summary=prior_art_summary,
+            novelty_analysis=novelty_analysis,
+        )
+
+
+class DisclosureSummaryModule(dspy.Module):
+    """Generate a concise summary of all preceding workflow steps."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(SummarizeDisclosure)
+        self.model_name = model_name
+
+    def forward(
+        self,
+        initial_idea: str,
+        claims_text: str,
+        prior_art_summary: str,
+        novelty_analysis: str,
+        consistency_review: str,
+        market_assessment: str,
+        legal_assessment: str,
+    ) -> dspy.Prediction:
+        """Generate a summary of all preceding workflow steps.
+
+        Args:
+            initial_idea: Initial invention idea text.
+            claims_text: Drafted patent claims.
+            prior_art_summary: Summary of prior art search results.
+            novelty_analysis: Novelty analysis against prior art.
+            consistency_review: Claims consistency review feedback.
+            market_assessment: Market potential assessment.
+            legal_assessment: Legal and IP ownership assessment.
+
+        Returns:
+            A DSPy Prediction with a disclosure_summary field.
+        """
+        return self.predict(
+            initial_idea=initial_idea,
+            claims_text=claims_text,
+            prior_art_summary=prior_art_summary,
+            novelty_analysis=novelty_analysis,
+            consistency_review=consistency_review,
+            market_assessment=market_assessment,
+            legal_assessment=legal_assessment,
+        )
+
+
+class NoveltyAnalysisModule(dspy.Module):
+    """Analyze invention novelty against prior art using LLM."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(AnalyzeNovelty)
+        self.model_name = model_name
+
+    def forward(
+        self,
+        invention_disclosure: str,
+        claims_text: str,
+        prior_art_summary: str,
+    ) -> dspy.Prediction:
+        """Analyze novelty of the invention.
+
+        Args:
+            invention_disclosure: Structured invention disclosure text.
+            claims_text: Drafted patent claims.
+            prior_art_summary: Summary of prior art references.
+
+        Returns:
+            A DSPy Prediction with a novelty_assessment field.
+        """
+        return self.predict(
+            invention_disclosure=invention_disclosure,
+            claims_text=claims_text,
+            prior_art_summary=prior_art_summary,
+        )
+
+
+class PriorArtSummaryModule(dspy.Module):
+    """Produce an analytical summary of prior art references using LLM."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(SummarizePriorArt)
+        self.model_name = model_name
+
+    def forward(
+        self,
+        invention_disclosure: str,
+        claims_text: str,
+        prior_art_references: str,
+    ) -> dspy.Prediction:
+        """Summarize prior art references.
+
+        Args:
+            invention_disclosure: The invention disclosure text.
+            claims_text: Drafted patent claims for context.
+            prior_art_references: All references with titles and abstracts.
+
+        Returns:
+            A DSPy Prediction with a prior_art_summary field.
+        """
+        return self.predict(
+            invention_disclosure=invention_disclosure,
+            claims_text=claims_text,
+            prior_art_references=prior_art_references,
         )

@@ -1,17 +1,18 @@
-"""Unit tests for the Novelty Analysis Agent."""
+"""Unit tests for the Novelty Analysis Agent.
+
+The node now uses DSPy NoveltyAnalysisModule (LLM-backed) instead of
+the old deterministic placeholder. Tests mock the DSPy module.
+"""
 
 import logging
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from patent_system.agents.novelty_analysis import (
     _PlaceholderRAG,
-    _analyze_prior_art,
-    _extract_query_from_disclosure,
     novelty_analysis_node,
 )
-from patent_system.db.models import NoveltyAnalysisResult
 
 
 def _make_state(**overrides):
@@ -29,149 +30,100 @@ def _make_state(**overrides):
         "review_approved": False,
         "iteration_count": 0,
         "current_step": "",
+        "market_assessment": "",
+        "legal_assessment": "",
+        "disclosure_summary": "",
+        "prior_art_summary": "",
+        "workflow_step_statuses": {},
     }
     base.update(overrides)
     return base
 
 
 # ---------------------------------------------------------------------------
-# _extract_query_from_disclosure
-# ---------------------------------------------------------------------------
-
-
-class TestExtractQuery:
-    """Tests for _extract_query_from_disclosure."""
-
-    def test_none_disclosure_returns_empty(self):
-        assert _extract_query_from_disclosure(None) == ""
-
-    def test_empty_disclosure_returns_empty(self):
-        assert _extract_query_from_disclosure({}) == ""
-
-    def test_extracts_technical_problem(self):
-        disclosure = {"technical_problem": "Slow data processing"}
-        result = _extract_query_from_disclosure(disclosure)
-        assert "Slow data processing" in result
-
-    def test_extracts_novel_features(self):
-        disclosure = {"novel_features": ["GPU acceleration", "parallel pipeline"]}
-        result = _extract_query_from_disclosure(disclosure)
-        assert "GPU acceleration" in result
-        assert "parallel pipeline" in result
-
-    def test_combines_problem_and_features(self):
-        disclosure = {
-            "technical_problem": "Slow processing",
-            "novel_features": ["Feature A"],
-        }
-        result = _extract_query_from_disclosure(disclosure)
-        assert "Slow processing" in result
-        assert "Feature A" in result
-
-
-# ---------------------------------------------------------------------------
-# _analyze_prior_art
-# ---------------------------------------------------------------------------
-
-
-class TestAnalyzePriorArt:
-    """Tests for _analyze_prior_art."""
-
-    def test_returns_novelty_analysis_result(self):
-        disclosure = {"novel_features": ["quantum error correction"]}
-        result = _analyze_prior_art(disclosure, [])
-        assert isinstance(result, NoveltyAnalysisResult)
-
-    def test_no_disclosure_gives_inconclusive(self):
-        result = _analyze_prior_art(None, [])
-        assert "No novel features identified" in result.novel_aspects[0]
-
-    def test_no_conflicts_all_features_novel(self):
-        disclosure = {"novel_features": ["Feature A", "Feature B"]}
-        result = _analyze_prior_art(disclosure, [])
-        assert "Feature A" in result.novel_aspects
-        assert "Feature B" in result.novel_aspects
-        assert result.potential_conflicts == []
-
-    def test_detects_conflict_with_prior_art(self):
-        disclosure = {"novel_features": ["gpu acceleration"]}
-        prior_art = [{"text": "GPU acceleration is well known", "score": 0.9}]
-        result = _analyze_prior_art(disclosure, prior_art)
-        assert len(result.potential_conflicts) == 1
-        assert result.potential_conflicts[0]["feature"] == "gpu acceleration"
-
-    def test_novel_aspects_exclude_conflicting(self):
-        disclosure = {"novel_features": ["gpu acceleration", "novel cache"]}
-        prior_art = [{"text": "GPU acceleration is well known", "score": 0.9}]
-        result = _analyze_prior_art(disclosure, prior_art)
-        assert "novel cache" in result.novel_aspects
-        assert "gpu acceleration" not in result.novel_aspects
-
-    def test_suggested_claim_scope_with_novel_aspects(self):
-        disclosure = {"novel_features": ["Feature X"]}
-        result = _analyze_prior_art(disclosure, [])
-        assert "Feature X" in result.suggested_claim_scope
-
-    def test_suggested_claim_scope_insufficient_data(self):
-        result = _analyze_prior_art(None, [])
-        assert "Insufficient" in result.suggested_claim_scope
-
-
-# ---------------------------------------------------------------------------
-# novelty_analysis_node
+# novelty_analysis_node (LLM-backed via DSPy)
 # ---------------------------------------------------------------------------
 
 
 class TestNoveltyAnalysisNode:
-    """Tests for novelty_analysis_node."""
+    """Tests for novelty_analysis_node with mocked DSPy module."""
 
-    def test_returns_required_keys(self):
-        state = _make_state()
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_returns_required_keys(self, mock_module_cls):
+        mock_instance = MagicMock()
+        mock_instance.return_value.novelty_assessment = "Novel aspects found."
+        mock_module_cls.return_value = mock_instance
+
+        state = _make_state(
+            invention_disclosure="Test invention",
+            claims_text="Claim 1",
+            prior_art_summary="Some prior art",
+        )
         result = novelty_analysis_node(state)
         assert "novelty_analysis" in result
         assert result["current_step"] == "novelty_analysis"
 
-    def test_novelty_analysis_is_dict(self):
-        state = _make_state()
-        result = novelty_analysis_node(state)
-        assert isinstance(result["novelty_analysis"], dict)
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_novelty_analysis_is_string(self, mock_module_cls):
+        mock_instance = MagicMock()
+        mock_instance.return_value.novelty_assessment = "Detailed analysis."
+        mock_module_cls.return_value = mock_instance
 
-    def test_analysis_has_required_fields(self):
+        state = _make_state(invention_disclosure="Test")
+        result = novelty_analysis_node(state)
+        assert isinstance(result["novelty_analysis"], str)
+        assert result["novelty_analysis"] == "Detailed analysis."
+
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_passes_disclosure_claims_prior_art(self, mock_module_cls):
+        mock_instance = MagicMock()
+        mock_instance.return_value.novelty_assessment = "Assessment"
+        mock_module_cls.return_value = mock_instance
+
         state = _make_state(
-            invention_disclosure={"novel_features": ["Feature A"]}
+            invention_disclosure="My invention",
+            claims_text="Claim 1: A method...",
+            prior_art_summary="Found 5 references.",
         )
-        result = novelty_analysis_node(state)
-        analysis = result["novelty_analysis"]
-        assert "novel_aspects" in analysis
-        assert "potential_conflicts" in analysis
-        assert "suggested_claim_scope" in analysis
+        novelty_analysis_node(state)
 
-    def test_uses_provided_rag_engine(self):
-        mock_rag = MagicMock()
-        mock_rag.query.return_value = [
-            {"text": "Related prior art about Feature A", "score": 0.85}
-        ]
-        disclosure = {
-            "technical_problem": "Problem X",
-            "novel_features": ["feature a"],
-        }
+        mock_instance.assert_called_once()
+        call_kwargs = mock_instance.call_args
+        assert "My invention" in str(call_kwargs)
+        assert "Claim 1: A method..." in str(call_kwargs)
+        assert "Found 5 references." in str(call_kwargs)
+
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_handles_dict_disclosure(self, mock_module_cls):
+        """Dict disclosures are serialized to JSON string."""
+        mock_instance = MagicMock()
+        mock_instance.return_value.novelty_assessment = "Assessment"
+        mock_module_cls.return_value = mock_instance
+
+        disclosure = {"technical_problem": "Slow processing", "novel_features": ["GPU"]}
         state = _make_state(invention_disclosure=disclosure)
-        result = novelty_analysis_node(state, rag_engine=mock_rag)
+        novelty_analysis_node(state)
 
-        mock_rag.query.assert_called_once()
-        call_kwargs = mock_rag.query.call_args
-        assert call_kwargs.kwargs["topic_id"] == 1
+        call_args = str(mock_instance.call_args)
+        assert "Slow processing" in call_args
 
-    def test_uses_placeholder_rag_when_none(self):
-        """No error when rag_engine is None — uses placeholder."""
-        state = _make_state(
-            invention_disclosure={"technical_problem": "Test"}
-        )
-        result = novelty_analysis_node(state, rag_engine=None)
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_handles_none_disclosure(self, mock_module_cls):
+        mock_instance = MagicMock()
+        mock_instance.return_value.novelty_assessment = "No disclosure provided."
+        mock_module_cls.return_value = mock_instance
+
+        state = _make_state(invention_disclosure=None)
+        result = novelty_analysis_node(state)
         assert result["current_step"] == "novelty_analysis"
 
-    def test_logs_agent_invocation(self, caplog):
-        state = _make_state()
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_logs_agent_invocation(self, mock_module_cls, caplog):
+        mock_instance = MagicMock()
+        mock_instance.return_value.novelty_assessment = "Assessment"
+        mock_module_cls.return_value = mock_instance
+
+        state = _make_state(invention_disclosure="Test")
         with caplog.at_level(
             logging.INFO, logger="patent_system.agents.novelty_analysis"
         ):
@@ -181,40 +133,17 @@ class TestNoveltyAnalysisNode:
             "NoveltyAnalysisAgent" in r.message for r in caplog.records
         )
 
-    def test_rag_query_uses_disclosure_content(self):
-        mock_rag = MagicMock()
-        mock_rag.query.return_value = []
-        disclosure = {
-            "technical_problem": "Quantum computing",
-            "novel_features": ["error correction"],
-        }
-        state = _make_state(invention_disclosure=disclosure, topic_id=42)
-        novelty_analysis_node(state, rag_engine=mock_rag)
+    @patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule")
+    def test_wraps_connection_error(self, mock_module_cls):
+        mock_instance = MagicMock()
+        mock_instance.side_effect = ConnectionError("refused")
+        mock_module_cls.return_value = mock_instance
 
-        call_kwargs = mock_rag.query.call_args
-        query_text = call_kwargs.kwargs["query_text"]
-        assert "Quantum computing" in query_text
-        assert "error correction" in query_text
-        assert call_kwargs.kwargs["topic_id"] == 42
+        from patent_system.exceptions import LLMConnectionError
 
-    def test_empty_disclosure_skips_rag_query(self):
-        mock_rag = MagicMock()
-        mock_rag.query.return_value = []
-        state = _make_state(invention_disclosure=None)
-        novelty_analysis_node(state, rag_engine=mock_rag)
-
-        mock_rag.query.assert_not_called()
-
-    def test_result_can_be_validated_as_model(self):
-        """The returned dict can be validated back into NoveltyAnalysisResult."""
-        state = _make_state(
-            invention_disclosure={"novel_features": ["Feature A"]}
-        )
-        result = novelty_analysis_node(state)
-        validated = NoveltyAnalysisResult.model_validate(
-            result["novelty_analysis"]
-        )
-        assert isinstance(validated, NoveltyAnalysisResult)
+        state = _make_state(invention_disclosure="Test")
+        with pytest.raises(LLMConnectionError):
+            novelty_analysis_node(state)
 
 
 class TestPlaceholderRAG:

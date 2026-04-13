@@ -550,6 +550,171 @@ class InventionDisclosureRepository:
             raise
 
 
+WORKFLOW_STEP_ORDER: list[str] = [
+    "initial_idea",
+    "claims_drafting",
+    "prior_art_search",
+    "novelty_analysis",
+    "consistency_review",
+    "market_potential",
+    "legal_clarification",
+    "disclosure_summary",
+    "patent_draft",
+]
+
+VALID_STEP_KEYS: set[str] = set(WORKFLOW_STEP_ORDER)
+
+
+class WorkflowStepRepository:
+    """CRUD for per-topic workflow step content and status.
+
+    Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 12a.3
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def upsert(
+        self, topic_id: int, step_key: str, content: str, status: str
+    ) -> None:
+        """Insert or update a workflow step.
+
+        Validates step_key against VALID_STEP_KEYS and uses INSERT OR REPLACE
+        semantics (the UNIQUE(topic_id, step_key) constraint enables this).
+
+        Args:
+            topic_id: The topic this step belongs to.
+            step_key: One of the nine canonical step keys.
+            content: The step's text content.
+            status: Either "pending" or "completed".
+
+        Raises:
+            ValueError: If step_key is not in VALID_STEP_KEYS.
+            sqlite3.Error: On database failure.
+        """
+        if step_key not in VALID_STEP_KEYS:
+            raise ValueError(
+                f"Invalid step_key {step_key!r}. "
+                f"Must be one of {sorted(VALID_STEP_KEYS)}"
+            )
+        try:
+            self._conn.execute(
+                """INSERT OR REPLACE INTO workflow_steps
+                   (topic_id, step_key, content, status, updated_at)
+                   VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, step_key, content, status),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPSERT", "workflow_steps", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> list[dict]:
+        """Return all steps for a topic, ordered by the canonical step sequence.
+
+        Steps are sorted according to WORKFLOW_STEP_ORDER regardless of
+        insertion order. Only steps that exist in the database are returned.
+
+        Args:
+            topic_id: The topic to query.
+
+        Returns:
+            List of dicts with keys: id, topic_id, step_key, content,
+            status, updated_at — ordered by WORKFLOW_STEP_ORDER.
+        """
+        try:
+            rows = self._conn.execute(
+                """SELECT id, topic_id, step_key, content, status, updated_at
+                   FROM workflow_steps WHERE topic_id = ?""",
+                (topic_id,),
+            ).fetchall()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "workflow_steps", str(exc))
+            raise
+
+        step_order = {key: idx for idx, key in enumerate(WORKFLOW_STEP_ORDER)}
+        results = [
+            {
+                "id": r[0],
+                "topic_id": r[1],
+                "step_key": r[2],
+                "content": r[3],
+                "status": r[4],
+                "updated_at": r[5],
+            }
+            for r in rows
+        ]
+        results.sort(key=lambda d: step_order.get(d["step_key"], len(WORKFLOW_STEP_ORDER)))
+        return results
+
+    def get_step(self, topic_id: int, step_key: str) -> dict | None:
+        """Return a single step record, or None if not found.
+
+        Args:
+            topic_id: The topic to query.
+            step_key: The step key to look up.
+
+        Returns:
+            Dict with keys: id, topic_id, step_key, content, status,
+            updated_at — or None.
+        """
+        try:
+            row = self._conn.execute(
+                """SELECT id, topic_id, step_key, content, status, updated_at
+                   FROM workflow_steps
+                   WHERE topic_id = ? AND step_key = ?""",
+                (topic_id, step_key),
+            ).fetchone()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "workflow_steps", str(exc))
+            raise
+
+        if row is None:
+            return None
+        return {
+            "id": row[0],
+            "topic_id": row[1],
+            "step_key": row[2],
+            "content": row[3],
+            "status": row[4],
+            "updated_at": row[5],
+        }
+
+    def reset_from_step(self, topic_id: int, step_key: str) -> None:
+        """Set status to 'pending' for the given step and all subsequent steps.
+
+        Uses WORKFLOW_STEP_ORDER to determine which steps come at or after
+        the specified step_key.
+
+        Args:
+            topic_id: The topic to reset.
+            step_key: The step from which to reset (inclusive).
+
+        Raises:
+            ValueError: If step_key is not in VALID_STEP_KEYS.
+            sqlite3.Error: On database failure.
+        """
+        if step_key not in VALID_STEP_KEYS:
+            raise ValueError(
+                f"Invalid step_key {step_key!r}. "
+                f"Must be one of {sorted(VALID_STEP_KEYS)}"
+            )
+        idx = WORKFLOW_STEP_ORDER.index(step_key)
+        keys_to_reset = WORKFLOW_STEP_ORDER[idx:]
+        try:
+            placeholders = ",".join("?" for _ in keys_to_reset)
+            self._conn.execute(
+                f"""UPDATE workflow_steps
+                    SET status = 'pending', updated_at = CURRENT_TIMESTAMP
+                    WHERE topic_id = ? AND step_key IN ({placeholders})""",
+                [topic_id, *keys_to_reset],
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "workflow_steps", str(exc))
+            raise
+
+
 class SourcePreferenceRepository:
     """CRUD operations for per-topic source selection preferences.
 

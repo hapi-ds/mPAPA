@@ -42,3 +42,93 @@ class DraftDescription(dspy.Signature):
     prior_art_summary: str = dspy.InputField()
     invention_disclosure: str = dspy.InputField()
     description_text: str = dspy.OutputField()
+
+
+class AnalyzeMarketPotential(dspy.Signature):
+    """Assess economic viability and market potential of an invention."""
+
+    invention_disclosure: str = dspy.InputField(desc="Structured invention disclosure text")
+    claims_text: str = dspy.InputField(desc="Drafted patent claims")
+    novelty_analysis: str = dspy.InputField(desc="Novelty analysis against prior art")
+    market_assessment: str = dspy.OutputField(desc="Market potential and economic viability assessment")
+
+
+class AnalyzeLegalClarification(dspy.Signature):
+    """Assess IP ownership, employment agreement implications, and prior art conflicts.
+
+    Analyze both patent references and scientific paper references to identify
+    potential IP conflicts, freedom-to-operate issues, and licensing considerations.
+    Consider patent claims overlap, publication dates, and jurisdictional aspects.
+    """
+
+    invention_disclosure: str = dspy.InputField(desc="Structured invention disclosure text")
+    claims_text: str = dspy.InputField(desc="Drafted patent claims")
+    prior_art_summary: str = dspy.InputField(
+        desc="Comprehensive summary of all prior art references including patents and scientific papers"
+    )
+    novelty_analysis: str = dspy.InputField(desc="Novelty analysis against prior art")
+    legal_assessment: str = dspy.OutputField(
+        desc="Legal and IP assessment covering: patent landscape conflicts, freedom-to-operate analysis, "
+        "employment/assignment considerations, licensing risks, and recommended actions"
+    )
+
+
+class SummarizeDisclosure(dspy.Signature):
+    """Generate a comprehensive summary of all preceding workflow steps.
+
+    Synthesize the invention idea, drafted claims, prior art analysis
+    (including all patent and scientific paper references), novelty findings,
+    consistency review, market potential, and legal assessment into a
+    cohesive disclosure summary suitable for patent filing preparation.
+    """
+
+    initial_idea: str = dspy.InputField(desc="Initial invention idea text")
+    claims_text: str = dspy.InputField(desc="Drafted patent claims")
+    prior_art_summary: str = dspy.InputField(
+        desc="Comprehensive summary of all prior art including patents and scientific papers"
+    )
+    novelty_analysis: str = dspy.InputField(desc="Novelty analysis against prior art")
+    consistency_review: str = dspy.InputField(desc="Claims consistency review feedback")
+    market_assessment: str = dspy.InputField(desc="Market potential assessment")
+    legal_assessment: str = dspy.InputField(desc="Legal and IP ownership assessment")
+    disclosure_summary: str = dspy.OutputField(
+        desc="Comprehensive disclosure summary covering: invention overview, key claims, "
+        "prior art landscape (all patents and papers), novelty position, consistency status, "
+        "market viability, legal considerations, and recommended next steps"
+    )
+
+
+class AnalyzeNovelty(dspy.Signature):
+    """Analyze the novelty of an invention against prior art references.
+
+    Identify which aspects of the invention are novel, which overlap with
+    existing prior art, and suggest how to scope the patent claims.
+    """
+
+    invention_disclosure: str = dspy.InputField(desc="Structured invention disclosure text")
+    claims_text: str = dspy.InputField(desc="Drafted patent claims")
+    prior_art_summary: str = dspy.InputField(desc="Summary of prior art references found")
+    novelty_assessment: str = dspy.OutputField(
+        desc="Detailed novelty analysis: novel aspects, potential conflicts with prior art, and suggested claim scope"
+    )
+
+
+class SummarizePriorArt(dspy.Signature):
+    """Produce a comprehensive analytical summary of prior art references.
+
+    Analyze ALL provided patent and scientific paper references to identify
+    key themes, technological trends, gaps in the prior art, and how they
+    relate to the invention. Do not simply list references — synthesize
+    findings into a coherent narrative covering the state of the art.
+    """
+
+    invention_disclosure: str = dspy.InputField(desc="The invention disclosure text")
+    claims_text: str = dspy.InputField(desc="Drafted patent claims for context")
+    prior_art_references: str = dspy.InputField(
+        desc="All prior art references (patents and scientific papers) with titles and abstracts"
+    )
+    prior_art_summary: str = dspy.OutputField(
+        desc="Comprehensive analytical summary of the prior art landscape: key themes, "
+        "technological trends, closest prior art to the invention, identified gaps, "
+        "and how the references relate to the claimed invention. Cover ALL references."
+    )

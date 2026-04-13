@@ -151,13 +151,21 @@ class TestNoveltyAnalysisNode:
             invention_disclosure={
                 "technical_problem": "Slow indexing",
                 "novel_features": ["Parallel indexer"],
-            }
+            },
+            claims_text="Claim 1",
+            prior_art_summary="Some prior art",
         )
-        result = novelty_analysis_node(state, rag_engine=mock_rag)
+
+        with patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule") as mock_cls:
+            mock_instance = MagicMock()
+            mock_instance.return_value.novelty_assessment = "Novel: Parallel indexer"
+            mock_cls.return_value = mock_instance
+
+            result = novelty_analysis_node(state, rag_engine=mock_rag)
 
         assert result["current_step"] == "novelty_analysis"
         assert result["novelty_analysis"] is not None
-        assert "novel_aspects" in result["novelty_analysis"]
+        assert isinstance(result["novelty_analysis"], str)
 
     def test_uses_placeholder_rag_when_none(self):
         from patent_system.agents.novelty_analysis import novelty_analysis_node
@@ -166,9 +174,17 @@ class TestNoveltyAnalysisNode:
             invention_disclosure={
                 "technical_problem": "Problem",
                 "novel_features": ["Feature"],
-            }
+            },
+            claims_text="Claim 1",
+            prior_art_summary="",
         )
-        result = novelty_analysis_node(state, rag_engine=None)
+
+        with patch("patent_system.agents.novelty_analysis.NoveltyAnalysisModule") as mock_cls:
+            mock_instance = MagicMock()
+            mock_instance.return_value.novelty_assessment = "Assessment"
+            mock_cls.return_value = mock_instance
+
+            result = novelty_analysis_node(state, rag_engine=None)
 
         assert result["current_step"] == "novelty_analysis"
         assert result["novelty_analysis"] is not None

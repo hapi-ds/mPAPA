@@ -1,16 +1,16 @@
-"""Novelty Analysis Agent for the patent drafting pipeline.
+"""Legal Clarification Agent for the patent drafting pipeline.
 
-Uses the DSPy NoveltyAnalysisModule to compare the invention disclosure
-and drafted claims against prior art to identify novel aspects, potential
-conflicts, and suggested claim scope.
+Uses the DSPy LegalClarificationModule to assess IP ownership,
+employment agreements, and prior art conflicts from the invention
+disclosure, claims text, prior art summary, and novelty analysis.
 
-Requirements: 4.1, 4.2, 4.4, 5.1
+Requirements: 8.1, 8.5
 """
 
 import json
 import logging
 import time
-from typing import Any, Protocol
+from typing import Any
 
 import dspy
 import httpx
@@ -18,32 +18,23 @@ import litellm.exceptions
 import requests.exceptions
 
 from patent_system.agents.state import PatentWorkflowState
-from patent_system.dspy_modules.modules import NoveltyAnalysisModule
+from patent_system.dspy_modules.modules import LegalClarificationModule
 from patent_system.exceptions import LLMConnectionError
 from patent_system.logging_config import log_agent_invocation
 
 logger = logging.getLogger(__name__)
 
 
-class RAGQueryable(Protocol):
-    """Protocol for objects that support RAG queries."""
-
-    def query(
-        self, topic_id: int, query_text: str, top_k: int = 5
-    ) -> list[dict]: ...
-
-
-class _PlaceholderRAG:
-    """Placeholder RAG engine returning empty results."""
-
-    def query(
-        self, topic_id: int, query_text: str, top_k: int = 5
-    ) -> list[dict]:
-        return []
-
-
 def _prepare_text(value: dict | str | None) -> str:
-    """Serialize a state value to a text representation."""
+    """Serialize a state value to a text representation.
+
+    Args:
+        value: A dict, string, or None from the workflow state.
+
+    Returns:
+        A string representation suitable for the DSPy module input.
+        Returns an empty string when value is None.
+    """
     if not value:
         return ""
     if isinstance(value, str):
@@ -54,38 +45,39 @@ def _prepare_text(value: dict | str | None) -> str:
         return str(value)
 
 
-def novelty_analysis_node(
-    state: PatentWorkflowState,
-    rag_engine: RAGQueryable | None = None,
-) -> dict[str, Any]:
-    """Run the Novelty Analysis Agent.
+def legal_clarification_node(state: PatentWorkflowState) -> dict[str, Any]:
+    """Run the Legal Clarification Agent.
 
-    Uses the LLM via DSPy NoveltyAnalysisModule to produce a detailed
-    novelty assessment comparing the invention against prior art.
+    1. Extracts ``invention_disclosure``, ``claims_text``,
+       ``prior_art_summary``, and ``novelty_analysis`` from state.
+    2. Calls ``LegalClarificationModule`` to assess legal aspects.
+    3. Logs agent invocation.
+    4. Returns dict with ``legal_assessment`` and ``current_step``.
 
     Args:
         state: The current workflow state.
-        rag_engine: Optional RAG engine (unused in LLM-based analysis
-            but kept for interface compatibility).
 
     Returns:
-        Dict with ``novelty_analysis`` (assessment string) and
-        ``current_step`` set to ``"novelty_analysis"``.
+        Dict with ``legal_assessment`` (assessment string) and
+        ``current_step`` set to ``"legal_clarification"``.
     """
     start = time.monotonic()
 
     disclosure = state.get("invention_disclosure")
     claims_text = state.get("claims_text", "")
     prior_art_summary = state.get("prior_art_summary", "")
+    novelty = state.get("novelty_analysis")
 
     disclosure_text = _prepare_text(disclosure)
+    novelty_text = _prepare_text(novelty)
 
-    module = NoveltyAnalysisModule()
+    module = LegalClarificationModule()
     try:
         prediction = module(
             invention_disclosure=disclosure_text,
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
+            novelty_analysis=novelty_text,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -103,23 +95,24 @@ def novelty_analysis_node(
             f"LM Studio unreachable at {base_url}: {exc}"
         ) from exc
 
-    novelty_text = prediction.novelty_assessment
+    legal_assessment = prediction.legal_assessment
 
     duration_ms = (time.monotonic() - start) * 1000
 
     log_agent_invocation(
         logger=logger,
-        name="NoveltyAnalysisAgent",
+        name="LegalClarificationAgent",
         input_summary=(
             f"disclosure_length={len(disclosure_text)}, "
             f"claims_length={len(claims_text)}, "
-            f"prior_art_length={len(prior_art_summary)}"
+            f"prior_art_length={len(prior_art_summary)}, "
+            f"novelty_length={len(novelty_text)}"
         ),
-        output_summary=f"assessment_length={len(novelty_text)}",
+        output_summary=f"assessment_length={len(legal_assessment)}",
         duration_ms=duration_ms,
     )
 
     return {
-        "novelty_analysis": novelty_text,
-        "current_step": "novelty_analysis",
+        "legal_assessment": legal_assessment,
+        "current_step": "legal_clarification",
     }

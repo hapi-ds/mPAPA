@@ -21,6 +21,7 @@ from patent_system.db.repository import (
     InventionDisclosureRepository,
     SourcePreferenceRepository,
     TopicRepository,
+    WorkflowStepRepository,
 )
 from patent_system.gui.chat_panel import create_chat_panel
 from patent_system.gui.draft_panel import create_draft_panel
@@ -194,6 +195,7 @@ def create_layout(
         chat_repo = ChatHistoryRepository(conn)
         disclosure_repo = InventionDisclosureRepository(conn)
         source_pref_repo = SourcePreferenceRepository(conn)
+        workflow_step_repo = WorkflowStepRepository(conn)
 
         create_research_panel(
             research_container,
@@ -215,6 +217,7 @@ def create_layout(
         create_draft_panel(
             draft_container, topic_id, workflow=workflow, conn=conn,
             disclosure_repo=disclosure_repo,
+            workflow_step_repo=workflow_step_repo,
         )
 
     # Initial load of topic list (Req 1.3)

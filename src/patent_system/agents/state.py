@@ -25,3 +25,10 @@ class PatentWorkflowState(TypedDict):
     review_approved: bool
     iteration_count: int
     current_step: str
+
+    # New fields for interactive workflow steps
+    market_assessment: str
+    legal_assessment: str
+    disclosure_summary: str
+    prior_art_summary: str
+    workflow_step_statuses: dict  # step_key -> "pending" | "completed"

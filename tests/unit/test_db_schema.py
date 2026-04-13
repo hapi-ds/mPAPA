@@ -19,6 +19,7 @@ EXPECTED_TABLES = {
     "source_preferences",
     "patent_drafts",
     "local_documents",
+    "workflow_steps",
 }
 
 

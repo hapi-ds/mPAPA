@@ -57,6 +57,17 @@ def _derive_search_terms(disclosure: dict | None) -> list[str]:
     if not disclosure:
         return [""]
 
+    # Handle string disclosures (e.g. from the interactive workflow
+    # where _initial_idea_node serializes the dict to a string).
+    if isinstance(disclosure, str):
+        try:
+            import json
+            disclosure = json.loads(disclosure)
+        except (json.JSONDecodeError, TypeError):
+            # Plain text disclosure — use it directly as a search term
+            truncated = disclosure[:200].strip()
+            return [truncated] if truncated else [""]
+
     terms: list[str] = []
 
     # Use novel_features as the primary search terms (short, focused)
@@ -707,8 +718,26 @@ def prior_art_search_node(
         duration_ms=duration_ms,
     )
 
+    # Build a human-readable prior art summary for the interactive workflow
+    summary_parts: list[str] = []
+    summary_parts.append(f"Found {len(all_results)} references from {len(sources_to_query) - len(failed_sources)} sources.")
+    if failed_sources:
+        summary_parts.append(f"Failed sources: {', '.join(failed_sources)}.")
+    for i, record in enumerate(all_results[:20], 1):
+        title = record.get("title", "Untitled")
+        source = record.get("source", "")
+        abstract = (record.get("abstract", "") or "")[:200]
+        entry = f"\n[{i}] {title}"
+        if source:
+            entry += f" ({source})"
+        if abstract:
+            entry += f"\n    {abstract}"
+        summary_parts.append(entry)
+    prior_art_summary = "\n".join(summary_parts)
+
     return {
         "prior_art_results": all_results,
+        "prior_art_summary": prior_art_summary,
         "failed_sources": failed_sources,
         "current_step": "prior_art_search",
     }

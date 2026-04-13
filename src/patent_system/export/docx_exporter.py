@@ -6,11 +6,153 @@ a blank Document when no template is configured or the file is missing.
 """
 
 import logging
+import re
 from pathlib import Path
 
 from docx import Document
+from docx.shared import Pt
 
 logger = logging.getLogger(__name__)
+
+WORKFLOW_STEP_ORDER: list[str] = [
+    "initial_idea",
+    "claims_drafting",
+    "prior_art_search",
+    "novelty_analysis",
+    "consistency_review",
+    "market_potential",
+    "legal_clarification",
+    "disclosure_summary",
+    "patent_draft",
+]
+
+STEP_DISPLAY_NAMES: dict[str, str] = {
+    "initial_idea": "Initial Idea",
+    "claims_drafting": "Claims Drafting",
+    "prior_art_search": "Prior Art Search",
+    "novelty_analysis": "Novelty Analysis",
+    "consistency_review": "Consistency Review",
+    "market_potential": "Market Potential",
+    "legal_clarification": "Legal Clarification",
+    "disclosure_summary": "Disclosure Summary",
+    "patent_draft": "Patent Draft",
+}
+
+
+def _safe_add_heading(doc: Document, text: str, level: int = 1) -> None:
+    """Add a heading, falling back to a bold paragraph if the style is missing."""
+    try:
+        doc.add_heading(text, level=level)
+    except KeyError:
+        p = doc.add_paragraph()
+        run = p.add_run(text)
+        run.bold = True
+        size_map = {1: Pt(18), 2: Pt(16), 3: Pt(14), 4: Pt(12)}
+        run.font.size = size_map.get(level, Pt(14))
+
+
+def _safe_add_list_paragraph(doc: Document, text: str, style: str) -> None:
+    """Add a list paragraph, falling back to a prefixed normal paragraph."""
+    try:
+        p = doc.add_paragraph(style=style)
+    except KeyError:
+        p = doc.add_paragraph()
+        prefix = "• " if "Bullet" in style else ""
+        if prefix:
+            p.add_run(prefix)
+    _add_inline_formatting(p, text)
+
+
+def _add_inline_formatting(paragraph, text: str) -> None:
+    """Parse inline markdown (bold, italic) and add formatted runs to a paragraph.
+
+    Handles: **bold**, *italic*, ***bold+italic***, `code`.
+    """
+    # Pattern matches **bold**, *italic*, `code`, or plain text
+    pattern = re.compile(
+        r'(\*\*\*(.+?)\*\*\*)'   # ***bold italic***
+        r'|(\*\*(.+?)\*\*)'      # **bold**
+        r'|(\*(.+?)\*)'          # *italic*
+        r'|(`(.+?)`)'            # `code`
+        r'|([^*`]+)'             # plain text
+    )
+    for m in pattern.finditer(text):
+        if m.group(2):  # ***bold italic***
+            run = paragraph.add_run(m.group(2))
+            run.bold = True
+            run.italic = True
+        elif m.group(4):  # **bold**
+            run = paragraph.add_run(m.group(4))
+            run.bold = True
+        elif m.group(6):  # *italic*
+            run = paragraph.add_run(m.group(6))
+            run.italic = True
+        elif m.group(8):  # `code`
+            run = paragraph.add_run(m.group(8))
+            run.font.name = "Courier New"
+            run.font.size = Pt(9)
+        elif m.group(9):  # plain text
+            paragraph.add_run(m.group(9))
+
+
+def _add_markdown_content(doc: Document, text: str) -> None:
+    """Convert markdown-formatted text to DOCX paragraphs with formatting.
+
+    Handles: ## headings, **bold**, *italic*, `code`,
+    - bullet lists, 1. numbered lists, blank line paragraph breaks.
+    """
+    lines = text.split("\n")
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+
+        # Skip empty lines (they act as paragraph separators)
+        if not stripped:
+            i += 1
+            continue
+
+        # Headings: ## Heading, ### Heading, etc.
+        heading_match = re.match(r'^(#{2,6})\s+(.+)$', stripped)
+        if heading_match:
+            level = min(len(heading_match.group(1)), 4)
+            _safe_add_heading(doc, heading_match.group(2).strip(), level=level)
+            i += 1
+            continue
+
+        # Bullet list items: - item or * item
+        if re.match(r'^[-*]\s+', stripped):
+            item_text = re.sub(r'^[-*]\s+', '', stripped)
+            _safe_add_list_paragraph(doc, item_text, 'List Bullet')
+            i += 1
+            continue
+
+        # Numbered list items: 1. item, 2. item, etc.
+        num_match = re.match(r'^(\d+)\.\s+', stripped)
+        if num_match:
+            item_text = re.sub(r'^\d+\.\s+', '', stripped)
+            _safe_add_list_paragraph(doc, item_text, 'List Number')
+            i += 1
+            continue
+
+        # Regular paragraph — collect consecutive non-special lines
+        para_lines = [stripped]
+        i += 1
+        while i < len(lines):
+            next_line = lines[i].strip()
+            if not next_line:
+                break
+            if re.match(r'^#{2,6}\s+', next_line):
+                break
+            if re.match(r'^[-*]\s+', next_line):
+                break
+            if re.match(r'^\d+\.\s+', next_line):
+                break
+            para_lines.append(next_line)
+            i += 1
+
+        p = doc.add_paragraph()
+        _add_inline_formatting(p, " ".join(para_lines))
 
 
 def validate_export(claims: str | None, description: str | None) -> bool:
@@ -70,6 +212,7 @@ class DOCXExporter:
         output_path: Path,
         references: list[dict] | None = None,
         chat_history: list[dict] | None = None,
+        workflow_steps: dict[str, str] | None = None,
     ) -> Path:
         """Generate a .docx file with claims, description, references, and chat.
 
@@ -80,6 +223,9 @@ class DOCXExporter:
             references: Optional list of dicts with 'title', 'abstract',
                 'source', and optionally 'patent_number' or 'doi' keys.
             chat_history: Optional list of dicts with 'role' and 'message' keys.
+            workflow_steps: Optional mapping of step_key to content text.
+                Non-empty steps are included as heading-1 sections in canonical
+                order between Description and References.
 
         Returns:
             The output_path where the document was saved.
@@ -91,14 +237,24 @@ class DOCXExporter:
         else:
             doc = Document()
 
-        doc.add_heading("Claims", level=1)
-        doc.add_paragraph(claims)
+        _safe_add_heading(doc, "Claims", level=1)
+        _add_markdown_content(doc, claims)
 
-        doc.add_heading("Description", level=1)
-        doc.add_paragraph(description)
+        _safe_add_heading(doc, "Description", level=1)
+        _add_markdown_content(doc, description)
+
+        if workflow_steps:
+            for step_key in WORKFLOW_STEP_ORDER:
+                if step_key == "patent_draft":
+                    continue
+                content = workflow_steps.get(step_key, "")
+                if content and content.strip():
+                    display_name = STEP_DISPLAY_NAMES.get(step_key, step_key)
+                    _safe_add_heading(doc, display_name, level=1)
+                    _add_markdown_content(doc, content)
 
         if references:
-            doc.add_heading("References", level=1)
+            _safe_add_heading(doc, "References", level=1)
             for i, ref in enumerate(references, 1):
                 title = ref.get("title", "Untitled")
                 source = ref.get("source", "")
@@ -112,7 +268,7 @@ class DOCXExporter:
                 heading_text = f"[{i}] {title}"
                 if source:
                     heading_text += f" ({source})"
-                doc.add_heading(heading_text, level=2)
+                _safe_add_heading(doc, heading_text, level=2)
 
                 # Metadata line: ID, relevance, full text indicator
                 meta_parts: list[str] = []
@@ -152,7 +308,7 @@ class DOCXExporter:
                     doc.add_paragraph(abstract)
 
         if chat_history:
-            doc.add_heading("AI Chat Log", level=1)
+            _safe_add_heading(doc, "AI Chat Log", level=1)
             for msg in chat_history:
                 role = msg.get("role", "unknown")
                 text = msg.get("message", "")

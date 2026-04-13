@@ -157,3 +157,130 @@ class TestDOCXExporterListTemplates:
         exporter = DOCXExporter(template_dir=tmp_path)
         result = exporter.list_available_templates()
         assert result == ["a_template.docx", "z_template.docx"]
+
+
+class TestDOCXExporterWorkflowSteps:
+    """Tests for the workflow_steps parameter in export."""
+
+    def test_export_without_workflow_steps(self, tmp_path: Path) -> None:
+        """Existing behavior is unchanged when workflow_steps is None."""
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        exporter.export("claims", "description", output, workflow_steps=None)
+
+        doc = Document(str(output))
+        headings = [p.text for p in doc.paragraphs if p.style.name.startswith("Heading")]
+        assert headings == ["Claims", "Description"]
+
+    def test_export_with_empty_workflow_steps_dict(self, tmp_path: Path) -> None:
+        """Empty dict produces no extra sections."""
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        exporter.export("claims", "description", output, workflow_steps={})
+
+        doc = Document(str(output))
+        headings = [p.text for p in doc.paragraphs if p.style.name.startswith("Heading")]
+        assert headings == ["Claims", "Description"]
+
+    def test_export_with_workflow_steps_adds_sections(self, tmp_path: Path) -> None:
+        """Non-empty workflow steps appear as heading-1 sections with display names."""
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        steps = {
+            "initial_idea": "My invention idea",
+            "novelty_analysis": "Novelty looks good",
+        }
+        exporter.export("claims", "description", output, workflow_steps=steps)
+
+        doc = Document(str(output))
+        headings = [p.text for p in doc.paragraphs if p.style.name.startswith("Heading")]
+        assert headings == ["Claims", "Description", "Initial Idea", "Novelty Analysis"]
+
+        full_text = "\n".join(p.text for p in doc.paragraphs)
+        assert "My invention idea" in full_text
+        assert "Novelty looks good" in full_text
+
+    def test_export_omits_empty_content_steps(self, tmp_path: Path) -> None:
+        """Steps with empty or whitespace-only content are omitted."""
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        steps = {
+            "initial_idea": "Has content",
+            "claims_drafting": "",
+            "prior_art_search": "   ",
+            "novelty_analysis": "Also has content",
+        }
+        exporter.export("claims", "description", output, workflow_steps=steps)
+
+        doc = Document(str(output))
+        headings = [p.text for p in doc.paragraphs if p.style.name.startswith("Heading")]
+        assert headings == ["Claims", "Description", "Initial Idea", "Novelty Analysis"]
+
+    def test_export_workflow_steps_in_canonical_order(self, tmp_path: Path) -> None:
+        """Steps appear in canonical order regardless of dict insertion order."""
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        # Insert in reverse order
+        steps = {
+            "patent_draft": "Draft content",
+            "market_potential": "Market content",
+            "initial_idea": "Idea content",
+        }
+        exporter.export("claims", "description", output, workflow_steps=steps)
+
+        doc = Document(str(output))
+        headings = [p.text for p in doc.paragraphs if p.style.name.startswith("Heading")]
+        assert headings == [
+            "Claims", "Description",
+            "Initial Idea", "Market Potential",
+        ]
+
+    def test_export_workflow_steps_before_references_and_chat(self, tmp_path: Path) -> None:
+        """Workflow steps appear after Description but before References and AI Chat Log."""
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        steps = {"consistency_review": "Review notes"}
+        refs = [{"title": "Ref 1", "abstract": "Abstract 1"}]
+        chat = [{"role": "user", "message": "Hello"}]
+
+        exporter.export(
+            "claims", "description", output,
+            references=refs, chat_history=chat, workflow_steps=steps,
+        )
+
+        doc = Document(str(output))
+        headings = [p.text for p in doc.paragraphs if p.style.name.startswith("Heading")]
+        # Heading 1 sections only
+        h1_headings = [
+            p.text for p in doc.paragraphs if p.style.name == "Heading 1"
+        ]
+        assert h1_headings == [
+            "Claims", "Description", "Consistency Review",
+            "References", "AI Chat Log",
+        ]
+
+    def test_export_all_workflow_steps(self, tmp_path: Path) -> None:
+        """All nine steps with content appear in canonical order."""
+        from patent_system.export.docx_exporter import WORKFLOW_STEP_ORDER, STEP_DISPLAY_NAMES
+
+        exporter = DOCXExporter(template_dir=tmp_path, template_name=None)
+        output = tmp_path / "output.docx"
+
+        steps = {key: f"Content for {key}" for key in WORKFLOW_STEP_ORDER}
+        exporter.export("claims", "description", output, workflow_steps=steps)
+
+        doc = Document(str(output))
+        h1_headings = [
+            p.text for p in doc.paragraphs if p.style.name == "Heading 1"
+        ]
+        expected = ["Claims", "Description"] + [
+            STEP_DISPLAY_NAMES[k] for k in WORKFLOW_STEP_ORDER
+            if k != "patent_draft"
+        ]
+        assert h1_headings == expected

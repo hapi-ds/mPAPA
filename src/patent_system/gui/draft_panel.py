@@ -1,16 +1,18 @@
 """Patent Draft panel UI for the Patent Analysis & Drafting System.
 
-Provides the "Generate Patent Draft" button, expandable sections for
-claims and description editors, an "Export to DOCX" button with
-validation, a workflow step indicator, and an invention disclosure
-review/edit placeholder.
+Provides a nine-step interactive workflow with progress indicator,
+expandable step sections, "Continue to Next Step" / "Rerun this Step"
+buttons, and DOCX export.
 
-Requirements: 16.6, 5.3, 5.4, 7.3, 7.4, 10.1, 10.6, 9.4, 2.5, 4.3
+Requirements: 2.1–2.4, 3.1–3.5, 4.1–4.4, 5.1–5.5, 6.1–6.4,
+              7.1–7.5, 8.1–8.5, 9.1–9.5, 10.1–10.4, 11.1–11.5,
+              12.1–12.4, 12a.1–12a.5, 13.1–13.3
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import sqlite3
 from typing import TYPE_CHECKING, Any
@@ -25,6 +27,8 @@ from patent_system.db.repository import (
     PatentRepository,
     ResearchSessionRepository,
     ScientificPaperRepository,
+    WorkflowStepRepository,
+    WORKFLOW_STEP_ORDER,
 )
 
 if TYPE_CHECKING:
@@ -32,25 +36,34 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Workflow steps displayed in the step indicator (Req 9.4)
+# Nine workflow steps displayed in the progress indicator (Req 11.1)
 WORKFLOW_STEPS: list[str] = [
-    "Disclosure",
+    "Initial Idea",
+    "Claims Drafting",
     "Prior Art Search",
     "Novelty Analysis",
-    "Claims Drafting",
     "Consistency Review",
-    "Description Drafting",
+    "Market Potential",
+    "Legal Clarification",
+    "Disclosure Summary",
+    "Patent Draft",
 ]
 
 # Map node current_step values to WORKFLOW_STEPS display names
 _STEP_DISPLAY_NAMES: dict[str, str] = {
-    "disclosure": "Disclosure",
+    "initial_idea": "Initial Idea",
+    "claims_drafting": "Claims Drafting",
     "prior_art_search": "Prior Art Search",
     "novelty_analysis": "Novelty Analysis",
-    "claims_drafting": "Claims Drafting",
     "consistency_review": "Consistency Review",
-    "description_drafting": "Description Drafting",
+    "market_potential": "Market Potential",
+    "legal_clarification": "Legal Clarification",
+    "disclosure_summary": "Disclosure Summary",
+    "patent_draft": "Patent Draft",
 }
+
+# Reverse mapping: display name → step key
+_DISPLAY_NAME_TO_KEY: dict[str, str] = {v: k for k, v in _STEP_DISPLAY_NAMES.items()}
 
 
 def can_export(claims: str, description: str) -> bool:
@@ -71,6 +84,22 @@ def can_export(claims: str, description: str) -> bool:
     return True
 
 
+def _has_content(text: str | None) -> bool:
+    """Return True if *text* contains at least one non-whitespace character."""
+    return bool(text and text.strip())
+
+
+def _find_active_step(completed_keys: set[str]) -> str | None:
+    """Return the first step key not in *completed_keys*, or None if all done.
+
+    Validates: Requirement 12.3
+    """
+    for key in WORKFLOW_STEP_ORDER:
+        if key not in completed_keys:
+            return key
+    return None
+
+
 def create_draft_panel(
     container: Any,
     topic_id: int,
@@ -78,36 +107,47 @@ def create_draft_panel(
     workflow: CompiledStateGraph | None = None,
     conn: sqlite3.Connection | None = None,
     disclosure_repo: InventionDisclosureRepository | None = None,
+    workflow_step_repo: WorkflowStepRepository | None = None,
 ) -> None:
-    """Populate *container* with the Patent Draft panel UI components.
-
-    The panel contains:
-    - A workflow step indicator showing the current pipeline stage (Req 9.4)
-    - An invention disclosure review/edit placeholder (Req 2.5)
-    - A "Generate Patent Draft" button (Req 16.6)
-    - Expandable sections for claims editor and description editor
-      (Req 5.3, 7.3)
-    - An "Export to DOCX" button with validation (Req 10.1, 10.6)
-
-    The actual agent invocations and database persistence will be wired
-    in task 12.1.  For now the generate button logs the action and the
-    editors hold local state.
+    """Populate *container* with the nine-step interactive Patent Draft UI.
 
     Args:
-        container: A NiceGUI container element (e.g. ``ui.column``) to
-            populate.  The container is cleared before adding content.
-        topic_id: The active topic ID whose patent draft is shown.
+        container: A NiceGUI container element (e.g. ``ui.column``).
+        topic_id: The active topic ID.
+        workflow: Compiled LangGraph workflow (9-node chain with interrupts).
+        conn: SQLite connection for loading prior art / drafts.
+        disclosure_repo: Repository for invention disclosures.
+        workflow_step_repo: Repository for per-step persistence.
     """
     container.clear()
 
-    # Panel-local state
+    # ------------------------------------------------------------------
+    # Panel-local mutable state
+    # ------------------------------------------------------------------
     panel_state: dict[str, Any] = {
         "claims": "",
         "description": "",
-        "current_step": "Disclosure",
+        "step_contents": {},      # step_key -> str
+        "completed_keys": set(),  # step keys with status "completed"
+        "active_key": None,       # current active step key
+        "running": False,         # True while an LLM step is executing
     }
 
-    # Load saved draft from DB
+    # ------------------------------------------------------------------
+    # Load saved workflow steps from DB (Req 12.1)
+    # ------------------------------------------------------------------
+    if workflow_step_repo is not None:
+        try:
+            saved_steps = workflow_step_repo.get_by_topic(topic_id)
+            for step in saved_steps:
+                key = step["step_key"]
+                panel_state["step_contents"][key] = step["content"]
+                if step["status"] == "completed":
+                    panel_state["completed_keys"].add(key)
+        except Exception:
+            logger.exception("Failed to load workflow steps for topic %d", topic_id)
+
+    # Load saved draft for claims/description
     draft_repo: PatentDraftRepository | None = None
     if conn is not None:
         draft_repo = PatentDraftRepository(conn)
@@ -119,263 +159,304 @@ def create_draft_panel(
         except Exception:
             logger.exception("Failed to load saved draft for topic %d", topic_id)
 
+    # Determine active step
+    panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
+
+    # ------------------------------------------------------------------
+    # Build UI
+    # ------------------------------------------------------------------
     with container:
         ui.label("Patent Draft").classes("text-h6 q-mb-sm")
 
-        # --- Workflow step indicator (Req 9.4) ---
-        ui.label("Workflow Progress").classes("text-subtitle2 q-mt-sm")
-
-        # Progress status label — shows current step in real time
-        progress_label = ui.label("").classes("text-caption text-grey q-mb-xs")
-        progress_bar = ui.linear_progress(value=0, show_value=False).classes("q-mb-sm")
-        progress_bar.set_visibility(False)
+        # --- Spinner for running steps (inline, near the steps) ---
         spinner = ui.spinner("dots", size="lg", color="primary").classes("q-mb-sm")
         spinner.set_visibility(False)
 
-        # Step completion chips — one per workflow step
-        step_chips_container = ui.row().classes("w-full gap-1 q-mb-md flex-wrap")
-        step_chip_elements: dict[str, Any] = {}
-        with step_chips_container:
-            for step_name in WORKFLOW_STEPS:
-                chip = ui.chip(step_name, icon="radio_button_unchecked", color="grey-4").props("outline")
-                step_chip_elements[step_name] = chip
+        # ------------------------------------------------------------------
+        # Helper: load local prior art references from DB (no network)
+        # ------------------------------------------------------------------
+        def _load_local_prior_art() -> list[dict]:
+            """Load patent and paper references from the local SQLite DB.
 
-        def _mark_step_done(step_display_name: str) -> None:
-            """Mark a step chip as completed."""
-            chip = step_chip_elements.get(step_display_name)
-            if chip is not None:
-                chip._props["icon"] = "check_circle"
-                chip._props["color"] = "positive"
-                chip.update()
+            Returns a list of dicts with title, abstract, source, etc.
+            Makes NO external network requests (Req 4.2).
+            """
+            results: list[dict] = []
+            if conn is None:
+                return results
+            try:
+                session_repo = ResearchSessionRepository(conn)
+                patent_repo = PatentRepository(conn)
+                paper_repo = ScientificPaperRepository(conn)
+                sessions = session_repo.get_by_topic(topic_id)
+                for session in sessions:
+                    for rec in patent_repo.get_by_session(session["id"]):
+                        results.append({
+                            "title": rec.title,
+                            "abstract": rec.abstract or "",
+                            "source": rec.source,
+                            "patent_number": rec.patent_number,
+                            "type": "patent",
+                        })
+                    for rec in paper_repo.get_by_session(session["id"]):
+                        results.append({
+                            "title": rec.title,
+                            "abstract": rec.abstract or "",
+                            "source": rec.source,
+                            "doi": rec.doi,
+                            "type": "paper",
+                        })
+            except Exception:
+                logger.exception("Failed to load local prior art for topic %d", topic_id)
+            return results
 
-        def _mark_step_active(step_display_name: str) -> None:
-            """Mark a step chip as currently running."""
-            chip = step_chip_elements.get(step_display_name)
-            if chip is not None:
-                chip._props["icon"] = "hourglass_top"
-                chip._props["color"] = "primary"
-                chip.update()
+        # ------------------------------------------------------------------
+        # Helper: build initial LangGraph state from prior step contents
+        # ------------------------------------------------------------------
+        def _build_initial_state(from_step_key: str | None = None) -> PatentWorkflowState:
+            """Build a PatentWorkflowState pre-populated from saved step contents.
 
-        # --- Instruction banner (hidden by default) ---
-        instruction_card = ui.card().classes("w-full q-mb-sm bg-yellow-1")
-        instruction_card.set_visibility(False)
-        with instruction_card:
-            with ui.row().classes("items-center gap-2"):
-                ui.icon("info", color="warning").classes("text-h5")
-                instruction_text = ui.label("").classes("text-body2")
+            If *from_step_key* is given, only steps before it are loaded.
+            """
+            sc = panel_state["step_contents"]
 
-        # --- Invention disclosure review (Req 2.5, 4.3) ---
-        with ui.expansion(
-            "Invention Disclosure Review",
-            icon="description",
-        ).classes("w-full q-mb-sm") as disclosure_expansion:
-            # Load and display actual disclosure data
-            _disc = None
-            if disclosure_repo is not None:
-                try:
-                    _disc = disclosure_repo.get_by_topic(topic_id)
-                except Exception:
-                    pass
-
-            if _disc is not None:
-                ui.label("Primary Description").classes("text-subtitle2 q-mt-sm")
-                ui.label(_disc["primary_description"]).classes(
-                    "text-body2 q-pa-sm bg-grey-1 rounded"
-                ).style("white-space: pre-wrap;")
-                terms = _disc.get("search_terms", [])
-                if terms:
-                    ui.label("Search Terms").classes("text-subtitle2 q-mt-sm")
-                    with ui.row().classes("gap-1 flex-wrap"):
-                        for term in terms:
-                            ui.chip(term, color="primary").props("outline dense")
+            # Build disclosure dict from initial_idea text
+            idea_text = sc.get("initial_idea", "")
+            disclosure: dict[str, Any] | str
+            if idea_text:
+                disclosure = idea_text
             else:
-                ui.label(
-                    "No invention disclosure saved yet. "
-                    "Go to the Research tab to enter your invention description first."
-                ).classes("text-grey q-pa-sm")
+                disclosure = None  # type: ignore[assignment]
 
-        # --- Generate Patent Draft button (Req 16.6) ---
-        async def _on_generate() -> None:
-            """Invoke the compiled workflow with streaming progress updates."""
-            if workflow is None:
-                ui.notify(
-                    "Workflow not available — please restart the application.",
-                    type="negative",
-                )
-                return
+            # Load prior art from DB for implementation_details
+            if conn is not None and disclosure is None:
+                if disclosure_repo is not None:
+                    try:
+                        saved = disclosure_repo.get_by_topic(topic_id)
+                        if saved:
+                            disclosure = json.dumps({
+                                "technical_problem": saved["primary_description"],
+                                "novel_features": saved.get("search_terms", []),
+                                "implementation_details": "",
+                                "potential_variations": [],
+                            })
+                    except Exception:
+                        pass
 
-            logger.info("Generate Patent Draft clicked for topic %d", topic_id)
-
-            # Hide any previous instructions
-            instruction_card.set_visibility(False)
-
-            # Load stored disclosure (Req 7.1, 7.2, 7.4)
-            saved_disclosure: dict | None = None
-            if disclosure_repo is not None:
-                try:
-                    saved_disclosure = disclosure_repo.get_by_topic(topic_id)
-                except Exception:
-                    logger.exception("Failed to load disclosure for topic %d", topic_id)
-
-            if saved_disclosure is None:
-                ui.notify(
-                    "No invention disclosure found. Please complete the Research tab first.",
-                    type="warning",
-                    close_button=True,
-                )
-                return
-
-            # Show progress
-            progress_label.set_text("Starting patent generation…")
-            progress_bar.set_visibility(True)
-            progress_bar.set_value(0)
-            spinner.set_visibility(True)
-            generate_button.disable()
-
-            # Build invention disclosure from stored data
-            disclosure: dict[str, Any] = {
-                "technical_problem": saved_disclosure["primary_description"],
-                "novel_features": saved_disclosure.get("search_terms", []),
-                "implementation_details": "",
-                "potential_variations": [],
-            }
-
-            # Concatenate abstracts and full texts from both tables (Req 7.3)
-            if conn is not None:
-                try:
-                    session_repo = ResearchSessionRepository(conn)
-                    patent_repo = PatentRepository(conn)
-                    paper_repo = ScientificPaperRepository(conn)
-                    from patent_system.db.repository import LocalDocumentRepository
-                    local_doc_repo = LocalDocumentRepository(conn)
-                    sessions = session_repo.get_by_topic(topic_id)
-                    text_parts: list[str] = []
-                    for session in sessions:
-                        for rec in patent_repo.get_by_session(session["id"]):
-                            if rec.abstract:
-                                text_parts.append(rec.abstract)
-                            if rec.full_text:
-                                text_parts.append(rec.full_text)
-                        for rec in paper_repo.get_by_session(session["id"]):
-                            if rec.abstract:
-                                text_parts.append(rec.abstract)
-                            if rec.full_text:
-                                text_parts.append(rec.full_text)
-                    # Include local documents
-                    for doc in local_doc_repo.get_by_topic(topic_id):
-                        if doc["content"]:
-                            text_parts.append(doc["content"][:5000])
-                    if text_parts:
-                        disclosure["implementation_details"] = "\n".join(text_parts)
-                except Exception:
-                    logger.exception("Failed to load prior art for topic %d", topic_id)
-
-            initial_state: PatentWorkflowState = {
+            state: PatentWorkflowState = {
                 "topic_id": topic_id,
                 "invention_disclosure": disclosure,
                 "interview_messages": [],
-                "prior_art_results": [],
+                "prior_art_results": _load_local_prior_art(),
                 "failed_sources": [],
                 "novelty_analysis": None,
-                "claims_text": "",
-                "description_text": "",
+                "claims_text": sc.get("claims_drafting", "") or panel_state["claims"],
+                "description_text": sc.get("patent_draft", "") or panel_state["description"],
                 "review_feedback": "",
                 "review_approved": False,
                 "iteration_count": 0,
-                "current_step": "disclosure",
+                "current_step": from_step_key or "initial_idea",
+                "market_assessment": sc.get("market_potential", ""),
+                "legal_assessment": sc.get("legal_clarification", ""),
+                "disclosure_summary": sc.get("disclosure_summary", ""),
+                "prior_art_summary": sc.get("prior_art_search", ""),
+                "workflow_step_statuses": {},
             }
+            return state
+
+        # ------------------------------------------------------------------
+        # Helper: persist step content to DB
+        # ------------------------------------------------------------------
+        def _persist_step(step_key: str, content: str, status: str = "completed") -> None:
+            """Save step content via WorkflowStepRepository. Shows notification on failure."""
+            if workflow_step_repo is None:
+                return
+            try:
+                workflow_step_repo.upsert(topic_id, step_key, content, status)
+            except Exception:
+                logger.exception("Failed to save step %s for topic %d", step_key, topic_id)
+                ui.notify(
+                    f"Could not save step '{_STEP_DISPLAY_NAMES.get(step_key, step_key)}' — your edits are preserved in memory.",
+                    type="warning",
+                )
+
+        def _save_draft() -> None:
+            """Persist current claims and description to the patent_drafts table."""
+            if draft_repo is not None:
+                try:
+                    draft_repo.upsert(topic_id, panel_state["claims"], panel_state["description"])
+                except Exception:
+                    logger.debug("Failed to auto-save draft for topic %d", topic_id, exc_info=True)
+
+        # ------------------------------------------------------------------
+        # Core: stream one graph segment and process its events
+        # ------------------------------------------------------------------
+        async def _stream_once(stream_input, config: dict) -> None:
+            """Run one workflow.stream() call and process events until it ends."""
+            import queue as _queue_mod
+
+            event_queue: _queue_mod.Queue = _queue_mod.Queue()
+            stream_error: list[Exception] = []
+
+            def _run_stream() -> None:
+                try:
+                    for event in workflow.stream(stream_input, config):  # type: ignore[union-attr]
+                        event_queue.put(event)
+                except Exception as exc:
+                    stream_error.append(exc)
+                finally:
+                    event_queue.put(None)
+
+            loop = asyncio.get_event_loop()
+            loop.run_in_executor(None, _run_stream)
+
+            while True:
+                event = await asyncio.to_thread(event_queue.get)
+                if event is None:
+                    break
+
+                for node_name, node_output in event.items():
+                    if node_name == "__end__":
+                        continue
+                    if not isinstance(node_output, dict):
+                        continue
+
+                    step_key = node_output.get("current_step", node_name)
+                    # Map legacy node names to canonical step keys
+                    if step_key == "description_drafting":
+                        step_key = "patent_draft"
+                    display_name = _STEP_DISPLAY_NAMES.get(step_key, step_key)
+
+                    # Extract content produced by this node
+                    content = ""
+                    if step_key == "initial_idea":
+                        disc = node_output.get("invention_disclosure", "")
+                        content = disc if isinstance(disc, str) else json.dumps(disc, default=str)
+                    elif step_key == "claims_drafting":
+                        content = node_output.get("claims_text", "")
+                    elif step_key == "prior_art_search":
+                        # prior_art_search_node returns prior_art_summary (string)
+                        content = node_output.get("prior_art_summary", "")
+                        if not content:
+                            # Fallback: build summary from prior_art_results list
+                            results = node_output.get("prior_art_results", [])
+                            if results:
+                                content = f"Found {len(results)} references.\n"
+                                for idx, r in enumerate(results[:20], 1):
+                                    content += f"[{idx}] {r.get('title', 'Untitled')}\n"
+                    elif step_key == "novelty_analysis":
+                        na = node_output.get("novelty_analysis")
+                        if isinstance(na, str):
+                            content = na
+                        elif isinstance(na, dict):
+                            content = json.dumps(na, indent=2, default=str)
+                        elif na:
+                            content = str(na)
+                    elif step_key == "consistency_review":
+                        content = node_output.get("review_feedback", "")
+                    elif step_key == "market_potential":
+                        content = node_output.get("market_assessment", "")
+                    elif step_key == "legal_clarification":
+                        content = node_output.get("legal_assessment", "")
+                    elif step_key == "disclosure_summary":
+                        content = node_output.get("disclosure_summary", "")
+                    elif step_key == "patent_draft":
+                        content = node_output.get("description_text", "")
+                        claims = node_output.get("claims_text", "")
+                        if claims:
+                            panel_state["claims"] = claims
+                            if claims_textarea_ref.get("el") is not None:
+                                claims_textarea_ref["el"].value = claims
+
+                    # Store in panel state (content only — do NOT overwrite
+                    # a step that's already marked completed)
+                    if content:
+                        panel_state["step_contents"][step_key] = content
+                        if step_key not in panel_state["completed_keys"]:
+                            _persist_step(step_key, content, "pending")
+
+                    # Update the textarea for this step
+                    ta = step_textareas.get(step_key)
+                    if ta is not None and content:
+                        ta.value = content
+
+                    _refresh_chips()
+
+            if stream_error:
+                raise stream_error[0]
+
+        # ------------------------------------------------------------------
+        # Core workflow execution: run from a given step key
+        # ------------------------------------------------------------------
+        async def _run_workflow_from(start_key: str, *, force_fresh: bool = False) -> None:
+            """Execute the LangGraph workflow starting from *start_key*.
+
+            Streams events, updates step textareas, persists results.
+
+            Args:
+                start_key: The step key to start from.
+                force_fresh: If True, always start a new graph run
+                    (ignore any existing checkpoint).
+            """
+            if workflow is None:
+                ui.notify("Workflow not available — please restart the application.", type="negative")
+                return
+
+            if panel_state["running"]:
+                return
+            panel_state["running"] = True
+
+            spinner.set_visibility(True)
+            _refresh_chips()  # Shows "Running: ..." in footer
 
             config = {"configurable": {"thread_id": f"topic-{topic_id}"}}
 
-            # Check if there's an existing interrupted checkpoint to resume
-            existing_snapshot = await asyncio.to_thread(workflow.get_state, config)
-            is_resuming = (
-                existing_snapshot is not None
-                and hasattr(existing_snapshot, "next")
-                and existing_snapshot.next
-            )
-
-            if is_resuming:
-                # Resume from interrupt — update claims from editor if edited
-                logger.info("Resuming workflow from interrupt for topic %d", topic_id)
-                progress_label.set_text("Resuming workflow…")
-
-                # Inject edited claims into the checkpoint before resuming
-                if panel_state["claims"]:
-                    await asyncio.to_thread(
-                        workflow.update_state,
-                        config,
-                        {"claims_text": panel_state["claims"], "review_approved": True},
-                    )
-
-                stream_input = None  # None = resume from checkpoint
+            if force_fresh:
+                # Discard any stale checkpoint so we start clean
+                stream_input: Any = _build_initial_state(start_key)
             else:
-                stream_input = initial_state
+                # Check for existing interrupted checkpoint to resume
+                existing_snapshot = await asyncio.to_thread(workflow.get_state, config)
+                is_resuming = (
+                    existing_snapshot is not None
+                    and hasattr(existing_snapshot, "next")
+                    and existing_snapshot.next
+                )
 
-            total_steps = len(WORKFLOW_STEPS)
+                if is_resuming:
+                    # Inject user edits into the checkpoint state before resuming.
+                    # This ensures downstream nodes see the user's changes.
+                    sc = panel_state["step_contents"]
+                    state_updates: dict[str, Any] = {}
+                    if sc.get("initial_idea"):
+                        state_updates["invention_disclosure"] = sc["initial_idea"]
+                    if sc.get("claims_drafting"):
+                        state_updates["claims_text"] = sc["claims_drafting"]
+                    if sc.get("prior_art_search"):
+                        state_updates["prior_art_summary"] = sc["prior_art_search"]
+                    if sc.get("novelty_analysis"):
+                        state_updates["novelty_analysis"] = sc["novelty_analysis"]
+                    if sc.get("consistency_review"):
+                        state_updates["review_feedback"] = sc["consistency_review"]
+                    if sc.get("market_potential"):
+                        state_updates["market_assessment"] = sc["market_potential"]
+                    if sc.get("legal_clarification"):
+                        state_updates["legal_assessment"] = sc["legal_clarification"]
+                    if sc.get("disclosure_summary"):
+                        state_updates["disclosure_summary"] = sc["disclosure_summary"]
+                    if state_updates:
+                        await asyncio.to_thread(
+                            workflow.update_state, config, state_updates
+                        )
+                    stream_input = None  # resume from checkpoint
+                else:
+                    stream_input = _build_initial_state(start_key)
 
             try:
-                import queue
+                # First stream call
+                await _stream_once(stream_input, config)
 
-                event_queue: queue.Queue = queue.Queue()
-                stream_error: list[Exception] = []
-
-                def _run_stream() -> None:
-                    """Run workflow.stream in a thread, pushing events to queue."""
-                    try:
-                        for event in workflow.stream(stream_input, config):
-                            event_queue.put(event)
-                    except Exception as exc:
-                        stream_error.append(exc)
-                    finally:
-                        event_queue.put(None)  # sentinel
-
-                # Start streaming in background
-                loop = asyncio.get_event_loop()
-                stream_future = loop.run_in_executor(None, _run_stream)
-
-                # Process events as they arrive, updating UI in real time
-                while True:
-                    # Poll the queue without blocking the event loop
-                    event = await asyncio.to_thread(event_queue.get)
-                    if event is None:
-                        break  # stream finished
-
-                    for node_name, node_output in event.items():
-                        if node_name == "__end__":
-                            continue
-                        step_key = node_output.get("current_step", node_name) if isinstance(node_output, dict) else node_name
-                        display_name = _STEP_DISPLAY_NAMES.get(step_key, step_key)
-                        progress_label.set_text(f"Running: {display_name}…")
-
-                        if display_name in WORKFLOW_STEPS:
-                            step_idx = WORKFLOW_STEPS.index(display_name)
-                            progress_bar.set_value((step_idx + 1) / total_steps)
-                            # Mark previous steps as done, current as active
-                            for i, sn in enumerate(WORKFLOW_STEPS):
-                                if i < step_idx:
-                                    _mark_step_done(sn)
-                                elif i == step_idx:
-                                    _mark_step_done(sn)
-
-                        # Extract claims/description as they become available
-                        if isinstance(node_output, dict):
-                            if node_output.get("claims_text"):
-                                set_claims(node_output["claims_text"])
-                                claims_expansion.open()
-                            if node_output.get("description_text"):
-                                set_description(node_output["description_text"])
-                                description_expansion.open()
-
-                # Wait for the thread to finish
-                await stream_future
-
-                # Re-raise any error from the stream thread
-                if stream_error:
-                    raise stream_error[0]
-
-                # Check if the workflow was interrupted for human review
-                # (stream() doesn't raise GraphInterrupt — it just stops)
+                # Check if interrupted
                 snapshot = await asyncio.to_thread(workflow.get_state, config)
                 is_interrupted = (
                     snapshot is not None
@@ -384,137 +465,545 @@ def create_draft_panel(
                 )
 
                 if is_interrupted:
-                    # Human review needed
-                    logger.info("Workflow paused for human review on topic %d", topic_id)
-                    spinner.set_visibility(False)
-
-                    if snapshot.values:
-                        checkpoint_claims = snapshot.values.get("claims_text", "")
-                        if checkpoint_claims:
-                            set_claims(checkpoint_claims)
-                            claims_expansion.open()
-
-                    progress_label.set_text("⏸ Paused — your review is needed")
-                    progress_bar.set_value(0.7)
-
-                    # Mark completed steps
-                    for sn in ["Disclosure", "Prior Art Search", "Novelty Analysis", "Claims Drafting"]:
-                        _mark_step_done(sn)
-                    _mark_step_active("Consistency Review")
-
-                    instruction_text.set_text(
-                        "The AI drafted claims and ran consistency checks, but needs your input. "
-                        "Please review and edit the claims in the Claims Editor below, then click "
-                        "'Generate Patent Draft' again to continue generating the full description."
-                    )
-                    instruction_card.set_visibility(True)
-
-                    if claims_textarea is not None:
-                        claims_textarea.enabled = True
-
-                    ui.notify(
-                        "Review needed — please check the claims and click Generate again.",
-                        type="warning",
-                        close_button=True,
-                    )
+                    # Auto-open the expansion for the newly active step
+                    panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
+                    active = panel_state["active_key"]
+                    if active and active in step_expansions:
+                        step_expansions[active].open()
                 else:
-                    # Workflow completed fully
-                    spinner.set_visibility(False)
-                    progress_label.set_text("✓ Patent draft complete")
-                    progress_bar.set_value(1.0)
-                    for sn in WORKFLOW_STEPS:
-                        _mark_step_done(sn)
-                    claims_expansion.open()
-                    description_expansion.open()
-
-                    ui.notify("Patent draft generated successfully.", type="positive", close_button=True)
-                    logger.info("Workflow completed for topic %d", topic_id)
+                    # Graph completed — mark all steps with content as completed
+                    for sk in WORKFLOW_STEP_ORDER:
+                        if _has_content(panel_state["step_contents"].get(sk, "")):
+                            panel_state["completed_keys"].add(sk)
+                            _persist_step(sk, panel_state["step_contents"][sk], "completed")
+                    _save_draft()
 
             except GraphInterrupt:
-                spinner.set_visibility(False)
-                logger.info("GraphInterrupt caught for topic %d", topic_id)
-                progress_label.set_text("⏸ Paused — your review is needed")
-                instruction_text.set_text(
-                    "The AI needs your input. Please review and edit the claims below, "
-                    "then click 'Generate Patent Draft' again to continue."
-                )
-                instruction_card.set_visibility(True)
-                if claims_textarea is not None:
-                    claims_textarea.enabled = True
-                claims_expansion.open()
+                pass  # Status handled by _refresh_chips in finally
 
             except Exception as exc:
-                spinner.set_visibility(False)
-                failed_step = panel_state.get("current_step", "unknown")
-                logger.exception("Workflow failed for topic %d at step '%s': %s", topic_id, failed_step, exc)
-                progress_label.set_text(f"✗ Failed at {failed_step}")
-                ui.notify(f"Workflow failed: {exc}", type="negative", close_button=True)
+                from patent_system.exceptions import LLMConnectionError
+                failed_display = _STEP_DISPLAY_NAMES.get(
+                    panel_state.get("active_key", ""), "unknown"
+                )
+                if isinstance(exc, LLMConnectionError):
+                    ui.notify(f"LLM connection failed at '{failed_display}': {exc}", type="negative")
+                else:
+                    ui.notify(f"Workflow failed at '{failed_display}': {exc}", type="negative")
+                logger.exception("Workflow failed for topic %d", topic_id)
 
             finally:
-                generate_button.enable()
+                panel_state["running"] = False
+                spinner.set_visibility(False)
+                # Recalculate active step
+                panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
+                _refresh_chips()
+                _refresh_step_sections()
 
-        generate_button = ui.button(
-            "Generate Patent Draft",
-            on_click=_on_generate,
-            icon="auto_fix_high",
-        ).props("color=primary").classes("q-mb-md")
+        # ------------------------------------------------------------------
+        # Re-run a single step by calling its node function directly
+        # ------------------------------------------------------------------
+        async def _rerun_single_step(step_key: str) -> None:
+            """Re-run a single step: clear → call LLM → show new content → confirm.
 
-        # --- Claims editor (Req 5.3, 5.4) ---
-        claims_textarea: ui.textarea | None = None
-        with ui.expansion(
-            "Claims Editor",
-            icon="gavel",
-        ).classes("w-full q-mb-sm") as claims_expansion:
-            claims_textarea = ui.textarea(
-                label="Patent Claims",
-                placeholder="Claims will be generated here…",
-                value=panel_state["claims"],
-            ).classes("w-full").props('outlined autogrow input-style="min-height: 300px"')
+            1. Saves the old content for potential revert
+            2. Clears the textarea
+            3. Calls the node function directly (LLM regenerates)
+            4. Shows the new content
+            5. Shows Keep/Revert buttons for the user to decide
+            """
+            if panel_state["running"]:
+                return
 
-            def _on_claims_change(e: Any) -> None:
-                panel_state["claims"] = e.value if e.value else ""
-                _update_export_state()
-                _save_draft()
-                logger.debug(
-                    "Claims updated for topic %d (%d chars)",
-                    topic_id,
-                    len(panel_state["claims"]),
-                )
+            # Save old content for revert
+            old_content = panel_state["step_contents"].get(step_key, "")
 
-            claims_textarea.on("change", _on_claims_change)
+            # Clear the textarea immediately
+            ta = step_textareas.get(step_key)
+            if ta is not None:
+                ta.value = ""
 
-        # --- Description editor (Req 7.3, 7.4) ---
-        description_textarea: ui.textarea | None = None
-        with ui.expansion(
-            "Description Editor",
-            icon="article",
-        ).classes("w-full q-mb-sm") as description_expansion:
-            description_textarea = ui.textarea(
-                label="Patent Description",
-                placeholder="Description will be generated here…",
-                value=panel_state["description"],
-            ).classes("w-full").props('outlined autogrow input-style="min-height: 400px"')
+            panel_state["running"] = True
+            spinner.set_visibility(True)
+            _refresh_chips()
 
-            def _on_description_change(e: Any) -> None:
-                panel_state["description"] = e.value if e.value else ""
-                _update_export_state()
-                _save_draft()
-                logger.debug(
-                    "Description updated for topic %d (%d chars)",
-                    topic_id,
-                    len(panel_state["description"]),
-                )
+            new_content = ""
+            try:
+                # Build state from current panel contents
+                state = _build_initial_state(step_key)
 
-            description_textarea.on("change", _on_description_change)
+                from patent_system.agents.graph import _local_prior_art_summary_node
+                from patent_system.agents.claims_drafting import claims_drafting_node
+                from patent_system.agents.novelty_analysis import novelty_analysis_node
+                from patent_system.agents.consistency_review import consistency_review_node
+                from patent_system.agents.market_potential import market_potential_node
+                from patent_system.agents.legal_clarification import legal_clarification_node
+                from patent_system.agents.disclosure_summary import disclosure_summary_node
+                from patent_system.agents.description_drafting import description_drafting_node
 
-        # --- Export warning label (Req 10.6) ---
+                node_map = {
+                    "claims_drafting": claims_drafting_node,
+                    "prior_art_search": _local_prior_art_summary_node,
+                    "novelty_analysis": novelty_analysis_node,
+                    "consistency_review": consistency_review_node,
+                    "market_potential": market_potential_node,
+                    "legal_clarification": legal_clarification_node,
+                    "disclosure_summary": disclosure_summary_node,
+                    "patent_draft": description_drafting_node,
+                }
+
+                node_fn = node_map.get(step_key)
+                if node_fn is None:
+                    ui.notify(f"Cannot re-run step '{step_key}'", type="warning")
+                    return
+
+                result = await asyncio.to_thread(node_fn, state)
+
+                # Extract content from the result
+                if step_key == "claims_drafting":
+                    new_content = result.get("claims_text", "")
+                elif step_key == "prior_art_search":
+                    new_content = result.get("prior_art_summary", "")
+                elif step_key == "novelty_analysis":
+                    na = result.get("novelty_analysis")
+                    new_content = na if isinstance(na, str) else json.dumps(na, indent=2, default=str) if na else ""
+                elif step_key == "consistency_review":
+                    new_content = result.get("review_feedback", "")
+                elif step_key == "market_potential":
+                    new_content = result.get("market_assessment", "")
+                elif step_key == "legal_clarification":
+                    new_content = result.get("legal_assessment", "")
+                elif step_key == "disclosure_summary":
+                    new_content = result.get("disclosure_summary", "")
+                elif step_key == "patent_draft":
+                    new_content = result.get("description_text", "")
+                    new_claims = result.get("claims_text", "")
+                    if new_claims:
+                        panel_state["claims"] = new_claims
+                        if claims_textarea_ref.get("el") is not None:
+                            claims_textarea_ref["el"].value = new_claims
+
+            except Exception as exc:
+                from patent_system.exceptions import LLMConnectionError
+                display = _STEP_DISPLAY_NAMES.get(step_key, step_key)
+                if isinstance(exc, LLMConnectionError):
+                    ui.notify(f"LLM connection failed at '{display}': {exc}", type="negative")
+                else:
+                    ui.notify(f"Re-run failed at '{display}': {exc}", type="negative")
+                logger.exception("Re-run failed for step %s topic %d", step_key, topic_id)
+                # Restore old content on failure
+                if ta is not None:
+                    ta.value = old_content
+                panel_state["step_contents"][step_key] = old_content
+                return
+
+            finally:
+                panel_state["running"] = False
+                spinner.set_visibility(False)
+                _refresh_chips()
+
+            # Show new content in textarea
+            if ta is not None and new_content:
+                ta.value = new_content
+            panel_state["step_contents"][step_key] = new_content or old_content
+
+            # Open the expansion
+            if step_key in step_expansions:
+                step_expansions[step_key].open()
+
+            # Show Keep / Revert confirmation
+            display = _STEP_DISPLAY_NAMES.get(step_key, step_key)
+
+            def _on_keep() -> None:
+                panel_state["step_contents"][step_key] = new_content
+                _persist_step(step_key, new_content, "completed")
+                ui.notify(f"{display}: new content saved.", type="positive")
+                _refresh_step_sections()
+
+            def _on_revert() -> None:
+                panel_state["step_contents"][step_key] = old_content
+                _persist_step(step_key, old_content, "completed")
+                if ta is not None:
+                    ta.value = old_content
+                ui.notify(f"{display}: reverted to previous content.", type="info")
+                _refresh_step_sections()
+
+            if new_content and new_content != old_content:
+                with ui.dialog() as dlg, ui.card():
+                    ui.label(f"New content generated for {display}.").classes("text-subtitle1")
+                    ui.label("Keep the new version or revert to the previous one?").classes("text-body2 q-mb-md")
+                    with ui.row().classes("justify-end gap-2"):
+                        ui.button("Revert", on_click=lambda: (dlg.close(), _on_revert()), icon="undo").props("flat color=warning")
+                        ui.button("Keep New", on_click=lambda: (dlg.close(), _on_keep()), icon="check").props("color=primary")
+                dlg.open()
+            elif new_content:
+                # Same content — just save silently
+                _persist_step(step_key, new_content, "completed")
+
+            _refresh_step_sections()
+
+        # ------------------------------------------------------------------
+        # Step sections container
+        # ------------------------------------------------------------------
+        step_textareas: dict[str, Any] = {}
+        step_continue_btns: dict[str, Any] = {}
+        step_rerun_btns: dict[str, Any] = {}
+        step_save_btns: dict[str, Any] = {}
+        step_expansions: dict[str, Any] = {}
+        claims_textarea_ref: dict[str, Any] = {"el": None}
+        description_textarea_ref: dict[str, Any] = {"el": None}
+
+        steps_container = ui.column().classes("w-full")
+
+        def _refresh_step_sections() -> None:
+            """Update visibility/enabled state of buttons and textareas."""
+            active_key = panel_state["active_key"]
+            is_running = panel_state.get("running", False)
+            for key in WORKFLOW_STEP_ORDER:
+                ta = step_textareas.get(key)
+                cont_btn = step_continue_btns.get(key)
+                rerun_btn = step_rerun_btns.get(key)
+                save_btn = step_save_btns.get(key)
+
+                is_completed = key in panel_state["completed_keys"]
+                is_active = key == active_key
+                has_text = _has_content(panel_state["step_contents"].get(key, ""))
+
+                # Textarea: only readonly while running
+                if ta is not None:
+                    if is_running:
+                        ta.props("readonly")
+                    else:
+                        ta.props(remove="readonly")
+
+                # Continue button: visible only during initial run-through
+                if cont_btn is not None:
+                    cont_btn.set_visibility(is_active and not is_completed)
+                    if has_text:
+                        cont_btn.enable()
+                    else:
+                        cont_btn.disable()
+
+                # Rerun button: visible on any step with content, hidden while running
+                if rerun_btn is not None:
+                    rerun_btn.set_visibility(has_text and not is_running)
+
+                # Save button: visible on any step with content, hidden while running
+                if save_btn is not None:
+                    save_btn.set_visibility(has_text and not is_running)
+
+            _update_export_state()
+
+        # ------------------------------------------------------------------
+        # Render each step section
+        # ------------------------------------------------------------------
+        with steps_container:
+            for step_idx, step_key in enumerate(WORKFLOW_STEP_ORDER):
+                step_num = step_idx + 1
+                display_name = _STEP_DISPLAY_NAMES[step_key]
+                saved_content = panel_state["step_contents"].get(step_key, "")
+
+                # --- Special handling for Step 1: Initial Idea (read-only) ---
+                if step_key == "initial_idea":
+                    with ui.expansion(
+                        f"Step {step_num}: {display_name}",
+                        icon="lightbulb",
+                    ).classes("w-full q-mb-sm") as exp:
+                        step_expansions[step_key] = exp
+
+                        # Load disclosure data for display
+                        _disc_data: dict | None = None
+                        if disclosure_repo is not None:
+                            try:
+                                _disc_data = disclosure_repo.get_by_topic(topic_id)
+                            except Exception:
+                                pass
+
+                        if _disc_data is not None:
+                            # Show primary description as read-only label
+                            ui.label("Primary Description").classes("text-subtitle2 q-mt-sm")
+                            ui.label(_disc_data["primary_description"]).classes(
+                                "text-body2 q-pa-sm bg-grey-1 rounded"
+                            ).style("white-space: pre-wrap;")
+
+                            # Show search terms as chips
+                            _terms = _disc_data.get("search_terms", [])
+                            if _terms:
+                                ui.label("Search Terms").classes("text-subtitle2 q-mt-sm")
+                                with ui.row().classes("gap-1 flex-wrap"):
+                                    for term in _terms:
+                                        ui.chip(term, color="primary").props("outline dense")
+
+                            # Build the content string for persistence
+                            _idea_parts = [_disc_data["primary_description"]]
+                            if _terms:
+                                _idea_parts.append("\nSearch Terms: " + ", ".join(_terms))
+                            saved_content = "\n".join(_idea_parts)
+                            panel_state["step_contents"][step_key] = saved_content
+                        else:
+                            ui.label(
+                                "No invention disclosure saved yet. "
+                                "Go to the Research tab to enter your invention description first."
+                            ).classes("text-grey q-pa-sm")
+
+                        # Hidden textarea ref for consistency with other steps
+                        # (not displayed, but keeps step_textareas dict complete)
+                        step_textareas[step_key] = None  # type: ignore[assignment]
+
+                        # Continue button — marks step 1 done, kicks off the
+                        # graph which will run initial_idea node + interrupt,
+                        # then immediately resumes to execute claims_drafting.
+                        async def _on_continue_initial() -> None:
+                            content = panel_state["step_contents"].get("initial_idea", "")
+                            if not _has_content(content):
+                                ui.notify(
+                                    "No invention disclosure found. "
+                                    "Please complete the Research tab first.",
+                                    type="warning",
+                                )
+                                return
+                            _persist_step("initial_idea", content, "completed")
+                            panel_state["completed_keys"].add("initial_idea")
+                            panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
+                            _refresh_chips()
+                            _refresh_step_sections()
+                            # Start graph fresh — initial_idea has no
+                            # interrupt so the graph flows straight into
+                            # claims_drafting, which pauses for review.
+                            await _run_workflow_from("initial_idea", force_fresh=True)
+
+                        cont_btn = ui.button(
+                            "Continue to Next Step",
+                            on_click=_on_continue_initial,
+                            icon="arrow_forward",
+                        ).props("color=primary")
+                        step_continue_btns[step_key] = cont_btn
+
+                        # Re-run button
+                        async def _on_rerun_initial() -> None:
+                            if workflow_step_repo is not None:
+                                try:
+                                    workflow_step_repo.reset_from_step(topic_id, "initial_idea")
+                                except Exception:
+                                    logger.exception("Failed to reset from initial_idea")
+                            panel_state["completed_keys"] -= set(WORKFLOW_STEP_ORDER)
+                            panel_state["active_key"] = "initial_idea"
+                            _refresh_chips()
+                            _refresh_step_sections()
+
+                        rerun_btn = ui.button(
+                            "Rerun this Step",
+                            on_click=_on_rerun_initial,
+                            icon="replay",
+                        ).props("color=warning flat")
+                        step_rerun_btns[step_key] = rerun_btn
+
+                # --- Special handling for Step 9: Patent Draft ---
+                elif step_key == "patent_draft":
+                    with ui.expansion(
+                        f"Step {step_num}: {display_name}",
+                        icon="description",
+                    ).classes("w-full q-mb-sm") as exp:
+                        step_expansions[step_key] = exp
+
+                        # Claims Editor
+                        claims_ta = ui.textarea(
+                            label="Patent Claims",
+                            placeholder="Claims will be generated here…",
+                            value=panel_state["claims"],
+                        ).classes("w-full").props(
+                            'outlined '
+                            'input-style="height: 300px; overflow-y: auto;"'
+                        )
+                        claims_textarea_ref["el"] = claims_ta
+
+                        def _on_claims_change(e: Any) -> None:
+                            panel_state["claims"] = e.value if e.value else ""
+                            _update_export_state()
+                            _save_draft()
+
+                        claims_ta.on("change", _on_claims_change)
+
+                        # Description Editor
+                        desc_ta = ui.textarea(
+                            label="Patent Description",
+                            placeholder="Description will be generated here…",
+                            value=panel_state["description"],
+                        ).classes("w-full").props(
+                            'outlined '
+                            'input-style="height: 400px; overflow-y: auto;"'
+                        )
+                        description_textarea_ref["el"] = desc_ta
+
+                        def _on_desc_change(e: Any) -> None:
+                            panel_state["description"] = e.value if e.value else ""
+                            _update_export_state()
+                            _save_draft()
+
+                        desc_ta.on("change", _on_desc_change)
+
+                        # We also keep a textarea for the step content (hidden, for consistency)
+                        step_textareas[step_key] = desc_ta
+
+                        # Continue button (not applicable for last step, but kept for consistency)
+                        cont_btn = ui.button(
+                            "Continue to Next Step",
+                            on_click=lambda: None,
+                            icon="arrow_forward",
+                        ).props("color=primary")
+                        cont_btn.set_visibility(False)
+                        step_continue_btns[step_key] = cont_btn
+
+                        # Re-run button
+                        async def _on_rerun_patent_draft() -> None:
+                            if workflow_step_repo is not None:
+                                try:
+                                    workflow_step_repo.reset_from_step(topic_id, "patent_draft")
+                                except Exception:
+                                    logger.exception("Failed to reset from patent_draft")
+                            panel_state["completed_keys"].discard("patent_draft")
+                            panel_state["active_key"] = "patent_draft"
+                            _refresh_chips()
+                            _refresh_step_sections()
+                            await _rerun_single_step("patent_draft")
+
+                        rerun_btn = ui.button(
+                            "Rerun this Step",
+                            on_click=_on_rerun_patent_draft,
+                            icon="replay",
+                        ).props("color=warning flat")
+                        step_rerun_btns[step_key] = rerun_btn
+
+                # --- Generic steps 2–8 ---
+                else:
+                    _icon_map = {
+                        "claims_drafting": "gavel",
+                        "prior_art_search": "search",
+                        "novelty_analysis": "science",
+                        "consistency_review": "fact_check",
+                        "market_potential": "trending_up",
+                        "legal_clarification": "balance",
+                        "disclosure_summary": "summarize",
+                    }
+                    with ui.expansion(
+                        f"Step {step_num}: {display_name}",
+                        icon=_icon_map.get(step_key, "article"),
+                    ).classes("w-full q-mb-sm") as exp:
+                        step_expansions[step_key] = exp
+
+                        ta = ui.textarea(
+                            label=display_name,
+                            placeholder=f"{display_name} content will appear here…",
+                            value=saved_content,
+                        ).classes("w-full").props(
+                            'outlined '
+                            'input-style="height: 300px; overflow-y: auto;"'
+                        )
+                        step_textareas[step_key] = ta
+
+                        def _make_change_handler(sk: str):
+                            def handler(e: Any) -> None:
+                                panel_state["step_contents"][sk] = e.value if e.value else ""
+                                cont = step_continue_btns.get(sk)
+                                if cont is not None:
+                                    if _has_content(e.value):
+                                        cont.enable()
+                                    else:
+                                        cont.disable()
+                            return handler
+
+                        ta.on("change", _make_change_handler(step_key))
+
+                        # Continue button
+                        def _make_continue_handler(sk: str):
+                            async def handler() -> None:
+                                # Read current value directly from textarea
+                                # (change event may not have fired yet)
+                                ta_el = step_textareas.get(sk)
+                                if ta_el is not None and hasattr(ta_el, 'value'):
+                                    panel_state["step_contents"][sk] = ta_el.value or ""
+                                content = panel_state["step_contents"].get(sk, "")
+                                if not _has_content(content):
+                                    return
+                                _persist_step(sk, content, "completed")
+                                panel_state["completed_keys"].add(sk)
+                                panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
+                                _refresh_chips()
+                                _refresh_step_sections()
+                                # Resume workflow from checkpoint
+                                next_key = panel_state["active_key"]
+                                if next_key is not None:
+                                    await _run_workflow_from(sk)
+                            return handler
+
+                        cont_btn = ui.button(
+                            "Continue to Next Step",
+                            on_click=_make_continue_handler(step_key),
+                            icon="arrow_forward",
+                        ).props("color=primary")
+                        step_continue_btns[step_key] = cont_btn
+
+                        # Re-run button
+                        def _make_rerun_handler(sk: str):
+                            async def handler() -> None:
+                                # Read current textarea value before resetting
+                                ta_el = step_textareas.get(sk)
+                                if ta_el is not None and hasattr(ta_el, 'value'):
+                                    panel_state["step_contents"][sk] = ta_el.value or ""
+
+                                if workflow_step_repo is not None:
+                                    try:
+                                        workflow_step_repo.reset_from_step(topic_id, sk)
+                                    except Exception:
+                                        logger.exception("Failed to reset from %s", sk)
+                                # Remove this step and all subsequent from completed
+                                idx = WORKFLOW_STEP_ORDER.index(sk)
+                                for k in WORKFLOW_STEP_ORDER[idx:]:
+                                    panel_state["completed_keys"].discard(k)
+                                panel_state["active_key"] = sk
+                                _refresh_chips()
+                                _refresh_step_sections()
+                                # Re-run this single step directly (calls the LLM)
+                                await _rerun_single_step(sk)
+                            return handler
+
+                        rerun_btn = ui.button(
+                            "Rerun this Step",
+                            on_click=_make_rerun_handler(step_key),
+                            icon="replay",
+                        ).props("color=warning flat")
+                        step_rerun_btns[step_key] = rerun_btn
+
+                        # Save edits button
+                        def _make_save_handler(sk: str):
+                            def handler() -> None:
+                                ta_el = step_textareas.get(sk)
+                                if ta_el is not None and hasattr(ta_el, 'value'):
+                                    panel_state["step_contents"][sk] = ta_el.value or ""
+                                content = panel_state["step_contents"].get(sk, "")
+                                if _has_content(content):
+                                    _persist_step(sk, content, "completed")
+                                    panel_state["completed_keys"].add(sk)
+                                    display = _STEP_DISPLAY_NAMES.get(sk, sk)
+                                    ui.notify(f"{display}: edits saved.", type="positive")
+                            return handler
+
+                        save_btn = ui.button(
+                            "Save Edits",
+                            on_click=_make_save_handler(step_key),
+                            icon="save",
+                        ).props("flat color=primary")
+                        step_save_btns[step_key] = save_btn
+
+        # ------------------------------------------------------------------
+        # Export section (Req 10.4, 13.1–13.3)
+        # ------------------------------------------------------------------
         export_warning = ui.label(
-            "Export disabled: claims and description must not be empty."
+            "Export disabled: complete all workflow steps first."
         ).classes("text-warning text-caption q-mt-sm")
 
-        # --- Export to DOCX button (Req 10.1, 10.6) ---
         def _on_export() -> None:
-            """Generate a DOCX file with references and trigger browser download."""
+            """Generate a DOCX file with all workflow step content."""
             claims = panel_state["claims"]
             description = panel_state["description"]
 
@@ -529,7 +1018,6 @@ def create_draft_panel(
             from patent_system.export.docx_exporter import DOCXExporter
 
             try:
-                # Use settings if available, otherwise defaults
                 template_dir = Path("src/patent_system/export/templates")
                 template_name = None
                 try:
@@ -540,21 +1028,18 @@ def create_draft_panel(
                 except Exception:
                     pass
 
-                # Load topic name for filename
                 topic_name = f"topic_{topic_id}"
                 if conn is not None:
                     try:
                         from patent_system.db.repository import TopicRepository
                         topic = TopicRepository(conn).get_by_id(topic_id)
                         if topic:
-                            # Sanitize for filename
                             topic_name = re_sub(r'[^\w\s-]', '', topic.name).strip().replace(' ', '_')
                     except Exception:
                         pass
 
-                # Load references from both patent and paper tables
+                # Load references
                 references: list[dict] = []
-                # URL templates for clickable links
                 from patent_system.gui.research_panel import _SOURCE_URLS
                 if conn is not None:
                     try:
@@ -590,7 +1075,7 @@ def create_draft_panel(
                     except Exception:
                         logger.exception("Failed to load references for export")
 
-                # Include local documents as references
+                # Include local documents
                 if conn is not None:
                     try:
                         from patent_system.db.repository import LocalDocumentRepository
@@ -625,11 +1110,19 @@ def create_draft_panel(
                 filename = f"{topic_name}_{today}.docx"
                 output_path = Path(f"data/export/{filename}")
 
+                # Build workflow_steps dict for export (Req 13.1–13.3)
+                workflow_steps_dict: dict[str, str] = {}
+                for sk in WORKFLOW_STEP_ORDER:
+                    c = panel_state["step_contents"].get(sk, "")
+                    if c:
+                        workflow_steps_dict[sk] = c
+
                 exporter = DOCXExporter(template_dir, template_name)
                 exporter.export(
                     claims, description, output_path,
                     references=references,
                     chat_history=chat_messages if chat_messages else None,
+                    workflow_steps=workflow_steps_dict if workflow_steps_dict else None,
                 )
 
                 ui.download(str(output_path))
@@ -647,10 +1140,16 @@ def create_draft_panel(
         ).props("color=secondary").classes("q-mt-sm")
 
         def _update_export_state() -> None:
-            """Enable/disable export button based on content (Req 10.6)."""
-            exportable = can_export(
-                panel_state["claims"],
-                panel_state["description"],
+            """Enable/disable export button based on content (Req 10.4)."""
+            # Export is available when all steps have content and claims+description exist.
+            # We check step_contents (not completed_keys) because the last step
+            # has no Continue button and may not be in completed_keys.
+            all_have_content = all(
+                _has_content(panel_state["step_contents"].get(sk, ""))
+                for sk in WORKFLOW_STEP_ORDER
+            )
+            exportable = all_have_content and can_export(
+                panel_state["claims"], panel_state["description"]
             )
             if exportable:
                 export_button.enable()
@@ -659,41 +1158,86 @@ def create_draft_panel(
                 export_button.disable()
                 export_warning.set_visibility(True)
 
-        # Initial state: export disabled (no content yet)
         _update_export_state()
 
-        # Expose helpers on the container for external wiring
-        def _save_draft() -> None:
-            """Persist current claims and description to DB."""
-            if draft_repo is not None:
-                try:
-                    draft_repo.upsert(
-                        topic_id,
-                        panel_state["claims"],
-                        panel_state["description"],
-                    )
-                except Exception:
-                    logger.debug("Failed to auto-save draft for topic %d", topic_id, exc_info=True)
+        # ------------------------------------------------------------------
+        # Sticky footer: progress chips + status label (Req 11.1–11.5)
+        # ------------------------------------------------------------------
+        with ui.element("div").classes(
+            "w-full q-pa-sm bg-white"
+        ).style(
+            "position: sticky; bottom: 0; z-index: 10; "
+            "border-top: 1px solid #e0e0e0;"
+        ):
+            step_chips_row = ui.row().classes("w-full gap-1 flex-wrap justify-center")
+            step_chip_elements: dict[str, Any] = {}
+            with step_chips_row:
+                for step_name in WORKFLOW_STEPS:
+                    chip = ui.chip(step_name, icon="radio_button_unchecked", color="grey-4").props("outline dense")
+                    step_chip_elements[step_name] = chip
 
+            progress_label = ui.label("").classes("text-caption text-grey text-center w-full q-mt-xs")
+
+        def _refresh_chips() -> None:
+            """Update chip icons/colours and status text to reflect current state."""
+            active_key = panel_state["active_key"]
+            completed = len(panel_state["completed_keys"])
+            total = len(WORKFLOW_STEP_ORDER)
+
+            for key in WORKFLOW_STEP_ORDER:
+                display = _STEP_DISPLAY_NAMES[key]
+                chip = step_chip_elements.get(display)
+                if chip is None:
+                    continue
+                if key in panel_state["completed_keys"]:
+                    chip._props["icon"] = "check_circle"
+                    chip._props["color"] = "positive"
+                elif key == active_key:
+                    chip._props["icon"] = "hourglass_top"
+                    chip._props["color"] = "primary"
+                else:
+                    chip._props["icon"] = "radio_button_unchecked"
+                    chip._props["color"] = "grey-4"
+                chip.update()
+
+            # Update status text to reflect the CURRENT active step
+            if panel_state.get("running"):
+                display = _STEP_DISPLAY_NAMES.get(active_key or "", "")
+                progress_label.set_text(f"⏳ Running: {display}…")
+            elif completed == total:
+                progress_label.set_text(f"✓ All {total} steps complete — ready to export")
+            elif active_key:
+                display = _STEP_DISPLAY_NAMES.get(active_key, active_key)
+                has_content = _has_content(panel_state["step_contents"].get(active_key, ""))
+                if has_content:
+                    progress_label.set_text(f"Step {completed + 1}/{total}: Review {display} and continue")
+                else:
+                    progress_label.set_text(f"Step {completed + 1}/{total}: {display}")
+            else:
+                progress_label.set_text("")
+
+        _refresh_chips()
+
+        # Initial refresh of step sections
+        _refresh_step_sections()
+
+        # Expose helpers on the container for external wiring
         def set_claims(text: str) -> None:
-            """Set claims text programmatically."""
             panel_state["claims"] = text
-            if claims_textarea is not None:
-                claims_textarea.value = text
+            if claims_textarea_ref.get("el") is not None:
+                claims_textarea_ref["el"].value = text
             _update_export_state()
             _save_draft()
 
         def set_description(text: str) -> None:
-            """Set description text programmatically."""
             panel_state["description"] = text
-            if description_textarea is not None:
-                description_textarea.value = text
+            if description_textarea_ref.get("el") is not None:
+                description_textarea_ref["el"].value = text
             _update_export_state()
             _save_draft()
 
         def set_current_step(step_name: str) -> None:
-            """Update the workflow step indicator."""
-            panel_state["current_step"] = step_name
+            panel_state["active_key"] = step_name
 
         container.set_claims = set_claims  # type: ignore[attr-defined]
         container.set_description = set_description  # type: ignore[attr-defined]

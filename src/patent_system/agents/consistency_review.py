@@ -50,6 +50,23 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
     claims = state.get("claims_text", "")
     description = state.get("description_text", "")
 
+    # In the interactive workflow, description_text may be empty at step 5.
+    # Fall back to prior art summary + novelty analysis as review context.
+    if not description:
+        parts: list[str] = []
+        prior_art = state.get("prior_art_summary", "")
+        if prior_art:
+            parts.append(f"Prior Art Summary:\n{prior_art}")
+        novelty = state.get("novelty_analysis")
+        if novelty:
+            import json as _json
+            if isinstance(novelty, str):
+                parts.append(f"Novelty Analysis:\n{novelty}")
+            elif isinstance(novelty, dict):
+                parts.append(f"Novelty Analysis:\n{_json.dumps(novelty, indent=2, default=str)}")
+        if parts:
+            description = "\n\n".join(parts)
+
     # Run the DSPy review module
     review_module = ReviewConsistencyModule()
     try:
