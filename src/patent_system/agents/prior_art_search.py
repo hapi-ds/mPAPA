@@ -91,6 +91,22 @@ _HTTP_TIMEOUT = 15  # seconds
 # Default maximum results per source (overridden by AppSettings.search_max_results_per_source)
 _DEFAULT_MAX_RESULTS = 10
 
+# Minimum seconds between requests to the same source (rate limiting)
+# Loaded from AppSettings at first use; default 3.0s
+_REQUEST_DELAY: float | None = None
+
+
+def _get_request_delay() -> float:
+    """Lazily load the request delay from settings."""
+    global _REQUEST_DELAY
+    if _REQUEST_DELAY is None:
+        try:
+            from patent_system.config import AppSettings
+            _REQUEST_DELAY = AppSettings().search_request_delay_seconds
+        except Exception:
+            _REQUEST_DELAY = 3.0
+    return _REQUEST_DELAY
+
 # EPO OPS client (lazily initialized)
 _epo_ops_client = None
 
@@ -279,11 +295,13 @@ def _query_google_scholar(search_terms: list[str], max_results: int = _DEFAULT_M
     all_results: list[dict] = []
     seen_titles: set[str] = set()
 
-    for term in search_terms:
+    for i, term in enumerate(search_terms):
         if not term or not term.strip():
             continue
         if len(all_results) >= max_results:
             break
+        if i > 0:
+            time.sleep(_get_request_delay())
 
         query = quote_plus(term.strip())
         url = f"https://{_SOURCE_ENDPOINTS['Google Scholar']}?q={query}&hl=en"
@@ -345,11 +363,13 @@ def _query_google_patents(search_terms: list[str], max_results: int = _DEFAULT_M
     all_results: list[dict] = []
     seen_ids: set[str] = set()
 
-    for term in search_terms:
+    for i, term in enumerate(search_terms):
         if not term or not term.strip():
             continue
         if len(all_results) >= max_results:
             break
+        if i > 0:
+            time.sleep(_get_request_delay())
 
         encoded_q = quote_plus(term.strip())
         url = f"https://{_SOURCE_ENDPOINTS['Google Patents']}/xhr/query?url=q%3D{encoded_q}&exp="
@@ -589,7 +609,7 @@ def prior_art_search_node(
     else:
         sources_to_query = _SOURCE_REGISTRY
 
-    for source_name, source_info in sources_to_query.items():
+    for src_idx, (source_name, source_info) in enumerate(sources_to_query.items()):
         parser = source_info["parser"]
         source_type = source_info["type"]
         req_start = time.monotonic()

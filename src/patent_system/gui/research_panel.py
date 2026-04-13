@@ -610,97 +610,83 @@ def create_research_panel(
         ).props('accept=".pdf,.docx,.txt"').classes("w-full").style("max-height: 100px;")
 
         # --- Status and Start Research ---
-        status_label = ui.label("").classes("text-caption q-mt-sm")
+        search_status = ui.label("").classes("text-caption q-mt-sm")
+        search_spinner = ui.spinner("dots", size="sm").classes("q-ml-sm")
+        search_spinner.set_visibility(False)
 
         async def _on_start_research() -> None:
-            """Handle the Start Research button click.
-
-            Validates input, saves disclosure, runs search with selected
-            sources, deduplicates results, persists records, and indexes
-            in RAG.
-
-            Requirements: 1.6, 1.7, 2.3, 2.5, 4.1, 5.1, 5.2, 5.3, 6.1, 6.2
-            """
-            # Validate primary description (Req 1.7)
+            """Run search fully in background with live status updates."""
             description = primary_input.value.strip() if primary_input.value else ""
             if not description:
-                ui.notify(
-                    "Please enter a primary invention description.",
-                    type="warning",
-                )
+                ui.notify("Please enter a primary invention description.", type="warning")
                 return
 
-            # Gather additional search terms
             terms = list(panel_state["term_inputs"])
 
-            # Save disclosure (Req 2.3)
             if disclosure_repo is not None:
                 try:
                     disclosure_repo.upsert(topic_id, description, terms)
                 except Exception:
-                    logger.exception(
-                        "Failed to save disclosure for topic %d", topic_id
-                    )
-                    ui.notify(
-                        "Failed to save invention disclosure. Your data is retained in the form.",
-                        type="negative",
-                    )
+                    logger.exception("Failed to save disclosure for topic %d", topic_id)
+                    ui.notify("Failed to save disclosure.", type="negative")
                     return
 
-            status_label.set_text("Searching…")
-            logger.info("Start Research for topic %d", topic_id)
-
-            # Build disclosure dict (Req 1.6)
+            selected_sources = [name for name, enabled in current_prefs.items() if enabled]
             invention_disclosure = _build_disclosure_dict(description, terms)
 
-            # Determine enabled sources (Req 4.1)
-            selected_sources = [
-                name for name, enabled in current_prefs.items() if enabled
-            ]
-
-            # Build workflow state
-            state = {
-                "topic_id": topic_id,
-                "invention_disclosure": invention_disclosure,
-                "interview_messages": [],
-                "prior_art_results": [],
-                "failed_sources": [],
-                "novelty_analysis": None,
-                "claims_text": "",
-                "description_text": "",
-                "review_feedback": "",
-                "review_approved": False,
-                "iteration_count": 0,
-                "current_step": "",
+            # Shared state for background thread → UI communication
+            search_state: dict[str, Any] = {
+                "status": "Starting search…",
+                "done": False,
+                "new_results": [],
+                "failed": [],
+                "total_raw": 0,
             }
 
-            # Run the blocking search in a background thread so the
-            # NiceGUI event loop stays responsive and the WebSocket
-            # connection is not dropped.
-            result = await asyncio.to_thread(
-                prior_art_search_node,
-                state,
-                rag_engine=rag_engine,
-                selected_sources=selected_sources,
-                max_results_per_source=max_results_per_source,
-            )
+            search_spinner.set_visibility(True)
+            search_status.set_text("Starting search…")
+            research_button.disable()
+            logger.info("Start Research for topic %d", topic_id)
 
-            results = result.get("prior_art_results", [])
-            failed = result.get("failed_sources", [])
+            def _bg_search() -> None:
+                """Background: search, persist, embed, index."""
+                state = {
+                    "topic_id": topic_id,
+                    "invention_disclosure": invention_disclosure,
+                    "interview_messages": [],
+                    "prior_art_results": [],
+                    "failed_sources": [],
+                    "novelty_analysis": None,
+                    "claims_text": "",
+                    "description_text": "",
+                    "review_feedback": "",
+                    "review_approved": False,
+                    "iteration_count": 0,
+                    "current_step": "",
+                }
 
-            # Deduplicate against existing records (Req 6.1, 6.2)
-            new_results: list[dict[str, Any]] = []
-            for rec in results:
-                if not _is_duplicate(rec, panel_state["results"]):
-                    new_results.append(rec)
+                search_state["status"] = f"Searching {len(selected_sources)} sources…"
+                result = prior_art_search_node(
+                    state,
+                    rag_engine=rag_engine,
+                    selected_sources=selected_sources,
+                    max_results_per_source=max_results_per_source,
+                )
 
-            status_label.set_text(f"Saving {len(new_results)} results…")
+                results = result.get("prior_art_results", [])
+                failed = result.get("failed_sources", [])
+                search_state["total_raw"] = len(results)
+                search_state["failed"] = failed
 
-            # Run persistence, embeddings, and RAG indexing in a background
-            # thread so the event loop stays responsive.
-            def _persist_and_index() -> None:
-                """Persist results to DB, generate embeddings, index in RAG."""
-                # Persist search session and results to DB (Req 5.1)
+                # Deduplicate
+                new_results: list[dict[str, Any]] = []
+                for rec in results:
+                    if not _is_duplicate(rec, panel_state["results"]):
+                        new_results.append(rec)
+
+                search_state["status"] = f"Saving {len(new_results)} results…"
+
+                # Persist
                 if conn is not None:
                     try:
                         session_repo = ResearchSessionRepository(conn)
@@ -716,15 +702,10 @@ def create_research_panel(
 
                             if is_paper:
                                 from patent_system.db.models import ScientificPaperRecord as SPR
-
                                 paper_record = SPR(
-                                    session_id=session_id,
-                                    doi=rec.get("doi", ""),
-                                    title=title,
-                                    abstract=abstract,
-                                    full_text=full_text,
-                                    pdf_path=rec.get("pdf_path"),
-                                    source=source_name,
+                                    session_id=session_id, doi=rec.get("doi", ""),
+                                    title=title, abstract=abstract, full_text=full_text,
+                                    pdf_path=rec.get("pdf_path"), source=source_name,
                                 )
                                 row_id = paper_repo.create(session_id, paper_record)
                                 rec["id"] = row_id
@@ -732,13 +713,10 @@ def create_research_panel(
                                 repo_for_emb = paper_repo
                             else:
                                 from patent_system.db.models import PatentRecord as PR
-
                                 patent_record = PR(
                                     session_id=session_id,
                                     patent_number=rec.get("patent_number", "UNKNOWN"),
-                                    title=title,
-                                    abstract=abstract,
-                                    full_text=full_text,
+                                    title=title, abstract=abstract, full_text=full_text,
                                     source=source_name,
                                 )
                                 row_id = patent_repo.create(session_id, patent_record)
@@ -746,27 +724,22 @@ def create_research_panel(
                                 rec["record_type"] = "patent"
                                 repo_for_emb = patent_repo
 
-                            # Generate and store embedding
                             if rag_engine is not None:
                                 try:
                                     emb_text = f"{title} {abstract or ''}"
                                     if full_text:
                                         emb_text += f" {full_text}"
-                                    emb = rag_engine._embedding_service.generate_embedding(emb_text)
+                                    emb = rag_engine._embedding_service.generate_embedding(emb_text[:2000])
                                     if emb is not None:
                                         repo_for_emb.update_embedding(row_id, emb)
                                 except Exception:
-                                    logger.debug(
-                                        "Failed to generate embedding for record %d",
-                                        row_id,
-                                        exc_info=True,
-                                    )
+                                    logger.debug("Embedding failed for %d", row_id, exc_info=True)
                     except Exception:
-                        logger.exception(
-                            "Failed to persist search results for topic %d", topic_id
-                        )
+                        logger.exception("Failed to persist results for topic %d", topic_id)
 
-                # Index results in RAG with full text (Req 5.3)
+                search_state["status"] = "Indexing in RAG…"
+
+                # RAG index
                 if rag_engine is not None and new_results:
                     rag_docs = []
                     for rec in new_results:
@@ -777,26 +750,19 @@ def create_research_panel(
                         text = f"{title} {doc_text}".strip() if title else doc_text
                         if text:
                             metadata = _sanitize_metadata({
-                                k: v
-                                for k, v in rec.items()
+                                k: v for k, v in rec.items()
                                 if k not in ("title", "abstract", "full_text", "embedding")
                             })
-                            rag_docs.append({"text": text, "metadata": metadata})
+                            rag_docs.append({"text": text[:4000], "metadata": metadata})
                     if rag_docs:
                         try:
                             rag_engine.index_documents(topic_id, rag_docs)
-                            logger.info(
-                                "Indexed %d docs in RAG for topic %d",
-                                len(rag_docs),
-                                topic_id,
-                            )
                         except Exception:
-                            logger.exception(
-                                "Failed to index in RAG for topic %d", topic_id
-                            )
+                            logger.exception("Failed to index in RAG for topic %d", topic_id)
 
-                # Compute relevance scores
+                # Relevance scoring
                 if rag_engine is not None and description:
+                    search_state["status"] = "Computing relevance…"
                     try:
                         rag_results = rag_engine.query(topic_id, description, top_k=50)
                         score_map: dict[str, float] = {}
@@ -812,33 +778,38 @@ def create_research_panel(
                             if title in score_map:
                                 rec["relevance_score"] = round(score_map[title] * 100, 1)
                     except Exception:
-                        logger.debug("Failed to compute relevance scores", exc_info=True)
+                        logger.debug("Failed to compute relevance", exc_info=True)
 
-            await asyncio.to_thread(_persist_and_index)
+                search_state["new_results"] = new_results
+                search_state["done"] = True
 
-            # Append new (non-duplicate) results to existing ones
-            panel_state["results"].extend(new_results)
-            _refresh_table()
+            # Start background thread
+            import threading
+            threading.Thread(target=_bg_search, daemon=True).start()
 
-            # Status feedback
-            parts = []
-            parts.append(f"{len(new_results)} new result(s) found")
-            if len(results) - len(new_results) > 0:
-                parts.append(f"{len(results) - len(new_results)} duplicate(s) skipped")
-            if failed:
-                parts.append(
-                    f"{len(failed)} source(s) unavailable: {', '.join(failed)}"
-                )
-            status_label.set_text(" · ".join(parts))
+            # Poll for completion with a timer
+            def _check_search() -> None:
+                search_status.set_text(search_state["status"])
+                if search_state["done"]:
+                    _search_timer.deactivate()
+                    search_spinner.set_visibility(False)
+                    research_button.enable()
 
-            if not new_results:
-                ui.notify(
-                    "No new results found.",
-                    type="info",
-                    close_button=True,
-                )
+                    new_results = search_state["new_results"]
+                    panel_state["results"].extend(new_results)
+                    _refresh_table()
 
-        ui.button(
+                    parts = [f"{len(new_results)} new result(s) found"]
+                    dupes = search_state["total_raw"] - len(new_results)
+                    if dupes > 0:
+                        parts.append(f"{dupes} duplicate(s) skipped")
+                    if search_state["failed"]:
+                        parts.append(f"{len(search_state['failed'])} source(s) unavailable")
+                    search_status.set_text(" · ".join(parts))
+
+            _search_timer = ui.timer(2.0, _check_search)
+
+        research_button = ui.button(
             "Start Research", on_click=_on_start_research
         ).props("color=primary").classes("q-mt-sm")
 

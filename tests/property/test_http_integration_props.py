@@ -92,7 +92,9 @@ class TestSourceURLConstruction:
         with patch(
             "patent_system.agents.prior_art_search.urlopen",
             return_value=_make_mock_response(),
-        ) as mock_urlopen:
+        ) as mock_urlopen, patch(
+            "patent_system.agents.prior_art_search._get_request_delay", return_value=0,
+        ):
             try:
                 _query_source(source, terms)
             except Exception:
@@ -127,7 +129,9 @@ class TestSourceURLConstruction:
         with patch(
             "patent_system.agents.prior_art_search.urlopen",
             return_value=_make_mock_response(),
-        ) as mock_urlopen:
+        ) as mock_urlopen, patch(
+            "patent_system.agents.prior_art_search._get_request_delay", return_value=0,
+        ):
             try:
                 _query_source(source, terms)
             except Exception:
