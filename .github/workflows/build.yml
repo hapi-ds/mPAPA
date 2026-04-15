@@ -3,7 +3,6 @@ name: Build & Release
 on:
   push:
     branches: [main]
-    tags: ["v*"]
 
 jobs:
   test:
@@ -45,7 +44,6 @@ jobs:
           echo "Coverage: ${COVERAGE}%"
 
       - name: Update coverage badge via Gist
-        if: github.ref == 'refs/heads/main'
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
@@ -59,7 +57,6 @@ jobs:
 
   release:
     needs: test
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     runs-on: windows-latest
     permissions:
       contents: write
@@ -86,12 +83,33 @@ jobs:
       - name: Install python-semantic-release
         run: uv pip install python-semantic-release
 
-      - name: Run semantic-release version
+      - name: Determine next version
+        id: semrel
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          OUTPUT=$(uv run semantic-release version --print 2>&1) || true
+          echo "Raw output: $OUTPUT"
+          # Extract version if semantic-release determined one
+          VERSION=$(uv run semantic-release version --print 2>/dev/null | grep -oP '^\d+\.\d+\.\d+' | head -1) || true
+          if [ -n "$VERSION" ]; then
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "released=true" >> "$GITHUB_OUTPUT"
+            echo "New version: $VERSION"
+          else
+            echo "released=false" >> "$GITHUB_OUTPUT"
+            echo "No new version to release"
+          fi
+
+      - name: Apply version bump and create tag
+        if: steps.semrel.outputs.released == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: uv run semantic-release version
 
       - name: Cache Nuitka compilation cache
+        if: steps.semrel.outputs.released == 'true'
         uses: actions/cache@v4
         with:
           path: ~/.cache/Nuitka
@@ -100,15 +118,18 @@ jobs:
             nuitka-cache-${{ runner.os }}-
 
       - name: Build executable
+        if: steps.semrel.outputs.released == 'true'
         run: uv run python build.py
 
       - name: Run smoke test
+        if: steps.semrel.outputs.released == 'true'
         run: uv run pytest tests/integration/test_exe_smoke.py -q
 
-      - name: Upload artifact to GitHub Release
+      - name: Upload exe to GitHub Release
+        if: steps.semrel.outputs.released == 'true'
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v')
         with:
+          tag_name: v${{ steps.semrel.outputs.version }}
           files: dist/**/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

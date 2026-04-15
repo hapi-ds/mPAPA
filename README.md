@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://github.com/hapi-ds/mPAPA/actions">
-    <img src="https://github.com/hapi-ds/pySSC/actions/workflows/build.yml/badge.svg" alt="CI Pipeline Status">
+    <img src="https://github.com/hapi-ds/mPAPA/actions/workflows/build.yml/badge.svg" alt="CI Pipeline Status">
   </a>
   <a href="https://github.com/hapi-ds/mPAPA/actions">
     <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/hapi-ds/b90471b021c2812e72f3ff038d22508d/raw/coverage-badge.json" alt="Coverage">
