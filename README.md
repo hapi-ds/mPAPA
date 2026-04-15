@@ -1,4 +1,8 @@
-# mPAPA — my Personal Artificial Patent Agent
+# mPAPA — my Personal Artificial Patent Attorney
+
+[![Tests](https://github.com/OWNER/REPO/actions/workflows/build.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/build.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/OWNER/YOUR_GIST_ID/raw/coverage-badge.json)](https://github.com/OWNER/REPO/actions/workflows/build.yml)
+[![Version](https://img.shields.io/github/v/release/OWNER/REPO?label=version)](https://github.com/OWNER/REPO/releases/latest)
 
 A locally-hosted, AI-powered patent analysis and drafting system. mPAPA orchestrates a pipeline of specialized agents to help patent professionals research prior art, analyze novelty, and draft patent applications — all while keeping sensitive invention data on your machine.
 

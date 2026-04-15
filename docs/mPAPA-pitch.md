@@ -1,4 +1,4 @@
-# mPAPA — my Personal Artificial Patent Agent
+# mPAPA — my Personal Artificial Patent Attorney
 
 **Your invention. Your machine. Your patent. Zero data leaks.**
 
@@ -6,9 +6,9 @@
 
 Stop paying patent attorneys $500/hour to do what AI can do in minutes. Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks for a first draft.
 
-**mPAPA is the first fully local AI patent drafting system.** It runs on YOUR machine*. Your invention data never touches the internet. Ever.
+**mPAPA is a fully local AI patent drafting system.** It runs on YOUR machine*. Your invention data never touches the internet. Ever.
 
-*Very good results can already be achieved with LLMs as small as 4.5 GB (GEMMA-4-e2b). When combined with an embedded model, even “standard” graphics cards or newer laptops are sufficient (VRAM >8GB).
+*Any recent PC will do. Just 6 GB+ RAM for LLM. GPU optional. Works great with models like Gemma-4-E2B.
 
 ---
 

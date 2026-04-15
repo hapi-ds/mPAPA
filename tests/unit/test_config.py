@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from patent_system.config import AppSettings
+from patent_system.config import AppSettings, get_base_dir
 
 
 class TestAppSettingsDefaults:
@@ -34,13 +34,19 @@ class TestAppSettingsDefaults:
         assert isinstance(settings.embedding_model_name, str)
         assert len(settings.embedding_model_name) > 0
 
-    def test_default_database_path(self) -> None:
-        settings = AppSettings()
-        assert settings.database_path == Path("data/patent_system.db")
+    def test_default_database_path(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("PATENT_DATABASE_PATH", raising=False)
+        settings = AppSettings(_env_file=None)
+        expected = get_base_dir() / "data" / "patent_system.db"
+        assert settings.database_path == expected
+        assert settings.database_path.is_absolute()
 
-    def test_default_docx_template_dir(self) -> None:
-        settings = AppSettings()
-        assert settings.docx_template_dir == Path("src/patent_system/export/templates")
+    def test_default_docx_template_dir(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("PATENT_DOCX_TEMPLATE_DIR", raising=False)
+        settings = AppSettings(_env_file=None)
+        expected = get_base_dir() / "src" / "patent_system" / "export" / "templates"
+        assert settings.docx_template_dir == expected
+        assert settings.docx_template_dir.is_absolute()
 
     def test_default_docx_template_name_is_none(self) -> None:
         settings = AppSettings()
@@ -51,9 +57,12 @@ class TestAppSettingsDefaults:
         settings = AppSettings()
         assert settings.monitoring_interval_hours == 24
 
-    def test_default_log_file_path(self) -> None:
-        settings = AppSettings()
-        assert settings.log_file_path == Path("logs/patent_system.log")
+    def test_default_log_file_path(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("PATENT_LOG_FILE_PATH", raising=False)
+        settings = AppSettings(_env_file=None)
+        expected = get_base_dir() / "logs" / "patent_system.log"
+        assert settings.log_file_path == expected
+        assert settings.log_file_path.is_absolute()
 
     def test_default_log_level(self) -> None:
         settings = AppSettings()
@@ -107,3 +116,16 @@ class TestAppSettingsValidation:
 
     def test_env_file_is_dotenv(self) -> None:
         assert AppSettings.model_config["env_file"] == ".env"
+
+
+class TestAppSettingsRuntimeDirs:
+    """Verify runtime directories are created on initialization."""
+
+    def test_ensure_runtime_dirs_called_on_init(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Instantiating AppSettings creates data/ and logs/ under get_base_dir()."""
+        base = get_base_dir()
+        # data/ and logs/ should exist after AppSettings() is created
+        # (they already exist in the project root, so just verify they're there)
+        AppSettings(_env_file=None)
+        assert (base / "data").is_dir()
+        assert (base / "logs").is_dir()

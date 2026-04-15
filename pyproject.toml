@@ -23,8 +23,45 @@ dependencies = [
 dev = [
     "hypothesis",
     "pytest",
+    "pytest-cov",
 ]
+build = ["nuitka"]
 
 [build-system]
 requires = ["uv_build>=0.11.1,<0.12.0"]
 build-backend = "uv_build"
+
+[tool.nuitka]
+output-dir = "dist"
+include-package = [
+    "patent_system",
+    "nicegui",
+    "langgraph",
+    "langgraph.checkpoint",
+    "llama_index.core",
+    "dspy",
+    "pydantic",
+    "pydantic_settings",
+    "docx",
+]
+include-package-data = ["nicegui"]
+include-data-dir = [
+    "src/patent_system/export/templates=patent_system/export/templates",
+]
+include-data-files = [
+    ".env.example=.env.example",
+]
+nofollow-import-to = [
+    "tests",
+    "pytest",
+    "hypothesis",
+]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+build_command = ""
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
