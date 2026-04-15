@@ -1,8 +1,25 @@
 # mPAPA — my Personal Artificial Patent Attorney
 
-[![Tests](https://github.com/OWNER/REPO/actions/workflows/build.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/build.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/hapi-ds/b90471b021c2812e72f3ff038d22508d/raw/coverage-badge.json)](https://github.com/OWNER/REPO/actions/workflows/build.yml)
-[![Version](https://img.shields.io/github/v/release/hapi-ds/mPAPA?label=version)](https://github.com/OWNER/REPO/releases/latest)
+<p align="center">
+  <a href="https://github.com/hapi-ds/mPAPA/releases">
+    <img src="https://img.shields.io/github/v/release/hapi-ds/mPAPA?style=flat-square&color=blue" alt="Latest Release">
+  </a>
+  <img src="https://img.shields.io/badge/python-3.11%20%7C%203.12-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python Version">
+  <a href="https://github.com/hapi-ds/mPAPA/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/hapi-ds/mPAPA?style=flat-square" alt="License">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/hapi-ds/mPAPA/actions">
+    <img src="https://github.com/hapi-ds/pySSC/actions/workflows/build.yml/badge.svg" alt="CI Pipeline Status">
+  </a>
+  <a href="https://github.com/hapi-ds/mPAPA/actions">
+    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/hapi-ds/b90471b021c2812e72f3ff038d22508d/raw/coverage-badge.json" alt="Coverage">
+  </a>
+</p>
+
+
 
 **Your invention. Your machine. Your patent. Zero data leaks.**
 
