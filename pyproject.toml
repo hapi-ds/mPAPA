@@ -1,6 +1,6 @@
 [project]
 name = "patent-system"
-version = "1.0.2"
+version = "1.0.3"
 description = "AI-powered patent analysis and drafting system with multi-agent orchestration"
 readme = "README.md"
 authors = [

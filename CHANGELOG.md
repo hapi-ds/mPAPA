@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.3 (2026-04-15)
+
+### Bug Fixes
+
+- Add --assume-yes-for-downloads to Nuitka command for CI
+  ([`3f5d971`](https://github.com/hapi-ds/mPAPA/commit/3f5d971ef7a6968104b12a5e42a49eea4f32b8be))
+
+
 ## v1.0.2 (2026-04-15)
 
 ### Bug Fixes
