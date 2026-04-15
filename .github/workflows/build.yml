@@ -83,33 +83,35 @@ jobs:
       - name: Install python-semantic-release
         run: uv pip install python-semantic-release
 
-      - name: Determine next version
-        id: semrel
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get version before semantic-release
+        id: before
         shell: bash
         run: |
-          OUTPUT=$(uv run semantic-release version --print 2>&1) || true
-          echo "Raw output: $OUTPUT"
-          # Extract version if semantic-release determined one
-          VERSION=$(uv run semantic-release version --print 2>/dev/null | grep -oP '^\d+\.\d+\.\d+' | head -1) || true
-          if [ -n "$VERSION" ]; then
-            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-            echo "released=true" >> "$GITHUB_OUTPUT"
-            echo "New version: $VERSION"
-          else
-            echo "released=false" >> "$GITHUB_OUTPUT"
-            echo "No new version to release"
-          fi
+          BEFORE=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "version=$BEFORE" >> "$GITHUB_OUTPUT"
+          echo "Version before: $BEFORE"
 
-      - name: Apply version bump and create tag
-        if: steps.semrel.outputs.released == 'true'
+      - name: Run semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: uv run semantic-release version
 
+      - name: Get version after semantic-release
+        id: after
+        shell: bash
+        run: |
+          AFTER=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "version=$AFTER" >> "$GITHUB_OUTPUT"
+          if [ "$AFTER" != "${{ steps.before.outputs.version }}" ]; then
+            echo "released=true" >> "$GITHUB_OUTPUT"
+            echo "New version: $AFTER"
+          else
+            echo "released=false" >> "$GITHUB_OUTPUT"
+            echo "No new version (still $AFTER)"
+          fi
+
       - name: Cache Nuitka compilation cache
-        if: steps.semrel.outputs.released == 'true'
+        if: steps.after.outputs.released == 'true'
         uses: actions/cache@v4
         with:
           path: ~/.cache/Nuitka
@@ -118,18 +120,18 @@ jobs:
             nuitka-cache-${{ runner.os }}-
 
       - name: Build executable
-        if: steps.semrel.outputs.released == 'true'
+        if: steps.after.outputs.released == 'true'
         run: uv run python build.py
 
       - name: Run smoke test
-        if: steps.semrel.outputs.released == 'true'
+        if: steps.after.outputs.released == 'true'
         run: uv run pytest tests/integration/test_exe_smoke.py -q
 
       - name: Upload exe to GitHub Release
-        if: steps.semrel.outputs.released == 'true'
+        if: steps.after.outputs.released == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.semrel.outputs.version }}
+          tag_name: v${{ steps.after.outputs.version }}
           files: dist/**/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
