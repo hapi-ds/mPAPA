@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/OWNER/REPO/actions/workflows/build.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/build.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/hapi-ds/b90471b021c2812e72f3ff038d22508d/raw/coverage-badge.json)](https://github.com/OWNER/REPO/actions/workflows/build.yml)
-[![Version](https://img.shields.io/github/v/release/OWNER/REPO?label=version)](https://github.com/OWNER/REPO/releases/latest)
+[![Version](https://img.shields.io/github/v/release/hapi-ds/mPAPA?label=version)](https://github.com/OWNER/REPO/releases/latest)
 
 **Your invention. Your machine. Your patent. Zero data leaks.**
 
