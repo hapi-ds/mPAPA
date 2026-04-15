@@ -233,7 +233,7 @@ def build_nuitka_command(
     Returns:
         A list of strings suitable for passing to ``subprocess.run()``.
     """
-    cmd: list[str] = [sys.executable, "-m", "nuitka", "--standalone"]
+    cmd: list[str] = [sys.executable, "-m", "nuitka", "--standalone", "--assume-yes-for-downloads"]
 
     # Output directory: CLI override takes precedence over config
     output_dir = args.output_dir if args.output_dir else config.get("output-dir", "dist")

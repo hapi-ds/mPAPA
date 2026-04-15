@@ -456,6 +456,7 @@ class TestBuildNuitkaCommand:
         assert cmd[1] == "-m"
         assert cmd[2] == "nuitka"
         assert cmd[3] == "--standalone"
+        assert cmd[4] == "--assume-yes-for-downloads"
 
     def test_onefile_present_when_true(self) -> None:
         """--onefile is in the command when the flag is True."""
