@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.5 (2026-04-16)
+
+### Bug Fixes
+
+- Readme update
+  ([`da3635c`](https://github.com/hapi-ds/mPAPA/commit/da3635c5c6ba7d688fdc1a58d549fbdd9fd16feb))
+
+
 ## v1.0.4 (2026-04-16)
 
 ### Bug Fixes
