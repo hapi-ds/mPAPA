@@ -450,6 +450,37 @@ def create_research_panel(
 
         ui.button("Add Term", icon="add", on_click=_add_term).props("flat dense")
 
+        # --- Save Disclosure Button ---
+        save_status = ui.label("").classes("text-caption text-grey")
+
+        def _on_save_disclosure() -> None:
+            """Persist the primary description and search terms to the DB."""
+            description = primary_input.value.strip() if primary_input.value else ""
+            if not description:
+                ui.notify("Please enter a primary invention description.", type="warning")
+                return
+
+            terms = list(panel_state["term_inputs"])
+
+            if disclosure_repo is not None:
+                try:
+                    disclosure_repo.upsert(topic_id, description, terms)
+                    save_status.set_text("✓ Saved")
+                    ui.notify("Disclosure saved.", type="positive")
+                    logger.info("Saved disclosure for topic %d", topic_id)
+                except Exception:
+                    logger.exception("Failed to save disclosure for topic %d", topic_id)
+                    ui.notify("Failed to save disclosure.", type="negative")
+                    save_status.set_text("⚠ Save failed")
+            else:
+                ui.notify("No database connection — cannot save.", type="warning")
+
+        with ui.row().classes("items-center gap-2 q-mt-sm"):
+            ui.button("Save", icon="save", on_click=_on_save_disclosure).props(
+                "color=secondary"
+            )
+            save_status
+
         # --- Source Selection Checkboxes (Req 3.1, 3.2, 3.5, 3.6) ---
         ui.label("Sources").classes("text-subtitle2 q-mt-md")
 
