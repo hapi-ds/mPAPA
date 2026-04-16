@@ -201,6 +201,8 @@ def create_research_panel(
     disclosure_repo: InventionDisclosureRepository | None = None,
     source_pref_repo: SourcePreferenceRepository | None = None,
     max_results_per_source: int = 10,
+    header_status_label: Any | None = None,
+    header_spinner: Any | None = None,
 ) -> None:
     """Populate *container* with the Research panel UI components.
 
@@ -212,8 +214,19 @@ def create_research_panel(
         disclosure_repo: Repository for invention disclosure persistence.
         source_pref_repo: Repository for source preference persistence.
         max_results_per_source: Maximum results to fetch per source.
+        header_status_label: Optional shared label in the header for
+            showing activity status (search progress, import status).
+        header_spinner: Optional shared spinner in the header shown
+            while background work is running.
     """
     container.clear()
+
+    def _set_header_status(text: str, busy: bool = False) -> None:
+        """Update the shared header status line."""
+        if header_status_label is not None:
+            header_status_label.set_text(text)
+        if header_spinner is not None:
+            header_spinner.set_visibility(busy)
 
     panel_state: dict[str, Any] = {
         "results": [],
@@ -450,6 +463,64 @@ def create_research_panel(
 
         ui.button("Add Term", icon="add", on_click=_add_term).props("flat dense")
 
+        # --- Suggest Search Terms Button ---
+        async def _on_suggest_terms() -> None:
+            """Use LLM to suggest search terms from the primary description."""
+            description = primary_input.value.strip() if primary_input.value else ""
+            if not description:
+                ui.notify("Please enter a primary invention description first.", type="warning")
+                return
+
+            _set_header_status("Suggesting search terms…", busy=True)
+            try:
+                from patent_system.dspy_modules.modules import SuggestSearchTermsModule
+
+                module = SuggestSearchTermsModule()
+                prediction = await asyncio.to_thread(
+                    module, invention_description=description
+                )
+                raw = prediction.search_terms or ""
+                suggested = [
+                    t.strip().lstrip("•-–0123456789.) ")
+                    for t in raw.splitlines()
+                    if t.strip() and not t.strip().startswith("#")
+                ]
+                suggested = [t for t in suggested if t]
+
+                if not suggested:
+                    ui.notify("No terms suggested — try a more detailed description.", type="warning")
+                    _set_header_status("No search terms suggested", busy=False)
+                    return
+
+                # Add suggested terms that aren't already present
+                existing = {t.strip().lower() for t in panel_state["term_inputs"] if t.strip()}
+                added = 0
+                for term in suggested:
+                    if term.lower() in existing:
+                        continue
+                    if len(panel_state["term_inputs"]) >= _MAX_SEARCH_TERMS:
+                        break
+                    panel_state["term_inputs"].append(term)
+                    existing.add(term.lower())
+                    added += 1
+
+                _render_terms()
+                msg = f"Added {added} suggested term(s)"
+                if len(suggested) > added:
+                    msg += f" ({len(suggested) - added} duplicates or limit reached)"
+                ui.notify(msg, type="positive")
+                _set_header_status(f"✓ {msg}", busy=False)
+                logger.info("Suggested %d terms for topic %d, added %d", len(suggested), topic_id, added)
+
+            except Exception as exc:
+                logger.exception("Failed to suggest search terms for topic %d", topic_id)
+                ui.notify(f"Term suggestion failed: {exc}", type="negative")
+                _set_header_status("⚠ Term suggestion failed", busy=False)
+
+        ui.button(
+            "Suggest Search Terms", icon="auto_awesome", on_click=_on_suggest_terms
+        ).props("flat dense color=primary")
+
         # --- Save Disclosure Button ---
         save_status = ui.label("").classes("text-caption text-grey")
 
@@ -595,6 +666,7 @@ def create_research_panel(
                 filename = f.name
                 content_bytes = await f.read()
                 import_status.set_text(f"Importing {filename}…")
+                _set_header_status(f"Importing {filename}…", busy=True)
 
                 def _process() -> dict | None:
                     """Run in thread: extract, persist, embed, index."""
@@ -640,15 +712,18 @@ def create_research_panel(
                     import_status.set_text(
                         f"⚠ No text in {filename} — may be a scanned/image PDF"
                     )
+                    _set_header_status(f"⚠ No text in {filename}", busy=False)
                     return
 
                 panel_state["results"].append(result)
                 import_status.set_text(f"✓ Imported {filename} ({result['word_count']:,} words)")
+                _set_header_status(f"✓ Imported {filename} ({result['word_count']:,} words)", busy=False)
                 logger.info("Imported '%s' for topic %d (%d words)", filename, topic_id, result["word_count"])
                 _refresh_table()
             except Exception:
                 logger.exception("Failed to import uploaded file")
                 import_status.set_text("⚠ Import failed")
+                _set_header_status("⚠ Import failed", busy=False)
 
         ui.upload(
             label="Upload PDF, DOCX, or TXT — files are imported automatically",
@@ -729,6 +804,7 @@ def create_research_panel(
 
             search_spinner.set_visibility(True)
             search_status.set_text("Starting search…")
+            _set_header_status("Research: Starting search…", busy=True)
             research_button.disable()
             logger.info("Start Research for topic %d", topic_id)
 
@@ -878,6 +954,7 @@ def create_research_panel(
             # Poll for completion with a timer
             def _check_search() -> None:
                 search_status.set_text(search_state["status"])
+                _set_header_status(f"Research: {search_state['status']}", busy=True)
                 if search_state["done"]:
                     _search_timer.deactivate()
                     search_spinner.set_visibility(False)
@@ -893,7 +970,9 @@ def create_research_panel(
                         parts.append(f"{dupes} duplicate(s) skipped")
                     if search_state["failed"]:
                         parts.append(f"{len(search_state['failed'])} source(s) unavailable")
-                    search_status.set_text(" · ".join(parts))
+                    summary = " · ".join(parts)
+                    search_status.set_text(summary)
+                    _set_header_status(f"Research: {summary}", busy=False)
 
             _search_timer = ui.timer(2.0, _check_search)
 

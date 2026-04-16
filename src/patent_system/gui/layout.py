@@ -1,8 +1,8 @@
 """Main layout for the Patent Analysis & Drafting System GUI.
 
-Provides the top-level page structure: header, left drawer with topic
-management, and a tabbed content area for Research, AI Chat, and Patent
-Draft panels.
+Provides the top-level page structure: header with title and workflow
+progress bar, left drawer with topic management, and a tabbed content
+area for Research, AI Chat, and Patent Draft panels.
 
 Requirements: 16.1, 16.2, 16.3, 1.1, 1.3, 1.4, 1.5
 """
@@ -44,6 +44,14 @@ def create_layout(
 ) -> None:
     """Set up the full page layout with header, drawer, and tabs.
 
+    The header has two rows:
+    1. App title + tab selectors
+    2. Workflow progress chips, spinner, and status text
+
+    Both rows are always visible and fixed at the top of the viewport.
+    The progress bar is populated by ``create_draft_panel`` when a topic
+    is selected.
+
     Args:
         topic_repo: Repository for topic CRUD operations.
         conn: SQLite connection for creating per-request repositories.
@@ -52,16 +60,51 @@ def create_layout(
         settings: Optional application settings for LLM configuration
             in chat and draft panels.
     """
-    # Shared state across the layout
     state: dict = {
         "selected_topic_id": None,
     }
 
-    # --- Header (Req 16.1) ---
-    with ui.header().classes("items-center justify-between"):
-        ui.label("Patent Analysis & Drafting System").classes(
-            "text-h5 font-bold"
+    # --- Header (Req 16.1, 16.3) ---
+    # Two rows: title+tabs on top, progress bar below.
+    # Both are inside ui.header() so they stay fixed at the top.
+    with ui.header().classes("items-center q-pa-none").style(
+        "flex-direction: column; align-items: stretch;"
+    ):
+        # Row 1: title + tabs
+        with ui.row().classes(
+            "w-full items-center justify-between q-px-md"
+        ).style("min-height: 48px;"):
+            ui.label("mPAPA").classes("text-h6 font-bold text-white")
+
+            with ui.tabs().classes("text-white") as tabs:
+                research_tab = ui.tab("Research")
+                chat_tab = ui.tab("AI Chat")
+                draft_tab = ui.tab("Patent Draft")
+
+        # Row 2: workflow progress bar (always visible)
+        # Starts with a placeholder; create_draft_panel replaces the
+        # content with chips + spinner + status label.
+        progress_bar = ui.row().classes(
+            "w-full q-px-md q-py-xs items-center justify-center"
+        ).style(
+            "background: rgba(0,0,0,0.15); min-height: 32px;"
         )
+        with progress_bar:
+            ui.label("Select a topic to see workflow progress").classes(
+                "text-caption text-grey-5"
+            )
+
+        # Row 3: shared activity status line (research search, imports, etc.)
+        with ui.row().classes(
+            "w-full q-px-md items-center justify-center"
+        ).style(
+            "background: rgba(0,0,0,0.25); min-height: 24px;"
+        ):
+            header_spinner = ui.spinner("dots", size="xs", color="white")
+            header_spinner.set_visibility(False)
+            header_status_label = ui.label("").classes(
+                "text-caption text-grey-4"
+            )
 
     # --- Left Drawer (Req 16.2) ---
     with ui.left_drawer(value=True).classes("p-4") as drawer:
@@ -95,7 +138,6 @@ def create_layout(
             _refresh_topic_list()
             _on_topic_selected(topic_id)
 
-        # Error label for duplicate name (Req 1.5)
         error_label = ui.label("").classes("text-negative text-caption")
         error_label.set_visibility(False)
 
@@ -121,7 +163,6 @@ def create_layout(
                         dialog_error.set_visibility(True)
                         return
 
-                    # Check for duplicate name (Req 1.5)
                     if topic_repo.name_exists(name):
                         dialog_error.set_text(
                             f'Topic "{name}" already exists.'
@@ -156,12 +197,7 @@ def create_layout(
             icon="add",
         ).classes("w-full q-mt-md")
 
-    # --- Tabs (Req 16.3) ---
-    with ui.tabs().classes("w-full") as tabs:
-        research_tab = ui.tab("Research")
-        chat_tab = ui.tab("AI Chat")
-        draft_tab = ui.tab("Patent Draft")
-
+    # --- Tab Panels ---
     with ui.tab_panels(tabs, value=research_tab).classes(
         "w-full flex-grow"
     ) as panels:
@@ -205,6 +241,8 @@ def create_layout(
             disclosure_repo=disclosure_repo,
             source_pref_repo=source_pref_repo,
             max_results_per_source=settings.search_max_results_per_source if settings else 10,
+            header_status_label=header_status_label,
+            header_spinner=header_spinner,
         )
         create_chat_panel(
             chat_container,
@@ -218,7 +256,7 @@ def create_layout(
             draft_container, topic_id, workflow=workflow, conn=conn,
             disclosure_repo=disclosure_repo,
             workflow_step_repo=workflow_step_repo,
+            progress_bar_container=progress_bar,
         )
 
-    # Initial load of topic list (Req 1.3)
     _refresh_topic_list()

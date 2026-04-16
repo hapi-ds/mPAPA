@@ -18,6 +18,24 @@ class StructureDisclosure(dspy.Signature):
     disclosure_json: str = dspy.OutputField()
 
 
+class SuggestSearchTerms(dspy.Signature):
+    """Suggest prior art search terms from an invention description.
+
+    Analyze the invention description and produce a list of focused search
+    terms suitable for patent and scientific literature databases. Include
+    technical keywords, synonyms, related concepts, and broader/narrower
+    terms that would help find relevant prior art. Return one term per
+    line, no numbering.
+    """
+
+    invention_description: str = dspy.InputField(
+        desc="Primary invention description text"
+    )
+    search_terms: str = dspy.OutputField(
+        desc="Suggested search terms, one per line"
+    )
+
+
 class DraftClaims(dspy.Signature):
     """Draft patent claims in European patent format. Write in English."""
 

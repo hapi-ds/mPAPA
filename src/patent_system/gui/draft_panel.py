@@ -108,6 +108,7 @@ def create_draft_panel(
     conn: sqlite3.Connection | None = None,
     disclosure_repo: InventionDisclosureRepository | None = None,
     workflow_step_repo: WorkflowStepRepository | None = None,
+    progress_bar_container: Any | None = None,
 ) -> None:
     """Populate *container* with the nine-step interactive Patent Draft UI.
 
@@ -118,6 +119,9 @@ def create_draft_panel(
         conn: SQLite connection for loading prior art / drafts.
         disclosure_repo: Repository for invention disclosures.
         workflow_step_repo: Repository for per-step persistence.
+        progress_bar_container: Optional external container (e.g. in the
+            header) where progress chips and status label are rendered.
+            When provided, the in-panel sticky footer is not created.
     """
     container.clear()
 
@@ -165,12 +169,10 @@ def create_draft_panel(
     # ------------------------------------------------------------------
     # Build UI
     # ------------------------------------------------------------------
+    # panel_state["spinner"] is set later when the progress bar is built.
+
     with container:
         ui.label("Patent Draft").classes("text-h6 q-mb-sm")
-
-        # --- Spinner for running steps (inline, near the steps) ---
-        spinner = ui.spinner("dots", size="lg", color="primary").classes("q-mb-sm")
-        spinner.set_visibility(False)
 
         # ------------------------------------------------------------------
         # Helper: load local prior art references from DB (no network)
@@ -408,7 +410,7 @@ def create_draft_panel(
                 return
             panel_state["running"] = True
 
-            spinner.set_visibility(True)
+            panel_state["spinner"].set_visibility(True)
             _refresh_chips()  # Shows "Running: ..." in footer
 
             config = {"configurable": {"thread_id": f"topic-{topic_id}"}}
@@ -496,7 +498,7 @@ def create_draft_panel(
 
             finally:
                 panel_state["running"] = False
-                spinner.set_visibility(False)
+                panel_state["spinner"].set_visibility(False)
                 # Recalculate active step
                 panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                 _refresh_chips()
@@ -526,7 +528,7 @@ def create_draft_panel(
                 ta.value = ""
 
             panel_state["running"] = True
-            spinner.set_visibility(True)
+            panel_state["spinner"].set_visibility(True)
             _refresh_chips()
 
             new_content = ""
@@ -608,7 +610,7 @@ def create_draft_panel(
 
             finally:
                 panel_state["running"] = False
-                spinner.set_visibility(False)
+                panel_state["spinner"].set_visibility(False)
                 _refresh_chips()
 
             # Show new content in textarea
@@ -1214,22 +1216,46 @@ def create_draft_panel(
         _update_export_state()
 
         # ------------------------------------------------------------------
-        # Sticky footer: progress chips + status label (Req 11.1–11.5)
+        # Progress chips + spinner + status label (Req 11.1–11.5)
+        # Rendered into the header's progress_bar_container when provided,
+        # otherwise falls back to an in-panel element.
         # ------------------------------------------------------------------
-        with ui.element("div").classes(
-            "w-full q-pa-sm bg-white"
-        ).style(
-            "position: sticky; bottom: 0; z-index: 10; "
-            "border-top: 1px solid #e0e0e0;"
-        ):
-            step_chips_row = ui.row().classes("w-full gap-1 flex-wrap justify-center")
-            step_chip_elements: dict[str, Any] = {}
-            with step_chips_row:
-                for step_name in WORKFLOW_STEPS:
-                    chip = ui.chip(step_name, icon="radio_button_unchecked", color="grey-4").props("outline dense")
-                    step_chip_elements[step_name] = chip
+        if progress_bar_container is not None:
+            progress_bar_container.clear()
+            _chips_parent = progress_bar_container
+            _in_header = True
+        else:
+            _chips_parent = ui.element("div").classes(
+                "w-full q-pa-sm bg-white"
+            ).style(
+                "position: sticky; bottom: 0; z-index: 10; "
+                "border-top: 1px solid #e0e0e0;"
+            )
+            _in_header = False
 
-            progress_label = ui.label("").classes("text-caption text-grey text-center w-full q-mt-xs")
+        step_chip_elements: dict[str, Any] = {}
+
+        with _chips_parent:
+            with ui.column().classes("w-full gap-0 items-center"):
+                with ui.row().classes("w-full gap-1 flex-wrap justify-center items-center"):
+                    for step_name in WORKFLOW_STEPS:
+                        chip = ui.chip(
+                            step_name, icon="radio_button_unchecked", color="grey-4"
+                        ).props("outline dense")
+                        step_chip_elements[step_name] = chip
+
+                    # Spinner sits next to the chips
+                    spinner = ui.spinner(
+                        "dots", size="sm",
+                        color="white" if _in_header else "primary",
+                    )
+                    spinner.set_visibility(False)
+                    panel_state["spinner"] = spinner
+
+                progress_label = ui.label("").classes(
+                    "text-caption text-center w-full"
+                    + (" text-white" if _in_header else " text-grey")
+                )
 
         def _refresh_chips() -> None:
             """Update chip icons/colours and status text to reflect current state."""

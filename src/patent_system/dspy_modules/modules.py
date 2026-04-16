@@ -18,6 +18,7 @@ from patent_system.dspy_modules.signatures import (
     RefineClaims,
     ReviewConsistency,
     StructureDisclosure,
+    SuggestSearchTerms,
     SummarizeDisclosure,
     SummarizePriorArt,
 )
@@ -85,6 +86,26 @@ class StructureDisclosureModule(dspy.Module):
             A DSPy Prediction with a disclosure_json field.
         """
         return self.predict(transcript=transcript)
+
+
+class SuggestSearchTermsModule(dspy.Module):
+    """Suggest prior art search terms from an invention description."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(SuggestSearchTerms)
+        self.model_name = model_name
+
+    def forward(self, invention_description: str) -> dspy.Prediction:
+        """Generate search term suggestions.
+
+        Args:
+            invention_description: The primary invention description text.
+
+        Returns:
+            A DSPy Prediction with a search_terms field (one term per line).
+        """
+        return self.predict(invention_description=invention_description)
 
 
 class DraftClaimsModule(dspy.Module):
