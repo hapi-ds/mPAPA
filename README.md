@@ -74,6 +74,8 @@ Stored locally in a database for each topic, so you can pick up right where you 
 
 ### The tech that makes it possible:
 
+**9 specialized AI agents** work together in a coordinated pipeline — each one focused on a single task (disclosure analysis, claims drafting, novelty assessment, consistency review, …). They share context through a structured state graph, so every agent builds on what the previous ones discovered.
+
 - **LM Studio** — Run any open-source LLM locally. Llama, Qwen, Mistral. Your choice.
 - **LangGraph** — Multi-step AI workflows with human-in-the-loop review at every stage.
 - **DSPy** — Structured, optimizable prompts. Not fragile prompt strings.
