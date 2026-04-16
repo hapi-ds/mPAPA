@@ -19,6 +19,9 @@ dependencies = [
     "pymupdf>=1.27.2.2",
 ]
 
+[project.scripts]
+mpapa = "patent_system.main:cli"
+
 [dependency-groups]
 dev = [
     "hypothesis",

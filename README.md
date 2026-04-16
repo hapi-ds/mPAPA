@@ -95,39 +95,41 @@ Stored locally in a database for each topic, so you can pick up right where you 
 
 ## Installation
 
-### Option A: Windows Executable (easiest)
 
-No Python required. Just download and run.
+---
 
-1. Go to the [Releases page](https://github.com/OWNER/REPO/releases/latest)
-2. Download `main.exe` from the latest release
-3. Place it in a folder of your choice (e.g. `C:\mPAPA\`)
-4. Copy `.env.example` next to the exe and rename it to `.env` — adjust settings if needed
-5. Double-click `main.exe` or run it from a terminal
-6. Open `http://localhost:8080` in your browser
+### Option A: Windows Executable ❌ (Currently Unavailable)
 
-On first launch, mPAPA automatically creates `data/` and `logs/` folders next to the executable.
+**Why we don't provide an .exe file:**
 
-### Option B: From Source (for developers)
+We've decided to temporarily discontinue providing Windows executables. Here's why:
 
-Requires Python 3.13+ and [uv](https://docs.astral.sh/uv/getting-started/installation/).
+- **False virus warnings**: Windows Defender and other antivirus software flag Python-packaged executables as malicious, even though they're completely safe. This creates unnecessary concern and a poor user experience.
+- **Build reliability issues**: The automated exe build process is unstable, takes over 2 hours, and occasionally produces inconsistent results.
+- **Trust and transparency**: We believe you shouldn't have to blindly trust an executable file. Running from source lets you see exactly what you're running.
 
-```bash
-# Clone the repo
-git clone https://github.com/OWNER/REPO.git
-cd mPAPA
+**Good news:** With modern Python tooling, running from source is nearly as simple as double-clicking an exe! See Option B below.
 
-# Install dependencies
-uv sync
+---
 
-# Copy the example env file and adjust as needed
-cp .env.example .env
+### Option B: Run from Source (Recommended) ✨
 
-# Run the app
-uv run python -m patent_system.main
-```
+The reliable, transparent, and surprisingly easy way to run mPAPA.
 
-Open your browser at `http://localhost:8080`.
+1. Install `uv` (a fast Python package manager) - takes 30 seconds! [uv getting started](https://docs.astral.sh/uv/getting-started/installation/)
+2. Download the source code or clone with git: `git clone https://github.com/OWNER/REPO.git`
+3. Copy `.env.example` to `.env` and adjust settings if needed
+4. Run `uv run mpapa` (the first time it downloads all needed libraries automatically)
+5. Open `http://localhost:8080` in your browser
+
+**Why this is actually better than an exe:**
+- ✅ No antivirus warnings or security concerns
+- ✅ Smaller download size  
+- ✅ Always up-to-date dependencies
+- ✅ Full transparency - inspect any part of the code
+- ✅ Easier to update and modify
+
+On first launch, mPAPA automatically creates `data/` and `logs/` folders.
 
 ---
 
@@ -151,13 +153,13 @@ Open LM Studio and search for a model in the Discover tab. Recommended options f
 | **Llama 3.1 8B** | ~5 GB | Well-rounded, widely tested |
 | **Mistral 7B** | ~4 GB | Good balance of speed and quality |
 
-Pick one that fits your RAM. 8 GB system RAM is enough for 4B models, 16 GB for 7-8B models. A GPU speeds things up but isn't required.
+Pick one that fits your RAM. 8 GB system RAM is enough for 4B models, 16 GB for 7-8B models. A GPU speeds things up but isn't required (but strongly recommended).
 
 ### 3. Download an embedding model
 
 In LM Studio's Discover tab, also search for and download an embedding model:
 
-- **nomic-embed-text-v1.5** (recommended, ~270 MB)
+- **nomic-embed-text-v1.5** (~270 MB) or any other "embed" model
 
 ### 4. Start the local server
 

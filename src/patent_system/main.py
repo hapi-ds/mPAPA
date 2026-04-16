@@ -185,5 +185,20 @@ def main() -> None:
     )
 
 
+def cli() -> None:
+    """Console script entry point for ``uv run mpapa``.
+
+    NiceGUI requires the application to be launched via ``python -m`` so
+    that ``__name__`` is ``"__main__"``.  This wrapper re-executes the
+    module as a subprocess to satisfy that requirement.
+    """
+    import subprocess
+    import sys
+
+    raise SystemExit(
+        subprocess.call([sys.executable, "-m", "patent_system.main"])
+    )
+
+
 if __name__ in {"__main__", "__mp_main__"}:
     main()

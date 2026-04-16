@@ -1,5 +1,8 @@
 name: Build & Release
 
+env:
+  BUILD_EXE: false  # Set to true to enable Nuitka exe build + upload
+
 on:
   push:
     branches: [main]
@@ -111,7 +114,7 @@ jobs:
           fi
 
       - name: Cache Nuitka compilation cache
-        if: steps.after.outputs.released == 'true'
+        if: env.BUILD_EXE == 'true' && steps.after.outputs.released == 'true'
         uses: actions/cache@v4
         with:
           path: ~/.cache/Nuitka
@@ -120,15 +123,15 @@ jobs:
             nuitka-cache-${{ runner.os }}-
 
       - name: Build executable
-        if: steps.after.outputs.released == 'true'
+        if: env.BUILD_EXE == 'true' && steps.after.outputs.released == 'true'
         run: uv run python build.py
 
       - name: Run smoke test
-        if: steps.after.outputs.released == 'true'
+        if: env.BUILD_EXE == 'true' && steps.after.outputs.released == 'true'
         run: uv run pytest tests/integration/test_exe_smoke.py -q
 
       - name: Upload exe to GitHub Release
-        if: steps.after.outputs.released == 'true'
+        if: env.BUILD_EXE == 'true' && steps.after.outputs.released == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.after.outputs.version }}
