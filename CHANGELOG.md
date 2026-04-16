@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.4 (2026-04-16)
+
+### Bug Fixes
+
+- No exe build
+  ([`f66ccdf`](https://github.com/hapi-ds/mPAPA/commit/f66ccdf88c0ad8e75379f865403481e5a7f9a083))
+
+
 ## v1.0.3 (2026-04-15)
 
 ### Bug Fixes
