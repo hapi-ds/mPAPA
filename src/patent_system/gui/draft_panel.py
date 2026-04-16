@@ -249,10 +249,10 @@ def create_draft_panel(
                 "interview_messages": [],
                 "prior_art_results": _load_local_prior_art(),
                 "failed_sources": [],
-                "novelty_analysis": None,
+                "novelty_analysis": sc.get("novelty_analysis"),
                 "claims_text": sc.get("claims_drafting", "") or panel_state["claims"],
                 "description_text": sc.get("patent_draft", "") or panel_state["description"],
-                "review_feedback": "",
+                "review_feedback": sc.get("consistency_review", ""),
                 "review_approved": False,
                 "iteration_count": 0,
                 "current_step": from_step_key or "initial_idea",
@@ -367,6 +367,7 @@ def create_draft_panel(
                             panel_state["claims"] = claims
                             if claims_textarea_ref.get("el") is not None:
                                 claims_textarea_ref["el"].value = claims
+                                claims_textarea_ref["el"].update()
 
                     # Store in panel state (content only — do NOT overwrite
                     # a step that's already marked completed)
@@ -379,6 +380,7 @@ def create_draft_panel(
                     ta = step_textareas.get(step_key)
                     if ta is not None and content:
                         ta.value = content
+                        ta.update()
 
                     _refresh_chips()
 
@@ -580,8 +582,15 @@ def create_draft_panel(
                     new_claims = result.get("claims_text", "")
                     if new_claims:
                         panel_state["claims"] = new_claims
+                        panel_state["step_contents"]["claims_drafting"] = new_claims
                         if claims_textarea_ref.get("el") is not None:
                             claims_textarea_ref["el"].value = new_claims
+                        # Also update the claims_drafting textarea if visible
+                        claims_ta = step_textareas.get("claims_drafting")
+                        if claims_ta is not None:
+                            claims_ta.value = new_claims
+                        _persist_step("claims_drafting", new_claims, "completed")
+                        _save_draft()
 
             except Exception as exc:
                 from patent_system.exceptions import LLMConnectionError
@@ -873,6 +882,40 @@ def create_draft_panel(
                             icon="replay",
                         ).props("color=warning flat")
                         step_rerun_btns[step_key] = rerun_btn
+
+                        # Save button for step 9
+                        def _on_save_patent_draft() -> None:
+                            # Read current textarea values
+                            if claims_textarea_ref.get("el") is not None:
+                                panel_state["claims"] = claims_textarea_ref["el"].value or ""
+                            if description_textarea_ref.get("el") is not None:
+                                panel_state["description"] = description_textarea_ref["el"].value or ""
+
+                            claims_val = panel_state["claims"]
+                            desc_val = panel_state["description"]
+
+                            # Save to patent_drafts table
+                            _save_draft()
+
+                            # Also persist to workflow_steps table
+                            if desc_val.strip():
+                                _persist_step("patent_draft", desc_val, "completed")
+                                panel_state["step_contents"]["patent_draft"] = desc_val
+                                panel_state["completed_keys"].add("patent_draft")
+                            if claims_val.strip():
+                                _persist_step("claims_drafting", claims_val, "completed")
+                                panel_state["step_contents"]["claims_drafting"] = claims_val
+
+                            ui.notify("Patent draft saved.", type="positive")
+                            _refresh_chips()
+                            _update_export_state()
+
+                        save_btn = ui.button(
+                            "Save Edits",
+                            on_click=_on_save_patent_draft,
+                            icon="save",
+                        ).props("flat color=primary")
+                        step_save_btns[step_key] = save_btn
 
                 # --- Generic steps 2–8 ---
                 else:

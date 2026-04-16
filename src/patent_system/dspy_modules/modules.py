@@ -15,6 +15,7 @@ from patent_system.dspy_modules.signatures import (
     DraftClaims,
     DraftDescription,
     InventionInterviewQuestion,
+    RefineClaims,
     ReviewConsistency,
     StructureDisclosure,
     SummarizeDisclosure,
@@ -161,6 +162,46 @@ class DraftDescriptionModule(dspy.Module):
             claims=claims,
             prior_art_summary=prior_art_summary,
             invention_disclosure=invention_disclosure,
+        )
+
+
+class RefineClaimsModule(dspy.Module):
+    """Refine patent claims based on accumulated analysis feedback."""
+
+    def __init__(self, model_name: str | None = None) -> None:
+        super().__init__()
+        self.predict = dspy.ChainOfThought(RefineClaims)
+        self.model_name = model_name
+
+    def forward(
+        self,
+        original_claims: str,
+        invention_disclosure: str,
+        novelty_analysis: str,
+        consistency_review: str,
+        market_assessment: str,
+        legal_assessment: str,
+    ) -> dspy.Prediction:
+        """Refine claims using feedback from analysis steps.
+
+        Args:
+            original_claims: The current patent claims text.
+            invention_disclosure: Structured invention disclosure.
+            novelty_analysis: Novelty analysis findings.
+            consistency_review: Consistency review feedback.
+            market_assessment: Market potential assessment.
+            legal_assessment: Legal and IP assessment.
+
+        Returns:
+            A DSPy Prediction with a refined_claims field.
+        """
+        return self.predict(
+            original_claims=original_claims,
+            invention_disclosure=invention_disclosure,
+            novelty_analysis=novelty_analysis,
+            consistency_review=consistency_review,
+            market_assessment=market_assessment,
+            legal_assessment=legal_assessment,
         )
 
 

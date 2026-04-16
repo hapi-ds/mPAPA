@@ -44,6 +44,28 @@ class DraftDescription(dspy.Signature):
     description_text: str = dspy.OutputField()
 
 
+class RefineClaims(dspy.Signature):
+    """Refine patent claims based on feedback from analysis steps.
+
+    Incorporate insights from novelty analysis, consistency review,
+    market potential, and legal assessment to improve the claims.
+    Preserve the European patent format (preamble, characterizing
+    portion, hierarchical dependents). Only make changes that are
+    justified by the feedback — do not rewrite claims that need no
+    improvement.
+    """
+
+    original_claims: str = dspy.InputField(desc="Current patent claims text")
+    invention_disclosure: str = dspy.InputField(desc="Structured invention disclosure text")
+    novelty_analysis: str = dspy.InputField(desc="Novelty analysis findings and suggested claim scope")
+    consistency_review: str = dspy.InputField(desc="Consistency review feedback on the claims")
+    market_assessment: str = dspy.InputField(desc="Market potential assessment")
+    legal_assessment: str = dspy.InputField(desc="Legal and IP assessment with freedom-to-operate findings")
+    refined_claims: str = dspy.OutputField(
+        desc="Improved patent claims incorporating feedback. European patent format."
+    )
+
+
 class AnalyzeMarketPotential(dspy.Signature):
     """Assess economic viability and market potential of an invention."""
 
