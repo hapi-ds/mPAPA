@@ -720,40 +720,46 @@ def create_draft_panel(
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
 
-                        # Load disclosure data for display
-                        _disc_data: dict | None = None
-                        if disclosure_repo is not None:
-                            try:
-                                _disc_data = disclosure_repo.get_by_topic(topic_id)
-                            except Exception:
-                                pass
+                        # Container for disclosure content (re-rendered on rerun)
+                        idea_content_container = ui.column().classes("w-full")
 
-                        if _disc_data is not None:
-                            # Show primary description as read-only label
-                            ui.label("Primary Description").classes("text-subtitle2 q-mt-sm")
-                            ui.label(_disc_data["primary_description"]).classes(
-                                "text-body2 q-pa-sm bg-grey-1 rounded"
-                            ).style("white-space: pre-wrap;")
+                        def _render_initial_idea() -> None:
+                            """Load disclosure from DB and render inside the container."""
+                            idea_content_container.clear()
+                            _disc_data: dict | None = None
+                            if disclosure_repo is not None:
+                                try:
+                                    _disc_data = disclosure_repo.get_by_topic(topic_id)
+                                except Exception:
+                                    pass
 
-                            # Show search terms as chips
-                            _terms = _disc_data.get("search_terms", [])
-                            if _terms:
-                                ui.label("Search Terms").classes("text-subtitle2 q-mt-sm")
-                                with ui.row().classes("gap-1 flex-wrap"):
-                                    for term in _terms:
-                                        ui.chip(term, color="primary").props("outline dense")
+                            with idea_content_container:
+                                if _disc_data is not None:
+                                    ui.label("Primary Description").classes("text-subtitle2 q-mt-sm")
+                                    ui.label(_disc_data["primary_description"]).classes(
+                                        "text-body2 q-pa-sm bg-grey-1 rounded"
+                                    ).style("white-space: pre-wrap;")
 
-                            # Build the content string for persistence
-                            _idea_parts = [_disc_data["primary_description"]]
-                            if _terms:
-                                _idea_parts.append("\nSearch Terms: " + ", ".join(_terms))
-                            saved_content = "\n".join(_idea_parts)
-                            panel_state["step_contents"][step_key] = saved_content
-                        else:
-                            ui.label(
-                                "No invention disclosure saved yet. "
-                                "Go to the Research tab to enter your invention description first."
-                            ).classes("text-grey q-pa-sm")
+                                    _terms = _disc_data.get("search_terms", [])
+                                    if _terms:
+                                        ui.label("Search Terms").classes("text-subtitle2 q-mt-sm")
+                                        with ui.row().classes("gap-1 flex-wrap"):
+                                            for term in _terms:
+                                                ui.chip(term, color="primary").props("outline dense")
+
+                                    _idea_parts = [_disc_data["primary_description"]]
+                                    if _terms:
+                                        _idea_parts.append("\nSearch Terms: " + ", ".join(_terms))
+                                    content_str = "\n".join(_idea_parts)
+                                    panel_state["step_contents"][step_key] = content_str
+                                else:
+                                    ui.label(
+                                        "No invention disclosure saved yet. "
+                                        "Go to the Research tab to enter your invention description first."
+                                    ).classes("text-grey q-pa-sm")
+                                    panel_state["step_contents"][step_key] = ""
+
+                        _render_initial_idea()
 
                         # Hidden textarea ref for consistency with other steps
                         # (not displayed, but keeps step_textareas dict complete)
@@ -763,6 +769,8 @@ def create_draft_panel(
                         # graph which will run initial_idea node + interrupt,
                         # then immediately resumes to execute claims_drafting.
                         async def _on_continue_initial() -> None:
+                            # Re-read disclosure from DB to pick up any changes
+                            _render_initial_idea()
                             content = panel_state["step_contents"].get("initial_idea", "")
                             if not _has_content(content):
                                 ui.notify(
@@ -788,7 +796,7 @@ def create_draft_panel(
                         ).props("color=primary")
                         step_continue_btns[step_key] = cont_btn
 
-                        # Re-run button
+                        # Re-run button — reloads disclosure from DB and resets all steps
                         async def _on_rerun_initial() -> None:
                             if workflow_step_repo is not None:
                                 try:
@@ -797,6 +805,8 @@ def create_draft_panel(
                                     logger.exception("Failed to reset from initial_idea")
                             panel_state["completed_keys"] -= set(WORKFLOW_STEP_ORDER)
                             panel_state["active_key"] = "initial_idea"
+                            # Reload disclosure from DB to pick up changes
+                            _render_initial_idea()
                             _refresh_chips()
                             _refresh_step_sections()
 
