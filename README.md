@@ -29,7 +29,7 @@ Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks
 
 **mPAPA is a fully local AI patent drafting system.** It runs on YOUR machine*. Your invention data never touches the internet. Ever.
 
-*Any recent PC will do. Just 6 GB+ RAM for LLM. GPU optional. Works great with models like Gemma-4-E2B.
+*Any recent PC will do. Just 6 GB+ (V)RAM for LLM. GPU optional (but strongly recommended). Works great with models like Gemma-4-E2B.
 
 ---
 
@@ -118,7 +118,7 @@ We've decided to temporarily discontinue providing Windows executables. Here's w
 
 The reliable, transparent, and surprisingly easy way to run mPAPA.
 
-1. Install `uv` (a fast Python package manager) - takes 30 seconds! [uv getting started](https://docs.astral.sh/uv/getting-started/installation/)
+1. Install `uv` (a fast Python package manager) - takes 30 seconds → [uv getting started](https://docs.astral.sh/uv/getting-started/installation/)
 2. Download the source code or clone with git: `git clone https://github.com/OWNER/REPO.git`
 3. Copy `.env.example` to `.env` and adjust settings if needed
 4. Run `uv run mpapa` (the first time it downloads all needed libraries automatically)
