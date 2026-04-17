@@ -7,6 +7,7 @@ DSPy to use LM Studio via the OpenAI-compatible API endpoint.
 
 import dspy
 
+from patent_system.agents.personality import generate_personality_prefix
 from patent_system.config import AppSettings
 from patent_system.dspy_modules.signatures import (
     AnalyzeLegalClarification,
@@ -51,19 +52,26 @@ class InterviewQuestionModule(dspy.Module):
         self.model_name = model_name
 
     def forward(
-        self, conversation_history: str, invention_context: str
+        self,
+        conversation_history: str,
+        invention_context: str,
+        personality_mode: str | None = None,
     ) -> dspy.Prediction:
         """Generate the next interview question.
 
         Args:
             conversation_history: The conversation so far.
             invention_context: Context about the invention being discussed.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
 
         Returns:
             A DSPy Prediction with a next_question field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_conversation_history = f"{prefix}\n\n{conversation_history}"
         return self.predict(
-            conversation_history=conversation_history,
+            conversation_history=prefixed_conversation_history,
             invention_context=invention_context,
         )
 
@@ -76,16 +84,24 @@ class StructureDisclosureModule(dspy.Module):
         self.predict = dspy.ChainOfThought(StructureDisclosure)
         self.model_name = model_name
 
-    def forward(self, transcript: str) -> dspy.Prediction:
+    def forward(
+        self,
+        transcript: str,
+        personality_mode: str | None = None,
+    ) -> dspy.Prediction:
         """Extract structured disclosure from a transcript.
 
         Args:
             transcript: The full interview transcript.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
 
         Returns:
             A DSPy Prediction with a disclosure_json field.
         """
-        return self.predict(transcript=transcript)
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_transcript = f"{prefix}\n\n{transcript}"
+        return self.predict(transcript=prefixed_transcript)
 
 
 class SuggestSearchTermsModule(dspy.Module):
@@ -96,16 +112,24 @@ class SuggestSearchTermsModule(dspy.Module):
         self.predict = dspy.ChainOfThought(SuggestSearchTerms)
         self.model_name = model_name
 
-    def forward(self, invention_description: str) -> dspy.Prediction:
+    def forward(
+        self,
+        invention_description: str,
+        personality_mode: str | None = None,
+    ) -> dspy.Prediction:
         """Generate search term suggestions.
 
         Args:
             invention_description: The primary invention description text.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
 
         Returns:
             A DSPy Prediction with a search_terms field (one term per line).
         """
-        return self.predict(invention_description=invention_description)
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_invention_description = f"{prefix}\n\n{invention_description}"
+        return self.predict(invention_description=prefixed_invention_description)
 
 
 class DraftClaimsModule(dspy.Module):
@@ -117,19 +141,31 @@ class DraftClaimsModule(dspy.Module):
         self.model_name = model_name
 
     def forward(
-        self, invention_disclosure: str, novelty_analysis: str
+        self,
+        invention_disclosure: str,
+        novelty_analysis: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Draft patent claims.
 
         Args:
             invention_disclosure: Structured invention disclosure text.
             novelty_analysis: Novelty analysis results.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a claims_text field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        if review_notes_text:
+            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
         return self.predict(
-            invention_disclosure=invention_disclosure,
+            invention_disclosure=prefixed_invention_disclosure,
             novelty_analysis=novelty_analysis,
         )
 
@@ -142,17 +178,31 @@ class ReviewConsistencyModule(dspy.Module):
         self.predict = dspy.Predict(ReviewConsistency)
         self.model_name = model_name
 
-    def forward(self, claims: str, description: str) -> dspy.Prediction:
+    def forward(
+        self,
+        claims: str,
+        description: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
+    ) -> dspy.Prediction:
         """Review claims for consistency with the description.
 
         Args:
             claims: The drafted patent claims.
             description: The patent description text.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with feedback and approved fields.
         """
-        return self.predict(claims=claims, description=description)
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_claims = f"{prefix}\n\n{claims}"
+        if review_notes_text:
+            prefixed_claims = f"{prefixed_claims}\n\n{review_notes_text}"
+        return self.predict(claims=prefixed_claims, description=description)
 
 
 class DraftDescriptionModule(dspy.Module):
@@ -168,6 +218,8 @@ class DraftDescriptionModule(dspy.Module):
         claims: str,
         prior_art_summary: str,
         invention_disclosure: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Generate the full patent description.
 
@@ -175,12 +227,20 @@ class DraftDescriptionModule(dspy.Module):
             claims: Approved patent claims.
             prior_art_summary: Summary of relevant prior art.
             invention_disclosure: Structured invention disclosure.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a description_text field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_claims = f"{prefix}\n\n{claims}"
+        if review_notes_text:
+            prefixed_claims = f"{prefixed_claims}\n\n{review_notes_text}"
         return self.predict(
-            claims=claims,
+            claims=prefixed_claims,
             prior_art_summary=prior_art_summary,
             invention_disclosure=invention_disclosure,
         )
@@ -202,6 +262,8 @@ class RefineClaimsModule(dspy.Module):
         consistency_review: str,
         market_assessment: str,
         legal_assessment: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Refine claims using feedback from analysis steps.
 
@@ -212,12 +274,20 @@ class RefineClaimsModule(dspy.Module):
             consistency_review: Consistency review feedback.
             market_assessment: Market potential assessment.
             legal_assessment: Legal and IP assessment.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a refined_claims field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_original_claims = f"{prefix}\n\n{original_claims}"
+        if review_notes_text:
+            prefixed_original_claims = f"{prefixed_original_claims}\n\n{review_notes_text}"
         return self.predict(
-            original_claims=original_claims,
+            original_claims=prefixed_original_claims,
             invention_disclosure=invention_disclosure,
             novelty_analysis=novelty_analysis,
             consistency_review=consistency_review,
@@ -239,6 +309,8 @@ class MarketPotentialModule(dspy.Module):
         invention_disclosure: str,
         claims_text: str,
         novelty_analysis: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Assess market potential of the invention.
 
@@ -246,12 +318,20 @@ class MarketPotentialModule(dspy.Module):
             invention_disclosure: Structured invention disclosure text.
             claims_text: Drafted patent claims.
             novelty_analysis: Novelty analysis against prior art.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a market_assessment field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        if review_notes_text:
+            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
         return self.predict(
-            invention_disclosure=invention_disclosure,
+            invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
             novelty_analysis=novelty_analysis,
         )
@@ -271,6 +351,8 @@ class LegalClarificationModule(dspy.Module):
         claims_text: str,
         prior_art_summary: str,
         novelty_analysis: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Assess legal and IP ownership aspects.
 
@@ -279,12 +361,20 @@ class LegalClarificationModule(dspy.Module):
             claims_text: Drafted patent claims.
             prior_art_summary: Summary of prior art search results.
             novelty_analysis: Novelty analysis against prior art.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a legal_assessment field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        if review_notes_text:
+            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
         return self.predict(
-            invention_disclosure=invention_disclosure,
+            invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
             novelty_analysis=novelty_analysis,
@@ -308,6 +398,8 @@ class DisclosureSummaryModule(dspy.Module):
         consistency_review: str,
         market_assessment: str,
         legal_assessment: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Generate a summary of all preceding workflow steps.
 
@@ -319,12 +411,20 @@ class DisclosureSummaryModule(dspy.Module):
             consistency_review: Claims consistency review feedback.
             market_assessment: Market potential assessment.
             legal_assessment: Legal and IP ownership assessment.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a disclosure_summary field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_initial_idea = f"{prefix}\n\n{initial_idea}"
+        if review_notes_text:
+            prefixed_initial_idea = f"{prefixed_initial_idea}\n\n{review_notes_text}"
         return self.predict(
-            initial_idea=initial_idea,
+            initial_idea=prefixed_initial_idea,
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
             novelty_analysis=novelty_analysis,
@@ -347,6 +447,8 @@ class NoveltyAnalysisModule(dspy.Module):
         invention_disclosure: str,
         claims_text: str,
         prior_art_summary: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Analyze novelty of the invention.
 
@@ -354,12 +456,20 @@ class NoveltyAnalysisModule(dspy.Module):
             invention_disclosure: Structured invention disclosure text.
             claims_text: Drafted patent claims.
             prior_art_summary: Summary of prior art references.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a novelty_assessment field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        if review_notes_text:
+            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
         return self.predict(
-            invention_disclosure=invention_disclosure,
+            invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
         )
@@ -378,6 +488,8 @@ class PriorArtSummaryModule(dspy.Module):
         invention_disclosure: str,
         claims_text: str,
         prior_art_references: str,
+        personality_mode: str | None = None,
+        review_notes_text: str | None = None,
     ) -> dspy.Prediction:
         """Summarize prior art references.
 
@@ -385,12 +497,20 @@ class PriorArtSummaryModule(dspy.Module):
             invention_disclosure: The invention disclosure text.
             claims_text: Drafted patent claims for context.
             prior_art_references: All references with titles and abstracts.
+            personality_mode: Optional personality mode string. Defaults to
+                ``"critical"`` when *None* or invalid.
+            review_notes_text: Optional formatted review notes to append
+                to the primary input after the personality prefix.
 
         Returns:
             A DSPy Prediction with a prior_art_summary field.
         """
+        prefix = generate_personality_prefix(personality_mode or "critical")
+        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        if review_notes_text:
+            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
         return self.predict(
-            invention_disclosure=invention_disclosure,
+            invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
             prior_art_references=prior_art_references,
         )

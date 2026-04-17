@@ -21,10 +21,12 @@ from langgraph.errors import GraphInterrupt
 from nicegui import ui
 
 from patent_system.agents.state import PatentWorkflowState
+from patent_system.agents.personality import AGENT_PERSONALITY_DEFAULTS
 from patent_system.db.repository import (
     InventionDisclosureRepository,
     PatentDraftRepository,
     PatentRepository,
+    PersonalityPreferenceRepository,
     ResearchSessionRepository,
     ScientificPaperRepository,
     WorkflowStepRepository,
@@ -64,6 +66,20 @@ _STEP_DISPLAY_NAMES: dict[str, str] = {
 
 # Reverse mapping: display name → step key
 _DISPLAY_NAME_TO_KEY: dict[str, str] = {v: k for k, v in _STEP_DISPLAY_NAMES.items()}
+
+# Badge colors for personality mode indicators (Req 8.2)
+_MODE_BADGE_COLORS: dict[str, str] = {
+    "critical": "red",
+    "neutral": "grey",
+    "innovation_friendly": "green",
+}
+
+# Human-readable labels for personality modes (Req 8.1)
+_MODE_BADGE_LABELS: dict[str, str] = {
+    "critical": "Critical",
+    "neutral": "Neutral",
+    "innovation_friendly": "Innovation-Friendly",
+}
 
 
 def can_export(claims: str, description: str) -> bool:
@@ -109,6 +125,7 @@ def create_draft_panel(
     disclosure_repo: InventionDisclosureRepository | None = None,
     workflow_step_repo: WorkflowStepRepository | None = None,
     progress_bar_container: Any | None = None,
+    personality_pref_repo: PersonalityPreferenceRepository | None = None,
 ) -> None:
     """Populate *container* with the nine-step interactive Patent Draft UI.
 
@@ -122,6 +139,7 @@ def create_draft_panel(
         progress_bar_container: Optional external container (e.g. in the
             header) where progress chips and status label are rendered.
             When provided, the in-panel sticky footer is not created.
+        personality_pref_repo: Repository for per-topic personality preferences.
     """
     container.clear()
 
@@ -135,6 +153,8 @@ def create_draft_panel(
         "completed_keys": set(),  # step keys with status "completed"
         "active_key": None,       # current active step key
         "running": False,         # True while an LLM step is executing
+        "step_modes": {},         # step_key -> personality mode string (Req 8.1)
+        "step_review_notes": {},  # step_key -> review notes string (Req 3.1)
     }
 
     # ------------------------------------------------------------------
@@ -148,6 +168,11 @@ def create_draft_panel(
                 panel_state["step_contents"][key] = step["content"]
                 if step["status"] == "completed":
                     panel_state["completed_keys"].add(key)
+                # Populate personality mode from DB (Req 8.4)
+                if step.get("personality_mode"):
+                    panel_state["step_modes"][key] = step["personality_mode"]
+                # Populate review notes from DB (Req 1.4)
+                panel_state["step_review_notes"][key] = step["review_notes"]
         except Exception:
             logger.exception("Failed to load workflow steps for topic %d", topic_id)
 
@@ -245,6 +270,27 @@ def create_draft_panel(
                     except Exception:
                         pass
 
+            # Load personality preferences for this topic, falling back to defaults
+            personality_modes: dict[str, str] = dict(AGENT_PERSONALITY_DEFAULTS)
+            if personality_pref_repo is not None:
+                try:
+                    saved_prefs = personality_pref_repo.get_by_topic(topic_id)
+                    if saved_prefs:
+                        personality_modes.update(saved_prefs)
+                except Exception:
+                    logger.exception(
+                        "Failed to load personality preferences for topic %d — using defaults",
+                        topic_id,
+                    )
+
+            # Cache the resolved modes so _stream_once can look up the
+            # correct mode per step (LangGraph strips personality_mode_used
+            # from node output because it's not in PatentWorkflowState).
+            panel_state["personality_modes"] = {
+                k: (v.value if hasattr(v, "value") else str(v))
+                for k, v in personality_modes.items()
+            }
+
             state: PatentWorkflowState = {
                 "topic_id": topic_id,
                 "invention_disclosure": disclosure,
@@ -263,18 +309,20 @@ def create_draft_panel(
                 "disclosure_summary": sc.get("disclosure_summary", ""),
                 "prior_art_summary": sc.get("prior_art_search", ""),
                 "workflow_step_statuses": {},
+                "personality_modes": personality_modes,
+                "review_notes": dict(panel_state.get("step_review_notes", {})),
             }
             return state
 
         # ------------------------------------------------------------------
         # Helper: persist step content to DB
         # ------------------------------------------------------------------
-        def _persist_step(step_key: str, content: str, status: str = "completed") -> None:
+        def _persist_step(step_key: str, content: str, status: str = "completed", personality_mode: str = "", review_notes: str = "") -> None:
             """Save step content via WorkflowStepRepository. Shows notification on failure."""
             if workflow_step_repo is None:
                 return
             try:
-                workflow_step_repo.upsert(topic_id, step_key, content, status)
+                workflow_step_repo.upsert(topic_id, step_key, content, status, personality_mode=personality_mode, review_notes=review_notes)
             except Exception:
                 logger.exception("Failed to save step %s for topic %d", step_key, topic_id)
                 ui.notify(
@@ -375,8 +423,14 @@ def create_draft_panel(
                     # a step that's already marked completed)
                     if content:
                         panel_state["step_contents"][step_key] = content
+                        # Look up the mode from the resolved personality_modes
+                        # (node_output won't contain personality_mode_used because
+                        # LangGraph strips keys not in PatentWorkflowState).
+                        personality_mode_used = panel_state.get("personality_modes", {}).get(step_key, "")
+                        # Update step_modes for badge display (Req 8.3)
+                        panel_state["step_modes"][step_key] = personality_mode_used
                         if step_key not in panel_state["completed_keys"]:
-                            _persist_step(step_key, content, "pending")
+                            _persist_step(step_key, content, "pending", personality_mode=personality_mode_used)
 
                     # Update the textarea for this step
                     ta = step_textareas.get(step_key)
@@ -479,7 +533,12 @@ def create_draft_panel(
                     for sk in WORKFLOW_STEP_ORDER:
                         if _has_content(panel_state["step_contents"].get(sk, "")):
                             panel_state["completed_keys"].add(sk)
-                            _persist_step(sk, panel_state["step_contents"][sk], "completed")
+                            _persist_step(
+                                sk,
+                                panel_state["step_contents"][sk],
+                                "completed",
+                                personality_mode=panel_state["step_modes"].get(sk, "critical"),
+                            )
                     _save_draft()
 
             except GraphInterrupt:
@@ -536,6 +595,13 @@ def create_draft_panel(
                 # Build state from current panel contents
                 state = _build_initial_state(step_key)
 
+                # Persist review notes before rerunning
+                rn_ta = step_review_textareas.get(step_key)
+                if rn_ta is not None and hasattr(rn_ta, 'value'):
+                    panel_state["step_review_notes"][step_key] = rn_ta.value or ""
+                    # Update state with latest review notes
+                    state["review_notes"] = dict(panel_state.get("step_review_notes", {}))
+
                 from patent_system.agents.graph import _local_prior_art_summary_node
                 from patent_system.agents.claims_drafting import claims_drafting_node
                 from patent_system.agents.novelty_analysis import novelty_analysis_node
@@ -561,7 +627,17 @@ def create_draft_panel(
                     ui.notify(f"Cannot re-run step '{step_key}'", type="warning")
                     return
 
-                result = await asyncio.to_thread(node_fn, state)
+                result = await asyncio.to_thread(node_fn, state, review_notes_mode="rerun")
+
+                # Extract personality mode used by this node
+                # Direct node calls return personality_mode_used; fall back
+                # to the resolved preferences if missing.
+                rerun_personality_mode = result.get(
+                    "personality_mode_used",
+                    panel_state.get("personality_modes", {}).get(step_key, ""),
+                )
+                # Update step_modes for badge display (Req 8.3)
+                panel_state["step_modes"][step_key] = rerun_personality_mode
 
                 # Extract content from the result
                 if step_key == "claims_drafting":
@@ -591,7 +667,7 @@ def create_draft_panel(
                         claims_ta = step_textareas.get("claims_drafting")
                         if claims_ta is not None:
                             claims_ta.value = new_claims
-                        _persist_step("claims_drafting", new_claims, "completed")
+                        _persist_step("claims_drafting", new_claims, "completed", personality_mode=rerun_personality_mode)
                         _save_draft()
 
             except Exception as exc:
@@ -627,13 +703,15 @@ def create_draft_panel(
 
             def _on_keep() -> None:
                 panel_state["step_contents"][step_key] = new_content
-                _persist_step(step_key, new_content, "completed")
+                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode)
+                panel_state["completed_keys"].add(step_key)
                 ui.notify(f"{display}: new content saved.", type="positive")
                 _refresh_step_sections()
 
             def _on_revert() -> None:
                 panel_state["step_contents"][step_key] = old_content
-                _persist_step(step_key, old_content, "completed")
+                _persist_step(step_key, old_content, "completed", personality_mode=rerun_personality_mode)
+                panel_state["completed_keys"].add(step_key)
                 if ta is not None:
                     ta.value = old_content
                 ui.notify(f"{display}: reverted to previous content.", type="info")
@@ -648,8 +726,11 @@ def create_draft_panel(
                         ui.button("Keep New", on_click=lambda: (dlg.close(), _on_keep()), icon="check").props("color=primary")
                 dlg.open()
             elif new_content:
-                # Same content — just save silently
-                _persist_step(step_key, new_content, "completed")
+                # Same content — save and mark completed so the step
+                # returns to its normal state and the user gets feedback.
+                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode)
+                panel_state["completed_keys"].add(step_key)
+                ui.notify(f"{display}: re-run complete (no changes).", type="info")
 
             _refresh_step_sections()
 
@@ -657,14 +738,32 @@ def create_draft_panel(
         # Step sections container
         # ------------------------------------------------------------------
         step_textareas: dict[str, Any] = {}
+        step_review_textareas: dict[str, Any] = {}  # step_key -> review notes textarea (Req 3.1)
         step_continue_btns: dict[str, Any] = {}
         step_rerun_btns: dict[str, Any] = {}
         step_save_btns: dict[str, Any] = {}
         step_expansions: dict[str, Any] = {}
+        step_badge_containers: dict[str, Any] = {}  # step_key -> badge container element (Req 8.1)
         claims_textarea_ref: dict[str, Any] = {"el": None}
         description_textarea_ref: dict[str, Any] = {"el": None}
 
         steps_container = ui.column().classes("w-full")
+
+        def _render_badge(badge_container: Any, step_key: str) -> None:
+            """Render a personality mode badge inside *badge_container* for *step_key*.
+
+            Clears the container first, then adds a ``ui.badge`` if a mode
+            is recorded in ``panel_state["step_modes"]``.
+
+            Validates: Requirements 8.1, 8.2, 8.3
+            """
+            badge_container.clear()
+            mode = panel_state["step_modes"].get(step_key)
+            if mode:
+                label = _MODE_BADGE_LABELS.get(mode, mode)
+                color = _MODE_BADGE_COLORS.get(mode, "grey")
+                with badge_container:
+                    ui.badge(label, color=color).props("dense")
 
         def _refresh_step_sections() -> None:
             """Update visibility/enabled state of buttons and textareas."""
@@ -672,6 +771,7 @@ def create_draft_panel(
             is_running = panel_state.get("running", False)
             for key in WORKFLOW_STEP_ORDER:
                 ta = step_textareas.get(key)
+                rn_ta = step_review_textareas.get(key)
                 cont_btn = step_continue_btns.get(key)
                 rerun_btn = step_rerun_btns.get(key)
                 save_btn = step_save_btns.get(key)
@@ -680,12 +780,26 @@ def create_draft_panel(
                 is_active = key == active_key
                 has_text = _has_content(panel_state["step_contents"].get(key, ""))
 
-                # Textarea: only readonly while running
+                # Agent output textarea: ALWAYS readonly for steps 2–8 (Req 2.1)
+                # Step 9 (patent_draft) textareas remain editable (claims/description)
+                # Step 1 (initial_idea) has no textarea (None)
                 if ta is not None:
-                    if is_running:
+                    if key not in ("initial_idea", "patent_draft"):
+                        # Steps 2–8: always readonly
                         ta.props("readonly")
                     else:
-                        ta.props(remove="readonly")
+                        # Step 9: only readonly while running
+                        if is_running:
+                            ta.props("readonly")
+                        else:
+                            ta.props(remove="readonly")
+
+                # Review notes textarea: readonly while running, editable otherwise (Req 3.4, 3.5)
+                if rn_ta is not None:
+                    if is_running:
+                        rn_ta.props("readonly")
+                    else:
+                        rn_ta.props(remove="readonly")
 
                 # Continue button: visible only during initial run-through
                 if cont_btn is not None:
@@ -702,6 +816,11 @@ def create_draft_panel(
                 # Save button: visible on any step with content, hidden while running
                 if save_btn is not None:
                     save_btn.set_visibility(has_text and not is_running)
+
+                # Refresh personality mode badge (Req 8.3)
+                badge_container = step_badge_containers.get(key)
+                if badge_container is not None:
+                    _render_badge(badge_container, key)
 
             _update_export_state()
 
@@ -721,6 +840,11 @@ def create_draft_panel(
                         icon="lightbulb",
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
+
+                        # Personality mode badge container (Req 8.1)
+                        badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_badge_containers[step_key] = badge_ctr
+                        _render_badge(badge_ctr, step_key)
 
                         # Container for disclosure content (re-rendered on rerun)
                         idea_content_container = ui.column().classes("w-full")
@@ -767,6 +891,23 @@ def create_draft_panel(
                         # (not displayed, but keeps step_textareas dict complete)
                         step_textareas[step_key] = None  # type: ignore[assignment]
 
+                        # Review Notes textarea for step 1 (Req 3.1, 3.7)
+                        review_ta_initial = ui.textarea(
+                            label="Your Review Notes",
+                            placeholder="Add your review notes here…",
+                            value=panel_state["step_review_notes"].get(step_key, ""),
+                        ).classes("w-full").props(
+                            'outlined '
+                            'input-style="height: 150px; overflow-y: auto;" '
+                            'bg-color="amber-1"'
+                        )
+                        step_review_textareas[step_key] = review_ta_initial
+
+                        def _on_review_change_initial(e: Any) -> None:
+                            panel_state["step_review_notes"]["initial_idea"] = e.value if e.value else ""
+
+                        review_ta_initial.on("change", _on_review_change_initial)
+
                         # Continue button — marks step 1 done, kicks off the
                         # graph which will run initial_idea node + interrupt,
                         # then immediately resumes to execute claims_drafting.
@@ -781,7 +922,12 @@ def create_draft_panel(
                                     type="warning",
                                 )
                                 return
-                            _persist_step("initial_idea", content, "completed")
+                            # Read and persist review notes (Req 4.2)
+                            rn_ta = step_review_textareas.get("initial_idea")
+                            if rn_ta is not None and hasattr(rn_ta, 'value'):
+                                panel_state["step_review_notes"]["initial_idea"] = rn_ta.value or ""
+                            review_notes = panel_state["step_review_notes"].get("initial_idea", "")
+                            _persist_step("initial_idea", content, "completed", personality_mode="", review_notes=review_notes)
                             panel_state["completed_keys"].add("initial_idea")
                             panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                             _refresh_chips()
@@ -807,6 +953,9 @@ def create_draft_panel(
                                     logger.exception("Failed to reset from initial_idea")
                             panel_state["completed_keys"] -= set(WORKFLOW_STEP_ORDER)
                             panel_state["active_key"] = "initial_idea"
+                            # Clear step_modes for all reset steps so stale badges don't show
+                            for k in WORKFLOW_STEP_ORDER:
+                                panel_state["step_modes"].pop(k, None)
                             # Reload disclosure from DB to pick up changes
                             _render_initial_idea()
                             _refresh_chips()
@@ -826,6 +975,11 @@ def create_draft_panel(
                         icon="description",
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
+
+                        # Personality mode badge container (Req 8.1)
+                        badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_badge_containers[step_key] = badge_ctr
+                        _render_badge(badge_ctr, step_key)
 
                         # Claims Editor
                         claims_ta = ui.textarea(
@@ -865,6 +1019,23 @@ def create_draft_panel(
 
                         # We also keep a textarea for the step content (hidden, for consistency)
                         step_textareas[step_key] = desc_ta
+
+                        # Review Notes textarea for step 9 (Req 3.1, 3.2)
+                        review_ta_patent = ui.textarea(
+                            label="Your Review Notes",
+                            placeholder="Add your review notes here…",
+                            value=panel_state["step_review_notes"].get(step_key, ""),
+                        ).classes("w-full").props(
+                            'outlined '
+                            'input-style="height: 150px; overflow-y: auto;" '
+                            'bg-color="amber-1"'
+                        )
+                        step_review_textareas[step_key] = review_ta_patent
+
+                        def _on_review_change_patent(e: Any) -> None:
+                            panel_state["step_review_notes"]["patent_draft"] = e.value if e.value else ""
+
+                        review_ta_patent.on("change", _on_review_change_patent)
 
                         # Continue button (not applicable for last step, but kept for consistency)
                         cont_btn = ui.button(
@@ -911,11 +1082,11 @@ def create_draft_panel(
 
                             # Also persist to workflow_steps table
                             if desc_val.strip():
-                                _persist_step("patent_draft", desc_val, "completed")
+                                _persist_step("patent_draft", desc_val, "completed", personality_mode=panel_state["step_modes"].get("patent_draft", "critical"))
                                 panel_state["step_contents"]["patent_draft"] = desc_val
                                 panel_state["completed_keys"].add("patent_draft")
                             if claims_val.strip():
-                                _persist_step("claims_drafting", claims_val, "completed")
+                                _persist_step("claims_drafting", claims_val, "completed", personality_mode=panel_state["step_modes"].get("claims_drafting", "critical"))
                                 panel_state["step_contents"]["claims_drafting"] = claims_val
 
                             ui.notify("Patent draft saved.", type="positive")
@@ -946,14 +1117,19 @@ def create_draft_panel(
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
 
+                        # Personality mode badge container (Req 8.1)
+                        badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_badge_containers[step_key] = badge_ctr
+                        _render_badge(badge_ctr, step_key)
+
                         ta = ui.textarea(
                             label=display_name,
                             placeholder=f"{display_name} content will appear here…",
                             value=saved_content,
                         ).classes("w-full").props(
-                            'outlined '
+                            'outlined readonly '
                             'input-style="height: 300px; overflow-y: auto;"'
-                        )
+                        ).style('background-color: #f5f5f5;')
                         step_textareas[step_key] = ta
 
                         def _make_change_handler(sk: str):
@@ -969,6 +1145,25 @@ def create_draft_panel(
 
                         ta.on("change", _make_change_handler(step_key))
 
+                        # Review Notes textarea (Req 3.1–3.6)
+                        review_ta = ui.textarea(
+                            label="Your Review Notes",
+                            placeholder="Add your review notes here…",
+                            value=panel_state["step_review_notes"].get(step_key, ""),
+                        ).classes("w-full").props(
+                            'outlined '
+                            'input-style="height: 150px; overflow-y: auto;" '
+                            'bg-color="amber-1"'
+                        )
+                        step_review_textareas[step_key] = review_ta
+
+                        def _make_review_change_handler(sk: str):
+                            def handler(e: Any) -> None:
+                                panel_state["step_review_notes"][sk] = e.value if e.value else ""
+                            return handler
+
+                        review_ta.on("change", _make_review_change_handler(step_key))
+
                         # Continue button
                         def _make_continue_handler(sk: str):
                             async def handler() -> None:
@@ -977,10 +1172,15 @@ def create_draft_panel(
                                 ta_el = step_textareas.get(sk)
                                 if ta_el is not None and hasattr(ta_el, 'value'):
                                     panel_state["step_contents"][sk] = ta_el.value or ""
+                                # Read current review notes from textarea
+                                rn_ta = step_review_textareas.get(sk)
+                                if rn_ta is not None and hasattr(rn_ta, 'value'):
+                                    panel_state["step_review_notes"][sk] = rn_ta.value or ""
                                 content = panel_state["step_contents"].get(sk, "")
                                 if not _has_content(content):
                                     return
-                                _persist_step(sk, content, "completed")
+                                review_notes = panel_state["step_review_notes"].get(sk, "")
+                                _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"), review_notes=review_notes)
                                 panel_state["completed_keys"].add(sk)
                                 panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                                 _refresh_chips()
@@ -1029,24 +1229,25 @@ def create_draft_panel(
                         ).props("color=warning flat")
                         step_rerun_btns[step_key] = rerun_btn
 
-                        # Save edits button
+                        # Save notes button (Req 4.1, 4.4)
                         def _make_save_handler(sk: str):
                             def handler() -> None:
-                                ta_el = step_textareas.get(sk)
-                                if ta_el is not None and hasattr(ta_el, 'value'):
-                                    panel_state["step_contents"][sk] = ta_el.value or ""
+                                rn_ta = step_review_textareas.get(sk)
+                                if rn_ta is not None and hasattr(rn_ta, 'value'):
+                                    panel_state["step_review_notes"][sk] = rn_ta.value or ""
                                 content = panel_state["step_contents"].get(sk, "")
+                                review_notes = panel_state["step_review_notes"].get(sk, "")
                                 if _has_content(content):
-                                    _persist_step(sk, content, "completed")
+                                    _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"), review_notes=review_notes)
                                     panel_state["completed_keys"].add(sk)
                                     display = _STEP_DISPLAY_NAMES.get(sk, sk)
-                                    ui.notify(f"{display}: edits saved.", type="positive")
+                                    ui.notify(f"{display}: notes saved.", type="positive")
                             return handler
 
                         save_btn = ui.button(
-                            "Save Edits",
+                            "Save Notes",
                             on_click=_make_save_handler(step_key),
-                            icon="save",
+                            icon="note_add",
                         ).props("flat color=primary")
                         step_save_btns[step_key] = save_btn
 

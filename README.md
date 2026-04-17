@@ -29,7 +29,7 @@ Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks
 
 **mPAPA is a fully local AI patent drafting system.** It runs on YOUR machine*. Your invention data never touches the internet. Ever.
 
-*Any recent PC will do. Just 6 GB+ RAM for LLM. GPU optional. Works great with models like Gemma-4-E2B.
+*Any recent PC will do. Just 6 GB+ (V)RAM for LLM. GPU optional (but strongly recommended). Works great with models like Gemma-4-E2B.
 
 ---
 
@@ -54,7 +54,9 @@ Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks
 
 📄 **Export to DOCX** — Professional formatting, proper styles, header/footer, ready for your attorney.
 
-Stored locally in a database for each topic, so you can pick up right where you left off at any time.
+🎭 **Agent Personality Modes** — Not every step needs the same attitude. Switch between **Critical** (skeptical, no sugarcoating), **Neutral** (balanced, just the facts), and **Innovation-Friendly** (opportunity-focused, constructive). Novelty analysis tears your claims apart by default. Disclosure keeps it open-minded. You set the tone per agent, per topic — because a patent draft needs a devil's advocate, not a cheerleader.
+
+Everything persisted locally in SQLite — per topic, per step, per setting. Close the browser, shut down your machine, come back in a week. Your entire workflow, research, drafts, and agent configurations are exactly where you left them.
 
 ---
 
@@ -118,7 +120,7 @@ We've decided to temporarily discontinue providing Windows executables. Here's w
 
 The reliable, transparent, and surprisingly easy way to run mPAPA.
 
-1. Install `uv` (a fast Python package manager) - takes 30 seconds! [uv getting started](https://docs.astral.sh/uv/getting-started/installation/)
+1. Install `uv` (a fast Python package manager) - takes 30 seconds → [uv getting started](https://docs.astral.sh/uv/getting-started/installation/)
 2. Download the source code or clone with git: `git clone https://github.com/OWNER/REPO.git`
 3. Copy `.env.example` to `.env` and adjust settings if needed
 4. Run `uv run mpapa` (the first time it downloads all needed libraries automatically)
@@ -221,6 +223,25 @@ src/patent_system/
 ├── monitoring/          # Background prior art monitoring scheduler
 └── gui/                 # NiceGUI web interface panels
 ```
+
+---
+
+## Troubleshooting
+
+### 🔴 Errors during "Prior Art Search"
+
+Getting crashes or errors when the agent tries to analyze your collected references? Your LLM's context window is probably too small.
+
+**Fix:** In LM Studio's **Developer** tab → Model settings → Crank **Context Length** to maximum (usually 32768, 40960, or even 262144 and more depending on your model). Prior art analysis needs to juggle multiple patent abstracts at once — give it room to breathe.
+
+### 🐌 Agent stuck "thinking" forever
+
+If the AI agent seems frozen in eternal contemplation (spinning wheel of death, no output for minutes), you're probably running on CPU only.
+
+**Fix:** In LM Studio's **Developer** tab → Model settings → Check **GPU Offload**. If it's set to 0, you're not using your GPU at all. Bump it up — start with 50% of your model's layers, adjust from there. No GPU? Consider a smaller model (4B instead of 7B) or accept that patent drafting just became your new meditation practice.
+
+**Pro tip:** Watch LM Studio's performance metrics while mPAPA runs. If you see 100% CPU and 0% GPU usage, that's your problem right there.
+
 
 ## License
 

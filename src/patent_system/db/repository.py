@@ -575,7 +575,13 @@ class WorkflowStepRepository:
         self._conn = conn
 
     def upsert(
-        self, topic_id: int, step_key: str, content: str, status: str
+        self,
+        topic_id: int,
+        step_key: str,
+        content: str,
+        status: str,
+        personality_mode: str = "critical",
+        review_notes: str = "",
     ) -> None:
         """Insert or update a workflow step.
 
@@ -587,6 +593,10 @@ class WorkflowStepRepository:
             step_key: One of the nine canonical step keys.
             content: The step's text content.
             status: Either "pending" or "completed".
+            personality_mode: The personality mode active when this step ran.
+                Defaults to "critical".
+            review_notes: User-authored review notes for this step.
+                Defaults to empty string.
 
         Raises:
             ValueError: If step_key is not in VALID_STEP_KEYS.
@@ -600,9 +610,10 @@ class WorkflowStepRepository:
         try:
             self._conn.execute(
                 """INSERT OR REPLACE INTO workflow_steps
-                   (topic_id, step_key, content, status, updated_at)
-                   VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)""",
-                (topic_id, step_key, content, status),
+                   (topic_id, step_key, content, status, personality_mode,
+                    review_notes, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, step_key, content, status, personality_mode, review_notes),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -620,11 +631,13 @@ class WorkflowStepRepository:
 
         Returns:
             List of dicts with keys: id, topic_id, step_key, content,
-            status, updated_at — ordered by WORKFLOW_STEP_ORDER.
+            status, personality_mode, review_notes, updated_at — ordered
+            by WORKFLOW_STEP_ORDER.
         """
         try:
             rows = self._conn.execute(
-                """SELECT id, topic_id, step_key, content, status, updated_at
+                """SELECT id, topic_id, step_key, content, status, updated_at,
+                          personality_mode, review_notes
                    FROM workflow_steps WHERE topic_id = ?""",
                 (topic_id,),
             ).fetchall()
@@ -641,6 +654,8 @@ class WorkflowStepRepository:
                 "content": r[3],
                 "status": r[4],
                 "updated_at": r[5],
+                "personality_mode": r[6],
+                "review_notes": r[7],
             }
             for r in rows
         ]
@@ -656,11 +671,12 @@ class WorkflowStepRepository:
 
         Returns:
             Dict with keys: id, topic_id, step_key, content, status,
-            updated_at — or None.
+            personality_mode, review_notes, updated_at — or None.
         """
         try:
             row = self._conn.execute(
-                """SELECT id, topic_id, step_key, content, status, updated_at
+                """SELECT id, topic_id, step_key, content, status, updated_at,
+                          personality_mode, review_notes
                    FROM workflow_steps
                    WHERE topic_id = ? AND step_key = ?""",
                 (topic_id, step_key),
@@ -678,6 +694,8 @@ class WorkflowStepRepository:
             "content": row[3],
             "status": row[4],
             "updated_at": row[5],
+            "personality_mode": row[6],
+            "review_notes": row[7],
         }
 
     def reset_from_step(self, topic_id: int, step_key: str) -> None:
@@ -780,6 +798,73 @@ class SourcePreferenceRepository:
             return {r[0]: bool(r[1]) for r in rows}
         except sqlite3.Error as exc:
             log_db_error(logger, "SELECT", "source_preferences", str(exc))
+            raise
+
+
+class PersonalityPreferenceRepository:
+    """CRUD operations for per-topic agent personality preferences.
+
+    Requirements: 9.1, 9.2, 9.3, 9.4
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def save(self, topic_id: int, preferences: dict[str, str]) -> None:
+        """Replace all personality preferences for a topic atomically.
+
+        Deletes existing preferences and inserts the new mapping
+        within a single transaction (DELETE + INSERT).
+
+        Args:
+            topic_id: The topic ID to save preferences for.
+            preferences: Mapping of agent_name → personality mode string.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            cursor = self._conn.cursor()
+
+            cursor.execute(
+                "DELETE FROM personality_preferences WHERE topic_id = ?",
+                (topic_id,),
+            )
+            for agent_name, personality_mode in preferences.items():
+                cursor.execute(
+                    """INSERT INTO personality_preferences
+                       (topic_id, agent_name, personality_mode)
+                       VALUES (?, ?, ?)""",
+                    (topic_id, agent_name, personality_mode),
+                )
+
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            self._conn.rollback()
+            log_db_error(logger, "REPLACE", "personality_preferences", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> dict[str, str] | None:
+        """Load personality preferences for a topic.
+
+        Args:
+            topic_id: The topic ID to look up.
+
+        Returns:
+            Dict mapping agent_name → personality mode string, or None
+            if no preferences are saved for this topic.
+        """
+        try:
+            rows = self._conn.execute(
+                """SELECT agent_name, personality_mode
+                   FROM personality_preferences WHERE topic_id = ?""",
+                (topic_id,),
+            ).fetchall()
+            if not rows:
+                return None
+            return {r[0]: r[1] for r in rows}
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "personality_preferences", str(exc))
             raise
 
 

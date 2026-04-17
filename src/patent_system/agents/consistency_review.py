@@ -17,6 +17,8 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
+from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import ReviewConsistencyModule
 from patent_system.exceptions import LLMConnectionError
@@ -25,7 +27,10 @@ from patent_system.logging_config import log_agent_invocation
 logger = logging.getLogger(__name__)
 
 
-def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
+def consistency_review_node(
+    state: PatentWorkflowState,
+    review_notes_mode: str = "continue",
+) -> dict[str, Any]:
     """Run the Consistency Reviewer Agent.
 
     1. Uses DSPy ``ReviewConsistencyModule`` to check claims against
@@ -39,6 +44,8 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     Args:
         state: The current workflow state.
+        review_notes_mode: Either ``"continue"`` (inject upstream notes)
+            or ``"rerun"`` (inject own notes only).
 
     Returns:
         Dict with ``review_feedback`` (feedback string from the
@@ -46,6 +53,12 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
         and ``current_step`` set to ``"consistency_review"``.
     """
     start = time.monotonic()
+
+    mode = resolve_personality_mode(state, "consistency_review")
+
+    # Build review notes text
+    review_notes = state.get("review_notes") or {}
+    notes_text = build_review_notes_text(review_notes, "consistency_review", review_notes_mode)
 
     claims = state.get("claims_text", "")
     description = state.get("description_text", "")
@@ -70,7 +83,7 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
     # Run the DSPy review module
     review_module = ReviewConsistencyModule()
     try:
-        prediction = review_module(claims=claims, description=description)
+        prediction = review_module(claims=claims, description=description, personality_mode=mode.value, review_notes_text=notes_text or None)
     except (
         requests.exceptions.ConnectionError,
         httpx.ConnectError,
@@ -98,7 +111,9 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
         name="ConsistencyReviewerAgent",
         input_summary=(
             f"claims_length={len(claims)}, "
-            f"description_length={len(description)}"
+            f"description_length={len(description)}, "
+            f"personality_mode={mode.value}, "
+            f"review_notes_length={len(notes_text)}"
         ),
         output_summary=f"approved={approved}, feedback_length={len(feedback)}",
         duration_ms=duration_ms,
@@ -108,4 +123,5 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
         "review_feedback": feedback,
         "review_approved": approved,
         "current_step": "consistency_review",
+        "personality_mode_used": mode.value,
     }

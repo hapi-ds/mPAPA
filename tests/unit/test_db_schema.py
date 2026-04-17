@@ -20,6 +20,7 @@ EXPECTED_TABLES = {
     "patent_drafts",
     "local_documents",
     "workflow_steps",
+    "personality_preferences",
 }
 
 

@@ -19,6 +19,7 @@ from patent_system.config import AppSettings
 from patent_system.db.repository import (
     ChatHistoryRepository,
     InventionDisclosureRepository,
+    PersonalityPreferenceRepository,
     SourcePreferenceRepository,
     TopicRepository,
     WorkflowStepRepository,
@@ -26,6 +27,7 @@ from patent_system.db.repository import (
 from patent_system.gui.chat_panel import create_chat_panel
 from patent_system.gui.draft_panel import create_draft_panel
 from patent_system.gui.research_panel import create_research_panel
+from patent_system.gui.settings_panel import create_settings_panel
 from patent_system.rag.engine import RAGEngine
 
 if TYPE_CHECKING:
@@ -80,6 +82,7 @@ def create_layout(
                 research_tab = ui.tab("Research")
                 chat_tab = ui.tab("AI Chat")
                 draft_tab = ui.tab("Patent Draft")
+                settings_tab = ui.tab("Settings")
 
         # Row 2: workflow progress bar (always visible)
         # Starts with a placeholder; create_draft_panel replaces the
@@ -222,6 +225,13 @@ def create_layout(
                     "text-grey"
                 )
 
+        with ui.tab_panel(settings_tab):
+            settings_container = ui.column().classes("w-full p-4")
+            with settings_container:
+                ui.label("Select a topic to configure settings.").classes(
+                    "text-grey"
+                )
+
     def _on_topic_selected(topic_id: int) -> None:
         """Load data for the selected topic into the tab panels (Req 1.4)."""
         topic = topic_repo.get_by_id(topic_id)
@@ -232,6 +242,7 @@ def create_layout(
         disclosure_repo = InventionDisclosureRepository(conn)
         source_pref_repo = SourcePreferenceRepository(conn)
         workflow_step_repo = WorkflowStepRepository(conn)
+        personality_pref_repo = PersonalityPreferenceRepository(conn)
 
         create_research_panel(
             research_container,
@@ -257,6 +268,14 @@ def create_layout(
             disclosure_repo=disclosure_repo,
             workflow_step_repo=workflow_step_repo,
             progress_bar_container=progress_bar,
+            personality_pref_repo=personality_pref_repo,
+        )
+        create_settings_panel(
+            settings_container,
+            topic_id,
+            conn=conn,
+            settings=settings or AppSettings(),
+            personality_pref_repo=personality_pref_repo,
         )
 
     _refresh_topic_list()

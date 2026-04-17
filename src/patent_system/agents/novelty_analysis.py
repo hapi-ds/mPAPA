@@ -17,6 +17,8 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
+from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import NoveltyAnalysisModule
 from patent_system.exceptions import LLMConnectionError
@@ -57,6 +59,7 @@ def _prepare_text(value: dict | str | None) -> str:
 def novelty_analysis_node(
     state: PatentWorkflowState,
     rag_engine: RAGQueryable | None = None,
+    review_notes_mode: str = "continue",
 ) -> dict[str, Any]:
     """Run the Novelty Analysis Agent.
 
@@ -67,12 +70,20 @@ def novelty_analysis_node(
         state: The current workflow state.
         rag_engine: Optional RAG engine (unused in LLM-based analysis
             but kept for interface compatibility).
+        review_notes_mode: Either ``"continue"`` (inject upstream notes)
+            or ``"rerun"`` (inject own notes only).
 
     Returns:
         Dict with ``novelty_analysis`` (assessment string) and
         ``current_step`` set to ``"novelty_analysis"``.
     """
     start = time.monotonic()
+
+    mode = resolve_personality_mode(state, "novelty_analysis")
+
+    # Build review notes text
+    review_notes = state.get("review_notes") or {}
+    notes_text = build_review_notes_text(review_notes, "novelty_analysis", review_notes_mode)
 
     disclosure = state.get("invention_disclosure")
     claims_text = state.get("claims_text", "")
@@ -86,6 +97,8 @@ def novelty_analysis_node(
             invention_disclosure=disclosure_text,
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
+            personality_mode=mode.value,
+            review_notes_text=notes_text or None,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -113,7 +126,9 @@ def novelty_analysis_node(
         input_summary=(
             f"disclosure_length={len(disclosure_text)}, "
             f"claims_length={len(claims_text)}, "
-            f"prior_art_length={len(prior_art_summary)}"
+            f"prior_art_length={len(prior_art_summary)}, "
+            f"personality_mode={mode.value}, "
+            f"review_notes_length={len(notes_text)}"
         ),
         output_summary=f"assessment_length={len(novelty_text)}",
         duration_ms=duration_ms,
@@ -122,4 +137,5 @@ def novelty_analysis_node(
     return {
         "novelty_analysis": novelty_text,
         "current_step": "novelty_analysis",
+        "personality_mode_used": mode.value,
     }

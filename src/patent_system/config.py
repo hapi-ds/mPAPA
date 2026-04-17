@@ -11,6 +11,8 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
+from patent_system.agents.personality import PersonalityMode
+
 
 def get_base_dir() -> Path:
     """Return the application base directory.
@@ -130,6 +132,10 @@ class AppSettings(BaseSettings):
     # Logging
     log_file_path: Path = Field(default_factory=_default_log_file_path)
     log_level: str = "INFO"
+
+    # Personality modes
+    default_personality_mode: PersonalityMode = PersonalityMode.CRITICAL
+    agent_personality_overrides: str = ""  # JSON string, e.g. '{"novelty_analysis": "neutral"}'
 
     model_config = {"env_file": ".env", "env_prefix": "PATENT_"}
 
