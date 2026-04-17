@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v1.1.0 (2026-04-17)
+
+### Bug Fixes
+
+- Correct save of personality badge
+  ([`d663c15`](https://github.com/hapi-ds/mPAPA/commit/d663c1517e5b73ac43535c604ed5d5898b328457))
+
+### Features
+
+- Add agent personality
+  ([`1d39e89`](https://github.com/hapi-ds/mPAPA/commit/1d39e89252fa3f468b1b809acd82a0b978530f10))
+
+- Added review text box
+  ([`c67c00e`](https://github.com/hapi-ds/mPAPA/commit/c67c00ea41b0f7b2bb9730323df78d714b526ee8))
+
+
 ## v1.0.5 (2026-04-16)
 
 ### Bug Fixes
