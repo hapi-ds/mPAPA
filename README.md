@@ -224,6 +224,25 @@ src/patent_system/
 └── gui/                 # NiceGUI web interface panels
 ```
 
+---
+
+## Troubleshooting
+
+### 🔴 Errors during "Prior Art Search"
+
+Getting crashes or errors when the agent tries to analyze your collected references? Your LLM's context window is probably too small.
+
+**Fix:** In LM Studio's **Developer** tab → Model settings → Crank **Context Length** to maximum (usually 32768, 40960, or even 262144 and more depending on your model). Prior art analysis needs to juggle multiple patent abstracts at once — give it room to breathe.
+
+### 🐌 Agent stuck "thinking" forever
+
+If the AI agent seems frozen in eternal contemplation (spinning wheel of death, no output for minutes), you're probably running on CPU only.
+
+**Fix:** In LM Studio's **Developer** tab → Model settings → Check **GPU Offload**. If it's set to 0, you're not using your GPU at all. Bump it up — start with 50% of your model's layers, adjust from there. No GPU? Consider a smaller model (4B instead of 7B) or accept that patent drafting just became your new meditation practice.
+
+**Pro tip:** Watch LM Studio's performance metrics while mPAPA runs. If you see 100% CPU and 0% GPU usage, that's your problem right there.
+
+
 ## License
 
 See [LICENSE](LICENSE).

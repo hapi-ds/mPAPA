@@ -819,11 +819,6 @@ class PersonalityPreferenceRepository:
         try:
             cursor = self._conn.cursor()
 
-            # Ensure no stale transaction is active before starting a new one.
-            if self._conn.in_transaction:
-                self._conn.commit()
-            cursor.execute("BEGIN")
-
             cursor.execute(
                 "DELETE FROM personality_preferences WHERE topic_id = ?",
                 (topic_id,),
