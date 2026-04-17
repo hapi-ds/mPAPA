@@ -31,6 +31,7 @@ from patent_system.agents.disclosure_summary import disclosure_summary_node
 from patent_system.agents.legal_clarification import legal_clarification_node
 from patent_system.agents.market_potential import market_potential_node
 from patent_system.agents.novelty_analysis import novelty_analysis_node
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import PriorArtSummaryModule
 from patent_system.exceptions import LLMConnectionError
@@ -124,6 +125,8 @@ def _local_prior_art_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
     _logger = logging.getLogger(__name__)
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "prior_art_search")
+
     results = state.get("prior_art_results") or []
     disclosure_text = state.get("invention_disclosure", "") or ""
     if isinstance(disclosure_text, dict):
@@ -178,6 +181,7 @@ def _local_prior_art_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
             invention_disclosure=disclosure_text,
             claims_text=claims_text,
             prior_art_references=references_text,
+            personality_mode=mode.value,
         )
         summary = prediction.prior_art_summary
     except (
@@ -200,7 +204,7 @@ def _local_prior_art_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
     log_agent_invocation(
         logger=_logger,
         name="PriorArtSummaryAgent",
-        input_summary=f"references={len(results)} ({patent_count} patents, {paper_count} papers)",
+        input_summary=f"references={len(results)} ({patent_count} patents, {paper_count} papers), personality_mode={mode.value}",
         output_summary=f"summary_length={len(summary)}",
         duration_ms=duration_ms,
     )
@@ -208,6 +212,7 @@ def _local_prior_art_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
     return {
         "prior_art_summary": summary,
         "current_step": "prior_art_search",
+        "personality_mode_used": mode.value,
     }
 
 

@@ -100,6 +100,7 @@ class TestConsistencyReviewNode:
         mock_instance.assert_called_once_with(
             claims="Claim 1: A method for processing data.",
             description="The present invention relates to data processing.",
+            personality_mode="critical",
         )
 
     @patch("patent_system.agents.consistency_review.ReviewConsistencyModule")
@@ -113,7 +114,7 @@ class TestConsistencyReviewNode:
         result = consistency_review_node(state)
 
         assert result["review_approved"] is False
-        mock_instance.assert_called_once_with(claims="", description="")
+        mock_instance.assert_called_once_with(claims="", description="", personality_mode="critical")
 
     @patch("patent_system.agents.consistency_review.ReviewConsistencyModule")
     def test_normalises_string_approved_true(self, mock_module_cls):

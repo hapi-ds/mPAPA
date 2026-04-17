@@ -17,6 +17,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import NoveltyAnalysisModule
 from patent_system.exceptions import LLMConnectionError
@@ -74,6 +75,8 @@ def novelty_analysis_node(
     """
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "novelty_analysis")
+
     disclosure = state.get("invention_disclosure")
     claims_text = state.get("claims_text", "")
     prior_art_summary = state.get("prior_art_summary", "")
@@ -86,6 +89,7 @@ def novelty_analysis_node(
             invention_disclosure=disclosure_text,
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
+            personality_mode=mode.value,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -113,7 +117,8 @@ def novelty_analysis_node(
         input_summary=(
             f"disclosure_length={len(disclosure_text)}, "
             f"claims_length={len(claims_text)}, "
-            f"prior_art_length={len(prior_art_summary)}"
+            f"prior_art_length={len(prior_art_summary)}, "
+            f"personality_mode={mode.value}"
         ),
         output_summary=f"assessment_length={len(novelty_text)}",
         duration_ms=duration_ms,
@@ -122,4 +127,5 @@ def novelty_analysis_node(
     return {
         "novelty_analysis": novelty_text,
         "current_step": "novelty_analysis",
+        "personality_mode_used": mode.value,
     }

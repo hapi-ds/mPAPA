@@ -17,6 +17,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DraftClaimsModule
 from patent_system.exceptions import LLMConnectionError
@@ -83,6 +84,8 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
     """
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "claims_drafting")
+
     disclosure = state.get("invention_disclosure")
     novelty = state.get("novelty_analysis")
     iteration_count = state.get("iteration_count", 0)
@@ -97,6 +100,7 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
         prediction = draft_module(
             invention_disclosure=disclosure_text,
             novelty_analysis=novelty_text,
+            personality_mode=mode.value,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -123,7 +127,8 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
         input_summary=(
             f"disclosure_length={len(disclosure_text)}, "
             f"novelty_length={len(novelty_text)}, "
-            f"iteration={new_iteration_count}"
+            f"iteration={new_iteration_count}, "
+            f"personality_mode={mode.value}"
         ),
         output_summary=f"claims_length={len(claims_text)}",
         duration_ms=duration_ms,
@@ -133,4 +138,5 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
         "claims_text": claims_text,
         "iteration_count": new_iteration_count,
         "current_step": "claims_drafting",
+        "personality_mode_used": mode.value,
     }

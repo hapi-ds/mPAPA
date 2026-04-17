@@ -21,10 +21,12 @@ from langgraph.errors import GraphInterrupt
 from nicegui import ui
 
 from patent_system.agents.state import PatentWorkflowState
+from patent_system.agents.personality import AGENT_PERSONALITY_DEFAULTS
 from patent_system.db.repository import (
     InventionDisclosureRepository,
     PatentDraftRepository,
     PatentRepository,
+    PersonalityPreferenceRepository,
     ResearchSessionRepository,
     ScientificPaperRepository,
     WorkflowStepRepository,
@@ -64,6 +66,20 @@ _STEP_DISPLAY_NAMES: dict[str, str] = {
 
 # Reverse mapping: display name → step key
 _DISPLAY_NAME_TO_KEY: dict[str, str] = {v: k for k, v in _STEP_DISPLAY_NAMES.items()}
+
+# Badge colors for personality mode indicators (Req 8.2)
+_MODE_BADGE_COLORS: dict[str, str] = {
+    "critical": "red",
+    "neutral": "grey",
+    "innovation_friendly": "green",
+}
+
+# Human-readable labels for personality modes (Req 8.1)
+_MODE_BADGE_LABELS: dict[str, str] = {
+    "critical": "Critical",
+    "neutral": "Neutral",
+    "innovation_friendly": "Innovation-Friendly",
+}
 
 
 def can_export(claims: str, description: str) -> bool:
@@ -109,6 +125,7 @@ def create_draft_panel(
     disclosure_repo: InventionDisclosureRepository | None = None,
     workflow_step_repo: WorkflowStepRepository | None = None,
     progress_bar_container: Any | None = None,
+    personality_pref_repo: PersonalityPreferenceRepository | None = None,
 ) -> None:
     """Populate *container* with the nine-step interactive Patent Draft UI.
 
@@ -122,6 +139,7 @@ def create_draft_panel(
         progress_bar_container: Optional external container (e.g. in the
             header) where progress chips and status label are rendered.
             When provided, the in-panel sticky footer is not created.
+        personality_pref_repo: Repository for per-topic personality preferences.
     """
     container.clear()
 
@@ -135,6 +153,7 @@ def create_draft_panel(
         "completed_keys": set(),  # step keys with status "completed"
         "active_key": None,       # current active step key
         "running": False,         # True while an LLM step is executing
+        "step_modes": {},         # step_key -> personality mode string (Req 8.1)
     }
 
     # ------------------------------------------------------------------
@@ -148,6 +167,9 @@ def create_draft_panel(
                 panel_state["step_contents"][key] = step["content"]
                 if step["status"] == "completed":
                     panel_state["completed_keys"].add(key)
+                # Populate personality mode from DB (Req 8.4)
+                if step.get("personality_mode"):
+                    panel_state["step_modes"][key] = step["personality_mode"]
         except Exception:
             logger.exception("Failed to load workflow steps for topic %d", topic_id)
 
@@ -245,6 +267,19 @@ def create_draft_panel(
                     except Exception:
                         pass
 
+            # Load personality preferences for this topic, falling back to defaults
+            personality_modes: dict[str, str] = dict(AGENT_PERSONALITY_DEFAULTS)
+            if personality_pref_repo is not None:
+                try:
+                    saved_prefs = personality_pref_repo.get_by_topic(topic_id)
+                    if saved_prefs:
+                        personality_modes.update(saved_prefs)
+                except Exception:
+                    logger.exception(
+                        "Failed to load personality preferences for topic %d — using defaults",
+                        topic_id,
+                    )
+
             state: PatentWorkflowState = {
                 "topic_id": topic_id,
                 "invention_disclosure": disclosure,
@@ -263,18 +298,19 @@ def create_draft_panel(
                 "disclosure_summary": sc.get("disclosure_summary", ""),
                 "prior_art_summary": sc.get("prior_art_search", ""),
                 "workflow_step_statuses": {},
+                "personality_modes": personality_modes,
             }
             return state
 
         # ------------------------------------------------------------------
         # Helper: persist step content to DB
         # ------------------------------------------------------------------
-        def _persist_step(step_key: str, content: str, status: str = "completed") -> None:
+        def _persist_step(step_key: str, content: str, status: str = "completed", personality_mode: str = "critical") -> None:
             """Save step content via WorkflowStepRepository. Shows notification on failure."""
             if workflow_step_repo is None:
                 return
             try:
-                workflow_step_repo.upsert(topic_id, step_key, content, status)
+                workflow_step_repo.upsert(topic_id, step_key, content, status, personality_mode=personality_mode)
             except Exception:
                 logger.exception("Failed to save step %s for topic %d", step_key, topic_id)
                 ui.notify(
@@ -375,8 +411,11 @@ def create_draft_panel(
                     # a step that's already marked completed)
                     if content:
                         panel_state["step_contents"][step_key] = content
+                        personality_mode_used = node_output.get("personality_mode_used", "critical")
+                        # Update step_modes for badge display (Req 8.3)
+                        panel_state["step_modes"][step_key] = personality_mode_used
                         if step_key not in panel_state["completed_keys"]:
-                            _persist_step(step_key, content, "pending")
+                            _persist_step(step_key, content, "pending", personality_mode=personality_mode_used)
 
                     # Update the textarea for this step
                     ta = step_textareas.get(step_key)
@@ -479,7 +518,12 @@ def create_draft_panel(
                     for sk in WORKFLOW_STEP_ORDER:
                         if _has_content(panel_state["step_contents"].get(sk, "")):
                             panel_state["completed_keys"].add(sk)
-                            _persist_step(sk, panel_state["step_contents"][sk], "completed")
+                            _persist_step(
+                                sk,
+                                panel_state["step_contents"][sk],
+                                "completed",
+                                personality_mode=panel_state["step_modes"].get(sk, "critical"),
+                            )
                     _save_draft()
 
             except GraphInterrupt:
@@ -563,6 +607,11 @@ def create_draft_panel(
 
                 result = await asyncio.to_thread(node_fn, state)
 
+                # Extract personality mode used by this node
+                rerun_personality_mode = result.get("personality_mode_used", "critical")
+                # Update step_modes for badge display (Req 8.3)
+                panel_state["step_modes"][step_key] = rerun_personality_mode
+
                 # Extract content from the result
                 if step_key == "claims_drafting":
                     new_content = result.get("claims_text", "")
@@ -591,7 +640,7 @@ def create_draft_panel(
                         claims_ta = step_textareas.get("claims_drafting")
                         if claims_ta is not None:
                             claims_ta.value = new_claims
-                        _persist_step("claims_drafting", new_claims, "completed")
+                        _persist_step("claims_drafting", new_claims, "completed", personality_mode=rerun_personality_mode)
                         _save_draft()
 
             except Exception as exc:
@@ -627,13 +676,13 @@ def create_draft_panel(
 
             def _on_keep() -> None:
                 panel_state["step_contents"][step_key] = new_content
-                _persist_step(step_key, new_content, "completed")
+                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode)
                 ui.notify(f"{display}: new content saved.", type="positive")
                 _refresh_step_sections()
 
             def _on_revert() -> None:
                 panel_state["step_contents"][step_key] = old_content
-                _persist_step(step_key, old_content, "completed")
+                _persist_step(step_key, old_content, "completed", personality_mode=rerun_personality_mode)
                 if ta is not None:
                     ta.value = old_content
                 ui.notify(f"{display}: reverted to previous content.", type="info")
@@ -649,7 +698,7 @@ def create_draft_panel(
                 dlg.open()
             elif new_content:
                 # Same content — just save silently
-                _persist_step(step_key, new_content, "completed")
+                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode)
 
             _refresh_step_sections()
 
@@ -661,10 +710,27 @@ def create_draft_panel(
         step_rerun_btns: dict[str, Any] = {}
         step_save_btns: dict[str, Any] = {}
         step_expansions: dict[str, Any] = {}
+        step_badge_containers: dict[str, Any] = {}  # step_key -> badge container element (Req 8.1)
         claims_textarea_ref: dict[str, Any] = {"el": None}
         description_textarea_ref: dict[str, Any] = {"el": None}
 
         steps_container = ui.column().classes("w-full")
+
+        def _render_badge(badge_container: Any, step_key: str) -> None:
+            """Render a personality mode badge inside *badge_container* for *step_key*.
+
+            Clears the container first, then adds a ``ui.badge`` if a mode
+            is recorded in ``panel_state["step_modes"]``.
+
+            Validates: Requirements 8.1, 8.2, 8.3
+            """
+            badge_container.clear()
+            mode = panel_state["step_modes"].get(step_key)
+            if mode:
+                label = _MODE_BADGE_LABELS.get(mode, mode)
+                color = _MODE_BADGE_COLORS.get(mode, "grey")
+                with badge_container:
+                    ui.badge(label, color=color).props("dense")
 
         def _refresh_step_sections() -> None:
             """Update visibility/enabled state of buttons and textareas."""
@@ -703,6 +769,11 @@ def create_draft_panel(
                 if save_btn is not None:
                     save_btn.set_visibility(has_text and not is_running)
 
+                # Refresh personality mode badge (Req 8.3)
+                badge_container = step_badge_containers.get(key)
+                if badge_container is not None:
+                    _render_badge(badge_container, key)
+
             _update_export_state()
 
         # ------------------------------------------------------------------
@@ -721,6 +792,11 @@ def create_draft_panel(
                         icon="lightbulb",
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
+
+                        # Personality mode badge container (Req 8.1)
+                        badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_badge_containers[step_key] = badge_ctr
+                        _render_badge(badge_ctr, step_key)
 
                         # Container for disclosure content (re-rendered on rerun)
                         idea_content_container = ui.column().classes("w-full")
@@ -781,7 +857,7 @@ def create_draft_panel(
                                     type="warning",
                                 )
                                 return
-                            _persist_step("initial_idea", content, "completed")
+                            _persist_step("initial_idea", content, "completed", personality_mode="")
                             panel_state["completed_keys"].add("initial_idea")
                             panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                             _refresh_chips()
@@ -826,6 +902,11 @@ def create_draft_panel(
                         icon="description",
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
+
+                        # Personality mode badge container (Req 8.1)
+                        badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_badge_containers[step_key] = badge_ctr
+                        _render_badge(badge_ctr, step_key)
 
                         # Claims Editor
                         claims_ta = ui.textarea(
@@ -911,11 +992,11 @@ def create_draft_panel(
 
                             # Also persist to workflow_steps table
                             if desc_val.strip():
-                                _persist_step("patent_draft", desc_val, "completed")
+                                _persist_step("patent_draft", desc_val, "completed", personality_mode=panel_state["step_modes"].get("patent_draft", "critical"))
                                 panel_state["step_contents"]["patent_draft"] = desc_val
                                 panel_state["completed_keys"].add("patent_draft")
                             if claims_val.strip():
-                                _persist_step("claims_drafting", claims_val, "completed")
+                                _persist_step("claims_drafting", claims_val, "completed", personality_mode=panel_state["step_modes"].get("claims_drafting", "critical"))
                                 panel_state["step_contents"]["claims_drafting"] = claims_val
 
                             ui.notify("Patent draft saved.", type="positive")
@@ -945,6 +1026,11 @@ def create_draft_panel(
                         icon=_icon_map.get(step_key, "article"),
                     ).classes("w-full q-mb-sm") as exp:
                         step_expansions[step_key] = exp
+
+                        # Personality mode badge container (Req 8.1)
+                        badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_badge_containers[step_key] = badge_ctr
+                        _render_badge(badge_ctr, step_key)
 
                         ta = ui.textarea(
                             label=display_name,
@@ -980,7 +1066,7 @@ def create_draft_panel(
                                 content = panel_state["step_contents"].get(sk, "")
                                 if not _has_content(content):
                                     return
-                                _persist_step(sk, content, "completed")
+                                _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"))
                                 panel_state["completed_keys"].add(sk)
                                 panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                                 _refresh_chips()
@@ -1037,7 +1123,7 @@ def create_draft_panel(
                                     panel_state["step_contents"][sk] = ta_el.value or ""
                                 content = panel_state["step_contents"].get(sk, "")
                                 if _has_content(content):
-                                    _persist_step(sk, content, "completed")
+                                    _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"))
                                     panel_state["completed_keys"].add(sk)
                                     display = _STEP_DISPLAY_NAMES.get(sk, sk)
                                     ui.notify(f"{display}: edits saved.", type="positive")

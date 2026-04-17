@@ -32,3 +32,7 @@ class PatentWorkflowState(TypedDict):
     disclosure_summary: str
     prior_art_summary: str
     workflow_step_statuses: dict  # step_key -> "pending" | "completed"
+
+    # Personality modes: maps agent_name → mode string (e.g. {"novelty_analysis": "critical"}).
+    # Populated once at workflow start from saved per-topic preferences; remains constant during run.
+    personality_modes: dict

@@ -17,6 +17,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import ReviewConsistencyModule
 from patent_system.exceptions import LLMConnectionError
@@ -47,6 +48,8 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
     """
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "consistency_review")
+
     claims = state.get("claims_text", "")
     description = state.get("description_text", "")
 
@@ -70,7 +73,7 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
     # Run the DSPy review module
     review_module = ReviewConsistencyModule()
     try:
-        prediction = review_module(claims=claims, description=description)
+        prediction = review_module(claims=claims, description=description, personality_mode=mode.value)
     except (
         requests.exceptions.ConnectionError,
         httpx.ConnectError,
@@ -98,7 +101,8 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
         name="ConsistencyReviewerAgent",
         input_summary=(
             f"claims_length={len(claims)}, "
-            f"description_length={len(description)}"
+            f"description_length={len(description)}, "
+            f"personality_mode={mode.value}"
         ),
         output_summary=f"approved={approved}, feedback_length={len(feedback)}",
         duration_ms=duration_ms,
@@ -108,4 +112,5 @@ def consistency_review_node(state: PatentWorkflowState) -> dict[str, Any]:
         "review_feedback": feedback,
         "review_approved": approved,
         "current_step": "consistency_review",
+        "personality_mode_used": mode.value,
     }

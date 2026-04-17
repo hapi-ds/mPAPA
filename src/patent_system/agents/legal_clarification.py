@@ -17,6 +17,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import LegalClarificationModule
 from patent_system.exceptions import LLMConnectionError
@@ -63,6 +64,8 @@ def legal_clarification_node(state: PatentWorkflowState) -> dict[str, Any]:
     """
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "legal_clarification")
+
     disclosure = state.get("invention_disclosure")
     claims_text = state.get("claims_text", "")
     prior_art_summary = state.get("prior_art_summary", "")
@@ -78,6 +81,7 @@ def legal_clarification_node(state: PatentWorkflowState) -> dict[str, Any]:
             claims_text=claims_text,
             prior_art_summary=prior_art_summary,
             novelty_analysis=novelty_text,
+            personality_mode=mode.value,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -106,7 +110,8 @@ def legal_clarification_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"disclosure_length={len(disclosure_text)}, "
             f"claims_length={len(claims_text)}, "
             f"prior_art_length={len(prior_art_summary)}, "
-            f"novelty_length={len(novelty_text)}"
+            f"novelty_length={len(novelty_text)}, "
+            f"personality_mode={mode.value}"
         ),
         output_summary=f"assessment_length={len(legal_assessment)}",
         duration_ms=duration_ms,
@@ -115,4 +120,5 @@ def legal_clarification_node(state: PatentWorkflowState) -> dict[str, Any]:
     return {
         "legal_assessment": legal_assessment,
         "current_step": "legal_clarification",
+        "personality_mode_used": mode.value,
     }

@@ -54,7 +54,9 @@ Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks
 
 📄 **Export to DOCX** — Professional formatting, proper styles, header/footer, ready for your attorney.
 
-Stored locally in a database for each topic, so you can pick up right where you left off at any time.
+🎭 **Agent Personality Modes** — Not every step needs the same attitude. Switch between **Critical** (skeptical, no sugarcoating), **Neutral** (balanced, just the facts), and **Innovation-Friendly** (opportunity-focused, constructive). Novelty analysis tears your claims apart by default. Disclosure keeps it open-minded. You set the tone per agent, per topic — because a patent draft needs a devil's advocate, not a cheerleader.
+
+Everything persisted locally in SQLite — per topic, per step, per setting. Close the browser, shut down your machine, come back in a week. Your entire workflow, research, drafts, and agent configurations are exactly where you left them.
 
 ---
 

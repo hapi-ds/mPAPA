@@ -47,6 +47,7 @@ def _make_state(**overrides) -> dict:
         "disclosure_summary": "",
         "prior_art_summary": "",
         "workflow_step_statuses": {},
+        "personality_modes": {},
     }
     base.update(overrides)
     return base
@@ -204,6 +205,7 @@ class TestWorkflowStateFields:
             "disclosure_summary",
             "prior_art_summary",
             "workflow_step_statuses",
+            "personality_modes",
         }
         actual_fields = set(PatentWorkflowState.__annotations__.keys())
         assert expected_fields == actual_fields

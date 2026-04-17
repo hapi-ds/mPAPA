@@ -18,6 +18,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DisclosureSummaryModule
 from patent_system.exceptions import LLMConnectionError
@@ -66,6 +67,8 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
     """
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "disclosure_summary")
+
     # Extract all seven preceding step fields
     disclosure = state.get("invention_disclosure")
     claims_text = state.get("claims_text", "")
@@ -89,6 +92,7 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
             consistency_review=consistency_review,
             market_assessment=market_assessment,
             legal_assessment=legal_assessment,
+            personality_mode=mode.value,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -120,7 +124,8 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"novelty_length={len(novelty_text)}, "
             f"consistency_length={len(consistency_review)}, "
             f"market_length={len(market_assessment)}, "
-            f"legal_length={len(legal_assessment)}"
+            f"legal_length={len(legal_assessment)}, "
+            f"personality_mode={mode.value}"
         ),
         output_summary=f"summary_length={len(disclosure_summary)}",
         duration_ms=duration_ms,
@@ -129,4 +134,5 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
     return {
         "disclosure_summary": disclosure_summary,
         "current_step": "disclosure_summary",
+        "personality_mode_used": mode.value,
     }

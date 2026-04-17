@@ -116,18 +116,62 @@ CREATE TABLE IF NOT EXISTS workflow_steps (
     FOREIGN KEY (topic_id) REFERENCES topics(id),
     UNIQUE(topic_id, step_key)
 );
+
+CREATE TABLE IF NOT EXISTS personality_preferences (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL,
+    agent_name TEXT NOT NULL,
+    personality_mode TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (topic_id) REFERENCES topics(id),
+    UNIQUE(topic_id, agent_name)
+);
 """
 
 _initialized_databases: set[str] = set()
 
 
+def _migrate_workflow_steps_personality(conn: sqlite3.Connection) -> None:
+    """Add or fix the personality_mode column on workflow_steps.
+
+    Phase 1 (new databases): adds the column with DEFAULT '' so pre-existing
+    rows are clearly distinguishable from rows created with personality support.
+
+    Phase 2 (databases from the first migration that used DEFAULT 'critical'):
+    resets those legacy default values to '' so the UI does not show a
+    misleading "Critical" badge on steps that were never run with personality
+    mode support.
+    """
+    cursor = conn.execute("PRAGMA table_info(workflow_steps)")
+    col_info = {row[1]: row for row in cursor.fetchall()}
+
+    if "personality_mode" not in col_info:
+        # Column doesn't exist yet — add it with empty-string default.
+        conn.execute(
+            "ALTER TABLE workflow_steps ADD COLUMN personality_mode TEXT NOT NULL DEFAULT ''"
+        )
+    else:
+        # Column exists. If the default is 'critical' (from the earlier
+        # migration), clear those legacy values so badges are not shown
+        # for steps that pre-date personality mode support.
+        # We detect the old migration by checking the column's default value.
+        default_val = col_info["personality_mode"][4]  # dflt_value is index 4
+        if default_val == "'critical'":
+            conn.execute(
+                "UPDATE workflow_steps SET personality_mode = '' WHERE personality_mode = 'critical'"
+            )
+
+
 def init_schema(conn: sqlite3.Connection) -> None:
-    """Execute the schema SQL to create all tables.
+    """Execute the schema SQL to create all tables and run migrations.
 
     Uses executescript to handle multiple statements. Safe to call
-    multiple times due to IF NOT EXISTS clauses.
+    multiple times due to IF NOT EXISTS clauses. After creating tables,
+    runs migration logic to add columns that may be missing in existing
+    databases.
     """
     conn.executescript(SCHEMA_SQL)
+    _migrate_workflow_steps_personality(conn)
 
 
 def get_connection(database_path: Path) -> sqlite3.Connection:

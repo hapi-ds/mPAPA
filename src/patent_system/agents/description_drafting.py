@@ -20,6 +20,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DraftDescriptionModule, RefineClaimsModule
 from patent_system.exceptions import LLMConnectionError
@@ -154,6 +155,8 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
     """
     start = time.monotonic()
 
+    mode = resolve_personality_mode(state, "patent_draft")
+
     original_claims = _prepare_claims_text(state)
     prior_art_summary = _prepare_prior_art_summary(state)
     disclosure_text = _prepare_disclosure_text(state)
@@ -172,6 +175,7 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
                 consistency_review=state.get("review_feedback", "") or "",
                 market_assessment=state.get("market_assessment", "") or "",
                 legal_assessment=state.get("legal_assessment", "") or "",
+                personality_mode=mode.value,
             )
             refined = refine_prediction.refined_claims
             if refined and refined.strip():
@@ -208,6 +212,7 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
             claims=claims,
             prior_art_summary=prior_art_summary,
             invention_disclosure=disclosure_text,
+            personality_mode=mode.value,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -232,7 +237,8 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"claims_length={len(claims)}, "
             f"claims_refined={claims_refined}, "
             f"prior_art_count={len(state.get('prior_art_results') or [])}, "
-            f"disclosure_length={len(disclosure_text)}"
+            f"disclosure_length={len(disclosure_text)}, "
+            f"personality_mode={mode.value}"
         ),
         output_summary=f"description_length={len(description_text)}",
         duration_ms=duration_ms,
@@ -242,4 +248,5 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
         "description_text": description_text,
         "claims_text": claims,
         "current_step": "description_drafting",
+        "personality_mode_used": mode.value,
     }
