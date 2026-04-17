@@ -21,6 +21,7 @@ import litellm.exceptions
 import requests.exceptions
 
 from patent_system.agents.personality import resolve_personality_mode
+from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DraftDescriptionModule, RefineClaimsModule
 from patent_system.exceptions import LLMConnectionError
@@ -123,7 +124,10 @@ def _prepare_novelty_text(state: PatentWorkflowState) -> str:
         return str(novelty)
 
 
-def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
+def description_drafting_node(
+    state: PatentWorkflowState,
+    review_notes_mode: str = "continue",
+) -> dict[str, Any]:
     """Run the Description Drafter Agent.
 
     When analysis feedback is available (novelty analysis, consistency
@@ -147,6 +151,9 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     Args:
         state: The current workflow state.
+        review_notes_mode: Either ``"continue"`` (inject upstream notes)
+            or ``"rerun"`` (inject own notes only). This node always
+            uses ``"continue"`` mode to accumulate ALL upstream notes.
 
     Returns:
         Dict with ``description_text`` (generated specification string),
@@ -156,6 +163,10 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "patent_draft")
+
+    # Build review notes text — always "continue" to accumulate ALL upstream notes
+    review_notes = state.get("review_notes") or {}
+    notes_text = build_review_notes_text(review_notes, "patent_draft", review_notes_mode)
 
     original_claims = _prepare_claims_text(state)
     prior_art_summary = _prepare_prior_art_summary(state)
@@ -176,6 +187,7 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
                 market_assessment=state.get("market_assessment", "") or "",
                 legal_assessment=state.get("legal_assessment", "") or "",
                 personality_mode=mode.value,
+                review_notes_text=notes_text or None,
             )
             refined = refine_prediction.refined_claims
             if refined and refined.strip():
@@ -213,6 +225,7 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
             prior_art_summary=prior_art_summary,
             invention_disclosure=disclosure_text,
             personality_mode=mode.value,
+            review_notes_text=notes_text or None,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -238,7 +251,8 @@ def description_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"claims_refined={claims_refined}, "
             f"prior_art_count={len(state.get('prior_art_results') or [])}, "
             f"disclosure_length={len(disclosure_text)}, "
-            f"personality_mode={mode.value}"
+            f"personality_mode={mode.value}, "
+            f"review_notes_length={len(notes_text)}"
         ),
         output_summary=f"description_length={len(description_text)}",
         duration_ms=duration_ms,

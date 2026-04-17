@@ -162,6 +162,21 @@ def _migrate_workflow_steps_personality(conn: sqlite3.Connection) -> None:
             )
 
 
+def _migrate_workflow_steps_review_notes(conn: sqlite3.Connection) -> None:
+    """Add review_notes column to workflow_steps if missing.
+
+    Adds a TEXT column with an empty-string default so existing rows
+    get a sensible value and new rows without an explicit review_notes
+    value are clearly empty.
+    """
+    cursor = conn.execute("PRAGMA table_info(workflow_steps)")
+    col_names = {row[1] for row in cursor.fetchall()}
+    if "review_notes" not in col_names:
+        conn.execute(
+            "ALTER TABLE workflow_steps ADD COLUMN review_notes TEXT NOT NULL DEFAULT ''"
+        )
+
+
 def init_schema(conn: sqlite3.Connection) -> None:
     """Execute the schema SQL to create all tables and run migrations.
 
@@ -172,6 +187,7 @@ def init_schema(conn: sqlite3.Connection) -> None:
     """
     conn.executescript(SCHEMA_SQL)
     _migrate_workflow_steps_personality(conn)
+    _migrate_workflow_steps_review_notes(conn)
 
 
 def get_connection(database_path: Path) -> sqlite3.Connection:

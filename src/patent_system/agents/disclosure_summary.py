@@ -19,6 +19,7 @@ import litellm.exceptions
 import requests.exceptions
 
 from patent_system.agents.personality import resolve_personality_mode
+from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DisclosureSummaryModule
 from patent_system.exceptions import LLMConnectionError
@@ -47,7 +48,10 @@ def _prepare_text(value: dict | str | None) -> str:
         return str(value)
 
 
-def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
+def disclosure_summary_node(
+    state: PatentWorkflowState,
+    review_notes_mode: str = "continue",
+) -> dict[str, Any]:
     """Run the Disclosure Summary Agent.
 
     1. Extracts all seven preceding step fields from state:
@@ -60,6 +64,8 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     Args:
         state: The current workflow state.
+        review_notes_mode: Either ``"continue"`` (inject upstream notes)
+            or ``"rerun"`` (inject own notes only).
 
     Returns:
         Dict with ``disclosure_summary`` (summary string) and
@@ -68,6 +74,10 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "disclosure_summary")
+
+    # Build review notes text
+    review_notes = state.get("review_notes") or {}
+    notes_text = build_review_notes_text(review_notes, "disclosure_summary", review_notes_mode)
 
     # Extract all seven preceding step fields
     disclosure = state.get("invention_disclosure")
@@ -93,6 +103,7 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
             market_assessment=market_assessment,
             legal_assessment=legal_assessment,
             personality_mode=mode.value,
+            review_notes_text=notes_text or None,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -125,7 +136,8 @@ def disclosure_summary_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"consistency_length={len(consistency_review)}, "
             f"market_length={len(market_assessment)}, "
             f"legal_length={len(legal_assessment)}, "
-            f"personality_mode={mode.value}"
+            f"personality_mode={mode.value}, "
+            f"review_notes_length={len(notes_text)}"
         ),
         output_summary=f"summary_length={len(disclosure_summary)}",
         duration_ms=duration_ms,

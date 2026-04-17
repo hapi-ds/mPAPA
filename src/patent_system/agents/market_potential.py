@@ -18,6 +18,7 @@ import litellm.exceptions
 import requests.exceptions
 
 from patent_system.agents.personality import resolve_personality_mode
+from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import MarketPotentialModule
 from patent_system.exceptions import LLMConnectionError
@@ -46,7 +47,10 @@ def _prepare_text(value: dict | str | None) -> str:
         return str(value)
 
 
-def market_potential_node(state: PatentWorkflowState) -> dict[str, Any]:
+def market_potential_node(
+    state: PatentWorkflowState,
+    review_notes_mode: str = "continue",
+) -> dict[str, Any]:
     """Run the Market Potential Agent.
 
     1. Extracts ``invention_disclosure``, ``claims_text``, and
@@ -57,6 +61,8 @@ def market_potential_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     Args:
         state: The current workflow state.
+        review_notes_mode: Either ``"continue"`` (inject upstream notes)
+            or ``"rerun"`` (inject own notes only).
 
     Returns:
         Dict with ``market_assessment`` (assessment string) and
@@ -65,6 +71,10 @@ def market_potential_node(state: PatentWorkflowState) -> dict[str, Any]:
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "market_potential")
+
+    # Build review notes text
+    review_notes = state.get("review_notes") or {}
+    notes_text = build_review_notes_text(review_notes, "market_potential", review_notes_mode)
 
     disclosure = state.get("invention_disclosure")
     claims_text = state.get("claims_text", "")
@@ -80,6 +90,7 @@ def market_potential_node(state: PatentWorkflowState) -> dict[str, Any]:
             claims_text=claims_text,
             novelty_analysis=novelty_text,
             personality_mode=mode.value,
+            review_notes_text=notes_text or None,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -108,7 +119,8 @@ def market_potential_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"disclosure_length={len(disclosure_text)}, "
             f"claims_length={len(claims_text)}, "
             f"novelty_length={len(novelty_text)}, "
-            f"personality_mode={mode.value}"
+            f"personality_mode={mode.value}, "
+            f"review_notes_length={len(notes_text)}"
         ),
         output_summary=f"assessment_length={len(market_assessment)}",
         duration_ms=duration_ms,

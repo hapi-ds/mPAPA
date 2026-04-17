@@ -18,6 +18,7 @@ import litellm.exceptions
 import requests.exceptions
 
 from patent_system.agents.personality import resolve_personality_mode
+from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.dspy_modules.modules import DraftClaimsModule
 from patent_system.exceptions import LLMConnectionError
@@ -62,7 +63,10 @@ def _prepare_novelty_text(novelty: dict | None) -> str:
         return str(novelty)
 
 
-def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
+def claims_drafting_node(
+    state: PatentWorkflowState,
+    review_notes_mode: str = "continue",
+) -> dict[str, Any]:
     """Run the Claims Drafting Agent.
 
     1. Uses DSPy ``DraftClaimsModule`` to generate claims in
@@ -76,6 +80,8 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
 
     Args:
         state: The current workflow state.
+        review_notes_mode: Either ``"continue"`` (inject upstream notes)
+            or ``"rerun"`` (inject own notes only).
 
     Returns:
         Dict with ``claims_text`` (generated claims string),
@@ -85,6 +91,10 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "claims_drafting")
+
+    # Build review notes text
+    review_notes = state.get("review_notes") or {}
+    notes_text = build_review_notes_text(review_notes, "claims_drafting", review_notes_mode)
 
     disclosure = state.get("invention_disclosure")
     novelty = state.get("novelty_analysis")
@@ -101,6 +111,7 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
             invention_disclosure=disclosure_text,
             novelty_analysis=novelty_text,
             personality_mode=mode.value,
+            review_notes_text=notes_text or None,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -128,7 +139,8 @@ def claims_drafting_node(state: PatentWorkflowState) -> dict[str, Any]:
             f"disclosure_length={len(disclosure_text)}, "
             f"novelty_length={len(novelty_text)}, "
             f"iteration={new_iteration_count}, "
-            f"personality_mode={mode.value}"
+            f"personality_mode={mode.value}, "
+            f"review_notes_length={len(notes_text)}"
         ),
         output_summary=f"claims_length={len(claims_text)}",
         duration_ms=duration_ms,

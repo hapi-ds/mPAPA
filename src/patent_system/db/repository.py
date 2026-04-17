@@ -581,6 +581,7 @@ class WorkflowStepRepository:
         content: str,
         status: str,
         personality_mode: str = "critical",
+        review_notes: str = "",
     ) -> None:
         """Insert or update a workflow step.
 
@@ -594,6 +595,8 @@ class WorkflowStepRepository:
             status: Either "pending" or "completed".
             personality_mode: The personality mode active when this step ran.
                 Defaults to "critical".
+            review_notes: User-authored review notes for this step.
+                Defaults to empty string.
 
         Raises:
             ValueError: If step_key is not in VALID_STEP_KEYS.
@@ -607,9 +610,10 @@ class WorkflowStepRepository:
         try:
             self._conn.execute(
                 """INSERT OR REPLACE INTO workflow_steps
-                   (topic_id, step_key, content, status, personality_mode, updated_at)
-                   VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
-                (topic_id, step_key, content, status, personality_mode),
+                   (topic_id, step_key, content, status, personality_mode,
+                    review_notes, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, step_key, content, status, personality_mode, review_notes),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -627,12 +631,13 @@ class WorkflowStepRepository:
 
         Returns:
             List of dicts with keys: id, topic_id, step_key, content,
-            status, personality_mode, updated_at — ordered by WORKFLOW_STEP_ORDER.
+            status, personality_mode, review_notes, updated_at — ordered
+            by WORKFLOW_STEP_ORDER.
         """
         try:
             rows = self._conn.execute(
                 """SELECT id, topic_id, step_key, content, status, updated_at,
-                          personality_mode
+                          personality_mode, review_notes
                    FROM workflow_steps WHERE topic_id = ?""",
                 (topic_id,),
             ).fetchall()
@@ -650,6 +655,7 @@ class WorkflowStepRepository:
                 "status": r[4],
                 "updated_at": r[5],
                 "personality_mode": r[6],
+                "review_notes": r[7],
             }
             for r in rows
         ]
@@ -665,12 +671,12 @@ class WorkflowStepRepository:
 
         Returns:
             Dict with keys: id, topic_id, step_key, content, status,
-            personality_mode, updated_at — or None.
+            personality_mode, review_notes, updated_at — or None.
         """
         try:
             row = self._conn.execute(
                 """SELECT id, topic_id, step_key, content, status, updated_at,
-                          personality_mode
+                          personality_mode, review_notes
                    FROM workflow_steps
                    WHERE topic_id = ? AND step_key = ?""",
                 (topic_id, step_key),
@@ -689,6 +695,7 @@ class WorkflowStepRepository:
             "status": row[4],
             "updated_at": row[5],
             "personality_mode": row[6],
+            "review_notes": row[7],
         }
 
     def reset_from_step(self, topic_id: int, step_key: str) -> None:
