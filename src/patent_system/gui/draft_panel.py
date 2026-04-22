@@ -1314,6 +1314,7 @@ def create_draft_panel(
                                     "source": rec.source,
                                     "patent_number": rec.patent_number,
                                     "has_full_text": bool(rec.full_text),
+                                    "relevance_score": rec.relevance_score,
                                     "url": url,
                                 })
                             for rec in paper_repo.get_by_session(session["id"]):
@@ -1326,6 +1327,7 @@ def create_draft_panel(
                                     "source": rec.source,
                                     "doi": rec.doi,
                                     "has_full_text": bool(rec.full_text),
+                                    "relevance_score": rec.relevance_score,
                                     "url": url,
                                 })
                     except Exception:

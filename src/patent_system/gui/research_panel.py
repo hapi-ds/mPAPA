@@ -31,6 +31,8 @@ from patent_system.db.repository import (
     ScientificPaperRepository,
     SourcePreferenceRepository,
 )
+from patent_system.rag.vectorization import prepare_vectorization_text
+from patent_system.services.text_extraction import extract_text_from_file
 
 logger = logging.getLogger(__name__)
 
@@ -178,6 +180,34 @@ def _normalize_date_key(value: Any) -> str:
     return str(value)
 
 
+def _persist_relevance_scores(
+    results: list[dict[str, Any]],
+    conn: Any,
+) -> None:
+    """Persist relevance scores from in-memory results to the database.
+
+    Iterates results and updates the relevance_score column for records
+    that have both a database ID and a computed relevance score.
+    """
+    try:
+        patent_repo = PatentRepository(conn)
+        paper_repo = ScientificPaperRepository(conn)
+        for rec in results:
+            score = rec.get("relevance_score")
+            rec_id = rec.get("id")
+            if score is None or rec_id is None:
+                continue
+            record_type = rec.get("record_type", "patent")
+            if record_type == "paper":
+                paper_repo.update_relevance_score(rec_id, score)
+            elif record_type == "patent":
+                patent_repo.update_relevance_score(rec_id, score)
+    except Exception:
+        logging.getLogger(__name__).debug(
+            "Failed to persist relevance scores", exc_info=True,
+        )
+
+
 def _sort_results(
     results: list[dict[str, Any]],
     criterion: str,
@@ -186,7 +216,14 @@ def _sort_results(
     if criterion == "discovery_date":
         return sorted(results, key=lambda r: _normalize_date_key(r.get("discovered_date")), reverse=True)
     if criterion == "relevance":
-        return sorted(results, key=lambda r: r.get("relevance_score", 0), reverse=True)
+        return sorted(
+            results,
+            key=lambda r: (
+                r.get("relevance_score") is not None,  # scored first (True > False)
+                r.get("relevance_score") if r.get("relevance_score") is not None else 0,
+            ),
+            reverse=True,
+        )
     if criterion == "citation_count":
         return sorted(results, key=lambda r: r.get("citation_count", 0), reverse=True)
     return list(results)
@@ -254,6 +291,7 @@ def create_research_panel(
                         "source": rec.source,
                         "patent_number": rec.patent_number,
                         "discovered_date": rec.discovered_date.isoformat() if rec.discovered_date else "",
+                        "relevance_score": rec.relevance_score,
                     })
                 for rec in paper_repo.get_by_session(session["id"]):
                     saved_results.append({
@@ -265,6 +303,7 @@ def create_research_panel(
                         "source": rec.source,
                         "doi": rec.doi,
                         "discovered_date": rec.discovered_date.isoformat() if rec.discovered_date else "",
+                        "relevance_score": rec.relevance_score,
                     })
             panel_state["results"] = saved_results
         except Exception:
@@ -333,13 +372,20 @@ def create_research_panel(
         def _bg_index_and_score() -> None:
             import struct
             try:
+                from patent_system.config import AppSettings as _AppSettings
+                _vect_limit = _AppSettings().vectorization_text_limit
+
                 rag_docs = []
                 for rec in _results_ref:
                     title = rec.get("title", "")
                     abstract = rec.get("abstract", "")
                     full_text = rec.get("full_text")
-                    doc_text = _build_rag_document_text(abstract, full_text)
-                    text = f"{title} {doc_text}".strip() if title else doc_text
+                    text = prepare_vectorization_text(
+                        title=title,
+                        abstract=abstract,
+                        full_text=full_text,
+                        max_chars=_vect_limit,
+                    )
                     if not text:
                         continue
                     metadata = _sanitize_metadata({
@@ -363,8 +409,7 @@ def create_research_panel(
                     rag_engine.index_with_embeddings(topic_id, rag_docs)
 
                 if _desc_ref:
-                    n_results = len(_results_ref)
-                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=max(n_results, _get_relevance_top_k()))
+                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=len(_results_ref))
                     score_map: dict[str, float] = {}
                     for rr in rag_results:
                         rr_text = rr.get("text", "")
@@ -380,6 +425,9 @@ def create_research_panel(
                         title = rec.get("title", "")
                         if title in score_map:
                             rec["relevance_score"] = round(score_map[title] * 100, 1)
+                    # Persist relevance scores to DB
+                    if conn is not None:
+                        _persist_relevance_scores(_results_ref, conn)
             except Exception:
                 logger.debug("Failed to index/score saved results", exc_info=True)
             finally:
@@ -605,56 +653,6 @@ def create_research_panel(
         # --- Local Document Upload ---
         ui.label("Upload Local Documents").classes("text-subtitle2 q-mt-md")
 
-        def _extract_text(filename: str, content_bytes: bytes) -> str:
-            """Extract text from uploaded file bytes.
-
-            For PDFs, tries multiple extraction methods:
-            1. Standard text extraction
-            2. Text from annotations/widgets
-            3. Raw text blocks
-            If all fail, returns empty string (likely a scanned image PDF).
-            """
-            lower = filename.lower()
-            if lower.endswith(".txt"):
-                return content_bytes.decode("utf-8", errors="replace")
-            elif lower.endswith(".pdf"):
-                import fitz  # PyMuPDF
-                try:
-                    doc = fitz.open(stream=content_bytes, filetype="pdf")
-                    text_parts: list[str] = []
-                    for page in doc:
-                        # Method 1: standard text extraction
-                        text = page.get_text("text")
-                        if text and text.strip():
-                            text_parts.append(text)
-                            continue
-                        # Method 2: OCR fallback for scanned pages
-                        try:
-                            tp = page.get_textpage_ocr(full=True)
-                            ocr_text = page.get_text("text", textpage=tp)
-                            if ocr_text and ocr_text.strip():
-                                text_parts.append(ocr_text)
-                                continue
-                        except Exception:
-                            pass
-                    doc.close()
-                    result = "\n".join(text_parts)
-                    if not result.strip():
-                        logger.warning(
-                            "PDF '%s' — no text extracted even with OCR",
-                            filename,
-                        )
-                    return result
-                except Exception:
-                    logger.exception("Failed to parse PDF '%s'", filename)
-                    return ""
-            elif lower.endswith(".docx"):
-                import io
-                from docx import Document as DocxDoc
-                doc = DocxDoc(io.BytesIO(content_bytes))
-                return "\n".join(p.text for p in doc.paragraphs if p.text)
-            return ""
-
         import_status = ui.label("").classes("text-caption text-grey")
 
         async def _on_file_uploaded(e: Any) -> None:
@@ -670,7 +668,7 @@ def create_research_panel(
 
                 def _process() -> dict | None:
                     """Run in thread: extract, persist, embed, index."""
-                    text = _extract_text(filename, content_bytes)
+                    text = extract_text_from_file(filename, content_bytes)
                     if not text.strip():
                         return None
 
@@ -684,14 +682,26 @@ def create_research_panel(
 
                     if rag_engine is not None:
                         try:
-                            emb = rag_engine._embedding_service.generate_embedding(text[:2000])
+                            from patent_system.config import AppSettings as _AppSettings
+                            _vect_limit = _AppSettings().vectorization_text_limit
+                            _emb_text = prepare_vectorization_text(
+                                title=filename,
+                                abstract=text,
+                                max_chars=_vect_limit,
+                            )
+                            emb = rag_engine._embedding_service.generate_embedding(_emb_text)
                             if emb:
                                 doc_repo.update_embedding(row_id, emb)
                         except Exception:
                             logger.debug("Embedding failed for %s", filename, exc_info=True)
                         try:
+                            _rag_text = prepare_vectorization_text(
+                                title=filename,
+                                abstract=text,
+                                max_chars=_vect_limit,
+                            )
                             rag_engine.index_documents(topic_id, [
-                                {"text": f"{filename} {text[:4000]}", "metadata": {"source": "Local Document", "filename": filename}},
+                                {"text": _rag_text, "metadata": {"source": "Local Document", "filename": filename}},
                             ])
                         except Exception:
                             logger.debug("RAG index failed for %s", filename, exc_info=True)
@@ -826,11 +836,20 @@ def create_research_panel(
                 }
 
                 search_state["status"] = f"Searching {len(selected_sources)} sources…"
+
+                from patent_system.config import AppSettings as _SearchSettings
+                _search_settings = _SearchSettings()
+
+                def _download_progress(current: int, total: int) -> None:
+                    search_state["status"] = f"Downloading full text {current}/{total}…"
+
                 result = prior_art_search_node(
                     state,
                     rag_engine=rag_engine,
                     selected_sources=selected_sources,
                     max_results_per_source=max_results_per_source,
+                    settings=_search_settings,
+                    progress_callback=_download_progress,
                 )
 
                 results = result.get("prior_art_results", [])
@@ -877,6 +896,8 @@ def create_research_panel(
                                     session_id=session_id,
                                     patent_number=rec.get("patent_number", "UNKNOWN"),
                                     title=title, abstract=abstract, full_text=full_text,
+                                    claims=rec.get("claims"),
+                                    pdf_path=rec.get("pdf_path"),
                                     source=source_name,
                                 )
                                 row_id = patent_repo.create(session_id, patent_record)
@@ -886,10 +907,15 @@ def create_research_panel(
 
                             if rag_engine is not None:
                                 try:
-                                    emb_text = f"{title} {abstract or ''}"
-                                    if full_text:
-                                        emb_text += f" {full_text}"
-                                    emb = rag_engine._embedding_service.generate_embedding(emb_text[:2000])
+                                    from patent_system.config import AppSettings as _AppSettings
+                                    _vect_limit = _AppSettings().vectorization_text_limit
+                                    emb_text = prepare_vectorization_text(
+                                        title=title,
+                                        abstract=abstract or "",
+                                        full_text=full_text,
+                                        max_chars=_vect_limit,
+                                    )
+                                    emb = rag_engine._embedding_service.generate_embedding(emb_text)
                                     if emb is not None:
                                         repo_for_emb.update_embedding(row_id, emb)
                                 except Exception:
@@ -901,19 +927,26 @@ def create_research_panel(
 
                 # RAG index
                 if rag_engine is not None and new_results:
+                    from patent_system.config import AppSettings as _AppSettings
+                    _vect_limit_rag = _AppSettings().vectorization_text_limit
+
                     rag_docs = []
                     for rec in new_results:
                         title = rec.get("title", "")
                         abstract = rec.get("abstract", "")
                         full_text = rec.get("full_text")
-                        doc_text = _build_rag_document_text(abstract, full_text)
-                        text = f"{title} {doc_text}".strip() if title else doc_text
+                        text = prepare_vectorization_text(
+                            title=title,
+                            abstract=abstract,
+                            full_text=full_text,
+                            max_chars=_vect_limit_rag,
+                        )
                         if text:
                             metadata = _sanitize_metadata({
                                 k: v for k, v in rec.items()
                                 if k not in ("title", "abstract", "full_text", "embedding")
                             })
-                            rag_docs.append({"text": text[:4000], "metadata": metadata})
+                            rag_docs.append({"text": text, "metadata": metadata})
                     if rag_docs:
                         try:
                             rag_engine.index_documents(topic_id, rag_docs)
@@ -925,8 +958,7 @@ def create_research_panel(
                     search_state["status"] = "Computing relevance…"
                     try:
                         all_recs = new_results + panel_state["results"]
-                        n_total = len(all_recs)
-                        rag_results = rag_engine.query(topic_id, description, top_k=max(n_total, _get_relevance_top_k()))
+                        rag_results = rag_engine.query(topic_id, description, top_k=len(all_recs))
                         score_map: dict[str, float] = {}
                         for rr in rag_results:
                             rr_text = rr.get("text", "")
@@ -941,6 +973,9 @@ def create_research_panel(
                             title = rec.get("title", "")
                             if title in score_map:
                                 rec["relevance_score"] = round(score_map[title] * 100, 1)
+                        # Persist relevance scores to DB
+                        if conn is not None:
+                            _persist_relevance_scores(all_recs, conn)
                     except Exception:
                         logger.debug("Failed to compute relevance", exc_info=True)
 
@@ -1075,6 +1110,28 @@ def create_research_panel(
                                 ).style(
                                     "white-space: pre-wrap; word-break: break-word;"
                                 )
+
+                        # Full-text viewer (Req 7.1, 7.4, 7.5)
+                        full_text = rec.get("full_text") or ""
+                        if full_text.strip():
+                            with ui.expansion(
+                                "View Full Text", icon="article"
+                            ).classes("w-full"):
+                                _ft_style = (
+                                    "white-space: pre-wrap; "
+                                    "word-break: break-word;"
+                                )
+                                if len(full_text) > 5000:
+                                    with ui.scroll_area().style(
+                                        "max-height: 400px;"
+                                    ).classes("w-full"):
+                                        ui.label(full_text).classes(
+                                            "text-body2"
+                                        ).style(_ft_style)
+                                else:
+                                    ui.label(full_text).classes(
+                                        "text-body2"
+                                    ).style(_ft_style)
 
         def _refresh_table() -> None:
             sorted_rows = _sort_results(

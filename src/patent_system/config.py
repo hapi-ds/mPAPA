@@ -66,6 +66,11 @@ def _default_log_file_path() -> Path:
     return get_base_dir() / "logs" / "patent_system.log"
 
 
+def _default_pdf_download_dir() -> Path:
+    """Return the default PDF download directory resolved relative to the base dir."""
+    return get_base_dir() / "data" / "pdfs"
+
+
 def _default_docx_template_dir() -> Path:
     """Return the default DOCX template directory resolved relative to the base dir.
 
@@ -121,6 +126,11 @@ class AppSettings(BaseSettings):
     search_request_delay_seconds: float = 3.0
     search_relevance_top_k: int = 200
 
+    # Full-text download & vectorization
+    full_text_download_enabled: bool = True
+    vectorization_text_limit: int = 4000
+    pdf_download_dir: Path = Field(default_factory=_default_pdf_download_dir)
+
     # EPO Open Patent Services (OPS)
     epo_ops_key: str = ""
     epo_ops_secret: str = ""
@@ -144,6 +154,8 @@ class AppSettings(BaseSettings):
 
         Calls :func:`ensure_runtime_dirs` with the application base
         directory so that ``data/`` and ``logs/`` exist before any other
-        code attempts to write to them.
+        code attempts to write to them.  Also ensures the PDF download
+        directory exists.
         """
         ensure_runtime_dirs(get_base_dir())
+        self.pdf_download_dir.mkdir(parents=True, exist_ok=True)

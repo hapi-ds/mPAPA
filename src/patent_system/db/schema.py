@@ -131,6 +131,17 @@ CREATE TABLE IF NOT EXISTS personality_preferences (
 _initialized_databases: set[str] = set()
 
 
+def _migrate_relevance_score(conn: sqlite3.Connection) -> None:
+    """Add relevance_score column to patents and scientific_papers if missing."""
+    for table in ("patents", "scientific_papers"):
+        cursor = conn.execute(f"PRAGMA table_info({table})")
+        col_names = {row[1] for row in cursor.fetchall()}
+        if "relevance_score" not in col_names:
+            conn.execute(
+                f"ALTER TABLE {table} ADD COLUMN relevance_score REAL"
+            )
+
+
 def _migrate_workflow_steps_personality(conn: sqlite3.Connection) -> None:
     """Add or fix the personality_mode column on workflow_steps.
 
@@ -186,6 +197,7 @@ def init_schema(conn: sqlite3.Connection) -> None:
     databases.
     """
     conn.executescript(SCHEMA_SQL)
+    _migrate_relevance_score(conn)
     _migrate_workflow_steps_personality(conn)
     _migrate_workflow_steps_review_notes(conn)
 

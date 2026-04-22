@@ -94,8 +94,9 @@ class PatentRepository:
             cursor = self._conn.execute(
                 """INSERT INTO patents
                    (session_id, patent_number, title, abstract, full_text,
-                    claims, pdf_path, source, discovered_date, embedding)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    claims, pdf_path, source, discovered_date, embedding,
+                    relevance_score)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     session_id,
                     record.patent_number,
@@ -107,6 +108,7 @@ class PatentRepository:
                     record.source,
                     record.discovered_date.isoformat(),
                     record.embedding,
+                    record.relevance_score,
                 ),
             )
             self._conn.commit()
@@ -119,7 +121,8 @@ class PatentRepository:
         """Return all patent records for a given research session."""
         rows = self._conn.execute(
             """SELECT id, session_id, patent_number, title, abstract,
-                      full_text, claims, pdf_path, source, discovered_date, embedding
+                      full_text, claims, pdf_path, source, discovered_date,
+                      embedding, relevance_score
                FROM patents WHERE session_id = ?""",
             (session_id,),
         ).fetchall()
@@ -136,6 +139,7 @@ class PatentRepository:
                 source=r[8],
                 discovered_date=_parse_timestamp(r[9]),
                 embedding=r[10],
+                relevance_score=r[11],
             )
             for r in rows
         ]
@@ -150,6 +154,18 @@ class PatentRepository:
             self._conn.execute(
                 "UPDATE patents SET embedding = ? WHERE id = ?",
                 (embedding, patent_id),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "patents", str(exc))
+            raise
+
+    def update_relevance_score(self, patent_id: int, score: float) -> None:
+        """Update the relevance score for a patent record."""
+        try:
+            self._conn.execute(
+                "UPDATE patents SET relevance_score = ? WHERE id = ?",
+                (score, patent_id),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -189,8 +205,9 @@ class ScientificPaperRepository:
             cursor = self._conn.execute(
                 """INSERT INTO scientific_papers
                    (session_id, doi, title, abstract, full_text,
-                    pdf_path, source, discovered_date, embedding)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    pdf_path, source, discovered_date, embedding,
+                    relevance_score)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     session_id,
                     record.doi,
@@ -201,6 +218,7 @@ class ScientificPaperRepository:
                     record.source,
                     record.discovered_date.isoformat(),
                     record.embedding,
+                    record.relevance_score,
                 ),
             )
             self._conn.commit()
@@ -213,7 +231,8 @@ class ScientificPaperRepository:
         """Return all scientific paper records for a given research session."""
         rows = self._conn.execute(
             """SELECT id, session_id, doi, title, abstract,
-                      full_text, pdf_path, source, discovered_date, embedding
+                      full_text, pdf_path, source, discovered_date,
+                      embedding, relevance_score
                FROM scientific_papers WHERE session_id = ?""",
             (session_id,),
         ).fetchall()
@@ -229,6 +248,7 @@ class ScientificPaperRepository:
                 source=r[7],
                 discovered_date=_parse_timestamp(r[8]),
                 embedding=r[9],
+                relevance_score=r[10],
             )
             for r in rows
         ]
@@ -239,6 +259,18 @@ class ScientificPaperRepository:
             self._conn.execute(
                 "UPDATE scientific_papers SET embedding = ? WHERE id = ?",
                 (embedding, paper_id),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "scientific_papers", str(exc))
+            raise
+
+    def update_relevance_score(self, paper_id: int, score: float) -> None:
+        """Update the relevance score for a scientific paper record."""
+        try:
+            self._conn.execute(
+                "UPDATE scientific_papers SET relevance_score = ? WHERE id = ?",
+                (score, paper_id),
             )
             self._conn.commit()
         except sqlite3.Error as exc:

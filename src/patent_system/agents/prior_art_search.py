@@ -210,7 +210,7 @@ def _query_arxiv(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESULT
                     "doi": entry_id,
                     "title": title,
                     "abstract": abstract,
-                    "full_text": abstract,
+                    "full_text": None,
                     "pdf_path": pdf_link,
                 })
 
@@ -307,7 +307,7 @@ def _query_pubmed(search_terms: list[str], max_results: int = _DEFAULT_MAX_RESUL
                     "doi": pmid,
                     "title": title,
                     "abstract": abstract,
-                    "full_text": abstract if abstract else None,
+                    "full_text": None,
                 })
 
     return {"results": all_results}
@@ -625,6 +625,8 @@ def prior_art_search_node(
     rag_engine: Any | None = None,
     selected_sources: list[str] | None = None,
     max_results_per_source: int = _DEFAULT_MAX_RESULTS,
+    settings: Any | None = None,
+    progress_callback: Any | None = None,
 ) -> dict[str, Any]:
     """Run the Prior Art Search Agent.
 
@@ -652,6 +654,10 @@ def prior_art_search_node(
             When provided and non-empty, only matching entries in
             ``_SOURCE_REGISTRY`` are iterated. When ``None`` or empty,
             all sources are queried.
+        settings: Optional ``AppSettings`` instance. When ``None``,
+            settings are loaded lazily via ``AppSettings()``.
+        progress_callback: Optional callable receiving
+            ``(current_index, total)`` for full-text download progress.
 
     Returns:
         Dict with ``prior_art_results`` (list of serialized records),
@@ -724,6 +730,13 @@ def prior_art_search_node(
                 source_name,
                 exc,
             )
+
+    # --- Full-text download step (after all source queries) ---
+    if settings is not None and settings.full_text_download_enabled:
+        from patent_system.services.full_text_downloader import FullTextDownloader
+
+        downloader = FullTextDownloader(settings)
+        all_results = downloader.download_all(all_results, progress_callback=progress_callback)
 
     # Index results in RAG engine if available
     if rag_engine is not None and all_results:
