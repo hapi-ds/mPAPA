@@ -1493,8 +1493,154 @@ def create_draft_panel(
             icon="download",
         ).props("color=secondary").classes("q-mt-sm")
 
+        def _on_latex_export() -> None:
+            """Generate LaTeX (.tex and .bib) files with all workflow step content."""
+            claims = panel_state["claims"]
+            description = panel_state["description"]
+
+            if not can_export(claims, description):
+                ui.notify("Claims and description must not be empty.", type="warning")
+                return
+
+            from datetime import date
+            from pathlib import Path
+            from re import sub as re_sub
+
+            from patent_system.export.latex_exporter import LaTeXExporter
+
+            try:
+                template_dir = Path("src/patent_system/export/templates")
+                template_name = None
+                try:
+                    from patent_system.config import AppSettings
+                    _settings = AppSettings()
+                    template_dir = _settings.latex_template_dir
+                    template_name = _settings.latex_template_name
+                except Exception:
+                    pass
+
+                topic_name = f"topic_{topic_id}"
+                if conn is not None:
+                    try:
+                        from patent_system.db.repository import TopicRepository
+                        topic = TopicRepository(conn).get_by_id(topic_id)
+                        if topic:
+                            topic_name = re_sub(r'[^\w\s-]', '', topic.name).strip().replace(' ', '_')
+                    except Exception:
+                        pass
+
+                # Load references
+                references: list[dict] = []
+                from patent_system.gui.research_panel import _SOURCE_URLS
+                if conn is not None:
+                    try:
+                        session_repo = ResearchSessionRepository(conn)
+                        patent_repo = PatentRepository(conn)
+                        paper_repo = ScientificPaperRepository(conn)
+                        sessions = session_repo.get_by_topic(topic_id)
+                        for session in sessions:
+                            for rec in patent_repo.get_by_session(session["id"]):
+                                record_id = rec.patent_number or ""
+                                url_tpl = _SOURCE_URLS.get(rec.source, "")
+                                url = url_tpl.format(id=record_id) if url_tpl and record_id and record_id != "UNKNOWN" else ""
+                                references.append({
+                                    "title": rec.title,
+                                    "abstract": rec.abstract or "",
+                                    "source": rec.source,
+                                    "patent_number": rec.patent_number,
+                                    "has_full_text": bool(rec.full_text),
+                                    "relevance_score": rec.relevance_score,
+                                    "url": url,
+                                })
+                            for rec in paper_repo.get_by_session(session["id"]):
+                                record_id = rec.doi or ""
+                                url_tpl = _SOURCE_URLS.get(rec.source, "")
+                                url = url_tpl.format(id=record_id) if url_tpl and record_id else ""
+                                references.append({
+                                    "title": rec.title,
+                                    "abstract": rec.abstract or "",
+                                    "source": rec.source,
+                                    "doi": rec.doi,
+                                    "has_full_text": bool(rec.full_text),
+                                    "relevance_score": rec.relevance_score,
+                                    "url": url,
+                                })
+                    except Exception:
+                        logger.exception("Failed to load references for LaTeX export")
+
+                # Include local documents
+                if conn is not None:
+                    try:
+                        from patent_system.db.repository import LocalDocumentRepository
+                        local_doc_repo = LocalDocumentRepository(conn)
+                        for doc in local_doc_repo.get_by_topic(topic_id):
+                            content = doc["content"]
+                            abstract = content[:500].strip()
+                            if len(content) > 500:
+                                abstract += "…"
+                            references.append({
+                                "title": doc["filename"],
+                                "abstract": abstract,
+                                "source": "Local Document",
+                                "has_full_text": True,
+                                "url": "",
+                            })
+                    except Exception:
+                        logger.exception("Failed to load local documents for LaTeX export")
+
+                # Load chat history
+                chat_messages: list[dict] = []
+                if conn is not None:
+                    try:
+                        from patent_system.db.repository import ChatHistoryRepository
+                        chat_repo = ChatHistoryRepository(conn)
+                        for msg in chat_repo.get_by_topic(topic_id):
+                            chat_messages.append({"role": msg.role, "message": msg.message})
+                    except Exception:
+                        logger.exception("Failed to load chat history for LaTeX export")
+
+                today = date.today().isoformat()
+                filename = f"{topic_name}_{today}.tex"
+                output_path = Path(f"data/export/{filename}")
+
+                # Build workflow_steps dict for export
+                workflow_steps_dict: dict[str, str] = {}
+                for sk in WORKFLOW_STEP_ORDER:
+                    c = panel_state["step_contents"].get(sk, "")
+                    if c:
+                        workflow_steps_dict[sk] = c
+
+                exporter = LaTeXExporter(template_dir, template_name)
+                exporter.export(
+                    claims, description, output_path,
+                    references=references if references else None,
+                    chat_history=chat_messages if chat_messages else None,
+                    workflow_steps=workflow_steps_dict if workflow_steps_dict else None,
+                )
+
+                ui.download(str(output_path))
+
+                # Also trigger download of .bib file if references exist
+                if references:
+                    bib_path = output_path.with_suffix(".bib")
+                    if bib_path.exists():
+                        ui.download(str(bib_path))
+
+                ui.notify("LaTeX exported successfully.", type="positive")
+                logger.info("Exported LaTeX for topic %d to %s", topic_id, output_path)
+
+            except Exception as exc:
+                logger.exception("Failed to export LaTeX for topic %d", topic_id)
+                ui.notify(f"Export failed: {exc}", type="negative")
+
+        latex_export_button = ui.button(
+            "Export to LaTeX",
+            on_click=_on_latex_export,
+            icon="code",
+        ).props("color=accent").classes("q-mt-sm")
+
         def _update_export_state() -> None:
-            """Enable/disable export button based on content (Req 10.4)."""
+            """Enable/disable export buttons based on content (Req 10.4)."""
             # Export is available when all steps have content and claims+description exist.
             # We check step_contents (not completed_keys) because the last step
             # has no Continue button and may not be in completed_keys.
@@ -1507,9 +1653,11 @@ def create_draft_panel(
             )
             if exportable:
                 export_button.enable()
+                latex_export_button.enable()
                 export_warning.set_visibility(False)
             else:
                 export_button.disable()
+                latex_export_button.disable()
                 export_warning.set_visibility(True)
 
         _update_export_state()

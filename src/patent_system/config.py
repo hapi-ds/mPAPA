@@ -76,6 +76,19 @@ def _default_domain_profiles_dir() -> Path:
     return get_base_dir() / "domain_profiles"
 
 
+def _default_latex_template_dir() -> Path:
+    """Return the default LaTeX template directory resolved relative to the base dir.
+
+    When compiled, templates are bundled alongside the executable under
+    ``patent_system/export/templates``.  When running from source, they
+    live under ``src/patent_system/export/templates``.
+    """
+    base = get_base_dir()
+    if "__compiled__" in dir() or getattr(sys, "frozen", False):
+        return base / "patent_system" / "export" / "templates"
+    return base / "src" / "patent_system" / "export" / "templates"
+
+
 def _default_docx_template_dir() -> Path:
     """Return the default DOCX template directory resolved relative to the base dir.
 
@@ -122,6 +135,10 @@ class AppSettings(BaseSettings):
     # DOCX export
     docx_template_dir: Path = Field(default_factory=_default_docx_template_dir)
     docx_template_name: str | None = None
+
+    # LaTeX export
+    latex_template_dir: Path = Field(default_factory=_default_latex_template_dir)
+    latex_template_name: str | None = None
 
     # Monitoring
     monitoring_interval_hours: int = 24

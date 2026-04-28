@@ -53,6 +53,18 @@ class TestAppSettingsDefaults:
         # Default is None, but .env may override to "template.docx"
         assert settings.docx_template_name is None or isinstance(settings.docx_template_name, str)
 
+    def test_default_latex_template_dir(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("PATENT_LATEX_TEMPLATE_DIR", raising=False)
+        settings = AppSettings(_env_file=None)
+        expected = get_base_dir() / "src" / "patent_system" / "export" / "templates"
+        assert settings.latex_template_dir == expected
+        assert settings.latex_template_dir.is_absolute()
+
+    def test_default_latex_template_name_is_none(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("PATENT_LATEX_TEMPLATE_NAME", raising=False)
+        settings = AppSettings(_env_file=None)
+        assert settings.latex_template_name is None
+
     def test_default_monitoring_interval_hours(self) -> None:
         settings = AppSettings()
         assert settings.monitoring_interval_hours == 24
@@ -101,6 +113,16 @@ class TestAppSettingsOverrides:
         monkeypatch.setenv("PATENT_DOCX_TEMPLATE_NAME", "european_patent.docx")
         settings = AppSettings()
         assert settings.docx_template_name == "european_patent.docx"
+
+    def test_override_latex_template_dir(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("PATENT_LATEX_TEMPLATE_DIR", "/tmp/latex_templates")
+        settings = AppSettings()
+        assert settings.latex_template_dir == Path("/tmp/latex_templates")
+
+    def test_override_latex_template_name(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("PATENT_LATEX_TEMPLATE_NAME", "custom_patent.tex")
+        settings = AppSettings()
+        assert settings.latex_template_name == "custom_patent.tex"
 
 
 class TestAppSettingsValidation:

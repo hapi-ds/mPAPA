@@ -209,3 +209,57 @@ def test_on_generate_graph_interrupt_import() -> None:
 
     assert GraphInterrupt is not None
     assert issubclass(GraphInterrupt, BaseException)
+
+
+# --- LaTeX export integration tests (Req 6.1–6.6) ---
+
+
+def test_latex_exporter_importable() -> None:
+    """LaTeXExporter can be imported from patent_system.export.latex_exporter."""
+    from patent_system.export.latex_exporter import LaTeXExporter
+
+    assert LaTeXExporter is not None
+
+
+def test_latex_exporter_has_export_method() -> None:
+    """LaTeXExporter has the export() method matching the expected interface."""
+    from pathlib import Path
+
+    from patent_system.export.latex_exporter import LaTeXExporter
+
+    exporter = LaTeXExporter(Path("src/patent_system/export/templates"), None)
+    assert hasattr(exporter, "export")
+    assert callable(exporter.export)
+
+
+def test_latex_exporter_has_list_available_templates() -> None:
+    """LaTeXExporter has the list_available_templates() method."""
+    from pathlib import Path
+
+    from patent_system.export.latex_exporter import LaTeXExporter
+
+    exporter = LaTeXExporter(Path("src/patent_system/export/templates"), None)
+    assert hasattr(exporter, "list_available_templates")
+    assert callable(exporter.list_available_templates)
+
+
+def test_can_export_applies_to_latex() -> None:
+    """can_export() logic applies equally to both DOCX and LaTeX buttons.
+
+    The same function gates both export buttons, so verifying it returns
+    correct values confirms both buttons share the enable/disable logic.
+    """
+    # Both non-empty → exportable
+    assert can_export("Claim 1: A method...", "Technical Field...") is True
+    # Empty claims → not exportable
+    assert can_export("", "Some description") is False
+    # Empty description → not exportable
+    assert can_export("Some claims", "") is False
+    # Whitespace only → not exportable
+    assert can_export("   ", "   ") is False
+
+
+def test_can_export_none_values_for_latex() -> None:
+    """can_export() handles None values correctly for LaTeX button logic."""
+    assert can_export(None, "desc") is False  # type: ignore[arg-type]
+    assert can_export("claims", None) is False  # type: ignore[arg-type]
