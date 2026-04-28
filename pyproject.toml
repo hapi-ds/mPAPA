@@ -17,6 +17,8 @@ dependencies = [
     "langgraph-checkpoint-sqlite>=3.0.3",
     "python-epo-ops-client>=4.2.1",
     "pymupdf>=1.27.2.2",
+    "mistune>=3.2.0",
+    "pyyaml>=6.0.3",
 ]
 
 [project.scripts]

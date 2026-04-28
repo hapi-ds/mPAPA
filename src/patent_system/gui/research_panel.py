@@ -31,6 +31,8 @@ from patent_system.db.repository import (
     ScientificPaperRepository,
     SourcePreferenceRepository,
 )
+from patent_system.rag.vectorization import prepare_vectorization_text
+from patent_system.services.text_extraction import extract_text_from_file
 
 logger = logging.getLogger(__name__)
 
@@ -178,6 +180,34 @@ def _normalize_date_key(value: Any) -> str:
     return str(value)
 
 
+def _persist_relevance_scores(
+    results: list[dict[str, Any]],
+    conn: Any,
+) -> None:
+    """Persist relevance scores from in-memory results to the database.
+
+    Iterates results and updates the relevance_score column for records
+    that have both a database ID and a computed relevance score.
+    """
+    try:
+        patent_repo = PatentRepository(conn)
+        paper_repo = ScientificPaperRepository(conn)
+        for rec in results:
+            score = rec.get("relevance_score")
+            rec_id = rec.get("id")
+            if score is None or rec_id is None:
+                continue
+            record_type = rec.get("record_type", "patent")
+            if record_type == "paper":
+                paper_repo.update_relevance_score(rec_id, score)
+            elif record_type == "patent":
+                patent_repo.update_relevance_score(rec_id, score)
+    except Exception:
+        logging.getLogger(__name__).debug(
+            "Failed to persist relevance scores", exc_info=True,
+        )
+
+
 def _sort_results(
     results: list[dict[str, Any]],
     criterion: str,
@@ -186,11 +216,231 @@ def _sort_results(
     if criterion == "discovery_date":
         return sorted(results, key=lambda r: _normalize_date_key(r.get("discovered_date")), reverse=True)
     if criterion == "relevance":
-        return sorted(results, key=lambda r: r.get("relevance_score", 0), reverse=True)
+        return sorted(
+            results,
+            key=lambda r: (
+                r.get("relevance_score") is not None,  # scored first (True > False)
+                r.get("relevance_score") if r.get("relevance_score") is not None else 0,
+            ),
+            reverse=True,
+        )
     if criterion == "citation_count":
         return sorted(results, key=lambda r: r.get("citation_count", 0), reverse=True)
     return list(results)
 
+
+def _bg_recalculate(
+    conn: sqlite3.Connection,
+    topic_id: int,
+    rag_engine: Any | None = None,
+    recalc_state: dict[str, Any] | None = None,
+) -> None:
+    """Regenerate all embeddings and recompute relevance scores for a topic.
+
+    This module-level function implements the full recalculation pipeline:
+      Phase 1 — Embedding Regeneration
+      Phase 2 — RAG Re-indexing
+      Phase 3 — Relevance Score Recomputation
+
+    Args:
+        conn: SQLite connection for database operations.
+        topic_id: The topic whose records should be recalculated.
+        rag_engine: Optional RAG engine for re-indexing and querying.
+        recalc_state: Optional shared dict for progress communication to UI.
+    """
+    import struct
+
+    from patent_system.config import AppSettings
+
+    if recalc_state is None:
+        recalc_state = {}
+
+    recalc_state["status"] = "starting"
+    recalc_state["error"] = None
+    recalc_state["current"] = 0
+    recalc_state["total"] = 0
+    recalc_state["failures"] = 0
+    recalc_state["done"] = False
+
+    settings = AppSettings()
+    _vect_limit = settings.vectorization_text_limit
+
+    # Determine the embedding service to use
+    if rag_engine is not None:
+        embedding_service = rag_engine._embedding_service
+    else:
+        from patent_system.rag.embeddings import EmbeddingService
+        embedding_service = EmbeddingService(
+            model_name=settings.embedding_model_name,
+            api_base=settings.lm_studio_base_url,
+            api_key=settings.lm_studio_api_key,
+        )
+
+    try:
+        # --- Collect all records ---
+        session_repo = ResearchSessionRepository(conn)
+        patent_repo = PatentRepository(conn)
+        paper_repo = ScientificPaperRepository(conn)
+        doc_repo = LocalDocumentRepository(conn)
+
+        sessions = session_repo.get_by_topic(topic_id)
+
+        # Build list of (record_type, record_id, title, abstract, full_text, repo)
+        all_records: list[tuple[str, int, str, str, str | None, Any]] = []
+
+        for session in sessions:
+            for rec in patent_repo.get_by_session(session["id"]):
+                all_records.append((
+                    "patent", rec.id, rec.title, rec.abstract or "",
+                    rec.full_text, patent_repo,
+                ))
+            for rec in paper_repo.get_by_session(session["id"]):
+                all_records.append((
+                    "paper", rec.id, rec.title, rec.abstract or "",
+                    rec.full_text, paper_repo,
+                ))
+
+        for doc in doc_repo.get_by_topic(topic_id):
+            all_records.append((
+                "local_document", doc["id"], doc["filename"], doc["content"],
+                None, doc_repo,
+            ))
+
+        total = len(all_records)
+        recalc_state["total"] = total
+        recalc_state["status"] = "regenerating"
+
+        # --- Phase 1: Embedding Regeneration ---
+        # Store new embeddings for Phase 2 re-indexing
+        new_embeddings: dict[tuple[str, int], bytes] = {}
+
+        for idx, (rec_type, rec_id, title, abstract, full_text, repo) in enumerate(all_records):
+            recalc_state["current"] = idx + 1
+
+            text = prepare_vectorization_text(
+                title=title,
+                abstract=abstract,
+                full_text=full_text,
+                max_chars=_vect_limit,
+            )
+            if not text.strip():
+                recalc_state["failures"] += 1
+                continue
+
+            try:
+                emb_bytes = embedding_service.generate_embedding(text)
+            except Exception as exc:
+                # Connection error — stop immediately
+                recalc_state["status"] = "error"
+                recalc_state["error"] = f"Embedding service error: {exc}"
+                recalc_state["done"] = True
+                logger.error(
+                    "Embedding service connection error during recalculation: %s", exc
+                )
+                return
+
+            if emb_bytes is None:
+                # Skip this record — do NOT overwrite existing embedding
+                recalc_state["failures"] += 1
+                continue
+
+            # Persist the new embedding
+            repo.update_embedding(rec_id, emb_bytes)
+            new_embeddings[(rec_type, rec_id)] = emb_bytes
+
+        # --- Phase 2: RAG Re-indexing ---
+        recalc_state["status"] = "reindexing"
+
+        if rag_engine is not None:
+            # Clear existing index for this topic
+            rag_engine._indexes.pop(topic_id, None)
+
+            # Build documents with fresh embeddings for re-indexing
+            rag_docs: list[dict[str, Any]] = []
+            for rec_type, rec_id, title, abstract, full_text, _repo in all_records:
+                emb_bytes = new_embeddings.get((rec_type, rec_id))
+                if not emb_bytes:
+                    continue
+
+                text = prepare_vectorization_text(
+                    title=title,
+                    abstract=abstract,
+                    full_text=full_text,
+                    max_chars=_vect_limit,
+                )
+                metadata = _sanitize_metadata({
+                    "record_type": rec_type,
+                    "id": rec_id,
+                    "title": title,
+                    "source": "recalculated",
+                })
+
+                n_floats = len(emb_bytes) // 4
+                embedding_list = list(struct.unpack(f"{n_floats}f", emb_bytes))
+
+                rag_docs.append({
+                    "text": text,
+                    "metadata": metadata,
+                    "embedding": embedding_list,
+                })
+
+            if rag_docs:
+                rag_engine.index_with_embeddings(topic_id, rag_docs)
+
+        # --- Phase 3: Relevance Score Recomputation ---
+        recalc_state["status"] = "scoring"
+
+        if rag_engine is not None:
+            disclosure_repo = InventionDisclosureRepository(conn)
+            disclosure = disclosure_repo.get_by_topic(topic_id)
+
+            if disclosure and disclosure.get("primary_description"):
+                disclosure_text = disclosure["primary_description"]
+                # Build a results list for _persist_relevance_scores
+                results_for_scoring: list[dict[str, Any]] = []
+                for rec_type, rec_id, title, abstract, full_text, _repo in all_records:
+                    results_for_scoring.append({
+                        "id": rec_id,
+                        "record_type": rec_type,
+                        "title": title,
+                        "abstract": abstract,
+                        "full_text": full_text,
+                    })
+
+                rag_results = rag_engine.query(
+                    topic_id, disclosure_text, top_k=len(results_for_scoring)
+                )
+
+                score_map: dict[str, float] = {}
+                for rr in rag_results:
+                    rr_text = rr.get("text", "")
+                    rr_score = rr.get("score", 0.0) or 0.0
+                    for rec in results_for_scoring:
+                        rec_title = rec.get("title", "")
+                        if not rec_title or rec_title in score_map:
+                            continue
+                        if rr_text.startswith(rec_title) or rec_title in rr_text:
+                            score_map[rec_title] = rr_score
+
+                for rec in results_for_scoring:
+                    title = rec.get("title", "")
+                    if title in score_map:
+                        rec["relevance_score"] = round(score_map[title] * 100, 1)
+
+                # Persist relevance scores to DB
+                _persist_relevance_scores(results_for_scoring, conn)
+
+                # Store results in recalc_state for UI update
+                recalc_state["results"] = results_for_scoring
+
+        recalc_state["status"] = "done"
+        recalc_state["done"] = True
+
+    except Exception as exc:
+        recalc_state["status"] = "error"
+        recalc_state["error"] = str(exc)
+        recalc_state["done"] = True
+        logger.exception("Recalculation failed for topic %d", topic_id)
 
 
 def create_research_panel(
@@ -254,6 +504,7 @@ def create_research_panel(
                         "source": rec.source,
                         "patent_number": rec.patent_number,
                         "discovered_date": rec.discovered_date.isoformat() if rec.discovered_date else "",
+                        "relevance_score": rec.relevance_score,
                     })
                 for rec in paper_repo.get_by_session(session["id"]):
                     saved_results.append({
@@ -265,6 +516,7 @@ def create_research_panel(
                         "source": rec.source,
                         "doi": rec.doi,
                         "discovered_date": rec.discovered_date.isoformat() if rec.discovered_date else "",
+                        "relevance_score": rec.relevance_score,
                     })
             panel_state["results"] = saved_results
         except Exception:
@@ -333,13 +585,20 @@ def create_research_panel(
         def _bg_index_and_score() -> None:
             import struct
             try:
+                from patent_system.config import AppSettings as _AppSettings
+                _vect_limit = _AppSettings().vectorization_text_limit
+
                 rag_docs = []
                 for rec in _results_ref:
                     title = rec.get("title", "")
                     abstract = rec.get("abstract", "")
                     full_text = rec.get("full_text")
-                    doc_text = _build_rag_document_text(abstract, full_text)
-                    text = f"{title} {doc_text}".strip() if title else doc_text
+                    text = prepare_vectorization_text(
+                        title=title,
+                        abstract=abstract,
+                        full_text=full_text,
+                        max_chars=_vect_limit,
+                    )
                     if not text:
                         continue
                     metadata = _sanitize_metadata({
@@ -363,8 +622,7 @@ def create_research_panel(
                     rag_engine.index_with_embeddings(topic_id, rag_docs)
 
                 if _desc_ref:
-                    n_results = len(_results_ref)
-                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=max(n_results, _get_relevance_top_k()))
+                    rag_results = rag_engine.query(topic_id, _desc_ref, top_k=len(_results_ref))
                     score_map: dict[str, float] = {}
                     for rr in rag_results:
                         rr_text = rr.get("text", "")
@@ -380,6 +638,9 @@ def create_research_panel(
                         title = rec.get("title", "")
                         if title in score_map:
                             rec["relevance_score"] = round(score_map[title] * 100, 1)
+                    # Persist relevance scores to DB
+                    if conn is not None:
+                        _persist_relevance_scores(_results_ref, conn)
             except Exception:
                 logger.debug("Failed to index/score saved results", exc_info=True)
             finally:
@@ -388,6 +649,38 @@ def create_research_panel(
         import threading
         _scoring_done = [False]
         threading.Thread(target=_bg_index_and_score, daemon=True).start()
+
+    # Shared state for recalculation progress (used by _bg_recalculate closure and UI timer)
+    recalc_state: dict[str, Any] = {
+        "status": "idle",
+        "error": None,
+        "current": 0,
+        "total": 0,
+        "failures": 0,
+        "done": False,
+        "results": None,
+    }
+
+    def _bg_recalculate_closure() -> None:
+        """Closure wrapper that calls the module-level _bg_recalculate with panel context."""
+        _bg_recalculate(
+            conn=conn,
+            topic_id=topic_id,
+            rag_engine=rag_engine,
+            recalc_state=recalc_state,
+        )
+        # Update panel_state results with new relevance scores if available
+        if recalc_state.get("results"):
+            score_map: dict[str, float] = {}
+            for rec in recalc_state["results"]:
+                title = rec.get("title", "")
+                score = rec.get("relevance_score")
+                if title and score is not None:
+                    score_map[title] = score
+            for rec in panel_state["results"]:
+                title = rec.get("title", "")
+                if title in score_map:
+                    rec["relevance_score"] = score_map[title]
 
     # Load saved source preferences (Req 3.5)
     saved_prefs: dict[str, bool] | None = None
@@ -605,56 +898,6 @@ def create_research_panel(
         # --- Local Document Upload ---
         ui.label("Upload Local Documents").classes("text-subtitle2 q-mt-md")
 
-        def _extract_text(filename: str, content_bytes: bytes) -> str:
-            """Extract text from uploaded file bytes.
-
-            For PDFs, tries multiple extraction methods:
-            1. Standard text extraction
-            2. Text from annotations/widgets
-            3. Raw text blocks
-            If all fail, returns empty string (likely a scanned image PDF).
-            """
-            lower = filename.lower()
-            if lower.endswith(".txt"):
-                return content_bytes.decode("utf-8", errors="replace")
-            elif lower.endswith(".pdf"):
-                import fitz  # PyMuPDF
-                try:
-                    doc = fitz.open(stream=content_bytes, filetype="pdf")
-                    text_parts: list[str] = []
-                    for page in doc:
-                        # Method 1: standard text extraction
-                        text = page.get_text("text")
-                        if text and text.strip():
-                            text_parts.append(text)
-                            continue
-                        # Method 2: OCR fallback for scanned pages
-                        try:
-                            tp = page.get_textpage_ocr(full=True)
-                            ocr_text = page.get_text("text", textpage=tp)
-                            if ocr_text and ocr_text.strip():
-                                text_parts.append(ocr_text)
-                                continue
-                        except Exception:
-                            pass
-                    doc.close()
-                    result = "\n".join(text_parts)
-                    if not result.strip():
-                        logger.warning(
-                            "PDF '%s' — no text extracted even with OCR",
-                            filename,
-                        )
-                    return result
-                except Exception:
-                    logger.exception("Failed to parse PDF '%s'", filename)
-                    return ""
-            elif lower.endswith(".docx"):
-                import io
-                from docx import Document as DocxDoc
-                doc = DocxDoc(io.BytesIO(content_bytes))
-                return "\n".join(p.text for p in doc.paragraphs if p.text)
-            return ""
-
         import_status = ui.label("").classes("text-caption text-grey")
 
         async def _on_file_uploaded(e: Any) -> None:
@@ -670,7 +913,7 @@ def create_research_panel(
 
                 def _process() -> dict | None:
                     """Run in thread: extract, persist, embed, index."""
-                    text = _extract_text(filename, content_bytes)
+                    text = extract_text_from_file(filename, content_bytes)
                     if not text.strip():
                         return None
 
@@ -684,14 +927,26 @@ def create_research_panel(
 
                     if rag_engine is not None:
                         try:
-                            emb = rag_engine._embedding_service.generate_embedding(text[:2000])
+                            from patent_system.config import AppSettings as _AppSettings
+                            _vect_limit = _AppSettings().vectorization_text_limit
+                            _emb_text = prepare_vectorization_text(
+                                title=filename,
+                                abstract=text,
+                                max_chars=_vect_limit,
+                            )
+                            emb = rag_engine._embedding_service.generate_embedding(_emb_text)
                             if emb:
                                 doc_repo.update_embedding(row_id, emb)
                         except Exception:
                             logger.debug("Embedding failed for %s", filename, exc_info=True)
                         try:
+                            _rag_text = prepare_vectorization_text(
+                                title=filename,
+                                abstract=text,
+                                max_chars=_vect_limit,
+                            )
                             rag_engine.index_documents(topic_id, [
-                                {"text": f"{filename} {text[:4000]}", "metadata": {"source": "Local Document", "filename": filename}},
+                                {"text": _rag_text, "metadata": {"source": "Local Document", "filename": filename}},
                             ])
                         except Exception:
                             logger.debug("RAG index failed for %s", filename, exc_info=True)
@@ -826,11 +1081,20 @@ def create_research_panel(
                 }
 
                 search_state["status"] = f"Searching {len(selected_sources)} sources…"
+
+                from patent_system.config import AppSettings as _SearchSettings
+                _search_settings = _SearchSettings()
+
+                def _download_progress(current: int, total: int) -> None:
+                    search_state["status"] = f"Downloading full text {current}/{total}…"
+
                 result = prior_art_search_node(
                     state,
                     rag_engine=rag_engine,
                     selected_sources=selected_sources,
                     max_results_per_source=max_results_per_source,
+                    settings=_search_settings,
+                    progress_callback=_download_progress,
                 )
 
                 results = result.get("prior_art_results", [])
@@ -877,6 +1141,8 @@ def create_research_panel(
                                     session_id=session_id,
                                     patent_number=rec.get("patent_number", "UNKNOWN"),
                                     title=title, abstract=abstract, full_text=full_text,
+                                    claims=rec.get("claims"),
+                                    pdf_path=rec.get("pdf_path"),
                                     source=source_name,
                                 )
                                 row_id = patent_repo.create(session_id, patent_record)
@@ -886,10 +1152,15 @@ def create_research_panel(
 
                             if rag_engine is not None:
                                 try:
-                                    emb_text = f"{title} {abstract or ''}"
-                                    if full_text:
-                                        emb_text += f" {full_text}"
-                                    emb = rag_engine._embedding_service.generate_embedding(emb_text[:2000])
+                                    from patent_system.config import AppSettings as _AppSettings
+                                    _vect_limit = _AppSettings().vectorization_text_limit
+                                    emb_text = prepare_vectorization_text(
+                                        title=title,
+                                        abstract=abstract or "",
+                                        full_text=full_text,
+                                        max_chars=_vect_limit,
+                                    )
+                                    emb = rag_engine._embedding_service.generate_embedding(emb_text)
                                     if emb is not None:
                                         repo_for_emb.update_embedding(row_id, emb)
                                 except Exception:
@@ -901,19 +1172,26 @@ def create_research_panel(
 
                 # RAG index
                 if rag_engine is not None and new_results:
+                    from patent_system.config import AppSettings as _AppSettings
+                    _vect_limit_rag = _AppSettings().vectorization_text_limit
+
                     rag_docs = []
                     for rec in new_results:
                         title = rec.get("title", "")
                         abstract = rec.get("abstract", "")
                         full_text = rec.get("full_text")
-                        doc_text = _build_rag_document_text(abstract, full_text)
-                        text = f"{title} {doc_text}".strip() if title else doc_text
+                        text = prepare_vectorization_text(
+                            title=title,
+                            abstract=abstract,
+                            full_text=full_text,
+                            max_chars=_vect_limit_rag,
+                        )
                         if text:
                             metadata = _sanitize_metadata({
                                 k: v for k, v in rec.items()
                                 if k not in ("title", "abstract", "full_text", "embedding")
                             })
-                            rag_docs.append({"text": text[:4000], "metadata": metadata})
+                            rag_docs.append({"text": text, "metadata": metadata})
                     if rag_docs:
                         try:
                             rag_engine.index_documents(topic_id, rag_docs)
@@ -925,8 +1203,7 @@ def create_research_panel(
                     search_state["status"] = "Computing relevance…"
                     try:
                         all_recs = new_results + panel_state["results"]
-                        n_total = len(all_recs)
-                        rag_results = rag_engine.query(topic_id, description, top_k=max(n_total, _get_relevance_top_k()))
+                        rag_results = rag_engine.query(topic_id, description, top_k=len(all_recs))
                         score_map: dict[str, float] = {}
                         for rr in rag_results:
                             rr_text = rr.get("text", "")
@@ -941,6 +1218,9 @@ def create_research_panel(
                             title = rec.get("title", "")
                             if title in score_map:
                                 rec["relevance_score"] = round(score_map[title] * 100, 1)
+                        # Persist relevance scores to DB
+                        if conn is not None:
+                            _persist_relevance_scores(all_recs, conn)
                     except Exception:
                         logger.debug("Failed to compute relevance", exc_info=True)
 
@@ -979,6 +1259,70 @@ def create_research_panel(
         research_button = ui.button(
             "Start Research", on_click=_on_start_research
         ).props("color=primary").classes("q-mt-sm")
+
+        # --- Recalculate Embeddings & Scores ---
+        async def _on_recalculate() -> None:
+            """Regenerate all embeddings and recompute relevance scores."""
+            recalculate_button.disable()
+            _set_header_status("Recalculating embeddings…", busy=True)
+
+            # Reset recalc_state
+            recalc_state["done"] = False
+            recalc_state["error"] = None
+            recalc_state["status"] = "starting"
+            recalc_state["current"] = 0
+            recalc_state["total"] = 0
+            recalc_state["failures"] = 0
+            recalc_state["results"] = None
+
+            # Start background thread
+            import threading
+            threading.Thread(target=_bg_recalculate_closure, daemon=True).start()
+
+            # Poll for completion
+            def _check_recalc() -> None:
+                if recalc_state["status"] == "regenerating":
+                    current = recalc_state.get("current", 0)
+                    total = recalc_state.get("total", 0)
+                    _set_header_status(
+                        f"Regenerating embeddings ({current}/{total})…", busy=True
+                    )
+                elif recalc_state["status"] == "reindexing":
+                    _set_header_status("Re-indexing in RAG…", busy=True)
+                elif recalc_state["status"] == "scoring":
+                    _set_header_status("Computing relevance scores…", busy=True)
+
+                if recalc_state["done"]:
+                    _recalc_timer.deactivate()
+                    recalculate_button.enable()
+
+                    if recalc_state.get("error"):
+                        ui.notify(recalc_state["error"], type="negative")
+                        _set_header_status(
+                            f"⚠ Recalculation failed: {recalc_state['error']}",
+                            busy=False,
+                        )
+                    else:
+                        # Update results with new scores
+                        if recalc_state.get("results"):
+                            panel_state["results"] = recalc_state["results"]
+                        _refresh_table()
+
+                        updated = recalc_state.get("total", 0) - recalc_state.get(
+                            "failures", 0
+                        )
+                        failed = recalc_state.get("failures", 0)
+                        _set_header_status(
+                            f"✓ Recalculation complete ({updated} updated, {failed} failed)",
+                            busy=False,
+                        )
+                        ui.notify("Recalculation complete!", type="positive")
+
+            _recalc_timer = ui.timer(1.0, _check_recalc)
+
+        recalculate_button = ui.button(
+            "Recalculate Embeddings & Scores", icon="refresh", on_click=_on_recalculate
+        ).props("color=accent").classes("q-mt-sm q-ml-sm")
 
         # --- Sort control ---
         def _on_sort_change(e: Any) -> None:
@@ -1075,6 +1419,28 @@ def create_research_panel(
                                 ).style(
                                     "white-space: pre-wrap; word-break: break-word;"
                                 )
+
+                        # Full-text viewer (Req 7.1, 7.4, 7.5)
+                        full_text = rec.get("full_text") or ""
+                        if full_text.strip():
+                            with ui.expansion(
+                                "View Full Text", icon="article"
+                            ).classes("w-full"):
+                                _ft_style = (
+                                    "white-space: pre-wrap; "
+                                    "word-break: break-word;"
+                                )
+                                if len(full_text) > 5000:
+                                    with ui.scroll_area().style(
+                                        "max-height: 400px;"
+                                    ).classes("w-full"):
+                                        ui.label(full_text).classes(
+                                            "text-body2"
+                                        ).style(_ft_style)
+                                else:
+                                    ui.label(full_text).classes(
+                                        "text-body2"
+                                    ).style(_ft_style)
 
         def _refresh_table() -> None:
             sorted_rows = _sort_results(

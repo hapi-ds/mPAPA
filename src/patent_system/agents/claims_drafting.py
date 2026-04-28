@@ -17,6 +17,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.domain_profiles import DEFAULT_PROFILE_SLUG
 from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
@@ -91,6 +92,7 @@ def claims_drafting_node(
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "claims_drafting")
+    domain_slug = state.get("domain_profile_slug") or DEFAULT_PROFILE_SLUG
 
     # Build review notes text
     review_notes = state.get("review_notes") or {}
@@ -112,6 +114,7 @@ def claims_drafting_node(
             novelty_analysis=novelty_text,
             personality_mode=mode.value,
             review_notes_text=notes_text or None,
+            domain_profile_slug=domain_slug,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -140,7 +143,8 @@ def claims_drafting_node(
             f"novelty_length={len(novelty_text)}, "
             f"iteration={new_iteration_count}, "
             f"personality_mode={mode.value}, "
-            f"review_notes_length={len(notes_text)}"
+            f"review_notes_length={len(notes_text)}, "
+            f"domain_profile={domain_slug}"
         ),
         output_summary=f"claims_length={len(claims_text)}",
         duration_ms=duration_ms,

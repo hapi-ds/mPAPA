@@ -28,6 +28,7 @@ from patent_system.agents.claims_drafting import claims_drafting_node
 from patent_system.agents.consistency_review import consistency_review_node
 from patent_system.agents.description_drafting import description_drafting_node
 from patent_system.agents.disclosure_summary import disclosure_summary_node
+from patent_system.agents.domain_profiles import DEFAULT_PROFILE_SLUG
 from patent_system.agents.legal_clarification import legal_clarification_node
 from patent_system.agents.market_potential import market_potential_node
 from patent_system.agents.novelty_analysis import novelty_analysis_node
@@ -132,6 +133,7 @@ def _local_prior_art_summary_node(
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "prior_art_search")
+    domain_slug = state.get("domain_profile_slug") or DEFAULT_PROFILE_SLUG
 
     # Build review notes text
     review_notes = state.get("review_notes") or {}
@@ -193,6 +195,7 @@ def _local_prior_art_summary_node(
             prior_art_references=references_text,
             personality_mode=mode.value,
             review_notes_text=notes_text or None,
+            domain_profile_slug=domain_slug,
         )
         summary = prediction.prior_art_summary
     except (
@@ -215,7 +218,7 @@ def _local_prior_art_summary_node(
     log_agent_invocation(
         logger=_logger,
         name="PriorArtSummaryAgent",
-        input_summary=f"references={len(results)} ({patent_count} patents, {paper_count} papers), personality_mode={mode.value}, review_notes_length={len(notes_text)}",
+        input_summary=f"references={len(results)} ({patent_count} patents, {paper_count} papers), personality_mode={mode.value}, review_notes_length={len(notes_text)}, domain_profile={domain_slug}",
         output_summary=f"summary_length={len(summary)}",
         duration_ms=duration_ms,
     )

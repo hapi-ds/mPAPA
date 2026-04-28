@@ -126,9 +126,29 @@ CREATE TABLE IF NOT EXISTS personality_preferences (
     FOREIGN KEY (topic_id) REFERENCES topics(id),
     UNIQUE(topic_id, agent_name)
 );
+
+CREATE TABLE IF NOT EXISTS topic_domain_profile (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL,
+    domain_profile_slug TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (topic_id) REFERENCES topics(id),
+    UNIQUE(topic_id)
+);
 """
 
 _initialized_databases: set[str] = set()
+
+
+def _migrate_relevance_score(conn: sqlite3.Connection) -> None:
+    """Add relevance_score column to patents and scientific_papers if missing."""
+    for table in ("patents", "scientific_papers"):
+        cursor = conn.execute(f"PRAGMA table_info({table})")
+        col_names = {row[1] for row in cursor.fetchall()}
+        if "relevance_score" not in col_names:
+            conn.execute(
+                f"ALTER TABLE {table} ADD COLUMN relevance_score REAL"
+            )
 
 
 def _migrate_workflow_steps_personality(conn: sqlite3.Connection) -> None:
@@ -177,6 +197,21 @@ def _migrate_workflow_steps_review_notes(conn: sqlite3.Connection) -> None:
         )
 
 
+def _migrate_workflow_steps_domain_profile(conn: sqlite3.Connection) -> None:
+    """Add domain_profile_slug column to workflow_steps if missing.
+
+    Adds a TEXT column with an empty-string default so existing rows
+    get a sensible value and new rows without an explicit domain_profile_slug
+    value are clearly empty.
+    """
+    cursor = conn.execute("PRAGMA table_info(workflow_steps)")
+    col_names = {row[1] for row in cursor.fetchall()}
+    if "domain_profile_slug" not in col_names:
+        conn.execute(
+            "ALTER TABLE workflow_steps ADD COLUMN domain_profile_slug TEXT NOT NULL DEFAULT ''"
+        )
+
+
 def init_schema(conn: sqlite3.Connection) -> None:
     """Execute the schema SQL to create all tables and run migrations.
 
@@ -186,8 +221,10 @@ def init_schema(conn: sqlite3.Connection) -> None:
     databases.
     """
     conn.executescript(SCHEMA_SQL)
+    _migrate_relevance_score(conn)
     _migrate_workflow_steps_personality(conn)
     _migrate_workflow_steps_review_notes(conn)
+    _migrate_workflow_steps_domain_profile(conn)
 
 
 def get_connection(database_path: Path) -> sqlite3.Connection:

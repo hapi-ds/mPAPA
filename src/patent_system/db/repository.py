@@ -94,8 +94,9 @@ class PatentRepository:
             cursor = self._conn.execute(
                 """INSERT INTO patents
                    (session_id, patent_number, title, abstract, full_text,
-                    claims, pdf_path, source, discovered_date, embedding)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    claims, pdf_path, source, discovered_date, embedding,
+                    relevance_score)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     session_id,
                     record.patent_number,
@@ -107,6 +108,7 @@ class PatentRepository:
                     record.source,
                     record.discovered_date.isoformat(),
                     record.embedding,
+                    record.relevance_score,
                 ),
             )
             self._conn.commit()
@@ -119,7 +121,8 @@ class PatentRepository:
         """Return all patent records for a given research session."""
         rows = self._conn.execute(
             """SELECT id, session_id, patent_number, title, abstract,
-                      full_text, claims, pdf_path, source, discovered_date, embedding
+                      full_text, claims, pdf_path, source, discovered_date,
+                      embedding, relevance_score
                FROM patents WHERE session_id = ?""",
             (session_id,),
         ).fetchall()
@@ -136,6 +139,7 @@ class PatentRepository:
                 source=r[8],
                 discovered_date=_parse_timestamp(r[9]),
                 embedding=r[10],
+                relevance_score=r[11],
             )
             for r in rows
         ]
@@ -150,6 +154,18 @@ class PatentRepository:
             self._conn.execute(
                 "UPDATE patents SET embedding = ? WHERE id = ?",
                 (embedding, patent_id),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "patents", str(exc))
+            raise
+
+    def update_relevance_score(self, patent_id: int, score: float) -> None:
+        """Update the relevance score for a patent record."""
+        try:
+            self._conn.execute(
+                "UPDATE patents SET relevance_score = ? WHERE id = ?",
+                (score, patent_id),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -189,8 +205,9 @@ class ScientificPaperRepository:
             cursor = self._conn.execute(
                 """INSERT INTO scientific_papers
                    (session_id, doi, title, abstract, full_text,
-                    pdf_path, source, discovered_date, embedding)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    pdf_path, source, discovered_date, embedding,
+                    relevance_score)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     session_id,
                     record.doi,
@@ -201,6 +218,7 @@ class ScientificPaperRepository:
                     record.source,
                     record.discovered_date.isoformat(),
                     record.embedding,
+                    record.relevance_score,
                 ),
             )
             self._conn.commit()
@@ -213,7 +231,8 @@ class ScientificPaperRepository:
         """Return all scientific paper records for a given research session."""
         rows = self._conn.execute(
             """SELECT id, session_id, doi, title, abstract,
-                      full_text, pdf_path, source, discovered_date, embedding
+                      full_text, pdf_path, source, discovered_date,
+                      embedding, relevance_score
                FROM scientific_papers WHERE session_id = ?""",
             (session_id,),
         ).fetchall()
@@ -229,6 +248,7 @@ class ScientificPaperRepository:
                 source=r[7],
                 discovered_date=_parse_timestamp(r[8]),
                 embedding=r[9],
+                relevance_score=r[10],
             )
             for r in rows
         ]
@@ -239,6 +259,18 @@ class ScientificPaperRepository:
             self._conn.execute(
                 "UPDATE scientific_papers SET embedding = ? WHERE id = ?",
                 (embedding, paper_id),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "UPDATE", "scientific_papers", str(exc))
+            raise
+
+    def update_relevance_score(self, paper_id: int, score: float) -> None:
+        """Update the relevance score for a scientific paper record."""
+        try:
+            self._conn.execute(
+                "UPDATE scientific_papers SET relevance_score = ? WHERE id = ?",
+                (score, paper_id),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -582,6 +614,7 @@ class WorkflowStepRepository:
         status: str,
         personality_mode: str = "critical",
         review_notes: str = "",
+        domain_profile_slug: str = "",
     ) -> None:
         """Insert or update a workflow step.
 
@@ -597,6 +630,8 @@ class WorkflowStepRepository:
                 Defaults to "critical".
             review_notes: User-authored review notes for this step.
                 Defaults to empty string.
+            domain_profile_slug: The domain profile slug active when this step ran.
+                Defaults to empty string.
 
         Raises:
             ValueError: If step_key is not in VALID_STEP_KEYS.
@@ -611,9 +646,10 @@ class WorkflowStepRepository:
             self._conn.execute(
                 """INSERT OR REPLACE INTO workflow_steps
                    (topic_id, step_key, content, status, personality_mode,
-                    review_notes, updated_at)
-                   VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
-                (topic_id, step_key, content, status, personality_mode, review_notes),
+                    review_notes, domain_profile_slug, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, step_key, content, status, personality_mode,
+                 review_notes, domain_profile_slug),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -631,13 +667,13 @@ class WorkflowStepRepository:
 
         Returns:
             List of dicts with keys: id, topic_id, step_key, content,
-            status, personality_mode, review_notes, updated_at — ordered
-            by WORKFLOW_STEP_ORDER.
+            status, personality_mode, review_notes, domain_profile_slug,
+            updated_at — ordered by WORKFLOW_STEP_ORDER.
         """
         try:
             rows = self._conn.execute(
                 """SELECT id, topic_id, step_key, content, status, updated_at,
-                          personality_mode, review_notes
+                          personality_mode, review_notes, domain_profile_slug
                    FROM workflow_steps WHERE topic_id = ?""",
                 (topic_id,),
             ).fetchall()
@@ -656,6 +692,7 @@ class WorkflowStepRepository:
                 "updated_at": r[5],
                 "personality_mode": r[6],
                 "review_notes": r[7],
+                "domain_profile_slug": r[8],
             }
             for r in rows
         ]
@@ -671,12 +708,13 @@ class WorkflowStepRepository:
 
         Returns:
             Dict with keys: id, topic_id, step_key, content, status,
-            personality_mode, review_notes, updated_at — or None.
+            personality_mode, review_notes, domain_profile_slug,
+            updated_at — or None.
         """
         try:
             row = self._conn.execute(
                 """SELECT id, topic_id, step_key, content, status, updated_at,
-                          personality_mode, review_notes
+                          personality_mode, review_notes, domain_profile_slug
                    FROM workflow_steps
                    WHERE topic_id = ? AND step_key = ?""",
                 (topic_id, step_key),
@@ -696,6 +734,7 @@ class WorkflowStepRepository:
             "updated_at": row[5],
             "personality_mode": row[6],
             "review_notes": row[7],
+            "domain_profile_slug": row[8],
         }
 
     def reset_from_step(self, topic_id: int, step_key: str) -> None:
@@ -865,6 +904,67 @@ class PersonalityPreferenceRepository:
             return {r[0]: r[1] for r in rows}
         except sqlite3.Error as exc:
             log_db_error(logger, "SELECT", "personality_preferences", str(exc))
+            raise
+
+
+class TopicDomainProfileRepository:
+    """Per-topic domain profile selection persistence.
+
+    Only stores which profile slug is selected for each topic.
+    Profile definitions live in YAML files, not in the database.
+
+    Requirements: 6.1, 6.2, 6.3, 6.4
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def save(self, topic_id: int, slug: str) -> None:
+        """Persist the domain profile selection for a topic.
+
+        Uses INSERT OR REPLACE semantics (the UNIQUE(topic_id) constraint
+        enables this).
+
+        Args:
+            topic_id: The topic ID to save the selection for.
+            slug: The domain profile slug to associate with the topic.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            self._conn.execute(
+                """INSERT OR REPLACE INTO topic_domain_profile
+                   (topic_id, domain_profile_slug, updated_at)
+                   VALUES (?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, slug),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "REPLACE", "topic_domain_profile", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> str | None:
+        """Load the domain profile slug for a topic.
+
+        Args:
+            topic_id: The topic ID to look up.
+
+        Returns:
+            The domain profile slug string, or None if no selection
+            is saved for this topic.
+        """
+        try:
+            row = self._conn.execute(
+                """SELECT domain_profile_slug
+                   FROM topic_domain_profile WHERE topic_id = ?""",
+                (topic_id,),
+            ).fetchone()
+            if row is None:
+                return None
+            return row[0]
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "topic_domain_profile", str(exc))
             raise
 
 

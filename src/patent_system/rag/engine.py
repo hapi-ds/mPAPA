@@ -13,6 +13,7 @@ from llama_index.core import Document, Settings, VectorStoreIndex
 
 from patent_system.config import AppSettings
 from patent_system.rag.embeddings import EmbeddingService
+from patent_system.rag.vectorization import prepare_vectorization_text
 
 logger = logging.getLogger(__name__)
 
@@ -65,10 +66,13 @@ class RAGEngine:
 
         from llama_index.core.schema import TextNode
 
-        _MAX_EMB_TEXT = 4000
         nodes = []
         for doc in documents:
-            text = doc["text"][:_MAX_EMB_TEXT] if len(doc.get("text", "")) > _MAX_EMB_TEXT else doc.get("text", "")
+            text = prepare_vectorization_text(
+                title="",
+                abstract=doc.get("text", ""),
+                max_chars=self._settings.vectorization_text_limit,
+            )
             meta = doc.get("metadata", {})
             node = TextNode(
                 text=text,
@@ -116,14 +120,15 @@ class RAGEngine:
 
         from llama_index.core.schema import TextNode
 
-        # Max chars to send for embedding — prevents CUDA OOM on long docs
-        _MAX_EMB_TEXT = 4000
-
         nodes_with_emb: list[TextNode] = []
         nodes_without_emb: list[Document] = []
 
         for doc in documents:
-            text = doc["text"][:_MAX_EMB_TEXT] if len(doc.get("text", "")) > _MAX_EMB_TEXT else doc.get("text", "")
+            text = prepare_vectorization_text(
+                title="",
+                abstract=doc.get("text", ""),
+                max_chars=self._settings.vectorization_text_limit,
+            )
             meta = doc.get("metadata", {})
             emb = doc.get("embedding")
             if emb and isinstance(emb, list):

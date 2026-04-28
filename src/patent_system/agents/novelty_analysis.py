@@ -17,6 +17,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.domain_profiles import DEFAULT_PROFILE_SLUG
 from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
@@ -80,6 +81,7 @@ def novelty_analysis_node(
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "novelty_analysis")
+    domain_slug = state.get("domain_profile_slug") or DEFAULT_PROFILE_SLUG
 
     # Build review notes text
     review_notes = state.get("review_notes") or {}
@@ -99,6 +101,7 @@ def novelty_analysis_node(
             prior_art_summary=prior_art_summary,
             personality_mode=mode.value,
             review_notes_text=notes_text or None,
+            domain_profile_slug=domain_slug,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -128,7 +131,8 @@ def novelty_analysis_node(
             f"claims_length={len(claims_text)}, "
             f"prior_art_length={len(prior_art_summary)}, "
             f"personality_mode={mode.value}, "
-            f"review_notes_length={len(notes_text)}"
+            f"review_notes_length={len(notes_text)}, "
+            f"domain_profile={domain_slug}"
         ),
         output_summary=f"assessment_length={len(novelty_text)}",
         duration_ms=duration_ms,

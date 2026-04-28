@@ -48,6 +48,7 @@ class PatentRecord(BaseModel):
     source: str
     discovered_date: datetime = Field(default_factory=_utc_now)
     embedding: bytes | None = None
+    relevance_score: float | None = None
 
 
 class ScientificPaperRecord(BaseModel):
@@ -63,6 +64,7 @@ class ScientificPaperRecord(BaseModel):
     source: str
     discovered_date: datetime = Field(default_factory=_utc_now)
     embedding: bytes | None = None
+    relevance_score: float | None = None
 
 
 class ChatMessage(BaseModel):
