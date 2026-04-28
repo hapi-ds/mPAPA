@@ -71,6 +71,11 @@ def _default_pdf_download_dir() -> Path:
     return get_base_dir() / "data" / "pdfs"
 
 
+def _default_domain_profiles_dir() -> Path:
+    """Return the default domain profiles directory resolved relative to the base dir."""
+    return get_base_dir() / "domain_profiles"
+
+
 def _default_docx_template_dir() -> Path:
     """Return the default DOCX template directory resolved relative to the base dir.
 
@@ -142,6 +147,10 @@ class AppSettings(BaseSettings):
     # Logging
     log_file_path: Path = Field(default_factory=_default_log_file_path)
     log_level: str = "INFO"
+
+    # Domain profiles
+    domain_profiles_dir: Path = Field(default_factory=_default_domain_profiles_dir)
+    default_domain_profile: str = "general-patent-drafting"
 
     # Personality modes
     default_personality_mode: PersonalityMode = PersonalityMode.CRITICAL

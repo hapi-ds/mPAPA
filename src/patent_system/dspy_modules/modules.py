@@ -5,8 +5,15 @@ dspy.Predict or dspy.ChainOfThought. The configure_dspy function sets up
 DSPy to use LM Studio via the OpenAI-compatible API endpoint.
 """
 
+from __future__ import annotations
+
 import dspy
 
+from patent_system.agents.domain_profiles import (
+    DEFAULT_PROFILE_SLUG,
+    ProfileLoader,
+    generate_domain_prefix,
+)
 from patent_system.agents.personality import generate_personality_prefix
 from patent_system.config import AppSettings
 from patent_system.dspy_modules.signatures import (
@@ -23,6 +30,32 @@ from patent_system.dspy_modules.signatures import (
     SummarizeDisclosure,
     SummarizePriorArt,
 )
+
+
+# ---------------------------------------------------------------------------
+# Module-level ProfileLoader (lazily initialized)
+# ---------------------------------------------------------------------------
+
+_profile_loader: ProfileLoader | None = None
+
+
+def set_profile_loader(loader: ProfileLoader) -> None:
+    """Set the module-level ProfileLoader instance.
+
+    This should be called during application startup after the ProfileLoader
+    has been initialized. DSPy modules use this loader to resolve domain
+    profile slugs into domain prefixes.
+
+    Args:
+        loader: A fully initialized ProfileLoader instance.
+    """
+    global _profile_loader
+    _profile_loader = loader
+
+
+def _get_profile_loader() -> ProfileLoader | None:
+    """Return the module-level ProfileLoader, or None if not yet initialized."""
+    return _profile_loader
 
 
 def configure_dspy(settings: AppSettings) -> dspy.LM:
@@ -56,6 +89,7 @@ class InterviewQuestionModule(dspy.Module):
         conversation_history: str,
         invention_context: str,
         personality_mode: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Generate the next interview question.
 
@@ -64,12 +98,23 @@ class InterviewQuestionModule(dspy.Module):
             invention_context: Context about the invention being discussed.
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a next_question field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_conversation_history = f"{prefix}\n\n{conversation_history}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_conversation_history = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{conversation_history}"
+            )
+        else:
+            prefixed_conversation_history = f"{personality_prefix}\n\n{conversation_history}"
         return self.predict(
             conversation_history=prefixed_conversation_history,
             invention_context=invention_context,
@@ -88,6 +133,7 @@ class StructureDisclosureModule(dspy.Module):
         self,
         transcript: str,
         personality_mode: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Extract structured disclosure from a transcript.
 
@@ -95,12 +141,23 @@ class StructureDisclosureModule(dspy.Module):
             transcript: The full interview transcript.
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a disclosure_json field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_transcript = f"{prefix}\n\n{transcript}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_transcript = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{transcript}"
+            )
+        else:
+            prefixed_transcript = f"{personality_prefix}\n\n{transcript}"
         return self.predict(transcript=prefixed_transcript)
 
 
@@ -116,6 +173,7 @@ class SuggestSearchTermsModule(dspy.Module):
         self,
         invention_description: str,
         personality_mode: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Generate search term suggestions.
 
@@ -123,12 +181,25 @@ class SuggestSearchTermsModule(dspy.Module):
             invention_description: The primary invention description text.
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a search_terms field (one term per line).
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_invention_description = f"{prefix}\n\n{invention_description}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_invention_description = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{invention_description}"
+            )
+        else:
+            prefixed_invention_description = (
+                f"{personality_prefix}\n\n{invention_description}"
+            )
         return self.predict(invention_description=prefixed_invention_description)
 
 
@@ -146,6 +217,7 @@ class DraftClaimsModule(dspy.Module):
         novelty_analysis: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Draft patent claims.
 
@@ -155,15 +227,30 @@ class DraftClaimsModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a claims_text field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{invention_disclosure}"
+            )
+        else:
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{invention_disclosure}"
+            )
         if review_notes_text:
-            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            prefixed_invention_disclosure = (
+                f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            )
         return self.predict(
             invention_disclosure=prefixed_invention_disclosure,
             novelty_analysis=novelty_analysis,
@@ -184,6 +271,7 @@ class ReviewConsistencyModule(dspy.Module):
         description: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Review claims for consistency with the description.
 
@@ -193,13 +281,22 @@ class ReviewConsistencyModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with feedback and approved fields.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_claims = f"{prefix}\n\n{claims}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_claims = f"{personality_prefix}\n\n{domain_prefix}\n\n{claims}"
+        else:
+            prefixed_claims = f"{personality_prefix}\n\n{claims}"
         if review_notes_text:
             prefixed_claims = f"{prefixed_claims}\n\n{review_notes_text}"
         return self.predict(claims=prefixed_claims, description=description)
@@ -220,6 +317,7 @@ class DraftDescriptionModule(dspy.Module):
         invention_disclosure: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Generate the full patent description.
 
@@ -230,13 +328,22 @@ class DraftDescriptionModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a description_text field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_claims = f"{prefix}\n\n{claims}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_claims = f"{personality_prefix}\n\n{domain_prefix}\n\n{claims}"
+        else:
+            prefixed_claims = f"{personality_prefix}\n\n{claims}"
         if review_notes_text:
             prefixed_claims = f"{prefixed_claims}\n\n{review_notes_text}"
         return self.predict(
@@ -264,6 +371,7 @@ class RefineClaimsModule(dspy.Module):
         legal_assessment: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Refine claims using feedback from analysis steps.
 
@@ -277,15 +385,28 @@ class RefineClaimsModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a refined_claims field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_original_claims = f"{prefix}\n\n{original_claims}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_original_claims = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{original_claims}"
+            )
+        else:
+            prefixed_original_claims = f"{personality_prefix}\n\n{original_claims}"
         if review_notes_text:
-            prefixed_original_claims = f"{prefixed_original_claims}\n\n{review_notes_text}"
+            prefixed_original_claims = (
+                f"{prefixed_original_claims}\n\n{review_notes_text}"
+            )
         return self.predict(
             original_claims=prefixed_original_claims,
             invention_disclosure=invention_disclosure,
@@ -311,6 +432,7 @@ class MarketPotentialModule(dspy.Module):
         novelty_analysis: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Assess market potential of the invention.
 
@@ -321,15 +443,30 @@ class MarketPotentialModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a market_assessment field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{invention_disclosure}"
+            )
+        else:
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{invention_disclosure}"
+            )
         if review_notes_text:
-            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            prefixed_invention_disclosure = (
+                f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            )
         return self.predict(
             invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
@@ -353,6 +490,7 @@ class LegalClarificationModule(dspy.Module):
         novelty_analysis: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Assess legal and IP ownership aspects.
 
@@ -364,15 +502,30 @@ class LegalClarificationModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a legal_assessment field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{invention_disclosure}"
+            )
+        else:
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{invention_disclosure}"
+            )
         if review_notes_text:
-            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            prefixed_invention_disclosure = (
+                f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            )
         return self.predict(
             invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
@@ -400,6 +553,7 @@ class DisclosureSummaryModule(dspy.Module):
         legal_assessment: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Generate a summary of all preceding workflow steps.
 
@@ -414,13 +568,24 @@ class DisclosureSummaryModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a disclosure_summary field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_initial_idea = f"{prefix}\n\n{initial_idea}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_initial_idea = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{initial_idea}"
+            )
+        else:
+            prefixed_initial_idea = f"{personality_prefix}\n\n{initial_idea}"
         if review_notes_text:
             prefixed_initial_idea = f"{prefixed_initial_idea}\n\n{review_notes_text}"
         return self.predict(
@@ -449,6 +614,7 @@ class NoveltyAnalysisModule(dspy.Module):
         prior_art_summary: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Analyze novelty of the invention.
 
@@ -459,15 +625,30 @@ class NoveltyAnalysisModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a novelty_assessment field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{invention_disclosure}"
+            )
+        else:
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{invention_disclosure}"
+            )
         if review_notes_text:
-            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            prefixed_invention_disclosure = (
+                f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            )
         return self.predict(
             invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,
@@ -490,6 +671,7 @@ class PriorArtSummaryModule(dspy.Module):
         prior_art_references: str,
         personality_mode: str | None = None,
         review_notes_text: str | None = None,
+        domain_profile_slug: str | None = None,
     ) -> dspy.Prediction:
         """Summarize prior art references.
 
@@ -500,15 +682,30 @@ class PriorArtSummaryModule(dspy.Module):
             personality_mode: Optional personality mode string. Defaults to
                 ``"critical"`` when *None* or invalid.
             review_notes_text: Optional formatted review notes to append
-                to the primary input after the personality prefix.
+                to the primary input after the domain prefix.
+            domain_profile_slug: Optional domain profile slug. Defaults to
+                the default profile when *None*.
 
         Returns:
             A DSPy Prediction with a prior_art_summary field.
         """
-        prefix = generate_personality_prefix(personality_mode or "critical")
-        prefixed_invention_disclosure = f"{prefix}\n\n{invention_disclosure}"
+        personality_prefix = generate_personality_prefix(personality_mode or "critical")
+        loader = _get_profile_loader()
+        if loader is not None:
+            domain_prefix = generate_domain_prefix(
+                domain_profile_slug or DEFAULT_PROFILE_SLUG, loader
+            )
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{domain_prefix}\n\n{invention_disclosure}"
+            )
+        else:
+            prefixed_invention_disclosure = (
+                f"{personality_prefix}\n\n{invention_disclosure}"
+            )
         if review_notes_text:
-            prefixed_invention_disclosure = f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            prefixed_invention_disclosure = (
+                f"{prefixed_invention_disclosure}\n\n{review_notes_text}"
+            )
         return self.predict(
             invention_disclosure=prefixed_invention_disclosure,
             claims_text=claims_text,

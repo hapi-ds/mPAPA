@@ -21,6 +21,7 @@ EXPECTED_TABLES = {
     "local_documents",
     "workflow_steps",
     "personality_preferences",
+    "topic_domain_profile",
 }
 
 

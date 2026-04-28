@@ -22,6 +22,7 @@ from nicegui import ui
 
 from patent_system.agents.state import PatentWorkflowState
 from patent_system.agents.personality import AGENT_PERSONALITY_DEFAULTS
+from patent_system.agents.domain_profiles import DEFAULT_PROFILE_SLUG, ProfileLoader
 from patent_system.db.repository import (
     InventionDisclosureRepository,
     PatentDraftRepository,
@@ -29,6 +30,7 @@ from patent_system.db.repository import (
     PersonalityPreferenceRepository,
     ResearchSessionRepository,
     ScientificPaperRepository,
+    TopicDomainProfileRepository,
     WorkflowStepRepository,
     WORKFLOW_STEP_ORDER,
 )
@@ -126,6 +128,7 @@ def create_draft_panel(
     workflow_step_repo: WorkflowStepRepository | None = None,
     progress_bar_container: Any | None = None,
     personality_pref_repo: PersonalityPreferenceRepository | None = None,
+    profile_loader: ProfileLoader | None = None,
 ) -> None:
     """Populate *container* with the nine-step interactive Patent Draft UI.
 
@@ -140,6 +143,8 @@ def create_draft_panel(
             header) where progress chips and status label are rendered.
             When provided, the in-panel sticky footer is not created.
         personality_pref_repo: Repository for per-topic personality preferences.
+        profile_loader: ProfileLoader instance for resolving domain profile
+            slugs to human-readable labels. If None, domain badges are skipped.
     """
     container.clear()
 
@@ -155,6 +160,7 @@ def create_draft_panel(
         "running": False,         # True while an LLM step is executing
         "step_modes": {},         # step_key -> personality mode string (Req 8.1)
         "step_review_notes": {},  # step_key -> review notes string (Req 3.1)
+        "step_domain_profiles": {},  # step_key -> domain_profile_slug string (Req 11.1)
     }
 
     # ------------------------------------------------------------------
@@ -171,6 +177,9 @@ def create_draft_panel(
                 # Populate personality mode from DB (Req 8.4)
                 if step.get("personality_mode"):
                     panel_state["step_modes"][key] = step["personality_mode"]
+                # Populate domain profile slug from DB (Req 11.4)
+                if step.get("domain_profile_slug"):
+                    panel_state["step_domain_profiles"][key] = step["domain_profile_slug"]
                 # Populate review notes from DB (Req 1.4)
                 panel_state["step_review_notes"][key] = step["review_notes"]
         except Exception:
@@ -190,6 +199,20 @@ def create_draft_panel(
 
     # Determine active step
     panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
+
+    # Load current domain profile slug for this topic (Req 11.1)
+    _current_domain_slug = DEFAULT_PROFILE_SLUG
+    if conn is not None:
+        try:
+            _domain_profile_repo = TopicDomainProfileRepository(conn)
+            _saved_domain_slug = _domain_profile_repo.get_by_topic(topic_id)
+            _current_domain_slug = _saved_domain_slug or DEFAULT_PROFILE_SLUG
+        except Exception:
+            logger.exception(
+                "Failed to load domain profile preference for topic %d — using default",
+                topic_id,
+            )
+    panel_state["current_domain_profile_slug"] = _current_domain_slug
 
     # ------------------------------------------------------------------
     # Build UI
@@ -291,6 +314,22 @@ def create_draft_panel(
                 for k, v in personality_modes.items()
             }
 
+            # Load domain profile preference for this topic, falling back to default
+            domain_profile_slug: str = DEFAULT_PROFILE_SLUG
+            if conn is not None:
+                try:
+                    domain_profile_repo = TopicDomainProfileRepository(conn)
+                    saved_slug = domain_profile_repo.get_by_topic(topic_id)
+                    domain_profile_slug = saved_slug or DEFAULT_PROFILE_SLUG
+                except Exception:
+                    logger.exception(
+                        "Failed to load domain profile preference for topic %d — using default",
+                        topic_id,
+                    )
+
+            # Cache the current domain profile slug so _persist_step can use it
+            panel_state["current_domain_profile_slug"] = domain_profile_slug
+
             state: PatentWorkflowState = {
                 "topic_id": topic_id,
                 "invention_disclosure": disclosure,
@@ -311,18 +350,19 @@ def create_draft_panel(
                 "workflow_step_statuses": {},
                 "personality_modes": personality_modes,
                 "review_notes": dict(panel_state.get("step_review_notes", {})),
+                "domain_profile_slug": domain_profile_slug,
             }
             return state
 
         # ------------------------------------------------------------------
         # Helper: persist step content to DB
         # ------------------------------------------------------------------
-        def _persist_step(step_key: str, content: str, status: str = "completed", personality_mode: str = "", review_notes: str = "") -> None:
+        def _persist_step(step_key: str, content: str, status: str = "completed", personality_mode: str = "", review_notes: str = "", domain_profile_slug: str = "") -> None:
             """Save step content via WorkflowStepRepository. Shows notification on failure."""
             if workflow_step_repo is None:
                 return
             try:
-                workflow_step_repo.upsert(topic_id, step_key, content, status, personality_mode=personality_mode, review_notes=review_notes)
+                workflow_step_repo.upsert(topic_id, step_key, content, status, personality_mode=personality_mode, review_notes=review_notes, domain_profile_slug=domain_profile_slug)
             except Exception:
                 logger.exception("Failed to save step %s for topic %d", step_key, topic_id)
                 ui.notify(
@@ -429,8 +469,11 @@ def create_draft_panel(
                         personality_mode_used = panel_state.get("personality_modes", {}).get(step_key, "")
                         # Update step_modes for badge display (Req 8.3)
                         panel_state["step_modes"][step_key] = personality_mode_used
+                        # Track domain profile slug for badge display (Req 11.1)
+                        domain_slug_used = panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)
+                        panel_state["step_domain_profiles"][step_key] = domain_slug_used
                         if step_key not in panel_state["completed_keys"]:
-                            _persist_step(step_key, content, "pending", personality_mode=personality_mode_used)
+                            _persist_step(step_key, content, "pending", personality_mode=personality_mode_used, domain_profile_slug=domain_slug_used)
 
                     # Update the textarea for this step
                     ta = step_textareas.get(step_key)
@@ -538,6 +581,7 @@ def create_draft_panel(
                                 panel_state["step_contents"][sk],
                                 "completed",
                                 personality_mode=panel_state["step_modes"].get(sk, "critical"),
+                                domain_profile_slug=panel_state["step_domain_profiles"].get(sk, panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)),
                             )
                     _save_draft()
 
@@ -638,6 +682,9 @@ def create_draft_panel(
                 )
                 # Update step_modes for badge display (Req 8.3)
                 panel_state["step_modes"][step_key] = rerun_personality_mode
+                # Track domain profile slug used during rerun (Req 11.3)
+                rerun_domain_slug = panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)
+                panel_state["step_domain_profiles"][step_key] = rerun_domain_slug
 
                 # Extract content from the result
                 if step_key == "claims_drafting":
@@ -667,7 +714,7 @@ def create_draft_panel(
                         claims_ta = step_textareas.get("claims_drafting")
                         if claims_ta is not None:
                             claims_ta.value = new_claims
-                        _persist_step("claims_drafting", new_claims, "completed", personality_mode=rerun_personality_mode)
+                        _persist_step("claims_drafting", new_claims, "completed", personality_mode=rerun_personality_mode, domain_profile_slug=rerun_domain_slug)
                         _save_draft()
 
             except Exception as exc:
@@ -703,14 +750,14 @@ def create_draft_panel(
 
             def _on_keep() -> None:
                 panel_state["step_contents"][step_key] = new_content
-                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode)
+                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode, domain_profile_slug=rerun_domain_slug)
                 panel_state["completed_keys"].add(step_key)
                 ui.notify(f"{display}: new content saved.", type="positive")
                 _refresh_step_sections()
 
             def _on_revert() -> None:
                 panel_state["step_contents"][step_key] = old_content
-                _persist_step(step_key, old_content, "completed", personality_mode=rerun_personality_mode)
+                _persist_step(step_key, old_content, "completed", personality_mode=rerun_personality_mode, domain_profile_slug=rerun_domain_slug)
                 panel_state["completed_keys"].add(step_key)
                 if ta is not None:
                     ta.value = old_content
@@ -728,7 +775,7 @@ def create_draft_panel(
             elif new_content:
                 # Same content — save and mark completed so the step
                 # returns to its normal state and the user gets feedback.
-                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode)
+                _persist_step(step_key, new_content, "completed", personality_mode=rerun_personality_mode, domain_profile_slug=rerun_domain_slug)
                 panel_state["completed_keys"].add(step_key)
                 ui.notify(f"{display}: re-run complete (no changes).", type="info")
 
@@ -744,6 +791,7 @@ def create_draft_panel(
         step_save_btns: dict[str, Any] = {}
         step_expansions: dict[str, Any] = {}
         step_badge_containers: dict[str, Any] = {}  # step_key -> badge container element (Req 8.1)
+        step_domain_badge_containers: dict[str, Any] = {}  # step_key -> domain badge container (Req 11.1)
         claims_textarea_ref: dict[str, Any] = {"el": None}
         description_textarea_ref: dict[str, Any] = {"el": None}
 
@@ -764,6 +812,32 @@ def create_draft_panel(
                 color = _MODE_BADGE_COLORS.get(mode, "grey")
                 with badge_container:
                     ui.badge(label, color=color).props("dense")
+
+        def _render_domain_badge(badge_container: Any, step_key: str) -> None:
+            """Render a domain profile badge inside *badge_container* for *step_key*.
+
+            Clears the container first, then adds a ``ui.badge`` showing the
+            domain_label of the profile that was active during execution.
+            If no profile_loader is available or the slug is empty/not found,
+            no badge is shown (unless it's the default profile, which shows
+            "General Patent Drafting").
+
+            Validates: Requirements 11.1, 11.2, 11.3
+            """
+            badge_container.clear()
+            if profile_loader is None:
+                return
+            slug = panel_state["step_domain_profiles"].get(step_key)
+            if not slug:
+                return
+            profile = profile_loader.get_by_slug(slug)
+            if profile is not None:
+                domain_label = profile.domain_label
+            else:
+                # Slug not found in loaded profiles — show fallback label
+                domain_label = "General Patent Drafting"
+            with badge_container:
+                ui.badge(domain_label, color="blue").props("dense")
 
         def _refresh_step_sections() -> None:
             """Update visibility/enabled state of buttons and textareas."""
@@ -822,6 +896,11 @@ def create_draft_panel(
                 if badge_container is not None:
                     _render_badge(badge_container, key)
 
+                # Refresh domain profile badge (Req 11.1, 11.3)
+                domain_badge_container = step_domain_badge_containers.get(key)
+                if domain_badge_container is not None:
+                    _render_domain_badge(domain_badge_container, key)
+
             _update_export_state()
 
         # ------------------------------------------------------------------
@@ -845,6 +924,11 @@ def create_draft_panel(
                         badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
                         step_badge_containers[step_key] = badge_ctr
                         _render_badge(badge_ctr, step_key)
+
+                        # Domain profile badge container (Req 11.1)
+                        domain_badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_domain_badge_containers[step_key] = domain_badge_ctr
+                        _render_domain_badge(domain_badge_ctr, step_key)
 
                         # Container for disclosure content (re-rendered on rerun)
                         idea_content_container = ui.column().classes("w-full")
@@ -927,7 +1011,9 @@ def create_draft_panel(
                             if rn_ta is not None and hasattr(rn_ta, 'value'):
                                 panel_state["step_review_notes"]["initial_idea"] = rn_ta.value or ""
                             review_notes = panel_state["step_review_notes"].get("initial_idea", "")
-                            _persist_step("initial_idea", content, "completed", personality_mode="", review_notes=review_notes)
+                            # Track domain profile for initial_idea badge (Req 11.1)
+                            panel_state["step_domain_profiles"]["initial_idea"] = panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)
+                            _persist_step("initial_idea", content, "completed", personality_mode="", review_notes=review_notes, domain_profile_slug=panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG))
                             panel_state["completed_keys"].add("initial_idea")
                             panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                             _refresh_chips()
@@ -980,6 +1066,11 @@ def create_draft_panel(
                         badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
                         step_badge_containers[step_key] = badge_ctr
                         _render_badge(badge_ctr, step_key)
+
+                        # Domain profile badge container (Req 11.1)
+                        domain_badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_domain_badge_containers[step_key] = domain_badge_ctr
+                        _render_domain_badge(domain_badge_ctr, step_key)
 
                         # Claims Editor
                         claims_ta = ui.textarea(
@@ -1082,11 +1173,11 @@ def create_draft_panel(
 
                             # Also persist to workflow_steps table
                             if desc_val.strip():
-                                _persist_step("patent_draft", desc_val, "completed", personality_mode=panel_state["step_modes"].get("patent_draft", "critical"))
+                                _persist_step("patent_draft", desc_val, "completed", personality_mode=panel_state["step_modes"].get("patent_draft", "critical"), domain_profile_slug=panel_state["step_domain_profiles"].get("patent_draft", panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)))
                                 panel_state["step_contents"]["patent_draft"] = desc_val
                                 panel_state["completed_keys"].add("patent_draft")
                             if claims_val.strip():
-                                _persist_step("claims_drafting", claims_val, "completed", personality_mode=panel_state["step_modes"].get("claims_drafting", "critical"))
+                                _persist_step("claims_drafting", claims_val, "completed", personality_mode=panel_state["step_modes"].get("claims_drafting", "critical"), domain_profile_slug=panel_state["step_domain_profiles"].get("claims_drafting", panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)))
                                 panel_state["step_contents"]["claims_drafting"] = claims_val
 
                             ui.notify("Patent draft saved.", type="positive")
@@ -1121,6 +1212,11 @@ def create_draft_panel(
                         badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
                         step_badge_containers[step_key] = badge_ctr
                         _render_badge(badge_ctr, step_key)
+
+                        # Domain profile badge container (Req 11.1)
+                        domain_badge_ctr = ui.row().classes("gap-1 items-center q-mb-xs")
+                        step_domain_badge_containers[step_key] = domain_badge_ctr
+                        _render_domain_badge(domain_badge_ctr, step_key)
 
                         ta = ui.textarea(
                             label=display_name,
@@ -1180,7 +1276,7 @@ def create_draft_panel(
                                 if not _has_content(content):
                                     return
                                 review_notes = panel_state["step_review_notes"].get(sk, "")
-                                _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"), review_notes=review_notes)
+                                _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"), review_notes=review_notes, domain_profile_slug=panel_state["step_domain_profiles"].get(sk, panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)))
                                 panel_state["completed_keys"].add(sk)
                                 panel_state["active_key"] = _find_active_step(panel_state["completed_keys"])
                                 _refresh_chips()
@@ -1238,7 +1334,7 @@ def create_draft_panel(
                                 content = panel_state["step_contents"].get(sk, "")
                                 review_notes = panel_state["step_review_notes"].get(sk, "")
                                 if _has_content(content):
-                                    _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"), review_notes=review_notes)
+                                    _persist_step(sk, content, "completed", personality_mode=panel_state["step_modes"].get(sk, "critical"), review_notes=review_notes, domain_profile_slug=panel_state["step_domain_profiles"].get(sk, panel_state.get("current_domain_profile_slug", DEFAULT_PROFILE_SLUG)))
                                     panel_state["completed_keys"].add(sk)
                                     display = _STEP_DISPLAY_NAMES.get(sk, sk)
                                     ui.notify(f"{display}: notes saved.", type="positive")

@@ -1797,6 +1797,7 @@ dependencies = [
     { name = "pymupdf" },
     { name = "python-docx" },
     { name = "python-epo-ops-client" },
+    { name = "pyyaml" },
 ]
 
 [package.dev-dependencies]
@@ -1821,6 +1822,7 @@ requires-dist = [
     { name = "pymupdf", specifier = ">=1.27.2.2" },
     { name = "python-docx" },
     { name = "python-epo-ops-client", specifier = ">=4.2.1" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
 ]
 
 [package.metadata.requires-dev]

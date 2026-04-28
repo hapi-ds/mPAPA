@@ -40,3 +40,7 @@ class PatentWorkflowState(TypedDict):
     # Review notes: maps step_key → user review notes string (e.g. {"claims_drafting": "revise claim 3"}).
     # Populated once at workflow start from saved per-step review notes; remains constant during run.
     review_notes: dict
+
+    # Domain profile: the active domain profile slug for this workflow run.
+    # Populated once at workflow start from saved per-topic preferences; remains constant during run.
+    domain_profile_slug: str

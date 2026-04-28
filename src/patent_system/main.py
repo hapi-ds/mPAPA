@@ -16,11 +16,12 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 
 from nicegui import ui
 
+from patent_system.agents.domain_profiles import ProfileLoader
 from patent_system.agents.graph import build_patent_workflow
 from patent_system.config import AppSettings
 from patent_system.db.repository import TopicRepository
 from patent_system.db.schema import get_connection
-from patent_system.dspy_modules.modules import configure_dspy
+from patent_system.dspy_modules.modules import configure_dspy, set_profile_loader
 from patent_system.gui.layout import create_layout
 from patent_system.logging_config import setup_logging
 from patent_system.monitoring.scheduler import MonitoringScheduler
@@ -128,6 +129,16 @@ def main() -> None:
     _configured_lm = configure_dspy(settings)
     logger.info("DSPy configured with LM Studio at %s", settings.lm_studio_base_url)
 
+    # 3a. Initialize domain profile loader (Req 4.1, 4.2, 4.3, 12.5)
+    profile_loader = ProfileLoader(settings.domain_profiles_dir)
+    if profile_loader.get_by_slug(settings.default_domain_profile) is None:
+        logger.warning(
+            "Default domain profile %r not found — falling back to 'general-patent-drafting'",
+            settings.default_domain_profile,
+        )
+    set_profile_loader(profile_loader)
+    logger.info("Domain profile loader initialized with %d profiles", len(profile_loader.get_all()))
+
     # 3b. Create RAG Engine instance (Req 4.1, 4.2, 4.4, 4.5)
     rag_engine = RAGEngine(settings)
     logger.info("RAG engine initialized with model %s", settings.embedding_model_name)
@@ -173,7 +184,7 @@ def main() -> None:
                     "Workflow execution is disabled until the LLM backend is available."
                 )
 
-        create_layout(topic_repo, conn, rag_engine=rag_engine, settings=settings, workflow=_compiled_workflow)
+        create_layout(topic_repo, conn, rag_engine=rag_engine, settings=settings, workflow=_compiled_workflow, profile_loader=profile_loader)
 
     # 8. Launch NiceGUI app
     logger.info("Launching NiceGUI web interface")

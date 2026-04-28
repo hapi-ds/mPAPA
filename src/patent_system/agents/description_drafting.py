@@ -20,6 +20,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.domain_profiles import DEFAULT_PROFILE_SLUG
 from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
@@ -163,6 +164,7 @@ def description_drafting_node(
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "patent_draft")
+    domain_slug = state.get("domain_profile_slug") or DEFAULT_PROFILE_SLUG
 
     # Build review notes text — always "continue" to accumulate ALL upstream notes
     review_notes = state.get("review_notes") or {}
@@ -188,6 +190,7 @@ def description_drafting_node(
                 legal_assessment=state.get("legal_assessment", "") or "",
                 personality_mode=mode.value,
                 review_notes_text=notes_text or None,
+                domain_profile_slug=domain_slug,
             )
             refined = refine_prediction.refined_claims
             if refined and refined.strip():
@@ -226,6 +229,7 @@ def description_drafting_node(
             invention_disclosure=disclosure_text,
             personality_mode=mode.value,
             review_notes_text=notes_text or None,
+            domain_profile_slug=domain_slug,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -252,7 +256,8 @@ def description_drafting_node(
             f"prior_art_count={len(state.get('prior_art_results') or [])}, "
             f"disclosure_length={len(disclosure_text)}, "
             f"personality_mode={mode.value}, "
-            f"review_notes_length={len(notes_text)}"
+            f"review_notes_length={len(notes_text)}, "
+            f"domain_profile={domain_slug}"
         ),
         output_summary=f"description_length={len(description_text)}",
         duration_ms=duration_ms,

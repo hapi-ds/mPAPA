@@ -18,6 +18,7 @@ import httpx
 import litellm.exceptions
 import requests.exceptions
 
+from patent_system.agents.domain_profiles import DEFAULT_PROFILE_SLUG
 from patent_system.agents.personality import resolve_personality_mode
 from patent_system.agents.review_notes import build_review_notes_text
 from patent_system.agents.state import PatentWorkflowState
@@ -74,6 +75,7 @@ def disclosure_summary_node(
     start = time.monotonic()
 
     mode = resolve_personality_mode(state, "disclosure_summary")
+    domain_slug = state.get("domain_profile_slug") or DEFAULT_PROFILE_SLUG
 
     # Build review notes text
     review_notes = state.get("review_notes") or {}
@@ -104,6 +106,7 @@ def disclosure_summary_node(
             legal_assessment=legal_assessment,
             personality_mode=mode.value,
             review_notes_text=notes_text or None,
+            domain_profile_slug=domain_slug,
         )
     except (
         requests.exceptions.ConnectionError,
@@ -137,7 +140,8 @@ def disclosure_summary_node(
             f"market_length={len(market_assessment)}, "
             f"legal_length={len(legal_assessment)}, "
             f"personality_mode={mode.value}, "
-            f"review_notes_length={len(notes_text)}"
+            f"review_notes_length={len(notes_text)}, "
+            f"domain_profile={domain_slug}"
         ),
         output_summary=f"summary_length={len(disclosure_summary)}",
         duration_ms=duration_ms,

@@ -15,12 +15,14 @@ from typing import TYPE_CHECKING
 
 from nicegui import ui
 
+from patent_system.agents.domain_profiles import ProfileLoader
 from patent_system.config import AppSettings
 from patent_system.db.repository import (
     ChatHistoryRepository,
     InventionDisclosureRepository,
     PersonalityPreferenceRepository,
     SourcePreferenceRepository,
+    TopicDomainProfileRepository,
     TopicRepository,
     WorkflowStepRepository,
 )
@@ -43,6 +45,7 @@ def create_layout(
     rag_engine: RAGEngine | None = None,
     settings: AppSettings | None = None,
     workflow: CompiledStateGraph | None = None,
+    profile_loader: ProfileLoader | None = None,
 ) -> None:
     """Set up the full page layout with header, drawer, and tabs.
 
@@ -61,6 +64,8 @@ def create_layout(
             and draft panels.
         settings: Optional application settings for LLM configuration
             in chat and draft panels.
+        profile_loader: Optional ProfileLoader for domain profile resolution
+            in settings and draft panels.
     """
     state: dict = {
         "selected_topic_id": None,
@@ -269,6 +274,7 @@ def create_layout(
             workflow_step_repo=workflow_step_repo,
             progress_bar_container=progress_bar,
             personality_pref_repo=personality_pref_repo,
+            profile_loader=profile_loader,
         )
         create_settings_panel(
             settings_container,
@@ -276,6 +282,8 @@ def create_layout(
             conn=conn,
             settings=settings or AppSettings(),
             personality_pref_repo=personality_pref_repo,
+            profile_loader=profile_loader,
+            domain_profile_repo=TopicDomainProfileRepository(conn),
         )
 
     _refresh_topic_list()

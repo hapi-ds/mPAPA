@@ -614,6 +614,7 @@ class WorkflowStepRepository:
         status: str,
         personality_mode: str = "critical",
         review_notes: str = "",
+        domain_profile_slug: str = "",
     ) -> None:
         """Insert or update a workflow step.
 
@@ -629,6 +630,8 @@ class WorkflowStepRepository:
                 Defaults to "critical".
             review_notes: User-authored review notes for this step.
                 Defaults to empty string.
+            domain_profile_slug: The domain profile slug active when this step ran.
+                Defaults to empty string.
 
         Raises:
             ValueError: If step_key is not in VALID_STEP_KEYS.
@@ -643,9 +646,10 @@ class WorkflowStepRepository:
             self._conn.execute(
                 """INSERT OR REPLACE INTO workflow_steps
                    (topic_id, step_key, content, status, personality_mode,
-                    review_notes, updated_at)
-                   VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
-                (topic_id, step_key, content, status, personality_mode, review_notes),
+                    review_notes, domain_profile_slug, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, step_key, content, status, personality_mode,
+                 review_notes, domain_profile_slug),
             )
             self._conn.commit()
         except sqlite3.Error as exc:
@@ -663,13 +667,13 @@ class WorkflowStepRepository:
 
         Returns:
             List of dicts with keys: id, topic_id, step_key, content,
-            status, personality_mode, review_notes, updated_at — ordered
-            by WORKFLOW_STEP_ORDER.
+            status, personality_mode, review_notes, domain_profile_slug,
+            updated_at — ordered by WORKFLOW_STEP_ORDER.
         """
         try:
             rows = self._conn.execute(
                 """SELECT id, topic_id, step_key, content, status, updated_at,
-                          personality_mode, review_notes
+                          personality_mode, review_notes, domain_profile_slug
                    FROM workflow_steps WHERE topic_id = ?""",
                 (topic_id,),
             ).fetchall()
@@ -688,6 +692,7 @@ class WorkflowStepRepository:
                 "updated_at": r[5],
                 "personality_mode": r[6],
                 "review_notes": r[7],
+                "domain_profile_slug": r[8],
             }
             for r in rows
         ]
@@ -703,12 +708,13 @@ class WorkflowStepRepository:
 
         Returns:
             Dict with keys: id, topic_id, step_key, content, status,
-            personality_mode, review_notes, updated_at — or None.
+            personality_mode, review_notes, domain_profile_slug,
+            updated_at — or None.
         """
         try:
             row = self._conn.execute(
                 """SELECT id, topic_id, step_key, content, status, updated_at,
-                          personality_mode, review_notes
+                          personality_mode, review_notes, domain_profile_slug
                    FROM workflow_steps
                    WHERE topic_id = ? AND step_key = ?""",
                 (topic_id, step_key),
@@ -728,6 +734,7 @@ class WorkflowStepRepository:
             "updated_at": row[5],
             "personality_mode": row[6],
             "review_notes": row[7],
+            "domain_profile_slug": row[8],
         }
 
     def reset_from_step(self, topic_id: int, step_key: str) -> None:
@@ -897,6 +904,67 @@ class PersonalityPreferenceRepository:
             return {r[0]: r[1] for r in rows}
         except sqlite3.Error as exc:
             log_db_error(logger, "SELECT", "personality_preferences", str(exc))
+            raise
+
+
+class TopicDomainProfileRepository:
+    """Per-topic domain profile selection persistence.
+
+    Only stores which profile slug is selected for each topic.
+    Profile definitions live in YAML files, not in the database.
+
+    Requirements: 6.1, 6.2, 6.3, 6.4
+    """
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def save(self, topic_id: int, slug: str) -> None:
+        """Persist the domain profile selection for a topic.
+
+        Uses INSERT OR REPLACE semantics (the UNIQUE(topic_id) constraint
+        enables this).
+
+        Args:
+            topic_id: The topic ID to save the selection for.
+            slug: The domain profile slug to associate with the topic.
+
+        Raises:
+            sqlite3.Error: On database failure.
+        """
+        try:
+            self._conn.execute(
+                """INSERT OR REPLACE INTO topic_domain_profile
+                   (topic_id, domain_profile_slug, updated_at)
+                   VALUES (?, ?, CURRENT_TIMESTAMP)""",
+                (topic_id, slug),
+            )
+            self._conn.commit()
+        except sqlite3.Error as exc:
+            log_db_error(logger, "REPLACE", "topic_domain_profile", str(exc))
+            raise
+
+    def get_by_topic(self, topic_id: int) -> str | None:
+        """Load the domain profile slug for a topic.
+
+        Args:
+            topic_id: The topic ID to look up.
+
+        Returns:
+            The domain profile slug string, or None if no selection
+            is saved for this topic.
+        """
+        try:
+            row = self._conn.execute(
+                """SELECT domain_profile_slug
+                   FROM topic_domain_profile WHERE topic_id = ?""",
+                (topic_id,),
+            ).fetchone()
+            if row is None:
+                return None
+            return row[0]
+        except sqlite3.Error as exc:
+            log_db_error(logger, "SELECT", "topic_domain_profile", str(exc))
             raise
 
 
