@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v1.1.1 (2026-04-28)
+
+### Bug Fixes
+
+- Patent domain profiles selectable
+  ([`5924895`](https://github.com/hapi-ds/mPAPA/commit/5924895d60fc4ebbb6f1a8ccb0e5b98844bd9a71))
+
+- Recalculate embedings and score
+  ([`e3a4b9b`](https://github.com/hapi-ds/mPAPA/commit/e3a4b9b07b663132ff156e1ffbbf2b960d41a0b5))
+
+
 ## v1.1.0 (2026-04-17)
 
 ### Bug Fixes
