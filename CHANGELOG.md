@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.0 (2026-04-28)
+
+### Features
+
+- Tex export added
+  ([`2c6aaa2`](https://github.com/hapi-ds/mPAPA/commit/2c6aaa2fa6ac315d549fa52f3f834895228620d5))
+
+
 ## v1.1.1 (2026-04-28)
 
 ### Bug Fixes
