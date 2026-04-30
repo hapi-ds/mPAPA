@@ -25,6 +25,20 @@
 
 ---
 
+## The Story Behind mPAPA 💡
+
+mPAPA started because I had a patent idea—and I already knew I was going to hate the job that was coming up: I didn’t want to deal with the tedious search for prior art, the complex legal phrasing, or the "black box" of patent filing, at least not for the first sanity check.
+
+Like many inventors, I was caught between two bad options:
+1. Pay thousands for an attorney just to see if the idea is even novel.
+2. Upload my billion-dollar idea to a cloud-based AI and risk a data leak.
+
+I built mPAPA to solve this for myself. I was genuinely astonished at how effectively even "small" local LLMs (like Gemma or Qwen) could handle the logic of patent drafting when given the right workflow. It worked so well for my initial checks that I decided to open-source it. 
+
+**Note:** mPAPA is not a replacement for a qualified patent attorney. It is, however, the perfect tool for that crucial "Step Zero": checking novelty, refining your claims, and generating a professional first draft before you ever spend a dime on legal fees.
+
+---
+
 Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks for a first draft.
 
 **mPAPA is a fully local AI patent drafting system.** It runs on YOUR machine*. Your invention data never touches the internet. Ever.
@@ -52,7 +66,7 @@ Stop uploading your billion-dollar idea to ChatGPT's servers. Stop waiting weeks
 
 **Every step: AI generates → you review → you edit → you continue.** Full control. Full transparency.
 
-📄 **Export to DOCX** — Professional formatting, proper styles, header/footer, ready for your attorney.
+📄 **Export to DOCX & LaTeX** — Professional formatting, proper styles, and ready for further processing. Whether you need a standard Word file for your attorney or a high-quality LaTeX document for academic-grade precision, mPAPA provides both.
 
 🎭 **Agent Personality Modes** — Not every step needs the same attitude. Switch between **Critical** (skeptical, no sugarcoating), **Neutral** (balanced, just the facts), and **Innovation-Friendly** (opportunity-focused, constructive). Novelty analysis tears your claims apart by default. Disclosure keeps it open-minded. You set the tone per agent, per topic — because a patent draft needs a devil's advocate, not a cheerleader.
 
@@ -71,6 +85,8 @@ Everything persisted locally in SQLite — per topic, per step, per setting. Clo
 | **Structured workflow** | 9-step guided process | Unstructured chat | Black box |
 | **Editable at every step** | Yes | Start over | Revision rounds |
 | **Works offline** | Yes | No | No |
+| **The "I hate patent legalese" factor** | Automated | Hit or miss | Expert but slow |
+
 
 ---
 
