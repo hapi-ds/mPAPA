@@ -262,7 +262,7 @@ If the AI agent seems frozen in eternal contemplation (spinning wheel of death, 
 This project was developed with assistance from AI coding tools, including kiro, opencode, qwen, claude. All outputs were reviewed, tested, and accepted by the maintainers. AI was used to support development; all architectural decisions and responsibility remain with the authors.
 
 ## Disclaimer
-This software is provided as is, without warranty of any kind. The authors and contributors are not responsible for any damages, losses, or issues arising from its use, including design errors, hardware damage, manufacturing mistakes, or data loss. AI-generated suggestions are not a replacement for qualified engineering review, and any safety-critical use requires independent expert validation. The MIT License applies.
+This software is provided as is, without warranty of any kind. The authors and contributors are not responsible for any damages, losses, or issues arising from its use, including design errors, hardware damage, manufacturing mistakes, or data loss. AI-generated suggestions are not a replacement for qualified engineering review, and any safety-critical use requires independent expert validation.
 
 ## License
 
