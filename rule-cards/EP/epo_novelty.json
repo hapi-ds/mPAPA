@@ -1,0 +1,141 @@
+{
+  "card_id": "epo_novelty",
+  "version": "2026.1",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": {
+    "title": "Guidelines for Examination in the European Patent Office",
+    "edition": "2025",
+    "part": "G",
+    "chapter": "VI",
+    "url": "https://www.epo.org/en/legal/guidelines-epc/2025/g_vi.html"
+  },
+  "task": "novelty",
+  "task_label": "Novelty Assessment (Art. 54 EPC)",
+  "language": "en",
+  "translated_from": null,
+  "last_updated": "2026-08-18",
+  "tags": ["novelty", "Art.54", "prior-art", "disclosure", "anticipation"],
+  "rules": [
+    {
+      "rule_id": "EPO-G-VI-1",
+      "title": "Novelty Requirement — Art. 54(1) EPC",
+      "requirement": "An invention SHALL be considered novel if it does not form part of the state of the art. The state of the art comprises everything made available to the public by means of a written or oral description, by use, or in any other way, before the date of filing (or priority date).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": null,
+      "reference": "Art. 54(1)(2) EPC; Guidelines G-VI, 1"
+    },
+    {
+      "rule_id": "EPO-G-VI-2",
+      "title": "Novelty Test — Single Document",
+      "requirement": "Novelty SHALL be assessed against each prior art document individually. It is NOT permitted to combine separate documents (or separate embodiments within one document) to attack novelty — combination is only relevant for inventive step.",
+      "severity": "mandatory",
+      "exceptions": [
+        "A document may be read together with common general knowledge to understand its meaning",
+        "An explicit reference in one document to the content of another effectively incorporates that content"
+      ],
+      "examples": {
+        "compliant": "Novelty objection citing a single document D1 that explicitly discloses features A, B, and C in combination.",
+        "non_compliant": "Novelty objection combining feature A from D1 with feature B from D2 — this is an inventive step attack, not novelty."
+      },
+      "reference": "Guidelines G-VI, 2; T 153/85"
+    },
+    {
+      "rule_id": "EPO-G-VI-3",
+      "title": "Disclosure Standard — Directly and Unambiguously Derivable",
+      "requirement": "A prior art document destroys novelty ONLY if the claimed subject matter is directly and unambiguously derivable from the document, taking into account the common general knowledge. Implicit disclosure counts: what a skilled person would inevitably understand from the document is considered disclosed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "D1 describes 'heating to 100°C' — this anticipates a claim to 'heating to a temperature of 95-105°C' because 100°C falls within the range.",
+        "non_compliant": "D1 describes 'heating' without specifying temperature — this does NOT anticipate a claim requiring 'heating to 100°C'."
+      },
+      "reference": "Guidelines G-VI, 2; T 677/91"
+    },
+    {
+      "rule_id": "EPO-G-VI-4",
+      "title": "Generic vs. Specific Disclosure",
+      "requirement": "A generic disclosure does NOT normally take away the novelty of a specific example falling within that generic scope. Conversely, a specific disclosure takes away novelty from a generic claim embracing that specific disclosure.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the specific example was already individually contemplated by the generic disclosure (e.g. a short list of named compounds)"
+      ],
+      "examples": {
+        "compliant": "Prior art discloses 'alkali metals' generically — a claim to 'sodium' specifically retains novelty.",
+        "non_compliant": "Prior art discloses 'sodium, potassium, or lithium' as a closed list — a claim to 'sodium' is anticipated."
+      },
+      "reference": "Guidelines G-VI, 4; T 12/81"
+    },
+    {
+      "rule_id": "EPO-G-VI-5",
+      "title": "Numerical Ranges — Overlap",
+      "requirement": "A claimed numerical range is novel over a prior art range if it is a sub-range that is: (a) narrow compared to the prior art range, (b) sufficiently far removed from any specific examples in the prior art, and (c) not an arbitrary selection but associated with a particular technical effect. If these conditions are not met, the sub-range lacks novelty.",
+      "severity": "mandatory",
+      "exceptions": [
+        "A specifically disclosed value (point) in the prior art always destroys novelty of any range encompassing that point"
+      ],
+      "examples": {
+        "compliant": "Prior art: 'temperature 20-200°C'. Claim: '80-100°C' — novel if narrow, far from prior art examples (which are at 30°C and 180°C), and associated with a specific effect.",
+        "non_compliant": "Prior art: 'temperature 20-200°C with preferred range 50-150°C'. Claim: '60-140°C' — not novel (overlaps with specifically disclosed preferred range)."
+      },
+      "reference": "Guidelines G-VI, 8; T 198/84"
+    },
+    {
+      "rule_id": "EPO-G-VI-6",
+      "title": "Selection Inventions",
+      "requirement": "A selection from a known range or group of compounds is novel if it satisfies the criteria for novelty of sub-ranges/sub-groups. The selection must not have been specifically disclosed and must be associated with a particular technical effect (a 'purposive selection').",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": null,
+      "reference": "Guidelines G-VI, 8; T 230/07"
+    },
+    {
+      "rule_id": "EPO-G-VI-7",
+      "title": "Novelty of Purpose-Limited Claims (Second Medical Use)",
+      "requirement": "Under Art. 54(5) EPC, a known substance or composition may be patented for use in a surgical, therapeutic, or diagnostic method if that specific use is novel. The claim format SHALL be: 'Substance X for use in the treatment of disease Y'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "Compound A for use in the treatment of Alzheimer's disease (where prior art only disclosed use for pain relief).",
+        "non_compliant": "Compound A for medical use (too broad — prior medical use already known)."
+      },
+      "reference": "Art. 54(4)(5) EPC; Guidelines G-VI, 7.1"
+    },
+    {
+      "rule_id": "EPO-G-VI-8",
+      "title": "Prior Art Under Art. 54(3) — Earlier Applications",
+      "requirement": "European patent applications with an earlier filing/priority date that were published on or after the filing date of the application under examination form part of the state of the art ONLY for the purpose of assessing novelty (NOT inventive step).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": null,
+      "reference": "Art. 54(3) EPC; Guidelines G-VI, 3"
+    },
+    {
+      "rule_id": "EPO-G-VI-9",
+      "title": "Implicit Features — Inherent Disclosure",
+      "requirement": "Features not expressly mentioned in a prior art document may still be considered disclosed if they inevitably result from what is explicitly described (inherent/implicit disclosure). The skilled person must recognise that the feature is necessarily present.",
+      "severity": "mandatory",
+      "exceptions": [
+        "A feature that only sometimes or possibly results from the prior art teaching is NOT inherently disclosed — this is a matter of inventive step, not novelty"
+      ],
+      "examples": {
+        "compliant": "D1 describes a steel alloy with specific composition — the crystal structure inevitably resulting from that composition is implicitly disclosed.",
+        "non_compliant": "D1 describes heating a material 'for some time' — a specific microstructure that only forms under precise time conditions is not inherently disclosed."
+      },
+      "reference": "Guidelines G-VI, 2; T 666/89"
+    }
+  ],
+  "review_checklist": [
+    "Is each independent claim assessed for novelty against the closest prior art documents INDIVIDUALLY?",
+    "Is the novelty attack based on what is directly and unambiguously derivable from the cited document?",
+    "Are generic vs. specific disclosure rules correctly applied?",
+    "For numerical range claims — are the sub-range novelty criteria (narrow, remote, associated effect) satisfied?",
+    "Are there Art. 54(3) documents (earlier filings, later published) that could anticipate?",
+    "For medical use claims — is the format correct and is the specific use genuinely novel?",
+    "Is implicit/inherent disclosure properly identified (features that inevitably result)?",
+    "Are any novelty objections improperly combining multiple documents (which is an inventive step issue)?",
+    "Is common general knowledge properly distinguished from prior art disclosure?"
+  ],
+  "system_prompt_injection": "You are a senior EPO patent examiner assessing novelty under Art. 54 EPC. Apply the strict 'directly and unambiguously derivable' standard. Remember: novelty is assessed against EACH prior art document individually — never combine documents for a novelty attack. Check generic vs. specific disclosure, numerical range overlap, inherent/implicit disclosure, and second medical use claims. Cite specific prior art passages when raising novelty concerns. Be precise about which claim features are anticipated and which survive."
+}

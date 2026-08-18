@@ -1,0 +1,120 @@
+{
+  "card_id": "uspto_subject_matter",
+  "version": "2026.1",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": {
+    "title": "Manual of Patent Examining Procedure",
+    "edition": "9th Ed., Rev. 01.2024",
+    "part": "2100",
+    "chapter": "2106",
+    "url": "https://www.uspto.gov/web/offices/pac/mpep/s2106.html"
+  },
+  "task": "patentable_subject_matter",
+  "task_label": "Patentable Subject Matter (35 U.S.C. §101)",
+  "language": "en",
+  "translated_from": null,
+  "last_updated": "2026-08-18",
+  "tags": ["§101", "subject-matter", "Alice", "Mayo", "abstract-idea", "law-of-nature", "software"],
+  "rules": [
+    {
+      "rule_id": "USPTO-2106-01",
+      "title": "Statutory Categories — Step 1",
+      "requirement": "A claim MUST be directed to one of the four statutory categories: (1) process, (2) machine, (3) manufacture, or (4) composition of matter. Claims not falling within any category are ineligible under §101.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "A method for filtering preservative agents from a fluid...",
+        "non_compliant": "A signal per se, a data structure per se, or a human per se."
+      },
+      "reference": "35 U.S.C. §101; MPEP §2106.03"
+    },
+    {
+      "rule_id": "USPTO-2106-02A",
+      "title": "Judicial Exceptions — Step 2A Prong 1",
+      "requirement": "A claim is directed to a judicial exception if it recites: (a) a law of nature, (b) a natural phenomenon, or (c) an abstract idea. Abstract ideas include: mathematical concepts, certain methods of organizing human activity (fundamental economic practices, managing relationships, advertising/marketing), and mental processes (concepts performable in the human mind including with pen and paper).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "A claim to a specific machine that applies a mathematical formula to transform a signal — recites abstract idea but may integrate it.",
+        "non_compliant": "A claim to 'determining a risk score based on historical data' with no technical implementation — recites mental process / mathematical concept."
+      },
+      "reference": "Alice Corp. v. CLS Bank (2014); Mayo v. Prometheus (2012); MPEP §2106.04"
+    },
+    {
+      "rule_id": "USPTO-2106-02B",
+      "title": "Practical Application — Step 2A Prong 2",
+      "requirement": "If a claim recites a judicial exception, determine whether the claim as a whole integrates the exception into a practical application. A claim integrates a judicial exception if it: applies the exception with a particular machine, transforms a particular article, applies the exception in a meaningful way beyond generally linking it to a technological environment, or adds a specific limitation other than what is well-understood, routine, conventional.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "A method of treating a patient with a specific dosage of drug X determined by measuring metabolite levels (applies law of nature to specific treatment).",
+        "non_compliant": "A method of determining a patient's drug dosage by applying a mathematical formula to metabolite data — mere data gathering + calculation with no specific treatment step."
+      },
+      "reference": "MPEP §2106.04(d); Vanda Pharmaceuticals v. West-Ward (2018)"
+    },
+    {
+      "rule_id": "USPTO-2106-03",
+      "title": "Inventive Concept — Step 2B",
+      "requirement": "If the claim does not integrate the judicial exception into a practical application, determine whether the claim recites additional elements that amount to significantly more than the judicial exception. Elements that are well-understood, routine, conventional activity (WURC) do NOT provide an inventive concept. Evidence of WURC may include: court decisions, publications, official notice.",
+      "severity": "mandatory",
+      "exceptions": [
+        "An ordered combination of conventional elements may provide an inventive concept if the combination itself is unconventional (BASCOM v. AT&T)"
+      ],
+      "examples": {
+        "compliant": "Additional elements include a specific unconventional arrangement of sensors and a custom processor architecture — not WURC.",
+        "non_compliant": "Additional elements are 'a generic computer', 'a processor', 'memory', 'receiving data over a network' — all WURC."
+      },
+      "reference": "MPEP §2106.05; Alice Corp. v. CLS Bank (2014)"
+    },
+    {
+      "rule_id": "USPTO-2106-04",
+      "title": "Software/Computer-Implemented Claims",
+      "requirement": "Claims directed to software or computer-implemented methods are NOT automatically ineligible. They are eligible if they: (a) improve the functioning of a computer itself, (b) improve another technology or technical field, (c) apply the judicial exception with a particular machine in a non-conventional way, or (d) effect a transformation of a particular article.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "A method for rendering a GUI display in a specific way that reduces processor load by 40% — improves computer functioning (Enfish v. Microsoft).",
+        "non_compliant": "A method for organizing data in a generic database using conventional computer components — merely automates a mental process on a computer."
+      },
+      "reference": "Enfish v. Microsoft (2016); MPEP §2106.05(a)"
+    },
+    {
+      "rule_id": "USPTO-2106-05",
+      "title": "Preemption Concern",
+      "requirement": "While preemption is not a standalone test, claims that effectively preempt all uses of a judicial exception are particularly suspect. Narrow claims tied to specific implementations are less likely to preempt.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": {
+        "compliant": "Claim limited to a specific algorithm running on a specific hardware configuration for a specific industrial application.",
+        "non_compliant": "Claim to 'any method of using a computer to determine [abstract concept]' — would preempt the entire field."
+      },
+      "reference": "Alice Corp. v. CLS Bank (2014); Mayo v. Prometheus (2012)"
+    },
+    {
+      "rule_id": "USPTO-2106-06",
+      "title": "Natural Products — Markedly Different Characteristics",
+      "requirement": "A claim to a nature-based product (organism, mineral, compound found in nature) is eligible if it has markedly different characteristics from its naturally occurring counterpart. Structure, function, or other properties that are different from the natural form indicate eligibility.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "Isolated and purified protein X having a specific truncation that gives it 10x binding affinity compared to the native form.",
+        "non_compliant": "Isolated genomic DNA (identical sequence to natural DNA) — Myriad Genetics."
+      },
+      "reference": "Association for Molecular Pathology v. Myriad Genetics (2013); MPEP §2106.04(c)"
+    }
+  ],
+  "review_checklist": [
+    "Does the claim fall within a statutory category (process, machine, manufacture, composition)?",
+    "Does the claim recite a judicial exception (abstract idea, law of nature, natural phenomenon)?",
+    "If abstract idea — is it a mathematical concept, method of organizing human activity, or mental process?",
+    "Does the claim as a whole integrate the exception into a practical application (Step 2A Prong 2)?",
+    "Are there specific technical improvements to a computer or other technology?",
+    "If no practical application — do additional elements provide significantly more than the exception (Step 2B)?",
+    "Are the additional elements well-understood, routine, conventional (WURC)?",
+    "For software claims — is there a specific technical improvement or just automation of a known process?",
+    "Does the claim preempt all uses of the underlying concept?",
+    "For nature-based products — are there markedly different characteristics from the natural form?"
+  ],
+  "system_prompt_injection": "You are a USPTO patent examiner applying the Alice/Mayo §101 framework (the 2019 Revised Patent Subject Matter Eligibility Guidance). Walk through the analysis step by step: (1) Is the claim in a statutory category? (2) Step 2A Prong 1: Does it recite a judicial exception? (3) Step 2A Prong 2: Does it integrate into a practical application? (4) Step 2B: Is there an inventive concept? Be specific about which claim elements are abstract vs. which provide the technical anchor. Cite relevant case law (Alice, Mayo, Enfish, BASCOM, Berkheimer) where applicable."
+}

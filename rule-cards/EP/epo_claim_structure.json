@@ -1,0 +1,191 @@
+{
+  "card_id": "epo_claim_structure",
+  "version": "2026.1",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": {
+    "title": "Guidelines for Examination in the European Patent Office",
+    "edition": "2025",
+    "part": "F",
+    "chapter": "IV",
+    "url": "https://www.epo.org/en/legal/guidelines-epc/2025/f_iv.html"
+  },
+  "task": "claim_structure",
+  "task_label": "Claim Structure & Formulation",
+  "language": "en",
+  "translated_from": null,
+  "last_updated": "2026-08-18",
+  "tags": ["claims", "structure", "two-part-form", "dependent-claims", "clarity", "Art.84", "Rule43"],
+  "rules": [
+    {
+      "rule_id": "EPO-F-IV-2.1",
+      "title": "Two-Part Form (Jepson Claims)",
+      "requirement": "Independent claims SHALL use the two-part form consisting of: (a) a preamble stating the designation of the subject-matter and those technical features necessary for the definition which, in combination, are part of the prior art; (b) a characterising portion stating the technical features for which protection is sought, preceded by 'characterised in that' or 'characterised by'.",
+      "severity": "mandatory",
+      "exceptions": [
+        "When the invention involves a novel combination of known integers where no clear distinction between prior art portion and novel contribution exists",
+        "When the claimed subject matter is entirely novel with no relevant prior art for the preamble",
+        "Process claims where the two-part form would be misleading or artificial"
+      ],
+      "examples": {
+        "compliant": "A hydraulic press for forming metal articles, comprising a frame, a hydraulic cylinder mounted on the frame, and a forming die, characterised in that the forming die includes a plurality of independently movable segments arranged to conform to the shape of the article.",
+        "non_compliant": "A hydraulic press comprising a frame, a hydraulic cylinder, a forming die with independently movable segments arranged to conform to the shape of an article."
+      },
+      "reference": "Guidelines F-IV, 2.1; Rule 43(1)(a)(b) EPC"
+    },
+    {
+      "rule_id": "EPO-F-IV-2.2",
+      "title": "Preamble Must Reflect Prior Art",
+      "requirement": "The preamble of a two-part claim SHALL include ALL features that are part of the closest prior art in combination. Features in the preamble are acknowledged as known.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Where no single prior art document discloses all preamble features in combination, the preamble may reflect a realistic combination known to the skilled person"
+      ],
+      "examples": {
+        "compliant": "A filtering device for removing preservative agents from medical fluids, comprising a housing with an inlet and an outlet, and a filter element disposed within the housing, characterised in that...",
+        "non_compliant": "A filtering device, characterised in that it comprises a housing with inlet and outlet and a filter element..."
+      },
+      "reference": "Guidelines F-IV, 2.1; Rule 43(1)(a) EPC"
+    },
+    {
+      "rule_id": "EPO-F-IV-3.1",
+      "title": "Claim Clarity — Art. 84 EPC",
+      "requirement": "Claims SHALL be clear. Each claim must define the matter for which protection is sought in terms of the technical features of the invention. Claims must be self-contained and understandable without reference to the description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "A composition comprising 10-50% by weight of compound X and 20-40% by weight of compound Y, wherein the ratio of X to Y is between 1:2 and 3:1.",
+        "non_compliant": "A composition comprising a suitable amount of compound X as described in Table 3 of the description."
+      },
+      "reference": "Art. 84 EPC; Guidelines F-IV, 4.1"
+    },
+    {
+      "rule_id": "EPO-F-IV-3.2",
+      "title": "Claim Conciseness",
+      "requirement": "Claims SHALL be concise. Unnecessarily verbose claims that obscure the scope of protection are objectionable. Redundant repetition of features, excessive alternatives in a single claim, and unnecessary limitations should be avoided.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Where clarity requires a more detailed formulation"
+      ],
+      "examples": null,
+      "reference": "Art. 84 EPC; Guidelines F-IV, 4.3"
+    },
+    {
+      "rule_id": "EPO-F-IV-3.3",
+      "title": "Claims Supported by Description",
+      "requirement": "Claims SHALL be supported by the description. Each claim must have a basis in the description and not extend beyond the content of the description as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "Claim recites 'a temperature between 50°C and 150°C' — description discloses this range with examples at 80°C, 100°C, and 130°C.",
+        "non_compliant": "Claim recites 'any temperature' — description only discloses operation between 50°C and 150°C."
+      },
+      "reference": "Art. 84 EPC; Guidelines F-IV, 6"
+    },
+    {
+      "rule_id": "EPO-F-IV-3.4",
+      "title": "Relative Terms and Vague Language",
+      "requirement": "Claims SHOULD NOT contain vague or relative terms (e.g. 'thin', 'strong', 'approximately', 'substantially') unless they have a well-recognised meaning in the technical field and the skilled person can determine their scope from the description.",
+      "severity": "recommended",
+      "exceptions": [
+        "Terms like 'approximately' are acceptable when the exact value is not critical to the invention and the skilled person understands the acceptable tolerance",
+        "Terms having a well-defined meaning in the specific technical field (e.g. 'high-frequency' in electronics)"
+      ],
+      "examples": {
+        "compliant": "...wherein the layer has a thickness of 0.1 to 5 micrometres.",
+        "non_compliant": "...wherein the layer is thin."
+      },
+      "reference": "Guidelines F-IV, 4.6"
+    },
+    {
+      "rule_id": "EPO-F-IV-3.5",
+      "title": "Reference Signs in Claims",
+      "requirement": "Claims SHOULD contain reference signs corresponding to those in the drawings, placed in parentheses, where this aids understanding. Reference signs SHALL NOT be construed as limiting the claim.",
+      "severity": "recommended",
+      "exceptions": [
+        "Claims directed to processes or methods where no corresponding drawing exists"
+      ],
+      "examples": {
+        "compliant": "A filtering device comprising a housing (1) with an inlet (2) and an outlet (3), and a filter element (4) disposed within the housing (1).",
+        "non_compliant": "A filtering device comprising a housing 1 with an inlet 2 and an outlet 3."
+      },
+      "reference": "Rule 43(7) EPC; Guidelines F-IV, 4.18"
+    },
+    {
+      "rule_id": "EPO-F-IV-4.1",
+      "title": "Dependent Claim Form",
+      "requirement": "Dependent claims SHALL contain a reference to the claim(s) on which they depend, followed by a statement of the additional features claimed. A dependent claim is understood to include ALL limitations of the claim from which it depends.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "3. The device according to claim 1 or 2, wherein the filter element comprises activated carbon.",
+        "non_compliant": "3. The device wherein the filter element comprises activated carbon."
+      },
+      "reference": "Rule 43(4) EPC; Guidelines F-IV, 3.4"
+    },
+    {
+      "rule_id": "EPO-F-IV-4.2",
+      "title": "Multiple Dependency",
+      "requirement": "A dependent claim MAY refer to more than one preceding claim (multiple dependency). Multiple dependent claims SHALL NOT serve as a basis for another multiple dependent claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "5. The device according to any one of claims 1 to 4, further comprising a sensor.",
+        "non_compliant": "7. The device according to claim 5 or 6 (where claim 5 is itself multiply dependent on claims 1-4)."
+      },
+      "reference": "Rule 43(4) EPC; Guidelines F-IV, 3.4"
+    },
+    {
+      "rule_id": "EPO-F-IV-4.3",
+      "title": "Claim Categories",
+      "requirement": "Claims SHALL be directed to one of the following categories: (a) product (device, apparatus, system, composition, compound); (b) process/method; (c) use of a product or process. A single set of claims SHALL NOT contain more than one independent claim in the same category unless the conditions of Rule 43(2) are met.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Rule 43(2): Multiple independent claims in the same category are permissible where they relate to: a plurality of interrelated products, different uses of a product or process, alternative solutions to a particular problem (where a single claim covering all alternatives would be inappropriate)"
+      ],
+      "examples": null,
+      "reference": "Rule 43(2)(3) EPC; Guidelines F-IV, 3.2"
+    },
+    {
+      "rule_id": "EPO-F-IV-4.4",
+      "title": "Functional Claim Language",
+      "requirement": "Claims MAY define features in functional terms ('means for', 'device for', 'adapted to', 'configured to') provided the skilled person would understand what means are suitable for performing the function. Purely functional claims that cover ALL conceivable means of performing a function may lack support if the description does not enable them all.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": {
+        "compliant": "...means for fastening the lid to the container (where multiple fastening means are described).",
+        "non_compliant": "...means for achieving the desired result (where only one specific mechanism is described)."
+      },
+      "reference": "Guidelines F-IV, 6.5"
+    },
+    {
+      "rule_id": "EPO-F-IV-4.5",
+      "title": "Product-by-Process Claims",
+      "requirement": "Product-by-process claims (where a product is defined by its manufacturing process) are permissible ONLY when the product cannot be otherwise defined. The product must be novel and inventive per se — the process steps do not confer novelty or inventive step on the product itself.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Where there is genuinely no other way to define the product than by reference to its method of manufacture"
+      ],
+      "examples": {
+        "compliant": "A glass panel obtainable by the process of step A, B, C (where the resulting structure cannot be defined otherwise).",
+        "non_compliant": "A filtered fluid obtained by passing through a filter (where the fluid itself is not novel)."
+      },
+      "reference": "Guidelines F-IV, 4.12"
+    }
+  ],
+  "review_checklist": [
+    "Does each independent claim use the two-part form (preamble + 'characterised in that' + characterising portion)?",
+    "If not in two-part form, is a valid exception justified?",
+    "Does the preamble correctly reflect the closest prior art?",
+    "Are claims clear — free from vague terms, self-referential language, or ambiguity?",
+    "Are claims supported by the description — no broader than what is disclosed?",
+    "Do dependent claims properly reference their parent claim(s)?",
+    "Are there impermissible chains of multiple dependencies?",
+    "Is there more than one independent claim per category — if so, is Rule 43(2) met?",
+    "Are functional claims adequately supported by the description?",
+    "Do product-by-process claims meet the requirements (product not definable otherwise)?",
+    "Are reference signs from drawings included in parentheses where helpful?",
+    "Is each claim concise — no unnecessary verbosity or redundancy?"
+  ],
+  "system_prompt_injection": "You are a senior EPO patent examiner specializing in formal claim assessment under the European Patent Convention. Apply Art. 84 EPC (clarity, conciseness, support), Rule 43 EPC (form and content of claims), and the Guidelines for Examination Part F, Chapter IV strictly. You examine claims with a critical eye — flag every departure from the two-part form unless a clear exception applies. Assess whether the preamble correctly delimits prior art from the novel contribution. Check that dependent claims are properly structured and that multiple dependencies comply with Rule 43(4). Be specific about which claim number has which problem and cite the exact legal basis for each finding."
+}

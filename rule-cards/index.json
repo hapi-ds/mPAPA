@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "last_updated": "2026-08-18",
+  "cards": [
+    {
+      "card_id": "epo_claim_structure",
+      "version": "2026.1",
+      "jurisdiction": "EP",
+      "task": "claim_structure",
+      "task_label": "Claim Structure & Formulation",
+      "path": "EP/epo_claim_structure.json",
+      "rules_count": 12,
+      "tags": ["claims", "structure", "two-part-form", "dependent-claims", "clarity", "Art.84", "Rule43"]
+    },
+    {
+      "card_id": "epo_novelty",
+      "version": "2026.1",
+      "jurisdiction": "EP",
+      "task": "novelty",
+      "task_label": "Novelty Assessment (Art. 54 EPC)",
+      "path": "EP/epo_novelty.json",
+      "rules_count": 9,
+      "tags": ["novelty", "Art.54", "prior-art", "disclosure", "anticipation"]
+    },
+    {
+      "card_id": "uspto_subject_matter",
+      "version": "2026.1",
+      "jurisdiction": "US",
+      "task": "patentable_subject_matter",
+      "task_label": "Patentable Subject Matter (35 U.S.C. §101)",
+      "path": "US/uspto_subject_matter.json",
+      "rules_count": 7,
+      "tags": ["§101", "subject-matter", "Alice", "Mayo", "abstract-idea", "law-of-nature", "software"]
+    }
+  ]
+}

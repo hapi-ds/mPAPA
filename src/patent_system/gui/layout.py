@@ -29,6 +29,7 @@ from patent_system.db.repository import (
 from patent_system.gui.chat_panel import create_chat_panel
 from patent_system.gui.draft_panel import create_draft_panel
 from patent_system.gui.research_panel import create_research_panel
+from patent_system.gui.reviewer_panel import create_reviewer_panel
 from patent_system.gui.settings_panel import create_settings_panel
 from patent_system.rag.engine import RAGEngine
 
@@ -87,6 +88,7 @@ def create_layout(
                 research_tab = ui.tab("Research")
                 chat_tab = ui.tab("AI Chat")
                 draft_tab = ui.tab("Patent Draft")
+                reviewer_tab = ui.tab("Patent Review")
                 settings_tab = ui.tab("Settings")
 
         # Row 2: workflow progress bar (always visible)
@@ -230,6 +232,15 @@ def create_layout(
                     "text-grey"
                 )
 
+        with ui.tab_panel(reviewer_tab):
+            reviewer_container = ui.column().classes("w-full p-4")
+            with reviewer_container:
+                # Reviewer works without a topic (standalone)
+                create_reviewer_panel(
+                    reviewer_container,
+                    settings=settings,
+                )
+
         with ui.tab_panel(settings_tab):
             settings_container = ui.column().classes("w-full p-4")
             with settings_container:
@@ -284,6 +295,20 @@ def create_layout(
             personality_pref_repo=personality_pref_repo,
             profile_loader=profile_loader,
             domain_profile_repo=TopicDomainProfileRepository(conn),
+        )
+
+        # Refresh reviewer panel with draft text from this topic
+        workflow_step_repo_for_review = WorkflowStepRepository(conn)
+        claims_step = workflow_step_repo_for_review.get_step(topic_id, "claims_drafting")
+        draft_step = workflow_step_repo_for_review.get_step(topic_id, "patent_draft")
+        claims = claims_step["content"] if claims_step else ""
+        description = draft_step["content"] if draft_step else ""
+        create_reviewer_panel(
+            reviewer_container,
+            settings=settings,
+            topic_id=topic_id,
+            claims_text=claims,
+            description_text=description,
         )
 
     _refresh_topic_list()
