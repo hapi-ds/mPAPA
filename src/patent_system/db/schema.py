@@ -135,6 +135,33 @@ CREATE TABLE IF NOT EXISTS topic_domain_profile (
     FOREIGN KEY (topic_id) REFERENCES topics(id),
     UNIQUE(topic_id)
 );
+
+CREATE TABLE IF NOT EXISTS review_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER,
+    patent_text TEXT NOT NULL,
+    card_ids TEXT NOT NULL,
+    jurisdiction TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    completed_at TEXT,
+    FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS review_findings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id INTEGER NOT NULL,
+    card_id TEXT NOT NULL,
+    rule_id TEXT NOT NULL,
+    finding TEXT NOT NULL,
+    severity TEXT NOT NULL,
+    location TEXT,
+    suggestion TEXT,
+    compliant INTEGER NOT NULL DEFAULT 0,
+    reference TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (session_id) REFERENCES review_sessions(id) ON DELETE CASCADE
+);
 """
 
 _initialized_databases: set[str] = set()

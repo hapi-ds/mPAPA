@@ -70,3 +70,8 @@ build_command = ""
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
+
+[tool.pytest.ini_options]
+markers = [
+    "llm: tests that require a running LLM endpoint (vLLM or LM Studio)",
+]
