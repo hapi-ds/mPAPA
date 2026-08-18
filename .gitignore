@@ -209,3 +209,6 @@ __marimo__/
 idea.md
 .kiro
 data/
+testdata/
+scripts/compile_rule_cards/sources/
+scripts/extract_testdata/output/
