@@ -129,6 +129,7 @@ def create_draft_panel(
     progress_bar_container: Any | None = None,
     personality_pref_repo: PersonalityPreferenceRepository | None = None,
     profile_loader: ProfileLoader | None = None,
+    on_review_draft: Any | None = None,
 ) -> None:
     """Populate *container* with the nine-step interactive Patent Draft UI.
 
@@ -145,6 +146,9 @@ def create_draft_panel(
         personality_pref_repo: Repository for per-topic personality preferences.
         profile_loader: ProfileLoader instance for resolving domain profile
             slugs to human-readable labels. If None, domain badges are skipped.
+        on_review_draft: Optional callback invoked when the user clicks the
+            'Review Draft' button. Receives (claims_text, description_text).
+            Typically switches to the Patent Review tab and pre-fills data.
     """
     container.clear()
 
@@ -1639,6 +1643,18 @@ def create_draft_panel(
             icon="code",
         ).props("color=accent").classes("q-mt-sm")
 
+        # Review Draft button — switches to Patent Review tab (Req 13.4)
+        def _on_review_draft() -> None:
+            """Switch to the Patent Review tab with current claims/description."""
+            if on_review_draft is not None:
+                on_review_draft(panel_state["claims"], panel_state["description"])
+
+        review_draft_button = ui.button(
+            "🔍 Review Draft",
+            on_click=_on_review_draft,
+            icon="policy",
+        ).props("color=primary flat").classes("q-mt-sm")
+
         def _update_export_state() -> None:
             """Enable/disable export buttons based on content (Req 10.4)."""
             # Export is available when all steps have content and claims+description exist.
@@ -1654,10 +1670,12 @@ def create_draft_panel(
             if exportable:
                 export_button.enable()
                 latex_export_button.enable()
+                review_draft_button.enable()
                 export_warning.set_visibility(False)
             else:
                 export_button.disable()
                 latex_export_button.disable()
+                review_draft_button.disable()
                 export_warning.set_visibility(True)
 
         _update_export_state()

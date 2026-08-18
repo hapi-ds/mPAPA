@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mpapa.local/schemas/rule-card-v1.schema.json",
+  "title": "RuleCard",
+  "description": "Schema for patent office examination rule cards. A Rule Card is a modular JSON file extracted from official patent office examination guidelines.",
+  "type": "object",
+  "required": [
+    "card_id",
+    "version",
+    "jurisdiction",
+    "office",
+    "source_document",
+    "task",
+    "task_label",
+    "language",
+    "translated_from",
+    "last_updated",
+    "tags",
+    "rules",
+    "review_checklist",
+    "system_prompt_injection"
+  ],
+  "properties": {
+    "card_id": {
+      "type": "string",
+      "description": "Unique identifier for this rule card"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version string for this rule card (e.g. '2026.1')"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "description": "Jurisdiction code (e.g. 'EP', 'US', 'DE')"
+    },
+    "office": {
+      "type": "string",
+      "description": "Patent office abbreviation (e.g. 'EPO', 'USPTO', 'DPMA')"
+    },
+    "source_document": {
+      "type": "object",
+      "description": "Reference to the official source document from which rules were extracted",
+      "required": ["title", "edition"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the official source document"
+        },
+        "edition": {
+          "type": "string",
+          "description": "Edition or year of the source document"
+        },
+        "part": {
+          "type": ["string", "null"],
+          "description": "Part of the document (e.g. 'F', 'Part II')"
+        },
+        "chapter": {
+          "type": ["string", "null"],
+          "description": "Chapter within the part"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "description": "URL to the official online version of the source document",
+          "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "string",
+      "description": "Machine-readable task identifier (e.g. 'claim_structure', 'novelty')"
+    },
+    "task_label": {
+      "type": "string",
+      "description": "Human-readable label for the task"
+    },
+    "language": {
+      "type": "string",
+      "description": "ISO 639-1 language code of this card's content",
+      "default": "en"
+    },
+    "translated_from": {
+      "type": ["string", "null"],
+      "description": "Original language code if this card was translated, null otherwise"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this card was last updated (ISO 8601 date: YYYY-MM-DD)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Searchable tags for categorization and filtering"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Rule"
+      },
+      "description": "Array of examination rules extracted from the source document"
+    },
+    "review_checklist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Checklist items for the reviewer to verify"
+    },
+    "system_prompt_injection": {
+      "type": "string",
+      "description": "Text injected into the LLM system prompt when this card is active"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Rule": {
+      "type": "object",
+      "description": "A single examination rule extracted from an official guideline",
+      "required": ["rule_id", "title", "requirement", "severity", "reference"],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "description": "Unique identifier for this rule within the card"
+        },
+        "title": {
+          "type": "string",
+          "description": "Short title of the rule"
+        },
+        "requirement": {
+          "type": "string",
+          "description": "Full text of the requirement"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["mandatory", "recommended", "optional"],
+          "description": "How strictly this rule must be followed"
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Cases where this rule does not apply"
+        },
+        "examples": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["compliant", "non_compliant"],
+              "properties": {
+                "compliant": {
+                  "type": "string",
+                  "description": "Example of correct application of this rule"
+                },
+                "non_compliant": {
+                  "type": "string",
+                  "description": "Example of incorrect application of this rule"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Compliant and non-compliant examples, or null if not provided"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Citation to the specific section in the source document"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

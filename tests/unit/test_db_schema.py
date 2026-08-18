@@ -22,6 +22,8 @@ EXPECTED_TABLES = {
     "workflow_steps",
     "personality_preferences",
     "topic_domain_profile",
+    "review_sessions",
+    "review_findings",
 }
 
 
