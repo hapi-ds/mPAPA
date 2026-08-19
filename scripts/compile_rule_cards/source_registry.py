@@ -55,77 +55,100 @@ class SourceEntry:
 REGISTRY: dict[tuple[str, str], SourceEntry] = {
     # =========================================================================
     # EPO — Guidelines for Examination (April 2025 edition)
-    # PDF per Part: https://link.epo.org/web/part_X_en.pdf
+    # HTML per chapter: https://www.epo.org/en/legal/guidelines-epc/2025/X_Y.html
+    # Note: PDF URLs (link.epo.org/web/part_X_en.pdf) are unreliable (404 for most parts)
+    # HTML is always available and up-to-date
     # =========================================================================
     ("EP", "novelty"): SourceEntry(
         jurisdiction="EP", chapter="novelty",
-        url="https://link.epo.org/web/part_g_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/g_vi.html",
         language="en", card_id="epo_novelty",
         label="Novelty (Art. 54 EPC)",
         edition="April 2025", part="G", section="Chapter VI",
     ),
     ("EP", "inventive_step"): SourceEntry(
         jurisdiction="EP", chapter="inventive_step",
-        url="https://link.epo.org/web/part_g_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/g_vii.html",
         language="en", card_id="epo_inventive_step",
         label="Inventive Step (Art. 56 EPC)",
         edition="April 2025", part="G", section="Chapter VII",
     ),
     ("EP", "claim_structure"): SourceEntry(
         jurisdiction="EP", chapter="claim_structure",
-        url="https://link.epo.org/web/part_f_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/f_iv.html",
         language="en", card_id="epo_claim_structure",
         label="Claims — Art. 84 and Formal Requirements",
         edition="April 2025", part="F", section="Chapter IV",
     ),
     ("EP", "sufficiency"): SourceEntry(
         jurisdiction="EP", chapter="sufficiency",
-        url="https://link.epo.org/web/part_f_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/f_iii.html",
         language="en", card_id="epo_sufficiency",
         label="Sufficiency of Disclosure (Art. 83)",
         edition="April 2025", part="F", section="Chapter III",
     ),
     ("EP", "unity"): SourceEntry(
         jurisdiction="EP", chapter="unity",
-        url="https://link.epo.org/web/part_f_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/f_v.html",
         language="en", card_id="epo_unity",
         label="Unity of Invention (Art. 82)",
         edition="April 2025", part="F", section="Chapter V",
     ),
     ("EP", "subject_matter"): SourceEntry(
         jurisdiction="EP", chapter="subject_matter",
-        url="https://link.epo.org/web/part_g_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/g_ii.html",
         language="en", card_id="epo_patentable_inventions",
         label="Patentable Inventions (Art. 52)",
         edition="April 2025", part="G", section="Chapter II",
     ),
     ("EP", "added_matter"): SourceEntry(
         jurisdiction="EP", chapter="added_matter",
-        url="https://link.epo.org/web/part_h_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/h_iv.html",
         language="en", card_id="epo_added_matter",
         label="Amendments — Art. 123(2) and (3)",
         edition="April 2025", part="H", section="Chapter IV",
     ),
     ("EP", "priority"): SourceEntry(
         jurisdiction="EP", chapter="priority",
-        url="https://link.epo.org/web/part_f_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/f_vi.html",
         language="en", card_id="epo_priority",
         label="Priority (Art. 87-89)",
         edition="April 2025", part="F", section="Chapter VI",
     ),
     ("EP", "industrial_application"): SourceEntry(
         jurisdiction="EP", chapter="industrial_application",
-        url="https://link.epo.org/web/part_g_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/g_iii.html",
         language="en", card_id="epo_industrial_application",
         label="Industrial Application (Art. 57)",
         edition="April 2025", part="G", section="Chapter III",
     ),
     ("EP", "opposition"): SourceEntry(
         jurisdiction="EP", chapter="opposition",
-        url="https://link.epo.org/web/part_d_en.pdf",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/d_v.html",
         language="en", card_id="epo_opposition",
         label="Substantive Examination of Opposition",
         edition="April 2025", part="D", section="Chapter V",
+    ),
+    ("EP", "description_format"): SourceEntry(
+        jurisdiction="EP", chapter="description_format",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/f_ii.html",
+        language="en", card_id="epo_description_format",
+        label="Content of a European Patent Application (Description, Drawings, Abstract)",
+        edition="April 2025", part="F", section="Chapter II",
+    ),
+    ("EP", "state_of_art"): SourceEntry(
+        jurisdiction="EP", chapter="state_of_art",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/g_iv.html",
+        language="en", card_id="epo_state_of_art",
+        label="State of the Art (Art. 54(2) — what counts as prior art)",
+        edition="April 2025", part="G", section="Chapter IV",
+    ),
+    ("EP", "non_prejudicial_disclosures"): SourceEntry(
+        jurisdiction="EP", chapter="non_prejudicial_disclosures",
+        url="https://www.epo.org/en/legal/guidelines-epc/2025/g_v.html",
+        language="en", card_id="epo_non_prejudicial_disclosures",
+        label="Non-Prejudicial Disclosures / Grace Period (Art. 55)",
+        edition="April 2025", part="G", section="Chapter V",
     ),
 
     # =========================================================================

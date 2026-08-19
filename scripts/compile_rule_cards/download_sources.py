@@ -38,9 +38,16 @@ SOURCES_DIR = SCRIPT_DIR / "sources"
 MANIFEST_FILE = SOURCES_DIR / ".download_manifest.json"
 
 TIMEOUT = 60
-USER_AGENT = "mPAPA-GuidelineDownloader/1.0"
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
 RETRY_ATTEMPTS = 3
 RETRY_DELAY = 5
+
+
+def _ext_for_url(url: str) -> str:
+    """Determine file extension from URL."""
+    if url.lower().endswith(".pdf"):
+        return ".pdf"
+    return ".html"
 
 
 def load_config() -> tuple[list[str], list[str]]:
@@ -143,7 +150,7 @@ def run(dry_run: bool = False, list_only: bool = False) -> None:
 
     try:
         for entry in sources:
-            dest = SOURCES_DIR / entry.jurisdiction / f"{entry.card_id}.pdf"
+            dest = SOURCES_DIR / entry.jurisdiction / f"{entry.card_id}{_ext_for_url(entry.url)}"
             lang = f" [{entry.language}→en]" if entry.language != "en" else ""
             print(f"  [{entry.jurisdiction}] {entry.label}{lang}")
 

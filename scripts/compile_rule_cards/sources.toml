@@ -40,3 +40,6 @@ industrial_application = true
 double_patenting = true     # US-specific
 restriction = true          # US-specific
 opposition = true           # EP-specific
+description_format = true   # How to write description, drawings, abstract
+state_of_art = true         # What counts as prior art, effective dates
+non_prejudicial_disclosures = true  # Grace period / exceptions to prior art
