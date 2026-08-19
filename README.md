@@ -280,13 +280,27 @@ The reviewer also integrates with the main workflow via the **"Review Draft"** b
 
 Rule Cards are compiled from official guideline PDFs using a local LLM (Qwen3.6-27B via vLLM). This is a maintainer tool — users just download pre-built cards.
 
+**The pipeline: Download → Translate → Compile → Review → Commit**
+
+Sources are always downloaded in their **original language** (German for DPMA, Japanese for JPO, Chinese for CNIPA, Korean for KIPO). Translation to English is handled automatically by the compiler LLM during extraction — no waiting for official English editions.
+
 ```bash
-# Start vLLM with 27B model
+# 1. Download all guideline PDFs (checks for updates, skips unchanged)
+uv run python scripts/compile_rule_cards/download_sources.py
+
+# 2. Start vLLM with 27B model
 ./scripts/start-vllm-27b.sh
 
-# Compile a card from a source PDF
-uv run python scripts/compile_cards.py --jurisdiction EP --task inventive_step --source <path_to_pdf>
+# 3. Compile a card (auto-translates non-English sources to English)
+uv run python scripts/compile_cards.py \
+    --jurisdiction JP --task novelty_inventive_step \
+    --source scripts/compile_rule_cards/sources/JP/jpo_novelty_inventive_step.pdf \
+    --card-id jpo_novelty --language ja
 ```
+
+**Configuration**: Edit `scripts/compile_rule_cards/sources.toml` to enable/disable jurisdictions or individual chapters.
+
+**Supported languages**: en, de, ja, zh, ko, fr (translation to English is automatic during compilation).
 
 See `TODO.md` for the full development roadmap.
 

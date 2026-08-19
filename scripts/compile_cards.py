@@ -57,8 +57,11 @@ def compile_single(
     jurisdiction: str,
     task: str,
     card_id: str,
+    source_language: str = "en",
 ) -> None:
     """Compile a single source file into a RuleCard.
+
+    Non-English sources are automatically translated to English during extraction.
 
     Args:
         config: Compiler configuration.
@@ -66,6 +69,7 @@ def compile_single(
         jurisdiction: Jurisdiction code (EP, US, PCT, etc.).
         task: Task identifier.
         card_id: Output card ID.
+        source_language: ISO 639-1 code of source language (en, de, ja, zh, ko).
     """
     if not source.exists():
         logger.error("Source file not found: %s", source)
@@ -75,7 +79,7 @@ def compile_single(
     task_label = TASK_LABELS.get(task, task.replace("_", " ").title())
 
     with RuleExtractor(config) as extractor:
-        rules = extractor.extract(source, jurisdiction, task)
+        rules = extractor.extract(source, jurisdiction, task, source_language=source_language)
 
     if not rules:
         logger.warning("No rules extracted from %s", source)
@@ -239,6 +243,12 @@ Examples:
         default=None,
         help="Override model name",
     )
+    parser.add_argument(
+        "--language", "-L",
+        type=str,
+        default="en",
+        help="Source language ISO code (en, de, ja, zh, ko, fr). Non-English sources are translated to English during extraction. Default: en",
+    )
 
     args = parser.parse_args()
 
@@ -268,7 +278,7 @@ Examples:
     if not args.card_id:
         parser.error("--card-id is required for single-file compilation")
 
-    compile_single(config, args.source, args.jurisdiction, args.task, args.card_id)
+    compile_single(config, args.source, args.jurisdiction, args.task, args.card_id, source_language=args.language)
 
 
 if __name__ == "__main__":
