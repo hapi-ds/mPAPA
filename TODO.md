@@ -20,20 +20,31 @@
 
 ## 🔲 Phase 2: Full EP + US Coverage (Next)
 
-### Rule Card Production (automated via batch compiler)
+### Rule Card Production Pipeline
 
-Run the batch compiler against downloaded guideline PDFs to produce all remaining cards:
+The full pipeline is now: **Download → (Translate) → Compile → Review → Commit**
 
 ```bash
-# 1. Start vLLM with 27B model
+# 1. Download all guideline PDFs (original language)
+uv run python scripts/compile_rule_cards/download_sources.py
+
+# 2. Start vLLM with 27B model (for compilation + translation)
 ./scripts/start-vllm-27b.sh
 
-# 2. Download EPO Guidelines PDF (Part G-VII for inventive step, etc.)
-# Place in scripts/compile_rule_cards/sources/
-
-# 3. Run compiler
-uv run python scripts/compile_cards.py --jurisdiction EP --task inventive_step --source scripts/compile_rule_cards/sources/epo_guidelines_g_vii.pdf
+# 3. Compile a card (translates non-English sources automatically)
+uv run python scripts/compile_cards.py --jurisdiction EP --task inventive_step \
+    --source scripts/compile_rule_cards/sources/EP/epo_inventive_step.pdf
 ```
+
+**Key design decision**: Sources are downloaded in their ORIGINAL language
+(Japanese for JPO, Chinese for CNIPA, Korean for KIPO, German for DPMA).
+Translation to English is handled by the rule card compiler via the local LLM.
+This means no waiting for official English translations — we always have the latest rules.
+
+**Configure sources**: Edit `scripts/compile_rule_cards/sources.toml`
+- Comment out jurisdictions or chapters you don't need
+- Add new sources as they become available
+- Run with `--dry-run` to check for updates without downloading
 
 **EPO cards needed:**
 - [ ] `epo_inventive_step` — Art. 56, Problem-Solution Approach (Part G-VII)

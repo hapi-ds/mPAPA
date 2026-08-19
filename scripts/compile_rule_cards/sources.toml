@@ -1,0 +1,482 @@
+# Patent Examination Guidelines — Source Configuration
+# 
+# This file defines all known patent examination guideline sources.
+# The downloader script uses this to fetch and update source documents.
+#
+# To disable a jurisdiction or chapter: comment it out with #
+# To add a new source: follow the existing format
+#
+# Format:
+#   [jurisdiction.office_code]
+#   enabled = true/false
+#   
+#   [[jurisdiction.office_code.sources]]
+#   id = "unique_id"           # Used as filename stem
+#   label = "Human Label"      # Display name
+#   url = "https://..."        # Download URL
+#   format = "pdf" or "html"   # Source format
+#   part = "G"                 # Guideline part/chapter identifier
+#   chapter = "VII"            # Sub-chapter (optional)
+#   task = "inventive_step"    # Maps to rule card task_id
+#   enabled = true             # Set false to skip this source
+
+[metadata]
+config_version = 1
+last_updated = "2026-08-19"
+notes = "Comprehensive list of patent examination guideline sources for rule card compilation"
+
+# =============================================================================
+# EUROPEAN PATENT OFFICE (EPO)
+# =============================================================================
+# Source: Guidelines for Examination in the EPO (April 2025 edition)
+# Available as PDF per Part and as HTML per chapter
+# PDF URL pattern: https://link.epo.org/web/part_X_en.pdf
+# HTML URL pattern: https://www.epo.org/en/legal/guidelines-epc/2025/PART_CHAPTER.html
+
+[EP]
+enabled = true
+office = "EPO"
+full_name = "European Patent Office"
+base_url_pdf = "https://link.epo.org/web"
+base_url_html = "https://www.epo.org/en/legal/guidelines-epc/2025"
+edition = "April 2025"
+language = "en"
+notes = "Updated annually (typically March/April). Check https://www.epo.org/en/legal/guidelines-epc for latest."
+
+# --- Part F: The European Patent Application ---
+
+[[EP.sources]]
+id = "epo_sufficiency"
+label = "Sufficiency of Disclosure (Art. 83)"
+url_pdf = "https://link.epo.org/web/part_f_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/f_iii.html"
+part = "F"
+chapter = "III"
+task = "sufficiency"
+enabled = true
+
+[[EP.sources]]
+id = "epo_claim_structure"
+label = "Claims — Art. 84 and Formal Requirements"
+url_pdf = "https://link.epo.org/web/part_f_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/f_iv.html"
+part = "F"
+chapter = "IV"
+task = "claim_structure"
+enabled = true
+
+[[EP.sources]]
+id = "epo_unity"
+label = "Unity of Invention (Art. 82)"
+url_pdf = "https://link.epo.org/web/part_f_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/f_v.html"
+part = "F"
+chapter = "V"
+task = "unity"
+enabled = true
+
+[[EP.sources]]
+id = "epo_priority"
+label = "Priority (Art. 87-89)"
+url_pdf = "https://link.epo.org/web/part_f_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/f_vi.html"
+part = "F"
+chapter = "VI"
+task = "priority"
+enabled = true
+
+# --- Part G: Patentability ---
+
+[[EP.sources]]
+id = "epo_patentable_inventions"
+label = "Inventions (Art. 52)"
+url_pdf = "https://link.epo.org/web/part_g_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/g_ii.html"
+part = "G"
+chapter = "II"
+task = "patentable_inventions"
+enabled = true
+
+[[EP.sources]]
+id = "epo_industrial_application"
+label = "Industrial Application (Art. 57)"
+url_pdf = "https://link.epo.org/web/part_g_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/g_iii.html"
+part = "G"
+chapter = "III"
+task = "industrial_application"
+enabled = true
+
+[[EP.sources]]
+id = "epo_state_of_art"
+label = "State of the Art (Art. 54(2))"
+url_pdf = "https://link.epo.org/web/part_g_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/g_iv.html"
+part = "G"
+chapter = "IV"
+task = "state_of_art"
+enabled = true
+
+[[EP.sources]]
+id = "epo_novelty"
+label = "Novelty (Art. 54)"
+url_pdf = "https://link.epo.org/web/part_g_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/g_vi.html"
+part = "G"
+chapter = "VI"
+task = "novelty"
+enabled = true
+
+[[EP.sources]]
+id = "epo_inventive_step"
+label = "Inventive Step (Art. 56)"
+url_pdf = "https://link.epo.org/web/part_g_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/g_vii.html"
+part = "G"
+chapter = "VII"
+task = "inventive_step"
+enabled = true
+
+# --- Part H: Amendments and Corrections ---
+
+[[EP.sources]]
+id = "epo_added_matter"
+label = "Allowability of Amendments — Art. 123(2) and (3)"
+url_pdf = "https://link.epo.org/web/part_h_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/h_iv.html"
+part = "H"
+chapter = "IV"
+task = "added_matter"
+enabled = true
+
+[[EP.sources]]
+id = "epo_amendment_examples"
+label = "Allowability of Amendments — Examples"
+url_pdf = "https://link.epo.org/web/part_h_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/h_v.html"
+part = "H"
+chapter = "V"
+task = "amendment_examples"
+enabled = true
+
+# --- Part D: Opposition ---
+
+[[EP.sources]]
+id = "epo_opposition_substantive"
+label = "Substantive Examination of Opposition"
+url_pdf = "https://link.epo.org/web/part_d_en.pdf"
+url_html = "https://www.epo.org/en/legal/guidelines-epc/2025/d_v.html"
+part = "D"
+chapter = "V"
+task = "opposition"
+enabled = true
+
+# =============================================================================
+# UNITED STATES PATENT AND TRADEMARK OFFICE (USPTO)
+# =============================================================================
+# Source: Manual of Patent Examining Procedure (MPEP), 9th Ed., Rev. 01.2024
+# Available as per-chapter PDFs
+# URL pattern: https://www.uspto.gov/web/offices/pac/mpep/mpep-XXXX-chapter.pdf
+
+[US]
+enabled = true
+office = "USPTO"
+full_name = "United States Patent and Trademark Office"
+base_url = "https://www.uspto.gov/web/offices/pac/mpep"
+edition = "9th Edition, Rev. 01.2024 (November 2024)"
+language = "en"
+notes = "Check https://www.uspto.gov/web/offices/pac/mpep/ for latest revision."
+
+[[US.sources]]
+id = "uspto_subject_matter"
+label = "Patentable Subject Matter (35 U.S.C. §101)"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2104-2106"
+task = "patentable_subject_matter"
+enabled = true
+
+[[US.sources]]
+id = "uspto_novelty"
+label = "Novelty / Anticipation (35 U.S.C. §102)"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2131-2138"
+task = "novelty"
+enabled = true
+
+[[US.sources]]
+id = "uspto_obviousness"
+label = "Obviousness (35 U.S.C. §103)"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2141-2145"
+task = "obviousness"
+enabled = true
+
+[[US.sources]]
+id = "uspto_written_description"
+label = "Written Description (35 U.S.C. §112(a))"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2161-2164"
+task = "written_description"
+enabled = true
+
+[[US.sources]]
+id = "uspto_enablement"
+label = "Enablement (35 U.S.C. §112(a))"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2164"
+task = "enablement"
+enabled = true
+
+[[US.sources]]
+id = "uspto_definiteness"
+label = "Definiteness / Claim Clarity (35 U.S.C. §112(b))"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2171-2175"
+task = "definiteness"
+enabled = true
+
+[[US.sources]]
+id = "uspto_double_patenting"
+label = "Double Patenting"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-0800.pdf"
+chapter = "800"
+sections = "804"
+task = "double_patenting"
+enabled = true
+
+[[US.sources]]
+id = "uspto_restriction"
+label = "Restriction / Election (35 U.S.C. §121)"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-0800.pdf"
+chapter = "800"
+sections = "803-808"
+task = "restriction"
+enabled = true
+
+[[US.sources]]
+id = "uspto_claim_drafting"
+label = "Claim Drafting (35 U.S.C. §112)"
+url = "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.pdf"
+chapter = "2100"
+sections = "2171-2175"
+task = "claim_structure"
+enabled = true
+
+# =============================================================================
+# WIPO — PCT INTERNATIONAL SEARCH AND PRELIMINARY EXAMINATION
+# =============================================================================
+# Source: PCT ISPE Guidelines (effective January 1, 2026)
+# Available as HTML chapters on WIPO website
+
+[PCT]
+enabled = true
+office = "WIPO"
+full_name = "World Intellectual Property Organization"
+base_url = "https://www.wipo.int/en/web/pct-system/texts/ispe"
+edition = "Effective January 1, 2026"
+language = "en"
+notes = "HTML-based, no single PDF. Chapters accessible via WIPO website."
+
+[[PCT.sources]]
+id = "pct_prior_art_search"
+label = "International Search — Prior Art"
+url = "https://www.wipo.int/en/web/pct-system/texts/ispe/15_43_51"
+chapter = "15"
+task = "prior_art_search"
+enabled = true
+
+[[PCT.sources]]
+id = "pct_written_opinion"
+label = "Written Opinion — Patentability"
+url = "https://www.wipo.int/en/web/pct-system/texts/ispe/3_16_22"
+chapter = "3"
+task = "written_opinion"
+enabled = true
+
+[[PCT.sources]]
+id = "pct_unity"
+label = "Unity of Invention"
+url = "https://www.wipo.int/en/web/pct-system/texts/ispe/1_01_04"
+chapter = "1"
+task = "unity"
+enabled = true
+
+# =============================================================================
+# JAPAN PATENT OFFICE (JPO)
+# =============================================================================
+# Source: 特許・実用新案審査基準 (Examination Guidelines for Patent and Utility Model)
+# Original language: Japanese. We translate locally via LLM — no waiting for official English.
+# Japanese source is always the most current.
+
+[JP]
+enabled = true
+office = "JPO"
+full_name = "Japan Patent Office"
+base_url = "https://www.jpo.go.jp/system/laws/rule/guideline/patent/tukujitu_kijun/document/index"
+edition = "2026"
+language = "ja"
+translate_to = "en"
+notes = "Japanese source is authoritative and updated first. English translations lag by months. Download Japanese, translate locally."
+
+[[JP.sources]]
+id = "jpo_full_guidelines"
+label = "審査基準 全文 (Full Examination Guidelines)"
+url = "https://www.jpo.go.jp/system/laws/rule/guideline/patent/tukujitu_kijun/document/index/allparts.pdf"
+task = "all"
+enabled = true
+
+[[JP.sources]]
+id = "jpo_novelty_inventive_step"
+label = "第III部 第2章: 新規性・進歩性 (Novelty & Inventive Step)"
+url = "https://www.jpo.go.jp/system/laws/rule/guideline/patent/tukujitu_kijun/document/index/03_0200.pdf"
+chapter = "III-2"
+task = "novelty_inventive_step"
+enabled = true
+
+[[JP.sources]]
+id = "jpo_description_requirements"
+label = "第I部: 明細書の記載要件 (Description Requirements)"
+url = "https://www.jpo.go.jp/system/laws/rule/guideline/patent/tukujitu_kijun/document/index/01_0000.pdf"
+chapter = "I"
+task = "description_requirements"
+enabled = true
+
+[[JP.sources]]
+id = "jpo_claim_interpretation"
+label = "第III部 第1章: 発明の認定 (Claim Interpretation)"
+url = "https://www.jpo.go.jp/system/laws/rule/guideline/patent/tukujitu_kijun/document/index/03_0100.pdf"
+chapter = "III-1"
+task = "claim_interpretation"
+enabled = true
+
+[[JP.sources]]
+id = "jpo_industrial_applicability"
+label = "第III部 第3章: 産業上利用可能性 (Industrial Applicability)"
+url = "https://www.jpo.go.jp/system/laws/rule/guideline/patent/tukujitu_kijun/document/index/03_0300.pdf"
+chapter = "III-3"
+task = "industrial_applicability"
+enabled = true
+
+# =============================================================================
+# CHINA NATIONAL INTELLECTUAL PROPERTY ADMINISTRATION (CNIPA)
+# =============================================================================
+# Source: 专利审查指南 (Patent Examination Guidelines, revised January 2024)
+# Original language: Chinese. We download Chinese source and translate via LLM.
+# NOTE: No single free PDF download link — may need manual download from CNIPA website.
+
+[CN]
+enabled = true
+office = "CNIPA"
+full_name = "China National Intellectual Property Administration"
+edition = "Revised January 2024"
+language = "zh"
+translate_to = "en"
+notes = "Chinese source is authoritative. Download from CNIPA website (may require manual acquisition). Translate locally via LLM."
+
+[[CN.sources]]
+id = "cnipa_novelty"
+label = "第二部分 第三章: 新颖性 (Novelty)"
+url = ""
+chapter = "II-3"
+task = "novelty"
+enabled = false
+notes = "URL TBD — CNIPA does not provide stable public PDF download links. Place manually in sources/ dir."
+
+[[CN.sources]]
+id = "cnipa_inventive_step"
+label = "第二部分 第四章: 创造性 (Inventive Step)"
+url = ""
+chapter = "II-4"
+task = "inventive_step"
+enabled = false
+notes = "URL TBD — place manually in sources/ dir."
+
+[[CN.sources]]
+id = "cnipa_sufficiency"
+label = "第二部分 第二章: 充分公开 (Sufficiency)"
+url = ""
+chapter = "II-2"
+task = "sufficiency"
+enabled = false
+notes = "URL TBD — place manually in sources/ dir."
+
+[[CN.sources]]
+id = "cnipa_subject_matter"
+label = "第二部分 第一章: 不授予专利权的客体 (Non-patentable Subject Matter)"
+url = ""
+chapter = "II-1"
+task = "subject_matter"
+enabled = false
+notes = "URL TBD — place manually in sources/ dir."
+
+# =============================================================================
+# KOREAN INTELLECTUAL PROPERTY OFFICE (KIPO)
+# =============================================================================
+# Source: 특허·실용신안 심사기준 (Patent Examination Guidelines)
+# Original language: Korean. Translate locally via LLM.
+
+[KR]
+enabled = true
+office = "KIPO"
+full_name = "Korean Intellectual Property Office"
+edition = "2024"
+language = "ko"
+translate_to = "en"
+notes = "Korean source is authoritative. Download from KIPO website. No stable public English PDF. Translate via LLM."
+
+[[KR.sources]]
+id = "kipo_examination_guidelines"
+label = "특허·실용신안 심사기준 (Full Patent Examination Guidelines)"
+url = ""
+task = "all"
+enabled = false
+notes = "URL TBD — available on kipo.go.kr, requires manual download. Place in sources/ dir."
+
+# =============================================================================
+# INTELLECTUAL PROPERTY INDIA (IPO India)
+# =============================================================================
+# Source: Manual of Patent Office Practice and Procedure (English)
+# Original language: English.
+
+[IN]
+enabled = true
+office = "IPO India"
+full_name = "Intellectual Property Office India"
+edition = "2019 (latest available)"
+language = "en"
+notes = "English original. Dated (2019) but still the current official manual."
+
+[[IN.sources]]
+id = "ipo_india_manual"
+label = "Manual of Patent Office Practice and Procedure"
+url = "https://ipindia.gov.in/writereaddata/Portal/IPOGuideManual/1_32_1_manual-of-patent-office-practice-and-procedure.pdf"
+task = "all"
+enabled = true
+
+# =============================================================================
+# GERMAN PATENT AND TRADE MARK OFFICE (DPMA)
+# =============================================================================
+# Source: Richtlinien für die Prüfung von Patentanmeldungen (German)
+# Original language: German. Translate locally via LLM.
+
+[DE]
+enabled = true
+office = "DPMA"
+full_name = "Deutsches Patent- und Markenamt"
+edition = "2024"
+language = "de"
+translate_to = "en"
+notes = "German source is authoritative. Overlaps significantly with EPO for substantive law, but has national procedural differences."
+
+[[DE.sources]]
+id = "dpma_pruefungsrichtlinien"
+label = "Richtlinien für die Prüfung von Patentanmeldungen"
+url = "https://www.dpma.de/docs/service/formulare/allgemein/p2796.pdf"
+task = "all"
+enabled = true
