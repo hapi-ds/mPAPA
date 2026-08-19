@@ -128,11 +128,14 @@ class RuleExtractor:
     def _extract_text(self, source_path: Path) -> str:
         """Extract text content from PDF or HTML file.
 
+        For HTML: strips navigation, scripts, styles, and extracts main article content.
+        For PDF: extracts text from all pages.
+
         Args:
             source_path: Path to the source file.
 
         Returns:
-            Extracted text content.
+            Extracted text content (clean, structured).
 
         Raises:
             ValueError: If the file format is unsupported.
@@ -147,11 +150,72 @@ class RuleExtractor:
             doc.close()
             return "\n".join(text_parts)
         elif suffix in (".html", ".htm"):
-            return source_path.read_text(encoding="utf-8")
+            return self._extract_html_content(source_path)
         else:
             raise ValueError(
                 f"Unsupported file format: {suffix}. Use .pdf or .html/.htm"
             )
+
+    def _extract_html_content(self, source_path: Path) -> str:
+        """Extract meaningful text from HTML, stripping navigation and boilerplate.
+
+        Uses a simple tag-stripping approach that preserves structure:
+        - Removes <script>, <style>, <nav>, <header>, <footer> blocks
+        - Converts headings to markdown-style markers for structure
+        - Preserves list items and paragraphs
+        - Strips all remaining HTML tags
+
+        Args:
+            source_path: Path to the HTML file.
+
+        Returns:
+            Clean text with structure preserved.
+        """
+        import re
+
+        html = source_path.read_text(encoding="utf-8")
+
+        # Remove blocks we never want
+        html = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<nav[^>]*>.*?</nav>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<header[^>]*>.*?</header>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<footer[^>]*>.*?</footer>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<!--.*?-->", "", html, flags=re.DOTALL)
+
+        # Try to extract just the main/article content if present
+        main_match = re.search(
+            r"<(?:main|article)[^>]*>(.*?)</(?:main|article)>",
+            html, flags=re.DOTALL | re.IGNORECASE,
+        )
+        if main_match:
+            html = main_match.group(1)
+
+        # Convert structural elements to text markers
+        html = re.sub(r"<h1[^>]*>(.*?)</h1>", r"\n# \1\n", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<h2[^>]*>(.*?)</h2>", r"\n## \1\n", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<h3[^>]*>(.*?)</h3>", r"\n### \1\n", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<h4[^>]*>(.*?)</h4>", r"\n#### \1\n", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<h[56][^>]*>(.*?)</h[56]>", r"\n##### \1\n", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<li[^>]*>", "\n- ", html, flags=re.IGNORECASE)
+        html = re.sub(r"<br\s*/?>", "\n", html, flags=re.IGNORECASE)
+        html = re.sub(r"<p[^>]*>", "\n", html, flags=re.IGNORECASE)
+        html = re.sub(r"</p>", "\n", html, flags=re.IGNORECASE)
+
+        # Strip all remaining tags
+        text = re.sub(r"<[^>]+>", "", html)
+
+        # Decode HTML entities
+        import html as html_module
+        text = html_module.unescape(text)
+
+        # Clean up whitespace (collapse multiple blank lines, strip trailing spaces)
+        text = re.sub(r"\n{3,}", "\n\n", text)
+        text = re.sub(r" +", " ", text)
+        lines = [line.strip() for line in text.split("\n")]
+        text = "\n".join(lines)
+
+        return text.strip()
 
     def _chunk_text(self, text: str) -> list[str]:
         """Split text into overlapping chunks.
