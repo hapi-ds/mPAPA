@@ -1,0 +1,1151 @@
+{
+  "card_id": "uspto_written_description_compiled",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": "uspto_written_description.pdf",
+  "task": "written_description",
+  "task_label": "Written Description",
+  "rules": [
+    {
+      "rule_id": "new_matter_cancellation_required",
+      "title": "New matter in amendments must be canceled",
+      "requirement": "amendments to the written description or claims involving new matter are ordinarily entered, but the new matter is required to be canceled from the written description",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 608.04"
+    },
+    {
+      "rule_id": "specification_must_contain_written_description",
+      "title": "Specification shall contain written description",
+      "requirement": "The specification shall contain a written description of the invention, and of the manner and process of making and using it, in such full, clear, concise, and exact terms as to enable any person skilled in the art to which it pertains, or with which it is most nearly connected, to make and use the same, and shall set forth the best mode contemplated by the inventor or joint inventor of carrying out the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(a)"
+    },
+    {
+      "rule_id": "pre_aia_specification_must_contain_written_description",
+      "title": "Pre-AIA specification shall contain written description",
+      "requirement": "The specification shall contain a written description of the invention, and of the manner and process of making and using it, in such full, clear, concise, and exact terms as to enable any person skilled in the art to which it pertains, or with which it is most nearly connected, to make and use the same, and shall set forth the best mode contemplated by the inventor of carrying out his invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "pre-AIA 35 U.S.C. 112, first paragraph"
+    },
+    {
+      "rule_id": "written_description_possession_test",
+      "title": "Specification must demonstrate inventor possession",
+      "requirement": "To satisfy the written description requirement, the specification must describe the claimed invention in sufficient detail that one skilled in the art can reasonably conclude that the inventor had possession of the claimed invention at the time of filing.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2161.01 I"
+    },
+    {
+      "rule_id": "functional_claims_written_description",
+      "title": "Functional claims require written description support",
+      "requirement": "Even if a claim is not construed as a means-plus-function limitation under 35 U.S.C. 112(f), computer-implemented functional claim language must still be evaluated for sufficient disclosure under the written description and enablement requirements of 35 U.S.C. 112(a).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2161.01"
+    },
+    {
+      "rule_id": "written_description_possession_requirement",
+      "title": "Specification must show inventor possession of claimed invention",
+      "requirement": "The specification must describe the claimed invention in a manner understandable to a person of ordinary skill in the art in a way that shows that the inventor actually invented the claimed invention at the time of filing.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(a); Ariad, 598 F.3d at 1351"
+    },
+    {
+      "rule_id": "written_description_applies_to_original_claims",
+      "title": "Written description requirement applies to all claims including original",
+      "requirement": "The written description requirement of 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, applies to all claims including original claims that are part of the disclosure as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(a); Ariad, 598 F.3d at 1349"
+    },
+    {
+      "rule_id": "written_description_genus_species_support",
+      "title": "Genus support depends on state of art and breadth",
+      "requirement": "Whether the genus is supported vel non depends upon the state of the art and the nature and breadth of the genus; so long as disclosure of the species is sufficient to convey to one skilled in the art that the inventor possessed the subject matter of the genus, the genus will be supported by an adequate written description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Hynix Semiconductor Inc. v. Rambus Inc., 645 F.3d 1336, 1352"
+    },
+    {
+      "rule_id": "written_description_functional_genus_requirement",
+      "title": "Functional genus claims must describe sufficient species",
+      "requirement": "The specification must demonstrate that the applicant [inventor] has made a generic invention that achieves the claimed result and do so by showing that the applicant [inventor] has invented species sufficient to support a claim to the functionally-defined genus.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Ariad, 598 F.3d at 1349, 94 USPQ2d at 1171"
+    },
+    {
+      "rule_id": "written_description_generic_language_insufficiency",
+      "title": "Generic statement of boundaries is insufficient for genus",
+      "requirement": "An adequate written description of a claimed genus requires more than a generic statement of an invention’s boundaries.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Ariad, 598 F.3d at 1349-50; Eli Lilly, 119 F.3d at 1568"
+    },
+    {
+      "rule_id": "written_description_single_embodiment_limitation",
+      "title": "Single embodiment does not support expansive generic claims",
+      "requirement": "A specification cannot always support expansive claim language and satisfy the requirements of 35 U.S.C. 112 merely by clearly describing one embodiment of the thing claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Claims to a generic method of making a seamless discrete wavelet transformation (DWT) were held invalid because the specification taught only one particular method."
+      ],
+      "reference": "LizardTech v. Earth Resource Mapping, Inc., 424 F.3d 1336, 1346"
+    },
+    {
+      "rule_id": "written_description_functional_result_description",
+      "title": "Functional claims must describe how function is performed",
+      "requirement": "Original claims may lack written description when the claims define the invention in functional language specifying a desired result but the specification does not sufficiently describe how the function is performed or the result is achieved.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "For software, this can occur when the algorithm or steps/procedure for performing the computer function are not explained at all or are not explained in sufficient detail."
+      ],
+      "reference": "MPEP § 2161.01"
+    },
+    {
+      "rule_id": "software_algorithm_sufficient_detail",
+      "title": "Software algorithm must be described in sufficient detail",
+      "requirement": "The algorithm or steps/procedure taken to perform the function must be described with sufficient detail so that one of ordinary skill in the art would understand how the inventor intended the function to be performed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "simply restating the function recited in the claim is not necessarily sufficient"
+      ],
+      "reference": "MPEP § 2161.01"
+    },
+    {
+      "rule_id": "functional_claim_possession_test",
+      "title": "Functional claims must show inventor possession",
+      "requirement": "When examining computer-implemented functional claims, examiners should determine whether the specification discloses the computer and the algorithm (e.g., the necessary steps and/or flowcharts) that perform the claimed function in sufficient detail such that one of ordinary skill in the art can reasonably conclude that the inventor possessed the claimed subject matter at the time of filing.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2161.01"
+    },
+    {
+      "rule_id": "written_description_rejection_mandatory",
+      "title": "Mandatory rejection for lack of written description",
+      "requirement": "If the specification does not provide a disclosure of the computer and algorithm in sufficient detail to demonstrate to one of ordinary skill in the art that the inventor possessed the invention a rejection under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, for lack of written description must be made.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2161.01"
+    },
+    {
+      "rule_id": "sufficient_detail_for_possession",
+      "title": "Spec must describe invention in sufficient detail",
+      "requirement": "A patent specification must describe the claimed invention in sufficient detail that one skilled in the art can reasonably conclude that the inventor had possession of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section I. GENERAL PRINCIPLES"
+    },
+    {
+      "rule_id": "describe_all_limitations",
+      "title": "Describe claimed invention with all limitations",
+      "requirement": "An applicant shows that the inventor was in possession of the claimed invention by describing the claimed invention with all of its limitations using such descriptive means as words, structures, figures, diagrams, and formulas that fully set forth the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section I. GENERAL PRINCIPLES"
+    },
+    {
+      "rule_id": "written_description_obviousness_insufficiency",
+      "title": "Obviousness does not satisfy written description",
+      "requirement": "A description that merely renders a claimed invention obvious may not sufficiently describe the invention for the purposes of the written description requirement of 35 U.S.C. 112.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Eli Lilly, 119 F.3d at 1567"
+      ],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "new_matter_prohibition",
+      "title": "Prohibition on introducing new matter",
+      "requirement": "The proscription against the introduction of new matter in a patent application (35 U.S.C. 132 and 251) serves to prevent an applicant from adding information that goes beyond the subject matter originally filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Rasmussen, 650 F.2d 1212"
+      ],
+      "reference": "35 U.S.C. 132, 251"
+    },
+    {
+      "rule_id": "claim_support_requirement",
+      "title": "Claims must be supported by as-filed disclosure",
+      "requirement": "The written description requirement prevents an applicant from claiming subject matter that was not adequately described in the specification as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "new_claims_violation",
+      "title": "New claims lacking support violate written description",
+      "requirement": "New or amended claims which introduce elements or limitations that are not supported by the as-filed disclosure violate the written description requirement.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Lukach, 442 F.2d 967",
+        "In re Smith, 458 F.2d 1389"
+      ],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "claim_support_disclosure_types",
+      "title": "Support via express, implicit, or inherent disclosure",
+      "requirement": "Newly added claims or claim limitations must be supported in the specification through express, implicit, or inherent disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "obvious_error_correction",
+      "title": "Correction of obvious errors is not new matter",
+      "requirement": "An amendment to correct an obvious error does not constitute new matter where the ordinary artisan would not only recognize the existence of the error in the specification, but also recognize the appropriate correction.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "In re Oda, 443 F.2d 1200"
+      ],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "sequence_error_correction",
+      "title": "Permissible correction of sequencing errors",
+      "requirement": "An amendment to correct the nucleic acid sequence may be permissible where the amendment conforms the sequence information to the compound described in the specification and covered by the claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Cubist Pharm., Inc. v. Hospira, Inc., 805 F.3d 1112"
+      ],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "omission_of_essential_feature",
+      "title": "Claim omitting essential feature fails written description",
+      "requirement": "A claim that omits an element that applicant describes as an essential or critical feature of the invention originally disclosed does not comply with the written description requirement.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Gentry Gallery, Inc. v. Berkline Corp.",
+        "In re Sus"
+      ],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "possession_test_standard",
+      "title": "Specification must convey possession of claimed invention",
+      "requirement": "The specification conveys with reasonable clarity to those skilled in the art that, as of the filing date sought, the inventor was in possession of the invention as now claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Vas-Cath, Inc."
+      ],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "examiner_burden_of_proof",
+      "title": "Examiner must identify unsupported claim limitations",
+      "requirement": "To make a prima facie case, it is necessary to identify the claim limitations that are not adequately supported, and explain why a person skilled in the art would not recognize the written description of the invention as providing adequate support for the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "applicant_show_support_new_claims",
+      "title": "Applicant should show support for new or amended claims",
+      "requirement": "With respect to newly added or amended claims, applicant should show support in the original disclosure for the new or amended claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "applicant_point_out_support_amendments",
+      "title": "Applicant should point out support for amendments",
+      "requirement": "Applicant should ... specifically point out the support for any amendments made to the disclosure.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP §§ 714.02 and 2163.06"
+    },
+    {
+      "rule_id": "claim_broadest_reasonable_interpretation",
+      "title": "Claims must be given broadest reasonable interpretation",
+      "requirement": "Each claim must be separately analyzed and given its broadest reasonable interpretation in light of and consistent with the written description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "claim_whole_support_required",
+      "title": "Claim as a whole must be supported by written description",
+      "requirement": "The claim as a whole, including all limitations found in the preamble, the transitional phrase, and the body of the claim, must be sufficiently supported to satisfy the written description requirement.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "possession_via_limitations",
+      "title": "Possession shown by describing all limitations",
+      "requirement": "An applicant shows that the inventor was in possession of the claimed invention by describing the claimed invention with all of its limitations.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "no_import_limitations_from_spec",
+      "title": "Limitations may not be imported from specification",
+      "requirement": "Limitations may not, however, be imported into the claims from the specification.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "well_known_terms_no_rejection",
+      "title": "No rejection for lack of detail on well-established terms",
+      "requirement": "The absence of definitions or details for well-established terms or procedures should not be the basis of a rejection under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, for lack of adequate written description.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "well_known_info_no_detail_needed",
+      "title": "Well-known information need not be described in detail",
+      "requirement": "Information which is well known in the art need not be described in detail in the specification.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "sufficient_info_possession",
+      "title": "Sufficient information required to show possession",
+      "requirement": "Sufficient information must be provided to show that the inventor had possession of the invention as claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "well_known_no_detail",
+      "title": "Well-known information need not be described in detail",
+      "requirement": "Information which is well known in the art need not be described in detail in the specification.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Hybritech, Inc. v. Monoclonal Antibodies, Inc."
+      ],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "detail_new_or_non_conventional",
+      "title": "Detail required only for new or non-conventional aspects",
+      "requirement": "The description need only describe in detail that which is new or not conventional.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Hybritech v. Monoclonal Antibodies"
+      ],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "written_description_function_structure_correlation",
+      "title": "Written description via function and minimal structure",
+      "requirement": "The written description requirement may be satisfied through disclosure of function and minimal structure when there is a well-established correlation between structure and function.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "If the art has established a strong correlation between structure and function, one skilled in the art would be able to predict with a reasonable degree of confidence the structure of the claimed invention from a recitation of its function."
+      ],
+      "reference": "Enzo Biochem, 323 F.3d at 964; 66 Fed. Reg. at 1106, n. 49"
+    },
+    {
+      "rule_id": "written_description_no_per_se_structure_rule",
+      "title": "No per se rule requiring known structure recitation",
+      "requirement": "There is no per se rule that an adequate written description of an invention that involves a biological macromolecule must contain a recitation of known structure.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "The Board erred in holding that the specifications do not meet the written description requirement because they do not reiterate the structure or formula or chemical name for the nucleotide sequences of the claimed chimeric genes where the genes were novel combinations of known DNA segments."
+      ],
+      "reference": "Falkner v. Inglis, 448 F.3d 1357, 1366; Capon v. Eshhar, 418 F.3d at 1358"
+    },
+    {
+      "rule_id": "written_description_adequate_disclosure_required",
+      "title": "Claimed invention must be adequately described",
+      "requirement": "The claimed invention itself must be adequately described in the written disclosure and/or the drawings.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Disclosure of an antigen fully characterized by its structure, formula, chemical name, physical properties, or deposit in a public depository does not, without more, provide an adequate written description of an antibody claimed by its binding affinity to that antigen."
+      ],
+      "reference": "Amgen Inc. v. Sanofi, 872 F.3d 1367, 1378; Centocor Ortho Biotech, Inc. v. Abbott Labs., 636 F.3d 1341, 1351-52"
+    },
+    {
+      "rule_id": "written_description_function_alone_insufficient",
+      "title": "Description by function alone typically insufficient",
+      "requirement": "Describing a composition by its function alone typically will not suffice to sufficiently describe the composition.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Description of a gene’s function will not enable claims to the gene because it is only an indication of what the gene does, rather than what it is."
+      ],
+      "reference": "Eli Lilly, 119 F.3 at 1568; Fiers, 984 F.2d at 1169-71"
+    },
+    {
+      "rule_id": "written_description_chemical_precise_definition",
+      "title": "Chemical invention requires precise definition",
+      "requirement": "An adequate written description of a chemical invention also requires a precise definition, such as by structure, formula, chemical name, or physical properties, and not merely a wish or plan for obtaining the chemical invention claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Without disclosure of which peptides, polynucleotides, and small organic molecules selectively inhibit PGHS-2, the claimed methods cannot be said to have been described."
+      ],
+      "reference": "Univ. of Rochester v. G.D. Searle & Co., 358 F.3d 916, 927"
+    },
+    {
+      "rule_id": "means_plus_function_adequate_link",
+      "title": "Means-plus-function adequate description criteria",
+      "requirement": "A means- (or step-) plus- function claim limitation is adequately described under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, if the written description adequately links or associates the function with the corresponding structure, materials, or acts.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(f); B. Braun Medical, Inc. v. Abbott Labs., 124 F.3d 1419, 1424"
+    },
+    {
+      "rule_id": "means_plus_function_adequate_description",
+      "title": "Adequate description for means-plus-function claims",
+      "requirement": "A means- (or step-) plus- function claim limitation is adequately described under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, if: (1) The written description adequately links or associates adequately described particular structure, material, or acts to perform the function recited in a means- (or step-) plus- function claim limitation; or (2) it is clear based on the facts of the application that one skilled in the art would have known what structure, material, or acts disclosed in the specification perform the function recited in a means- (or step-) plus- function limitation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "indefinite_means_plus_function_lacks_written_description",
+      "title": "Indefinite means-plus-function implies lack of written description",
+      "requirement": "When a claim is rejected as indefinite under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph because there is no corresponding structure, materials, or acts, or an inadequate disclosure of corresponding structure, materials, or acts, for a means- (or step-) plus-function claim limitation, then the claim must also be rejected under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, for lack of an adequate written description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "conventional_elements_need_not_be_detailed",
+      "title": "Conventional elements need not be disclosed in detail",
+      "requirement": "What is conventional or well known to one of ordinary skill in the art need not be disclosed in detail.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "possession_test_for_written_description",
+      "title": "Possession test for adequate written description",
+      "requirement": "If a skilled artisan would have understood the inventor to be in possession of the claimed invention at the time of filing, even if every nuance of the claims is not explicitly described in the specification, then the adequate description requirement is met.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "single_embodiment_reduction_to_practice",
+      "title": "Single embodiment: actual reduction to practice",
+      "requirement": "For each claim drawn to a single embodiment or species, determine whether the application describes an actual reduction to practice of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "single_embodiment_reduction_to_drawings",
+      "title": "Single embodiment: reduction to drawings or formulas",
+      "requirement": "If the application does not describe an actual reduction to practice, determine whether the invention is complete as evidenced by a reduction to drawings or structural chemical formulas that are sufficiently detailed to show that inventor was in possession of the claimed invention as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "single_embodiment_distinguishing_characteristics",
+      "title": "Single embodiment: distinguishing identifying characteristics",
+      "requirement": "If the application does not describe an actual reduction to practice or reduction to drawings or structural chemical formula, determine whether the invention has been set forth in terms of distinguishing identifying characteristics as evidenced by other descriptions of the invention that are sufficiently detailed to show that inventor was in possession of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "complete_structure_satisfies_description",
+      "title": "Complete structure satisfies full, clear, concise, exact terms",
+      "requirement": "The complete structure of a species or embodiment typically satisfies the requirement that the description be set forth 'in such full, clear, concise, and exact terms' to show possession of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "no_rejection_if_complete_structure",
+      "title": "No written description rejection if complete structure disclosed",
+      "requirement": "If a complete structure is disclosed, the written description requirement is satisfied for that species or embodiment, and a rejection under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, for lack of written description must not be made.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(a); pre-AIA 35 U.S.C. 112, first paragraph"
+    },
+    {
+      "rule_id": "sufficient_identifying_characteristics",
+      "title": "Sufficient identifying characteristics for possession",
+      "requirement": "Disclosure of any combination of such identifying characteristics that distinguish the claimed invention from other materials and would lead one of skill in the art to the conclusion that the inventor was in possession of the claimed species is sufficient.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "level of skill and knowledge in the art",
+        "partial structure",
+        "physical and/or chemical properties",
+        "functional characteristics alone or coupled with a known or disclosed correlation between structure and function",
+        "method of making the claimed invention"
+      ],
+      "reference": "35 U.S.C. 112"
+    },
+    {
+      "rule_id": "no_rejection_mature_technology",
+      "title": "No written description question in mature technologies",
+      "requirement": "In most technologies which are mature, and wherein the knowledge and level of skill in the art is high, a written description question should not be raised for claims present in the application when originally filed, even if the specification discloses only a method of making the invention and the function of the invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112"
+    },
+    {
+      "rule_id": "insufficient_disclosure_unpredictable_art",
+      "title": "Insufficient disclosure in unpredictable technologies",
+      "requirement": "For inventions in emerging and unpredictable technologies, or for inventions characterized by factors not reasonably predictable which are known to one of ordinary skill in the art, disclosure of only a method of making the invention and the function may not be sufficient to support a product claim other than a product-by-process claim.",
+      "severity": "prohibited",
+      "exceptions": [
+        "product-by-process claim"
+      ],
+      "examples": [
+        "Fiers v. Revel",
+        "Amgen"
+      ],
+      "reference": "35 U.S.C. 112"
+    },
+    {
+      "rule_id": "product_by_process_satisfaction",
+      "title": "Written description for product-by-process claims",
+      "requirement": "Where the process has actually been used to produce the product, the written description requirement for a product-by-process claim is clearly satisfied; however, the requirement may not be satisfied where it is not clear that the acts set forth in the specification can be performed, or that the product is produced by that process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112"
+    },
+    {
+      "rule_id": "insufficient_partial_structure",
+      "title": "Insufficient partial structure without characterization",
+      "requirement": "Disclosure of a partial structure without additional characterization of the product may not be sufficient to evidence possession of the claimed invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Amgen"
+      ],
+      "reference": "35 U.S.C. 112"
+    },
+    {
+      "rule_id": "species_claim_rejection_insufficient_test",
+      "title": "Rejection of species claims failing written description test",
+      "requirement": "Any claim to a species that does not meet the test described under at least one of (a), (b), or (c) must be rejected as lacking adequate written description under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "genus_claim_representative_species",
+      "title": "Genus claims require representative number of species",
+      "requirement": "The written description requirement for a claimed genus may be satisfied through sufficient description of a representative number of species by actual reduction to practice, reduction to drawings, or by disclosure of relevant, identifying characteristics... sufficient to show the inventor was in possession of the claimed genus.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "actual reduction to practice",
+        "reduction to drawings",
+        "disclosure of relevant, identifying characteristics"
+      ],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "genus_variation_sufficient_variety",
+      "title": "Sufficient variety required for substantial genus variation",
+      "requirement": "Thus, when there is substantial variation within the genus, one must describe a sufficient variety of species to reflect the variation within the genus.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "single_species_genus_support_limitation",
+      "title": "Single species support for genus limited by predictability",
+      "requirement": "A patentee will not be deemed to have invented species sufficient to constitute the genus by virtue of having disclosed a single species when … the evidence indicates ordinary artisans could not predict the operability in the invention of any species other than the one disclosed.",
+      "severity": "prohibited",
+      "exceptions": [
+        "situations where one species adequately supports a genus"
+      ],
+      "examples": [
+        "Claims directed to PTFE dental floss with a friction-enhancing coating were not supported by a disclosure of a microcrystalline wax coating where there was no evidence... showing applicant conveyed that any other coating was suitable"
+      ],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "genus_disclosure_unpredictable_art",
+      "title": "Genus disclosure in unpredictable arts",
+      "requirement": "For inventions in an unpredictable art, adequate written description of a genus which embraces widely variant species cannot be achieved by disclosing only one species within the genus.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Eli Lilly, 119 F.3d at 1568"
+      ],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "genus_structural_diversity_requirement",
+      "title": "Genus disclosure must reflect structural diversity",
+      "requirement": "The disclosure must adequately reflect the structural diversity of the claimed genus, either through the disclosure of sufficient species that are 'representative of the full variety or scope of the genus,' or by the establishment of 'a reasonable structure-function correlation.'",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "AbbVie, 759 F.3d at 1300-01"
+      ],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "genus_claim_rejection_insufficient_species",
+      "title": "Rejection for lack of representative species",
+      "requirement": "If a representative number of adequately described species are not disclosed for a genus, the claim to that genus must be rejected as lacking adequate written description under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2163"
+    },
+    {
+      "rule_id": "applicant_show_support_amendments",
+      "title": "Applicant should show support for amendments",
+      "requirement": "When filing an amendment an applicant should show support in the original disclosure for new or amended claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2163.06"
+    },
+    {
+      "rule_id": "applicant_show_support_for_amendments",
+      "title": "Applicant should show support for amendments",
+      "requirement": "When filing an amendment an applicant should show support in the original disclosure for new or amended claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "applicant_point_out_support",
+      "title": "Applicant should point out support for amendments",
+      "requirement": "Applicant should ... specifically point out the support for any amendments made to the disclosure.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP §§ 714.02 and 2163.06"
+    },
+    {
+      "rule_id": "claim_limitation_supported_in_original",
+      "title": "Claim limitations must be supported in original disclosure",
+      "requirement": "To comply with the written description requirement of 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, or to be entitled to an earlier priority date or filing date under 35 U.S.C. 119, 120, 365, or 386, each claim limitation must be expressly, implicitly, or inherently supported in the originally filed disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "implicit_limitation_understood_by_posa",
+      "title": "Implicit limitations must be understood by POSA",
+      "requirement": "When an explicit limitation in a claim “is not present in the written description whose benefit is sought it must be shown that a person of ordinary skill would have understood, at the time the patent application was filed, that the description requires that limitation.”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Hyatt v. Boone, 146 F.3d 1348"
+    },
+    {
+      "rule_id": "claim_must_include_essential_elements",
+      "title": "Claims must include all essential elements",
+      "requirement": "Furthermore, each claim must include all elements which applicant has described as essential.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "reject_claim_lacking_written_description",
+      "title": "Reject claims lacking written description support",
+      "requirement": "If the originally filed disclosure does not provide support for each claim limitation, or if an element which applicant describes as essential or critical is not claimed, a new or amended claim must be rejected under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, as lacking adequate written description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "deny_priority_lacking_written_description",
+      "title": "Deny priority if written description lacking",
+      "requirement": "In the case of a priority or benefit claim under 35 U.S.C. 119, 120, 365, or 386, the priority or benefit claim must be denied [if the originally filed disclosure does not provide support for each claim limitation].",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "office_action_communicate_findings",
+      "title": "Office action should clearly communicate findings",
+      "requirement": "The Office action should clearly communicate the findings, conclusions, and reasons which support them.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "office_action_offer_suggestions",
+      "title": "Office action should offer helpful suggestions",
+      "requirement": "When possible, the Office action should offer helpful suggestions on how to overcome rejections.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "examiner_must_have_reasonable_basis",
+      "title": "Examiner must have reasonable basis to challenge written description",
+      "requirement": "The examiner, therefore, must have a reasonable basis to challenge the adequacy of the written description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "examiner_must_present_evidence",
+      "title": "Examiner must present evidence of lack of possession",
+      "requirement": "The examiner has the initial burden of presenting by a preponderance of evidence why a person skilled in the art would not recognize in an applicant’s disclosure a description of the invention defined by the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "examiner_must_set_forth_findings",
+      "title": "Examiner must set forth express findings of fact for rejection",
+      "requirement": "In rejecting a claim, the examiner must set forth express findings of fact regarding the above analysis which support the lack of written description conclusion.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "findings_must_identify_limitation",
+      "title": "Findings must identify the claim limitation at issue",
+      "requirement": "These findings should: (A) Identify the claim limitation at issue;",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "findings_must_establish_prima_facie",
+      "title": "Findings must establish prima facie case of lack of possession",
+      "requirement": "These findings should: (B) Establish a prima facie case by providing reasons why a person skilled in the art at the time the application was filed would not have recognized that the inventor was in possession of the invention as claimed in view of the disclosure of the application as filed.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "general_allegation_insufficient",
+      "title": "General allegation of unpredictability is insufficient",
+      "requirement": "A general allegation of “unpredictability in the art” is not a sufficient reason to support a rejection for lack of adequate written description.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "do_not_repeat_rejection_if_satisfied",
+      "title": "Do not repeat rejection if record demonstrates satisfaction",
+      "requirement": "If the whole record now demonstrates that the written description requirement is satisfied, do not repeat the rejection in the next Office action.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "affidavits_must_be_analyzed",
+      "title": "Relevant affidavits must be thoroughly analyzed",
+      "requirement": "When a rejection is maintained, any affidavits relevant to the 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, written description requirement, must be thoroughly analyzed and discussed in the next Office action.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163"
+    },
+    {
+      "rule_id": "claim_should_not_be_rejected_for_new_matter",
+      "title": "Claim should not be rejected on ground of new matter",
+      "requirement": "The claim should not be rejected or objected to on the ground of new matter.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.01"
+    },
+    {
+      "rule_id": "written_description_standard",
+      "title": "Description must clearly allow recognition of invention",
+      "requirement": "An objective standard for determining compliance with the written description requirement is, “does the description clearly allow persons of ordinary skill in the art to recognize that he or she invented what is claimed.”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "applicant_must_convey_possession",
+      "title": "Applicant must convey possession of invention",
+      "requirement": "To satisfy the written description requirement, an applicant must convey with reasonable clarity to those skilled in the art that, as of the filing date sought, the inventor was in possession of the invention, and that the invention, in that context, is whatever is now claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "possession_test_requirement",
+      "title": "Disclosure must convey possession of claimed subject matter",
+      "requirement": "The disclosure of the application relied upon reasonably conveys to the artisan that the inventor had possession at that time of the later claimed subject matter.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ralston Purina Co. v. Far-Mar-Co., Inc.",
+        "In re Kaslow"
+      ],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "clear_conveyance_of_possession",
+      "title": "Specification must clearly convey inventor possession",
+      "requirement": "The specification conveys with reasonable clarity to those skilled in the art that, as of the filing date sought, inventor was in possession of the invention as now claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Vas-Cath, Inc. v. Mahurkar"
+      ],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "description_of_limitations",
+      "title": "Inventor possession shown by describing all limitations",
+      "requirement": "An applicant shows that the inventor was in possession of the claimed invention by describing the claimed invention with all of its limitations using such descriptive means as words, structures, figures, diagrams, and formulas that fully set forth the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Lockwood v. Am. Airlines, Inc."
+      ],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "methods_to_show_possession",
+      "title": "Possession shown by reduction to practice or distinguishing characteristics",
+      "requirement": "Possession may be shown in a variety of ways including description of an actual reduction to practice, or by showing that the invention was 'ready for patenting' such as by the disclosure of drawings or structural chemical formulas that show that the invention was complete, or by describing distinguishing identifying characteristics sufficient to show that the inventor was in possession of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Pfaff v. Wells Elecs., Inc.",
+        "Regents of the Univ. of Cal. v. Eli Lilly",
+        "Amgen, Inc. v. Chugai Pharm."
+      ],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "examiner_rejection_for_unsupported_amendments",
+      "title": "Examiner must reject claims with unsupported amendments",
+      "requirement": "If a claim is amended to include subject matter, limitations, or terminology not present in the application as filed, involving a departure from, addition to, or deletion from the disclosure of the application as filed, the examiner should conclude that the claimed subject matter is not described in that application. This conclusion will result in the rejection of the claims affected under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C.112, first paragraph - description requirement, or denial of the benefit of the filing date of a previously filed application, as appropriate.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.02"
+    },
+    {
+      "rule_id": "amendment_support_requirement",
+      "title": "Amendments must be supported by original description",
+      "requirement": "An amendment to the claims or the addition of a new claim must be supported by the description of the invention in the application as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Wright"
+      ],
+      "reference": "MPEP § 2163.03"
+    },
+    {
+      "rule_id": "parent_date_support_requirement",
+      "title": "Parent application must disclose subject matter for date benefit",
+      "requirement": "Under 35 U.S.C. 120, the claims in a U.S. application are entitled to the benefit of the filing date of an earlier filed U.S. application if the subject matter of the claim is disclosed in the manner provided by 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph in the earlier filed application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Tronzo v. Biomet, Inc.",
+        "In re Scheiber",
+        "Regents of the Univ. of Minnesota v. Gilead Scis., Inc."
+      ],
+      "reference": "MPEP § 2163.03"
+    },
+    {
+      "rule_id": "priority_support_requirement",
+      "title": "Priority application must support claims per 112(a)",
+      "requirement": "Under 35 U.S.C. 119(a) or (e), the claims in a U.S. application are entitled to the benefit of a foreign priority date or the filing date of a provisional application if the corresponding foreign application or provisional application supports the claims in the manner required by 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Purdue Pharma LP v. Iancu",
+        "In re Ziegler",
+        "Kawai v. Metlesics",
+        "In re Gosteli"
+      ],
+      "reference": "MPEP § 2163.03"
+    },
+    {
+      "rule_id": "interference_claim_support",
+      "title": "Interference claim support requirement",
+      "requirement": "In an interference proceeding, the claim corresponding to a count must be supported by the specification in the manner provided by 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.03 IV"
+    },
+    {
+      "rule_id": "earlier_application_support",
+      "title": "Earlier application support for interference",
+      "requirement": "When a party to an interference seeks the benefit of an earlier-filed U.S. patent application, the earlier application must meet the requirements of 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph for the subject matter of the count.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.03 IV"
+    },
+    {
+      "rule_id": "functional_claim_disclosure",
+      "title": "Functional claim disclosure requirement",
+      "requirement": "An original claim may lack written description support when the claim defines the invention in functional language specifying a desired result but the disclosure fails to sufficiently identify how the function is performed or the result is achieved.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.03 V"
+    },
+    {
+      "rule_id": "broad_genus_narrow_species",
+      "title": "Broad genus claim support requirement",
+      "requirement": "An original claim may lack written description support when a broad genus claim is presented but the disclosure only describes a narrow species with no evidence that the genus is contemplated.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.03 V"
+    },
+    {
+      "rule_id": "specification_recognition_standard",
+      "title": "Specification recognition standard",
+      "requirement": "The language of the specification, to the extent possible, must describe the claimed invention so that one skilled in the art can recognize what is claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.03 V"
+    },
+    {
+      "rule_id": "means_plus_function_structure",
+      "title": "Means-plus-function structure disclosure",
+      "requirement": "If the specification fails to disclose sufficient corresponding structure, materials, or acts that perform the entire claimed function, then the claim limitation lacks an adequate written description as required by 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.03 VI"
+    },
+    {
+      "rule_id": "examiner_rejection_findings",
+      "title": "Examiner rejection findings requirement",
+      "requirement": "In rejecting a claim, the examiner must set forth express findings of fact which support the lack of written description conclusion.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.04 I"
+    },
+    {
+      "rule_id": "examiner_prima_facie_case",
+      "title": "Examiner prima facie case requirement",
+      "requirement": "The examiner must establish a prima facie case by providing reasons why a person skilled in the art at the time the application was filed would not have recognized that the inventor was in possession of the invention as claimed in view of the disclosure of the application as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2163.04 I"
+    },
+    {
+      "rule_id": "written_description_support_requirement",
+      "title": "Claim limitations must be supported by original disclosure",
+      "requirement": "To comply with the written description requirement of 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, or to be entitled to an earlier priority date or filing date under 35 U.S.C. 119, 120, or 365(c), each claim limitation must be expressly, implicitly, or inherently supported in the originally filed disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2163.05"
+    },
+    {
+      "rule_id": "generic_claim_representative_species",
+      "title": "Generic claim support via representative species",
+      "requirement": "The written description requirement for a claimed genus may be satisfied through sufficient description of a representative number of species. A 'representative number of species' means that the species which are adequately described are representative of the entire genus. Thus, when there is substantial variation within the genus, one must describe a sufficient variety of species to reflect the variation within the genus.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Claims directed to a functionally defined genus of antibodies were not supported by a disclosure that 'only describe[d] one type of structurally similar antibodies' that 'are not representative of the full variety or scope of the genus.'",
+        "Disclosure of a single method of adheringly applying one layer to another was sufficient to support a generic claim to 'adheringly applying' because one skilled in the art reading the specification would understand that it is unimportant how the layers are adhered, so long as they are adhered."
+      ],
+      "reference": "§ 2163.05 B"
+    },
+    {
+      "rule_id": "single_species_genus_support",
+      "title": "Single species support for genus claims",
+      "requirement": "The disclosure of only one species encompassed within a genus adequately describes a claim directed to that genus only if the disclosure 'indicates that the patentee has invented species sufficient to constitute the gen[us].' A patentee will not be deemed to have invented species sufficient to constitute the genus by virtue of having disclosed a single species when the evidence indicates ordinary artisans could not predict the operability in the invention of any species other than the one disclosed.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Situations where one species adequately supports a genus because the specific variation is unimportant to the invention's operation (e.g., 'adheringly applying')."
+      ],
+      "examples": [
+        "Claims directed to PTFE dental floss with a friction-enhancing coating were not supported by a disclosure of a microcrystalline wax coating where there was no evidence in the disclosure or anywhere else in the record showing applicant conveyed that any other coating was suitable for a PTFE dental floss.",
+        "Disclosure of corticosteriod in DMSO sufficient to support claims drawn to a method of using a mixture of a 'physiologically active steroid' and DMSO because 'use of known chemical compounds in a manner auxiliary to the invention must have a corresponding written description only so specific as to lead one having ordinary skill in the art to that class of compounds.'"
+      ],
+      "reference": "§ 2163.05 B"
+    },
+    {
+      "rule_id": "teaching_against_other_species",
+      "title": "Insufficiency when specification teaches against other species",
+      "requirement": "The disclosure of a species in the parent application does not suffice to provide written description support for the genus in the child application where the specification taught against other species.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In Tronzo v. Biomet, the disclosure of a species in the parent application did not suffice to provide written description support for the genus in the child application where the specification taught against other species."
+      ],
+      "reference": "§ 2163.05 B"
+    },
+    {
+      "rule_id": "narrowing_claims_unsupported_elements",
+      "title": "Prohibition on narrowing claims with unsupported elements",
+      "requirement": "The introduction of claim changes which involve narrowing the claims by introducing elements or limitations which are not supported by the as-filed disclosure is a violation of the written description requirement of 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "A 'laundry list' disclosure of every possible moiety for every possible position does not constitute a written description of every species in a genus because it would not 'reasonably lead' one skilled in the art to conclude that the inventor had possession of the claimed invention."
+      ],
+      "reference": "§ 2163.05 II"
+    },
+    {
+      "rule_id": "new_matter_prohibition_amendments",
+      "title": "No new matter in amendments",
+      "requirement": "No amendment shall introduce new matter into the disclosure of the invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 132"
+    },
+    {
+      "rule_id": "new_matter_prohibition_reissue",
+      "title": "No new matter in reissue applications",
+      "requirement": "No new matter shall be introduced into the application for reissue.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 251"
+    },
+    {
+      "rule_id": "examiner_action_new_matter_disclosure",
+      "title": "Object to new matter in disclosure",
+      "requirement": "If new subject matter is added to the disclosure, whether it be in the abstract, the specification, or the drawings, the examiner should object to the introduction of new matter under 35 U.S.C. 132 or 251 as appropriate, and require applicant to cancel the new matter.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2163.06 I"
+    },
+    {
+      "rule_id": "examiner_rejection_new_matter_claims",
+      "title": "Reject claims with new matter",
+      "requirement": "If new matter is added to the claims, the examiner should reject the claims under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph - written description requirement.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2163.06 I"
+    },
+    {
+      "rule_id": "examiner_rejection_specification_amendment",
+      "title": "Reject claims affected by spec new matter",
+      "requirement": "When the claims have not been amended, per se, but the specification has been amended to add new matter, a rejection of the claims under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, should be made whenever any of the claim limitations are affected by the added material.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2163.06 I"
+    },
+    {
+      "rule_id": "definition_intent_clarity",
+      "title": "Clarity of intended definition",
+      "requirement": "If there are multiple definitions for a term and a definition is added to the application, it must be clear from the application as filed that applicant intended a particular definition, in order to avoid an issue of new matter and/or lack of written description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Schering Corp. v. Amgen, Inc."
+      ],
+      "reference": "2163.07 I"
+    },
+    {
+      "rule_id": "foreign_priority_no_support",
+      "title": "No reliance on foreign priority for errors",
+      "requirement": "Where a foreign priority document under 35 U.S.C. 119 is of record in the U.S. application file, applicant may not rely on the disclosure of that document to support correction of an error in the pending U.S. application.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Ex parte Bondiou"
+      ],
+      "reference": "2163.07 II"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the specification contains a written description of the invention in full, clear, concise, and exact terms.",
+    "Confirm that the specification demonstrates inventor possession of the claimed invention as of the filing date.",
+    "Ensure that all claims, including original claims, are supported by the written description in the specification as filed.",
+    "Check that functional claims include sufficient detail on how the function is performed, not just the desired result.",
+    "Verify that computer-implemented functional claims disclose the specific algorithm or steps required to perform the function.",
+    "Ensure that genus claims are supported by a sufficient number of species or a structural unity, rather than just generic boundaries.",
+    "Confirm that a single embodiment does not improperly support expansive generic claim language without additional support.",
+    "Verify that amendments do not introduce new matter beyond the original disclosure.",
+    "Ensure that any new matter introduced in amendments is canceled from the written description.",
+    "Check that the description is not merely rendering the invention obvious, but actually describes the invention itself.",
+    "Verify that the specification describes the claimed invention with all its limitations using words, structures, figures, or formulas.",
+    "Confirm that the disclosure allows a person skilled in the art to reasonably conclude the inventor possessed the claimed invention.",
+    "Ensure that functional genus claims show the applicant invented species sufficient to achieve the claimed result."
+  ],
+  "system_prompt_injection": "Apply the USPTO written description guidelines to ensure the specification fully describes the invention in clear, concise, and exact terms that demonstrate the inventor's possession of the claimed subject matter as filed. Mandate the cancellation of any new matter introduced in amendments and reject claims that lack sufficient support, particularly functional or genus claims that rely on generic boundaries or single embodiments without adequate species disclosure. Require detailed descriptions of algorithms and steps for computer-implemented functions to prove the inventor understood how to perform the claimed results. Prohibit reliance on obviousness to satisfy the written description requirement and ensure all claim limitations are explicitly described using words, structures, or figures. Enforce these standards for both AIA and pre-AIA applications to prevent claiming subject matter beyond the original disclosure."
+}
