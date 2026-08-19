@@ -1,0 +1,350 @@
+{
+  "card_id": "epo_priority_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_priority.pdf",
+  "task": "priority",
+  "task_label": "Priority & Filing",
+  "rules": [
+    {
+      "rule_id": "priority_12_month_limit",
+      "title": "Priority claim within 12 months",
+      "requirement": "the previous application must have been filed not more than 12 months before the filing date of the European application",
+      "severity": "mandatory",
+      "exceptions": [
+        "subject to certain exceptions, see A-III, 6.6"
+      ],
+      "examples": [],
+      "reference": "F-VI, 1.3 (iii)"
+    },
+    {
+      "rule_id": "priority_first_application_requirement",
+      "title": "Previous application must be first application",
+      "requirement": "the previous application must have been the 'first application' filed in respect of the same invention as the one to which the European application relates",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-VI, 1.3 (iv)"
+    },
+    {
+      "rule_id": "priority_same_invention_disclosure",
+      "title": "Subject-matter derivable from previous application",
+      "requirement": "the subject-matter of a claim in a European application may enjoy the priority of a previous application only if the skilled person can derive the subject-matter of the claim directly and unambiguously, using common general knowledge, from the previous application as a whole",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-VI, 1.3 (iv)"
+    },
+    {
+      "rule_id": "priority_first_application_filing_date",
+      "title": "Filing date of first application must be claimed",
+      "requirement": "The filing date of the 'first application' must be claimed as a priority, i.e. the application disclosing for the first time any or all of the subject-matter of the European application",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-VI, 1.4"
+    },
+    {
+      "rule_id": "priority_invalid_if_not_first",
+      "title": "Priority invalid if not first application",
+      "requirement": "If it is found that the application to which the priority claim is directed is in fact not the first application in this sense, but some or all of the subject-matter was disclosed in a still earlier application filed by the same applicant or his predecessor in title, the priority claim is invalid insofar as the subject-matter was already disclosed in the still earlier application",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-VI, 1.4"
+    },
+    {
+      "rule_id": "subsequent_app_as_first_conditions",
+      "title": "Conditions for subsequent application as first",
+      "requirement": "A subsequent application for the same subject-matter and filed in or for the same State or Member of the WTO is considered as the 'first application' for priority purposes if, at the date this subsequent application was filed, the still earlier application had been withdrawn, abandoned or refused, without being open to public inspection and without leaving any rights outstanding, and had not served as a basis for claiming priority",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-VI, 1.4.1"
+    },
+    {
+      "rule_id": "priority_evidence_still_earlier_app",
+      "title": "Evidence required for still earlier application",
+      "requirement": "the applicant should be required to establish by evidence from an appropriate authority (normally a national patent office) that there were no rights outstanding in Art. 87(1) in the still earlier application in respect of the subject-matter of the application being examined.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter VI-3"
+    },
+    {
+      "rule_id": "priority_no_mosaic_claims",
+      "title": "Prohibition of mosaic priority claims",
+      "requirement": "it is not permitted to 'mosaic' priority documents.",
+      "severity": "prohibited",
+      "exceptions": [
+        "where one priority document contains a reference to the other and explicitly states that features from the two documents can be combined in a particular manner"
+      ],
+      "examples": [
+        "a claim to a combination of feature C (from first application) and feature D (from second application), where neither discloses the combination, is entitled only to the date of filing of the European application itself."
+      ],
+      "reference": "Part F - Chapter VI-4, 1.5"
+    },
+    {
+      "rule_id": "priority_examiner_investigation_duty",
+      "title": "Examiner must investigate priority validity if relevant",
+      "requirement": "the examiner must investigate whether the priority date(s) claimed may be accorded to the appropriate parts of the application he is examining",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "cases where prior art has been made available to the public on or after the priority date claimed and before the date of filing",
+        "cases where the content of the European patent application is totally or partially identical with the content of another European application claiming a priority date within that period"
+      ],
+      "reference": "Part F - Chapter VI-4, 2.1"
+    },
+    {
+      "rule_id": "priority_examiner_inform_applicant",
+      "title": "Examiner should inform applicant of priority outcome",
+      "requirement": "the examiner ... should inform the applicant of the outcome and whether, in consequence, the particular prior art under consideration ... forms part of the state",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter VI-4, 2.1"
+    },
+    {
+      "rule_id": "priority_document_filing_requirement",
+      "title": "Priority document must be on file for grant",
+      "requirement": "No European patent may be granted until such time as the priority document is on file.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter VI-5"
+    },
+    {
+      "rule_id": "substantive_exam_stay_missing_doc",
+      "title": "Examination stay if priority validity is key",
+      "requirement": "If intermediate documents or Art. 54(3) applications exist and the patentability of the subject-matter claimed depends on the validity of the priority right, substantive examination cannot be finalised as long as the priority document is missing.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter VI-5"
+    },
+    {
+      "rule_id": "no_request_pct_compliance",
+      "title": "No request for priority doc if PCT rules met",
+      "requirement": "Where the applicant has complied with Rule 17.1(a), (b) or (b-bis) PCT, he may not be requested to file the priority document.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter VI-5"
+    },
+    {
+      "rule_id": "same_invention_directly_derivable",
+      "title": "Subject-matter must be directly derivable",
+      "requirement": "For the priority date to be valid in this respect the subject-matter of the claim must be directly and unambiguously derivable from the disclosure of the invention in the priority document, also taking into account any features implicit to a person skilled in the art in what is expressly mentioned in the document.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A claim to an apparatus including 'releasable fastening means' would be entitled to the priority date of a disclosure of that apparatus in which the relevant fastening element was, say, a nut and bolt, or a spring catch or a toggle-operated latch, provided the general concept of 'releasable' is implicit in the disclosure of such element."
+      ],
+      "reference": "Part F - Chapter VI-6"
+    },
+    {
+      "rule_id": "priority_specific_disclosure_required",
+      "title": "Disclosure must be specific, not general",
+      "requirement": "The requirement that the disclosure must be specific means that it is not sufficient if the subject-matter in question is merely referred to in broad and general terms.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A claim to a detailed embodiment of a certain feature would not be entitled to priority on the basis of a mere general reference to that feature in a priority document."
+      ],
+      "reference": "Part F - Chapter VI-6"
+    },
+    {
+      "rule_id": "priority_whole_document_considered",
+      "title": "Consider previous application as a whole",
+      "requirement": "The description and any claims or drawings of the previous application should, therefore, be considered as a whole in deciding this question, except that account should not be taken of subject-matter found solely in that part of the description referring to prior art, or in an explicit disclaimer.",
+      "severity": "recommended",
+      "exceptions": [
+        "Subject-matter found solely in that part of the description referring to prior art",
+        "Subject-matter found in an explicit disclaimer"
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter VI-6"
+    },
+    {
+      "rule_id": "priority_declaration_content",
+      "title": "Content requirements for priority declaration",
+      "requirement": "The declaration of priority must indicate the date of the priority application, the relevant State party to the Paris Convention or Member of the WTO, and the file number.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-VI, 3.2"
+    },
+    {
+      "rule_id": "priority_document_filing_deadline",
+      "title": "Deadline for filing certified priority document",
+      "requirement": "The certified copy of the previous application, i.e. the priority document, must be filed within 16 months of the priority date.",
+      "severity": "mandatory",
+      "exceptions": [
+        "unless such a copy is already on file because it has been supplied in the context of Rule 40(3)",
+        "or of a request pursuant to Rule 56"
+      ],
+      "examples": [],
+      "reference": "F-VI, 3.3"
+    },
+    {
+      "rule_id": "translation_required_for_validity",
+      "title": "Translation required for priority validity",
+      "requirement": "A translation of the previous application into one of the official languages of the EPO is required only if it is needed for determining the validity of the priority claim, where this is of relevance to the patentability of the underlying invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(1)"
+    },
+    {
+      "rule_id": "translation_filing_deadline",
+      "title": "Translation must be filed within time limit",
+      "requirement": "The translation must be filed within the time limit set by the EPO.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(1)"
+    },
+    {
+      "rule_id": "declaration_complete_translation",
+      "title": "Declaration of complete translation as alternative",
+      "requirement": "Alternatively, under Rule 53(3), a declaration that the European patent application is a complete translation of the previous application may be submitted within that same time limit.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(3)"
+    },
+    {
+      "rule_id": "declaration_must_be_unambiguous",
+      "title": "Declaration must be unambiguous",
+      "requirement": "This declaration must be unambiguous, stating that the translation is 'complete' or, for example, 'identical' or 'literal'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(3)"
+    },
+    {
+      "rule_id": "diluted_declaration_rejected",
+      "title": "Diluted or modified declarations not accepted",
+      "requirement": "Declarations in diluted or modified form (stating, for example, that the translation is 'practically complete' or that the contents 'are essentially the same') cannot be accepted.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "stating that the translation is 'practically complete'",
+        "stating that the contents 'are essentially the same'"
+      ],
+      "reference": "Rule 53(3)"
+    },
+    {
+      "rule_id": "incorrect_declaration_rejected",
+      "title": "Obviously incorrect declarations not accepted",
+      "requirement": "The same applies to cases where the declaration is obviously incorrect (e.g. if several priorities are claimed for a single European application or if the European application contains more or less text than is contained in the previous application as filed). In all these cases a complete translation must be filed.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "several priorities are claimed for a single European application",
+        "European application contains more or less text than the previous application"
+      ],
+      "reference": "Rule 53(3)"
+    },
+    {
+      "rule_id": "declaration_rejected_if_claims_differ",
+      "title": "Declaration rejected if claims differ from priority",
+      "requirement": "Where the European application contains claims on its date of filing and the priority application did not contain claims on its filing date or contained fewer claims on its filing date than the subsequent European application, the declaration cannot be accepted.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(3)"
+    },
+    {
+      "rule_id": "translation_required_if_eppo_adds_copy",
+      "title": "Translation/declaration required if EPO adds copy",
+      "requirement": "The translation or declaration under Rule 53(3) must also be filed in those cases where the EPO adds a copy of the previous application to the file.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(3)"
+    },
+    {
+      "rule_id": "no_duplicate_translation_if_rule_56",
+      "title": "No second translation if provided under Rule 56",
+      "requirement": "If the applicant has already provided the EPO with a translation of the priority document as part of a request under Rule 56 ... to base missing parts of the description or drawings on the priority application itself, then there is no need for the applicant to file the translation a second time.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 56"
+    },
+    {
+      "rule_id": "translation_request_must_be_written",
+      "title": "Translation request must be in writing",
+      "requirement": "Because of the time limit and its possible legal consequences, the request must always be made in writing.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Guidelines Part F"
+    },
+    {
+      "rule_id": "priority_lost_if_translation_missing",
+      "title": "Priority lost if translation/declaration not filed",
+      "requirement": "If the required translation or declaration is not filed within the time limit, the right of priority is lost and the applicant or proprietor is informed accordingly.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 53(1)"
+    },
+    {
+      "rule_id": "priority_effective_for_art_54_3",
+      "title": "Priority remains effective for Art 54(3) state of art",
+      "requirement": "However, for reasons of legal certainty the right of priority remains effective for determining the state of the art for the purposes of Art. 54(3) ... in respect of any other European patent application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 54(3)"
+    },
+    {
+      "rule_id": "voluntary_abandonment_of_priority",
+      "title": "Voluntary abandonment of priority claim",
+      "requirement": "An applicant may voluntarily abandon a claimed priority at any time.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Guidelines Part F"
+    },
+    {
+      "rule_id": "priority_abandonment_timing_effect",
+      "title": "Effect of priority abandonment on publication date",
+      "requirement": "If an applicant abandons a claimed priority before the technical preparations for publication have been completed, then the priority date is not effective and the publication is deferred until 18 months after the filing date. If it is abandoned after the technical preparations for publication have been completed, then the application is still published 18 months after the priority date originally claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "3.5"
+    },
+    {
+      "rule_id": "priority_reestablishment_deadline",
+      "title": "Deadline for re-establishment of rights for priority period",
+      "requirement": "Any request for re-establishment of rights in respect of the period specified in Art. 87(1) must be filed within two months of expiry of that period, according to Rule 136(1), second sentence.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "3.6"
+    }
+  ],
+  "review_checklist": [
+    "Verify priority claim is within 12 months of the previous application's filing date.",
+    "Confirm the previous application is the 'first application' for the subject-matter.",
+    "Ensure the filing date of the first application is explicitly claimed as priority.",
+    "Check that the priority declaration includes date, state, and file number.",
+    "Verify the certified priority document is filed within 16 months of the priority date.",
+    "Confirm no mosaic priority claims are made across multiple documents.",
+    "Assess if claim subject-matter is directly and unambiguously derivable from the priority document.",
+    "Ensure the priority disclosure is specific and not merely broad or general.",
+    "Consider the previous application as a whole (description, claims, drawings) for derivation.",
+    "Investigate priority validity if it affects patentability against intermediate documents.",
+    "Stay substantive examination if priority validity is key to overcoming prior art.",
+    "Ensure priority document is on file before grant of the European patent.",
+    "Verify no request for priority document if PCT Rule 17.1 conditions are met.",
+    "Check that translations are filed within the set time limit if required for validity.",
+    "Inform the applicant of the priority outcome and its impact on prior art."
+  ],
+  "system_prompt_injection": "Adhere strictly to the European Patent Office guidelines on priority and filing as outlined in epo_priority.pdf. Ensure that priority claims are filed within 12 months of the first application, contain correct declaration details, and are supported by certified documents submitted within 16 months. Verify that the claimed subject matter is directly and unambiguously derivable from the priority document, avoiding mosaic claims and ensuring the disclosure is specific rather than general. Investigate priority validity thoroughly, stay substantive examination if patentability depends on this validity, and require translations only when necessary for determining priority validity. Inform applicants of priority outcomes and ensure no patent is granted until the priority document is on file, unless PCT rules have been satisfied."
+}

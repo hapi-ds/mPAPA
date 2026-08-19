@@ -1,0 +1,822 @@
+{
+  "card_id": "epo_subject_matter_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_patentable_inventions.pdf",
+  "task": "subject_matter",
+  "task_label": "Subject Matter",
+  "rules": [
+    {
+      "rule_id": "invention_must_be_technical",
+      "title": "Invention must have technical character",
+      "requirement": "An 'invention' within the meaning of Art. 52(1) must be of both a concrete and a technical character.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 1.1"
+    },
+    {
+      "rule_id": "exclusion_as_such_only",
+      "title": "Exclusions apply only as such",
+      "requirement": "Any exclusion from patentability under Art. 52(2) applies only to the extent to which the application relates to the excluded subject-matter as such (Art. 52(3)).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 2"
+    },
+    {
+      "rule_id": "claim_whole_technical_character",
+      "title": "Assess claim as whole for technical character",
+      "requirement": "The subject-matter of the claim should be considered as a whole, in order to decide whether the claimed subject-matter has a technical character. If it does not, there is no invention within the meaning of Art. 52(1).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 2"
+    },
+    {
+      "rule_id": "technical_character_independent_of_prior_art",
+      "title": "Technical character assessment independent of prior art",
+      "requirement": "Technical character should be assessed without regard to the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 2"
+    },
+    {
+      "rule_id": "evaluate_features_for_technical_contribution",
+      "title": "Evaluate each feature for technical contribution",
+      "requirement": "In claims comprising technical and non-technical features, each feature has to be evaluated to see if it contributes to the technical character of the claimed subject-matter.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 2"
+    },
+    {
+      "rule_id": "discovery_unpatentable_as_such",
+      "title": "Discovery as such is unpatentable",
+      "requirement": "If a new property of a known material or article is found out, that is mere discovery and unpatentable because discovery as such has no technical effect and is therefore not an invention within the meaning of Art. 52(1).",
+      "severity": "prohibited",
+      "exceptions": [
+        "If that property is put to practical use, then this constitutes an invention which may be patentable."
+      ],
+      "examples": [
+        "The discovery that a particular known material is able to withstand mechanical shock would not be patentable, but a railway sleeper made from that material could well be patentable."
+      ],
+      "reference": "G-II, 3.1"
+    },
+    {
+      "rule_id": "natural_substance_discovery_unpatentable",
+      "title": "Discovery of natural substance unpatentable",
+      "requirement": "To find a previously unrecognised substance occurring in nature is also mere discovery and therefore unpatentable.",
+      "severity": "prohibited",
+      "exceptions": [
+        "If a substance found in nature can be shown to produce a technical effect, it may be patentable."
+      ],
+      "examples": [
+        "A substance occurring in nature which is found to have an antibiotic effect."
+      ],
+      "reference": "G-II, 3.1"
+    },
+    {
+      "rule_id": "scientific_theory_unpatentable",
+      "title": "Scientific theories are unpatentable",
+      "requirement": "Scientific theories are a more generalised form of discoveries, and the same principle as set out in G-II, 3.1 applies [i.e., unpatentable as such].",
+      "severity": "prohibited",
+      "exceptions": [
+        "New semiconductor devices and processes for manufacturing these may be patentable."
+      ],
+      "examples": [
+        "The physical theory of semiconductivity would not be patentable."
+      ],
+      "reference": "G-II, 3.2"
+    },
+    {
+      "rule_id": "mathematical_method_unpatentable",
+      "title": "Mathematical methods as such unpatentable",
+      "requirement": "Purely abstract or intellectual methods are not patentable. For example, an abstract shortcut method of division would be excluded from patentability by Art. 52(2)(a) and (3).",
+      "severity": "prohibited",
+      "exceptions": [
+        "A calculating machine constructed to operate accordingly would not be excluded.",
+        "Electrical filters designed according to a particular mathematical method would also not be excluded."
+      ],
+      "examples": [
+        "An abstract shortcut method of division."
+      ],
+      "reference": "G-II, 3.3"
+    },
+    {
+      "rule_id": "mathematical_method_technical_means",
+      "title": "Mathematical method using technical means",
+      "requirement": "A method for analysing the cyclical behaviour of a curve relating two parameters... is a mathematical method as such, excluded from patentability by Art. 52(2)(a) and (3), unless it uses technical means, for example, if it is computer-implemented.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Unless it uses technical means, for example, if it is computer-implemented."
+      ],
+      "examples": [],
+      "reference": "G-II, 3.3"
+    },
+    {
+      "rule_id": "technical_process_with_math_method",
+      "title": "Technical process using mathematical method",
+      "requirement": "A claim directed to a technical process in which a mathematical method is used, thus being restricted to a particular application of the mathematical method in a technical field, does not seek protection for the mathematical method as such.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A method of encoding audio information in a communication system may aim to reduce distortion induced by channel noise."
+      ],
+      "reference": "G-II, 3.3"
+    },
+    {
+      "rule_id": "business_method_exclusion",
+      "title": "Exclusion of methods of doing business",
+      "requirement": "A method of doing business is excluded from patentability even where it implies the possibility of making use of unspecified technical means or has practical utility.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "scheme for organising a commercial operation"
+      ],
+      "reference": "Art. 52(2)(c), G-II, 3.5"
+    },
+    {
+      "rule_id": "mental_act_exclusion",
+      "title": "Exclusion of methods carried out exclusively mentally",
+      "requirement": "A method that may exclusively be carried out mentally lacks technical character and is not patentable, regardless of the complexity of the method or any technical considerations involved.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "method for designing a nuclear core loading arrangement which neither specifies the use of means or measures of a technical nature nor includes the provision of a physical entity as the resulting product"
+      ],
+      "reference": "G-II, 3.5"
+    },
+    {
+      "rule_id": "computer_implemented_invention_whole_claim",
+      "title": "Examination of computer-implemented inventions as a whole",
+      "requirement": "If the claimed subject-matter specifies an apparatus or a technical process for carrying out at least some part of the scheme, that scheme and the apparatus or process have to be examined as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "claim specifies computers, computer networks or other conventional programmable apparatus, a program therefor, or a storage medium carrying the program"
+      ],
+      "reference": "G-II, 3.5"
+    },
+    {
+      "rule_id": "technical_character_assessment_independent_of_prior_art",
+      "title": "Technical character assessment independent of prior art",
+      "requirement": "Technical character should be assessed without regard to the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 3.6"
+    },
+    {
+      "rule_id": "computer_program_patentability_condition",
+      "title": "Condition for patentability of computer programs",
+      "requirement": "A computer program claimed by itself is not excluded from patentability if it is capable of bringing about, when running on or loaded into a computer, a further technical effect going beyond the 'normal' physical interactions between the program (software) and the computer (hardware) on which it is run.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "control of an industrial process",
+        "internal functioning of the computer itself or its interfaces",
+        "affecting the efficiency or security of a process",
+        "management of computer resources required",
+        "rate of data transfer in a communication link"
+      ],
+      "reference": "G-II, 3.6"
+    },
+    {
+      "rule_id": "normal_physical_effects_insufficient",
+      "title": "Normal physical effects insufficient for technical character",
+      "requirement": "The normal physical effects of the execution of a program, e.g. electrical currents, are not in themselves sufficient to lend a computer program technical character, and a further technical effect is needed.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "electrical currents"
+      ],
+      "reference": "G-II, 3.6"
+    },
+    {
+      "rule_id": "technical_considerations_beyond_algorithm",
+      "title": "Requirement for technical considerations beyond algorithm",
+      "requirement": "The programmer must have had technical considerations beyond 'merely' finding a computer algorithm to carry out some procedure to demonstrate that the program has technical character.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 3.6"
+    },
+    {
+      "rule_id": "computer_program_technical_effect",
+      "title": "Computer program with technical effect is not excluded",
+      "requirement": "When a computer program produces a further technical effect, it is by itself considered technical and not excluded.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "control of an industrial process",
+        "internal functioning of the computer",
+        "affecting efficiency or security of a process",
+        "management of computer resources",
+        "rate of data transfer in a communication link"
+      ],
+      "reference": "G-II, 3.6; T 1173/97"
+    },
+    {
+      "rule_id": "technical_means_lend_character",
+      "title": "Use of technical means lends technical character",
+      "requirement": "Any claimed subject-matter defining or using technical means is an invention within the meaning of Art. 52(1). This applies even if the technical means are commonly known.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "inclusion of a computer",
+        "computer network",
+        "readable medium carrying a program"
+      ],
+      "reference": "Art. 52(1); T 424/03; T 258/03; G 3/08"
+    },
+    {
+      "rule_id": "reject_non_technical_program",
+      "title": "Reject computer program lacking technical character",
+      "requirement": "If claimed subject-matter relating to a computer program does not have a technical character, it should be rejected under Art. 52(2) and (3).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 52(2) and (3)"
+    },
+    {
+      "rule_id": "info_presentation_content_non_technical",
+      "title": "Information presentation by content is non-technical",
+      "requirement": "A feature relating to a presentation of information defined solely by the content of the information does not have a technical character.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "acoustical signals",
+        "spoken words",
+        "visual displays",
+        "books defined by their subject",
+        "gramophone records defined by the musical piece recorded",
+        "traffic signs defined by the warning thereon"
+      ],
+      "reference": "Art. 52(2)(d); G-II, 3.7"
+    },
+    {
+      "rule_id": "cognitive_content_manner_non_technical",
+      "title": "Manner of conveying cognitive content is non-technical",
+      "requirement": "A feature which relates to the manner in which cognitive content is conveyed to the user on a screen normally does not contribute to a technical solution to a technical problem.",
+      "severity": "recommended",
+      "exceptions": [
+        "if the arrangement or manner of presentation can be shown to have a credible technical effect"
+      ],
+      "examples": [],
+      "reference": "G-II, 3.7; T 1741/08; T 1143/06"
+    },
+    {
+      "rule_id": "subjective_preferences_non_technical",
+      "title": "Subjective preferences do not solve technical problem",
+      "requirement": "A feature that solely addresses a user's subjective preferences does not solve a technical problem.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 3.7; T 1567/05"
+    },
+    {
+      "rule_id": "visual_indication_system_event_technical",
+      "title": "Visual indication of system event is technical",
+      "requirement": "Giving visual indications of an automatically detected event occurring in the system itself as a prompt for human interaction with the system, e.g. to avoid technical malfunctions, is usually regarded as making a technical contribution.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "prompt for human interaction to avoid technical malfunctions"
+      ],
+      "reference": "G-II, 3.7"
+    },
+    {
+      "rule_id": "visual_indication_mental_activity_non_technical",
+      "title": "Visual indication for mental activity is non-technical",
+      "requirement": "A visual indication aimed exclusively at the mental activities of the viewer, in particular at preparing the relevant data for a non-technical decision-making process by the user as the final addressee, is usually not regarded as making a technical contribution.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "preparing data for non-technical decision-making"
+      ],
+      "reference": "G-II, 3.7; T 756/06"
+    },
+    {
+      "rule_id": "non_technical_app_state_non_technical",
+      "title": "Presenting non-technical application state is non-technical",
+      "requirement": "Presenting the state of some non-technical application executed on a computer is normally not considered to be technical.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 3.7"
+    },
+    {
+      "rule_id": "graphic_design_non_technical",
+      "title": "Graphic design of user interfaces is non-technical",
+      "requirement": "Features concerning the graphic design of user interfaces do not have a technical effect, because their design is not based on technical considerations, but on general intellectual considerations.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 3.7.1"
+    },
+    {
+      "rule_id": "user_interface_technical_effect_check",
+      "title": "Examiner must check technical effect of UI features",
+      "requirement": "the examiner must check whether these features contribute to achieving a particular technical effect if, e.g.: they are combined with steps of or means for interacting with a user or they concern technical information (e.g. internal machine states).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "combined with steps of or means for interacting with a user",
+        "concern technical information (e.g. internal machine states)"
+      ],
+      "reference": "Part G - Chapter II-8, 3.7.1"
+    },
+    {
+      "rule_id": "data_structure_technical_features_check",
+      "title": "Examiner should check inherent technical features of data structure",
+      "requirement": "the examiner should check whether the data structure as claimed inherently comprises the technical features of the system or the steps of a corresponding method which forms the basis of the technical effect.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter II-8, 3.7.2"
+    },
+    {
+      "rule_id": "ordre_public_exclusion",
+      "title": "Inventions contrary to ordre public or morality excluded",
+      "requirement": "Any invention the commercial exploitation of which would be contrary to \"ordre public\" or morality is specifically excluded from patentability.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Anti-personnel mines"
+      ],
+      "reference": "Art. 53(a)"
+    },
+    {
+      "rule_id": "ordre_public_objection_raising",
+      "title": "Objection under Art 53(a) if public regards invention abhorrent",
+      "requirement": "If it is clear that this is the case, an objection should be raised under Art. 53(a); otherwise not.",
+      "severity": "recommended",
+      "exceptions": [
+        "if the invention can also be exploited in a way which does not and would not infringe \"ordre public\" and morality"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter II-9, 4.1"
+    },
+    {
+      "rule_id": "prohibited_matter_not_ordre_public",
+      "title": "Exploitation not contrary to ordre public merely because prohibited by law",
+      "requirement": "Exploitation is not to be deemed to be contrary to \"ordre public\" or morality merely because it is prohibited by law or regulation in some or all of the Contracting States.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter II-9, 4.1.1"
+    },
+    {
+      "rule_id": "dual_use_no_objection",
+      "title": "No objection under Art 53(a) for inventions with offensive and non-offensive use",
+      "requirement": "In such a case, no objection arises under Art. 53(a).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "a process for breaking open locked safes, the use by a burglar being offensive but the use by a locksmith in the case of emergency non-offensive"
+      ],
+      "reference": "Part G - Chapter II-9, 4.1.2"
+    },
+    {
+      "rule_id": "delete_ordre_public_reference",
+      "title": "Deletion of references contrary to ordre public",
+      "requirement": "if the application contains an explicit reference to a use which is contrary to \"ordre public\" or morality, deletion of this reference should be required under the terms of Rule 48(1)(a).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 48(1)(a)"
+    },
+    {
+      "rule_id": "first_medical_use_claim_format",
+      "title": "Claim format for first medical use",
+      "requirement": "A claim to a known substance or composition for the first use in surgical, therapeutic and/or diagnostic methods should be in a form such as: \"Substance or composition X\" followed by the indication of the use, for instance \"... for use as a medicament\" or \"... for use in therapy/in vivo diagnostics/surgery\".",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "\"Substance or composition X\" followed by \"... for use as a medicament\"",
+        "\"Substance or composition X\" followed by \"... for use in therapy/in vivo diagnostics/surgery\""
+      ],
+      "reference": "Art. 54(4)"
+    },
+    {
+      "rule_id": "further_medical_use_claim_format",
+      "title": "Claim format for further medical use",
+      "requirement": "If the known substance or composition was previously disclosed for use in surgery, therapy or diagnostic methods practised on the human or animal body (\"further medical use\"), the claim should be in the form: \"Substance or composition X\" followed by the indication of the specific therapeutical/in vivo diagnostic/surgical use, for instance, \"... for use in treating disease Y\".",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "\"Substance or composition X\" followed by \"... for use in treating disease Y\""
+      ],
+      "reference": "Art. 54(4)"
+    },
+    {
+      "rule_id": "surgery_exclusion_scope",
+      "title": "Surgery exclusion covers cosmetic and non-therapeutic purposes",
+      "requirement": "The term 'surgery' defines the nature of the treatment rather than its purpose. Thus, for example, a method of treatment by surgery for cosmetic purposes or for embryo transfer is excluded from patentability, as well as surgical treatment for therapeutic purposes.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "method of treatment by surgery for cosmetic purposes",
+        "embryo transfer",
+        "surgical treatment for therapeutic purposes"
+      ],
+      "reference": "G 1/07, Reasons 3.3.10"
+    },
+    {
+      "rule_id": "surgery_exclusion_criteria",
+      "title": "Surgery exclusion requires substantial physical intervention and health risk",
+      "requirement": "The exclusion applies to substantial physical interventions on the body which require professional medical expertise to be carried out and which entail a substantial health risk even when carried out with the required professional care and expertise. The health risk must be associated with the mode of administration and not solely with the agent as such.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "injection of a contrast agent into the heart",
+        "catheterisation",
+        "endoscopy"
+      ],
+      "reference": "G 1/07, Reasons 3.4.2.3"
+    },
+    {
+      "rule_id": "routine_interventions_not_excluded",
+      "title": "Routine invasive techniques on uncritical body parts are not excluded",
+      "requirement": "Invasive techniques of a routine character which are performed on uncritical body parts and are generally carried out in a non-medical, commercial environment, are not excluded from patentability.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "tattooing",
+        "piercing",
+        "hair removal by optical radiation",
+        "micro-abrasion of the skin"
+      ],
+      "reference": "G 1/07"
+    },
+    {
+      "rule_id": "minor_interventions_not_excluded",
+      "title": "Uncritical methods with minor intervention and no substantial risk are not excluded",
+      "requirement": "Uncritical methods involving only a minor intervention and no substantial health risks, when carried out with the required care and skill, do not fall under the scope of Art. 53(c).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 1/07"
+    },
+    {
+      "rule_id": "multi_step_method_exclusion",
+      "title": "Multi-step methods with surgical/therapeutic step are excluded",
+      "requirement": "The exclusion under Art. 53(c) applies to multi-step methods which comprise or encompass at least one therapeutic or surgical step, as defined in the previous paragraph. The non-patentable subject-matter must be removed from the scope of the claim.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(c)"
+    },
+    {
+      "rule_id": "therapy_definition",
+      "title": "Therapy includes curing, prophylaxis, and malfunction correction",
+      "requirement": "Therapy implies the curing of a disease or malfunction of the body and covers prophylactic treatment, e.g. immunisation against a certain disease or the removal of plaque.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "immunisation against a certain disease",
+        "removal of plaque"
+      ],
+      "reference": "T 19/86, T 290/86"
+    },
+    {
+      "rule_id": "apparatus_therapy_exception",
+      "title": "Apparatus functioning methods not excluded if no functional link to therapy",
+      "requirement": "A method for therapeutic purposes concerning the functioning of an apparatus associated with a living human or animal body is not excluded from patentability if no functional relationship exists between the steps related to the apparatus and the therapeutic effect of the apparatus on the body.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "T 245/87"
+    },
+    {
+      "rule_id": "clinical_trials_exclusion",
+      "title": "Clinical trials with therapeutic aspect are excluded",
+      "requirement": "As clinical trials have a therapeutic aspect for the human subjects undergoing them, an objection under Art. 53(c) should be raised if a claim includes a step relating to a method of treatment of the human body by therapy.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 4.2.2"
+    },
+    {
+      "rule_id": "human_animal_no_distinction",
+      "title": "No distinction between humans and animals for Art 53(c) exclusion",
+      "requirement": "When interpreting the scope of the exclusion under Art. 53(c), no distinction is to be made between human beings and animals.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(c)"
+    },
+    {
+      "rule_id": "diagnostic_method_four_phases",
+      "title": "Diagnostic method claim must include all four phases",
+      "requirement": "The claim must include method steps relating to all of the following phases: (i) the examination phase, involving the collection of data, (ii) the comparison of these data with standard values, (iii) the finding of any significant deviation, i.e. a symptom, during the comparison, (iv) the attribution of the deviation to a particular clinical picture, i.e. the deductive medical or veterinary decision phase (diagnosis for curative purposes stricto sensu).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 4.2.1.3"
+    },
+    {
+      "rule_id": "diagnostic_method_missing_features",
+      "title": "Essential missing diagnostic features must be in independent claim",
+      "requirement": "If features pertaining to any of these phases are missing and are essential for the definition of the invention, those features are to be included in the independent claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Example 9 in Annex II of F-IV"
+      ],
+      "reference": "G-II, 4.2.1.3"
+    },
+    {
+      "rule_id": "diagnostic_method_practised_on_body",
+      "title": "Technical steps of diagnostic method must be practised on body",
+      "requirement": "In order to fulfil the 'practised on the human or animal body' criterion, each of the preceding technical method steps relating to phases (i) to (iii) must be performed on a human or animal body.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 4.2.1.3"
+    },
+    {
+      "rule_id": "diagnostic_method_interaction_requirement",
+      "title": "Technical steps must necessitate presence of body",
+      "requirement": "For each technical method step, it must be ascertained whether an interaction with the human or animal body takes place. This criterion is fulfilled if the performance of the technical method step in question necessitates the presence of the body.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 4.2.1.3"
+    },
+    {
+      "rule_id": "clinical_trial_no_objection",
+      "title": "No Art 53(a) objection for controlled clinical trials",
+      "requirement": "In cases where a claim is interpreted as exclusively relating to a clinical trial of an experimental medicament carried out on human beings under strictly controlled conditions and with informed consent of the patient concerned, no objection under Art. 53(a) should be raised.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 4.2.2"
+    },
+    {
+      "rule_id": "biotech_interpretation_rules",
+      "title": "Biotech inventions interpreted per Rules 26-29",
+      "requirement": "For European patent applications and patents concerning biotechnological inventions, the relevant provisions of the EPC are to be applied and interpreted in accordance with the provisions of Rules 26 to 29.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 5.2"
+    },
+    {
+      "rule_id": "biotech_directive_interpretation",
+      "title": "EU Directive 98/44/EC as supplementary interpretation",
+      "requirement": "European Union Directive 98/44/EC of 6 July 1998 on the legal protection of biotechnological inventions is to be used as a supplementary means of interpretation. In particular the recitals preceding the provisions of the Directive are also to be taken into account.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-II, 5.2"
+    },
+    {
+      "rule_id": "biological_material_isolation_patentability",
+      "title": "Isolated biological material patentability",
+      "requirement": "An element isolated from the human body or otherwise produced by means of a technical process, which is susceptible of industrial application, including the sequence or partial sequence of a gene, may constitute a patentable invention, even if the structure of that element is identical to that of a natural element.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Simple discovery of one of its elements, including the sequence or partial sequence of a gene, cannot constitute patentable inventions."
+      ],
+      "examples": [],
+      "reference": "G-II, 5.3; EU Dir. 98/44/EC, rec. 21"
+    },
+    {
+      "rule_id": "gene_sequence_industrial_application_disclosure",
+      "title": "Disclosure of industrial application for gene sequences",
+      "requirement": "The industrial application of a sequence or partial sequence must be disclosed in the patent application as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-III, 4; EU Dir. 98/44/EC, rec. 22"
+    },
+    {
+      "rule_id": "plants_animals_variety_limitation",
+      "title": "Patentability of plants and animals not confined to varieties",
+      "requirement": "Inventions which concern plants or animals are patentable provided that the application of the invention is not technically confined to a single plant or animal variety.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "EU Dir. 98/44/EC, rec. 29"
+    },
+    {
+      "rule_id": "plant_variety_claim_exclusion",
+      "title": "Exclusion of claims identifying specific plant varieties",
+      "requirement": "A claim wherein specific plant varieties are not individually claimed is not excluded from patentability under Art. 53(b) even though it may embrace plant varieties. The subject-matter of a claim covering but not identifying plant varieties is not a claim to a variety or varieties.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 1/98; Art. 53(b)"
+    },
+    {
+      "rule_id": "human_cloning_process_exclusion",
+      "title": "Exclusion of processes for cloning human beings",
+      "requirement": "European patents are not to be granted in respect of biotechnological inventions which concern processes for cloning human beings.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Any process, including techniques of embryo splitting, designed to create a human being with the same nuclear genetic information as another living or deceased human being."
+      ],
+      "reference": "Art. 53(a); Rule 28(a); EU Dir. 98/44/EC, rec. 41"
+    },
+    {
+      "rule_id": "human_germ_line_modification_exclusion",
+      "title": "Exclusion of processes modifying human germ line genetic identity",
+      "requirement": "European patents are not to be granted in respect of biotechnological inventions which concern processes for modifying the germ line genetic identity of human beings.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(a); Rule 28(b)"
+    },
+    {
+      "rule_id": "human_embryo_use_exclusion",
+      "title": "Exclusion of uses of human embryos for industrial or commercial purposes",
+      "requirement": "European patents are not to be granted in respect of biotechnological inventions which concern uses of human embryos for industrial or commercial purposes. A claim directed to a product, which at the filing date of the application could be exclusively obtained by a method which necessarily involved the destruction of human embryos from which the said product is derived is excluded from patentability under Rule 28(c), even if said method is not part of the claim.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Inventions for therapeutic or diagnostic purposes which are applied to the human embryo and are useful to it."
+      ],
+      "examples": [],
+      "reference": "Art. 53(a); Rule 28(c); G 2/06; T 2221/10; EU Dir. 98/44/EC, rec. 42"
+    },
+    {
+      "rule_id": "animal_suffering_without_benefit_exclusion",
+      "title": "Exclusion of animal genetic modification causing suffering without benefit",
+      "requirement": "European patents are not to be granted in respect of biotechnological inventions which concern processes for modifying the genetic identity of animals which are likely to cause them suffering without any substantial medical benefit to man or animal, and also animals resulting from such processes.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(a); Rule 28"
+    },
+    {
+      "rule_id": "human_body_not_patentable",
+      "title": "Human body and gene sequences not patentable",
+      "requirement": "The human body, at the various stages of its formation and development, and the simple discovery of one of its elements, including the sequence or partial sequence of a gene, cannot constitute patentable inventions.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "germ cells"
+      ],
+      "reference": "EU Dir. 98/44/EC, rec. 16"
+    },
+    {
+      "rule_id": "chimeras_production_excluded",
+      "title": "Processes to produce chimeras excluded",
+      "requirement": "Processes to produce chimeras from germ cells or totipotent cells of humans and animals are excluded from patentability under Art. 53(a).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(a), EU Dir. 98/44/EC, rec. 38"
+    },
+    {
+      "rule_id": "plant_variety_not_patentable",
+      "title": "Specific plant varieties not patentable",
+      "requirement": "A patent is not to be granted if the claimed subject-matter is directed to a specific plant variety or specific plant varieties.",
+      "severity": "prohibited",
+      "exceptions": [
+        "if the invention concerns plants or animals and if the technical feasibility of the invention is not confined to a particular plant or animal variety, the invention is patentable"
+      ],
+      "examples": [],
+      "reference": "Rule 26(4), Art. 53(b)"
+    },
+    {
+      "rule_id": "plant_grouping_patentable",
+      "title": "Plant groupings not meeting variety definition patentable",
+      "requirement": "A claimed plant grouping is not excluded from patentability under Art. 53(b) if it does not meet the definition of a plant variety set out in Rule 26(4).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 26(4), Art. 53(b)"
+    },
+    {
+      "rule_id": "process_plant_variety_not_excluded",
+      "title": "Process for producing plant variety not a priori excluded",
+      "requirement": "A process claim for the production of a plant variety (or plant varieties) is not a priori excluded from patentability merely because the resulting product constitutes or may constitute a plant variety.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 64(2), G 1/98"
+    },
+    {
+      "rule_id": "essentially_biological_process_excluded",
+      "title": "Essentially biological processes excluded",
+      "requirement": "A process for the production of plants or animals which is based on the sexual crossing of whole genomes and on the subsequent selection of plants or animals is excluded from patentability as being essentially biological.",
+      "severity": "prohibited",
+      "exceptions": [
+        "if the process contains an additional step of a technical nature, which by itself introduces a trait into the genome or modifies a trait in the genome of the plant or animal produced, so that the introduction or modification of that trait is not the result of the mixing of the genes of the plants or animals chosen for sexual crossing"
+      ],
+      "examples": [
+        "method of crossing, inter-breeding, or selectively breeding horses",
+        "method using genetic molecular markers to select parent or progeny"
+      ],
+      "reference": "Art. 53(b), G 1/08, G 2/07"
+    },
+    {
+      "rule_id": "genetic_engineering_patentable",
+      "title": "Genetic engineering processes patentable",
+      "requirement": "A process involving inserting a gene or trait into a plant by genetic engineering does not rely on recombination of whole genomes and the natural mixing of plant genes, and hence is patentable.",
+      "severity": "mandatory",
+      "exceptions": [
+        "claims directed to such processes may not contain crossing and selection steps"
+      ],
+      "examples": [],
+      "reference": "Art. 53(b)"
+    },
+    {
+      "rule_id": "marker_selection_without_crossing_patentable",
+      "title": "Selection using markers without crossing patentable",
+      "requirement": "Processes for selecting plants or animals using genetic molecular markers without crossing the plants or animals are not excluded from patentability.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(b)"
+    },
+    {
+      "rule_id": "treatment_process_not_essentially_biological",
+      "title": "Treatment processes not essentially biological",
+      "requirement": "A process of treating a plant or animal to improve its properties or yield or to promote or suppress its growth is not an essentially biological process for the production of plants or animals since it is not based on the sexual crossing of whole genomes and subsequent selection of plants or animals.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "method of pruning a tree",
+        "method of treating a plant characterised by the application of a growth-stimulating substance or radiation",
+        "treatment of soil by technical means to suppress or promote the growth of plants"
+      ],
+      "reference": "Art. 53(b)"
+    },
+    {
+      "rule_id": "essentially_biological_process_exclusion",
+      "title": "Exclusion of essentially biological processes for plants/animals",
+      "requirement": "Essentially biological processes for the production of plants or animals are excluded from patentability under Art. 53(b).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Method for the production of plants having trait X comprising crossing plants A and B and selecting progeny having marker X.",
+        "Use of a (transgenic) plant for generating further plants.",
+        "Use of a (transgenic) animal for breeding.",
+        "Introgression of a (transgenic) trait X into a plant.",
+        "Methods for plant breeding comprising the step of embryo rescue."
+      ],
+      "reference": "Art. 53(b)"
+    },
+    {
+      "rule_id": "product_claim_allowable_despite_bio_process",
+      "title": "Product claims allowable even if produced by essentially biological process",
+      "requirement": "The exclusion from patentability of essentially biological processes for the production of plants does not have a negative effect on the allowability of a product claim directed to plants or plant material, even if the only method available is an essentially biological process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(b), G 2/12, G 2/13"
+    },
+    {
+      "rule_id": "microbiological_process_exception",
+      "title": "Microbiological processes are not excluded from patentability",
+      "requirement": "The exception referred to in Art. 53(b) first half-sentence does not apply to microbiological processes or the products thereof.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Method of producing a (transgenic) plant having trait X by introducing a vector comprising the sequence of SEQ ID NO: 1.",
+        "Method for selecting animals having phenotype Y by screening for the presence of a marker having the sequence shown in SEQ ID NO: 1."
+      ],
+      "reference": "Art. 53(b)"
+    },
+    {
+      "rule_id": "microorganism_product_patentable",
+      "title": "Microorganisms are patentable as products of microbiological processes",
+      "requirement": "The microorganism can be protected per se as it is a product obtained by a microbiological process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 53(b), G-II, 3.1"
+    },
+    {
+      "rule_id": "plant_varieties_excluded_regardless_of_method",
+      "title": "Plant varieties excluded from patentability regardless of production method",
+      "requirement": "Product claims for plant or animal varieties cannot be allowed even if the variety is produced by means of a microbiological process. The exception to patentability in Art. 53(b) applies to plant varieties irrespective of the way in which they are produced.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Plant varieties containing genes introduced into an ancestral plant by recombinant gene technology."
+      ],
+      "reference": "Rule 27(c), Art. 53(b), G 1/98"
+    }
+  ],
+  "review_checklist": [
+    "Verify the claimed subject-matter has a concrete and technical character as a whole.",
+    "Confirm that any excluded subject-matter under Art. 52(2) is not claimed 'as such'.",
+    "Assess technical character independently of the prior art.",
+    "Evaluate each feature to determine if it contributes to the technical character.",
+    "Ensure the claim is not directed to a mere discovery of a natural substance or property.",
+    "Verify the claim does not protect a scientific theory or mathematical method as such.",
+    "Confirm that mathematical methods are applied in a specific technical process or use technical means.",
+    "Ensure the claim is not a method of doing business or exclusively mental act.",
+    "For computer-implemented inventions, examine the scheme and apparatus/process as a whole.",
+    "Verify the computer program produces a further technical effect beyond normal physical interactions.",
+    "Confirm the programmer considered technical aspects beyond merely implementing an algorithm.",
+    "Ensure the use of technical means, even if common, lends technical character to the claim."
+  ],
+  "system_prompt_injection": "Apply the European Patent Office guidelines from epo_patentable_inventions.pdf to determine patentability under Article 52 EPC. Assess the claimed subject-matter as a whole for technical character independently of prior art, ensuring that exclusions under Article 52(2) apply only to the extent the application relates to excluded matter as such. Reject claims directed solely to discoveries, scientific theories, mathematical methods, business methods, or mental acts unless they involve technical means or produce a further technical effect beyond normal physical interactions. For computer-implemented inventions, verify that the program brings about a technical effect and that the programmer considered technical aspects beyond merely implementing an algorithm. Ensure that any use of technical means, even if commonly known, lends the necessary technical character to the invention."
+}

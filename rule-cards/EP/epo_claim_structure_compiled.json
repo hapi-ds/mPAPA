@@ -1,0 +1,1046 @@
+{
+  "card_id": "epo_claim_structure_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_claim_structure.pdf",
+  "task": "claim_structure",
+  "task_label": "Claim Structure & Drafting",
+  "rules": [
+    {
+      "rule_id": "claims_must_define_protection",
+      "title": "Claims must define matter for protection",
+      "requirement": "The application must contain 'one or more claims'. These must: (i) 'define the matter for which protection is sought'; (ii) 'be clear and concise'; and (iii) 'be supported by the description'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84"
+    },
+    {
+      "rule_id": "claims_technical_features_only",
+      "title": "Claims must be drafted in terms of technical features",
+      "requirement": "The claims must be drafted in terms of the 'technical features of the invention'. This means that claims should not contain any statements relating, for example, to commercial advantages or other non-technical matters, but statements of purpose should be allowed if they assist in defining the invention.",
+      "severity": "mandatory",
+      "exceptions": [
+        "statements of purpose allowed if they assist in defining the invention"
+      ],
+      "examples": [],
+      "reference": "F-IV, 2.1"
+    },
+    {
+      "rule_id": "functional_features_allowable",
+      "title": "Functional features allowable if no inventive skill needed",
+      "requirement": "Functional features may be included provided that a skilled person would have no difficulty in providing some means of performing this function without exercising inventive skill.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 2.1"
+    },
+    {
+      "rule_id": "two_part_form_where_appropriate",
+      "title": "Two-part form required wherever appropriate",
+      "requirement": "Rule 43(1)(a) and (b) define the two-part form which a claim should have 'wherever appropriate'. The first part should contain a statement indicating 'the designation of the subject-matter of the invention' i.e. the general technical class of apparatus, process, etc. to which the invention relates, followed by a statement of 'those technical features which are necessary for the definition of the claimed subject-matter but which, in combination, are part of the prior art'.",
+      "severity": "recommended",
+      "exceptions": [
+        "where the nature of the invention makes the form unsuitable"
+      ],
+      "examples": [],
+      "reference": "Rule 43(1)"
+    },
+    {
+      "rule_id": "prior_art_features_relevant_only",
+      "title": "Only relevant prior art features in preamble",
+      "requirement": "It is clear from the wording of Rule 43 that it is necessary only to refer to those prior-art features which are relevant to the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "if the invention relates to a photographic camera but the inventive step relates entirely to the shutter, it would be sufficient for the first part of the claim to read: 'A photographic camera including a focal plane shutter'"
+      ],
+      "reference": "Rule 43(1)"
+    },
+    {
+      "rule_id": "characterising_portion_definition",
+      "title": "Characterising portion must state added features",
+      "requirement": "The second part or 'characterising portion' should state the features which the invention adds to the prior art, i.e. the technical features for which, in combination with the features stated in sub-paragraph (a) (the first part), protection is sought.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(1)"
+    },
+    {
+      "rule_id": "transfer_features_if_known_in_combination",
+      "title": "Transfer features to preamble if known in combination",
+      "requirement": "If a single document in the state of the art according to Art. 54(2), e.g. cited in the search report, reveals that one or more features in the second part of the claim were already known in combination with all the features in the first part of the claim and in that combination have the same effect as they have in the full combination according to the invention, the examiner should require that such feature or features be transferred to the first part.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 2.2"
+    },
+    {
+      "rule_id": "applicant_feature_division_respected",
+      "title": "Applicant's feature division respected if not incorrect",
+      "requirement": "Where, however, a claim relates to a novel combination, and where the division of the features of the claim between the prior-art part and the characterising part could be made in more than one way without inaccuracy, the applicant should not be pressed, unless there are very substantial reasons, to adopt a different division of the features from that which he has chosen, if his version is not incorrect.",
+      "severity": "recommended",
+      "exceptions": [
+        "very substantial reasons"
+      ],
+      "examples": [],
+      "reference": "F-IV, 2.2"
+    },
+    {
+      "rule_id": "extra_preamble_features_accepted",
+      "title": "Extra features in preamble accepted if insisted",
+      "requirement": "If the applicant insists on including more features in the preamble than can be derived from the closest available prior art, this should be accepted.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 2.2"
+    },
+    {
+      "rule_id": "two_part_form_avoid_if_unsuitable",
+      "title": "Two-part form avoided if unsuitable or misleading",
+      "requirement": "The nature of the invention may be such that this form of claim is unsuitable, e.g. because it would give a distorted or misleading picture of the invention or the prior art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "the combination of known integers of equal status, the inventive step lying solely in the combination",
+        "the modification of, as distinct from addition to, a known chemical process e.g. by omitting one substance or substituting one substance for another",
+        "a complex system of functionally inter-related parts, the inventive step concerning changes in several of these or in their inter-relationships",
+        "new chemical compound or group of compounds"
+      ],
+      "reference": "F-IV, 2.3"
+    },
+    {
+      "rule_id": "two_part_form_avoidance_art54_3",
+      "title": "Avoid two-part form if prior art is Art. 54(3) application",
+      "requirement": "The Rule 43 form of claim should be avoided when the only relevant prior art is another European patent application falling within the terms of Art. 54(3).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-3, Section 2.3.1"
+    },
+    {
+      "rule_id": "two_part_form_appropriateness",
+      "title": "Two-part form not insisted upon if prior art clear in description",
+      "requirement": "If the indication of prior art made in the description is sufficiently clear to meet the requirement of Rule 42(1)(b), the two-part form should not be insisted upon.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-3, Section 2.3.2"
+    },
+    {
+      "rule_id": "claims_no_drawings",
+      "title": "Claims must not contain drawings",
+      "requirement": "The claims may contain chemical or mathematical formulae but not drawings.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-3, Section 2.4"
+    },
+    {
+      "rule_id": "claims_tables_desirability",
+      "title": "Claims may contain tables only if desirable",
+      "requirement": "The claims may contain tables but 'only if their subject-matter makes the use of tables desirable'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-3, Section 2.4"
+    },
+    {
+      "rule_id": "one_independent_claim_per_category",
+      "title": "Limit to one independent claim per category",
+      "requirement": "The number of independent claims is limited to one independent claim in each category.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Plurality of interrelated products (Rule 43(2)(a))",
+        "Plurality of different inventive uses of a product or apparatus (Rule 43(2)(b))",
+        "Alternative solutions to a particular problem (Rule 43(2)(c))"
+      ],
+      "examples": [
+        "plug and socket",
+        "transmitter – receiver",
+        "intermediate(s) and final chemical product",
+        "gene – gene construct – host – protein – medicament",
+        "claims directed to further medical uses when a first medical use is known",
+        "claims directed to the use of compound X for multiple purposes",
+        "a group of chemical compounds",
+        "two or more processes for the manufacture of such compounds"
+      ],
+      "reference": "Part F - Chapter IV-4, Section 3.2"
+    },
+    {
+      "rule_id": "combine_alternative_solutions",
+      "title": "Combine alternative solutions into single claim",
+      "requirement": "if it is possible to cover alternative solutions by a single claim, the applicant should do so.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "overlaps and similarities in the features of the independent claims of the same category are an indication that it would be appropriate to replace such claims with a single independent claim, e.g. by selecting a common wording for the essential features"
+      ],
+      "reference": "Rule 43(2)(c)"
+    },
+    {
+      "rule_id": "amend_claims_to_remove_excluded_subject_matter",
+      "title": "Amend claims to remove excluded subject-matter",
+      "requirement": "the claims must be amended in such a way as to result in the removal of all subject-matter excluded from the search (Rule 62a(2)) and the description amended accordingly",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(2), Rule 62a(2)"
+    },
+    {
+      "rule_id": "prohibit_amendments_with_excluded_subject_matter",
+      "title": "Do not admit amendments with excluded subject-matter",
+      "requirement": "such amendments may not be admitted",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "amendments to provide a set of claims complying with Rule 43(2), but containing one or more claims directed to subject-matter excluded from the search in accordance with Rule 62a(1)"
+      ],
+      "reference": "Rule 137(5)"
+    },
+    {
+      "rule_id": "dependent_claim_reference_placement",
+      "title": "Dependent claim reference placement",
+      "requirement": "Such a claim must contain, if possible at the beginning, a reference to the other claim, all features of which it includes",
+      "severity": "mandatory",
+      "exceptions": [
+        "claims in different categories (see F-IV, 3.8)"
+      ],
+      "examples": [],
+      "reference": "Rule 43(3) and (4)"
+    },
+    {
+      "rule_id": "dependent_claim_characterised_expression",
+      "title": "Permissibility of characterised expressions in dependent claims",
+      "requirement": "Expressions such as 'characterised in that' or 'characterised by' are not necessary in a dependent claim but are nevertheless permissible.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 3.4"
+    },
+    {
+      "rule_id": "dependent_claim_multiple_references",
+      "title": "Dependent claim referencing multiple previous claims",
+      "requirement": "A dependent claim may refer back to one or more independent claims, to one or more dependent claims, or to both independent and dependent claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 3.4"
+    },
+    {
+      "rule_id": "claim_arrangement_grouping",
+      "title": "Grouping of dependent claims by reference",
+      "requirement": "All dependent claims referring back to a single previous claim and those referring back to several previous claims must be grouped together to the extent and in the most appropriate way possible.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(4)"
+    },
+    {
+      "rule_id": "claim_arrangement_clarity",
+      "title": "Arrangement enabling ready determination of association",
+      "requirement": "The arrangement of claims must be one which enables the association of related claims to be readily determined and their meaning in association to be readily construed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(4)"
+    },
+    {
+      "rule_id": "alternatives_in_claim_clarity",
+      "title": "Clarity requirement for alternatives in a claim",
+      "requirement": "A claim may refer to alternatives, provided that the number and presentation of alternatives in a single claim does not make the claim obscure or difficult to construe.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 3.7"
+    },
+    {
+      "rule_id": "alternatives_in_claim_unity",
+      "title": "Unity requirement for alternatives in a claim",
+      "requirement": "A claim may refer to alternatives, provided that the claim meets the requirements of unity.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 3.7"
+    },
+    {
+      "rule_id": "cross_category_claim_clarity",
+      "title": "Clarity for claims referencing different categories",
+      "requirement": "The applicant should be required to set out clearly in the claim the essential features of the apparatus when a claim contains a reference to a claim of a different category.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Apparatus for carrying out the process of claim 1"
+      ],
+      "reference": "F-IV, 3.8"
+    },
+    {
+      "rule_id": "product_process_distinction",
+      "title": "Distinction between product and process claims",
+      "requirement": "In the wording of claims and in the assessment of the claimed subject-matter, a clear distinction must be maintained between product claims (for a device, apparatus or system) and process claims (for a process, activity or use).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 3.8"
+    },
+    {
+      "rule_id": "apparatus_claim_structure_clarity",
+      "title": "Apparatus claim structure clarity",
+      "requirement": "An apparatus may be defined in terms of functions it is able to perform, provided the structure is made sufficiently clear.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 3.8"
+    },
+    {
+      "rule_id": "apparatus_claim_usage_limitation",
+      "title": "Prohibition of limiting apparatus claim only by use",
+      "requirement": "A claim for an apparatus cannot normally be limited only by the manner in which the apparatus is used.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Apparatus Z, when used for carrying out process Y"
+      ],
+      "reference": "F-IV, 3.8"
+    },
+    {
+      "rule_id": "product_claim_not_limited_by_use",
+      "title": "Product claims must not be limited only by manner of use",
+      "requirement": "A claim for an apparatus cannot normally be limited only by the manner in which the apparatus is used; for this reason, a claim which simply reads 'Apparatus Z, when used for carrying out process Y' should also be objected to on the grounds of lack of clarity and failure to state the technical features.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Apparatus Z, when used for carrying out process Y"
+      ],
+      "reference": "Rule 43(1), Art. 84"
+    },
+    {
+      "rule_id": "claims_must_be_clear",
+      "title": "Claims must be clear to the person skilled in the art",
+      "requirement": "The requirement that the claims must be clear applies to individual claims, i.e. to independent and dependent claims alike, and also to the claims as a whole. Therefore, the meaning of the terms of a claim should, as far as possible, be clear for the person skilled in the art from the wording of the claim alone.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84"
+    },
+    {
+      "rule_id": "claim_category_must_be_unambiguous",
+      "title": "Claim wording must leave no doubt as to its category",
+      "requirement": "In view of the differences in the scope of protection which may be attached to the various categories of claims, the examiner should ensure that the wording of a claim leaves no doubt as to its category.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84"
+    },
+    {
+      "rule_id": "special_meaning_must_be_in_claim",
+      "title": "Special meanings must be clear from claim wording alone",
+      "requirement": "If such a special meaning applies, the examiner should, so far as possible, require the claim to be amended whereby the meaning is clear from the wording of the claim alone.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84"
+    },
+    {
+      "rule_id": "avoid_inconsistency_description_claims",
+      "title": "Avoid inconsistencies between description and claims",
+      "requirement": "Any inconsistency between the description and the claims should be avoided if it may throw doubt on the extent of protection and therefore render the claim unclear or unsupported under Art. 84, second sentence or, alternatively, render the claim objectionable under Art. 84, first sentence.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84"
+    },
+    {
+      "rule_id": "independent_claim_must_define_essential_features",
+      "title": "Independent claims must clearly define all essential features",
+      "requirement": "Art. 84, first sentence, when read in conjunction with Rule 43(1) and (3), has to be interpreted as meaning not only that an independent claim must be comprehensible from a technical point of view but also that it must clearly define the subject-matter of the invention, that is to say indicate all the essential features thereof.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the applicant shows convincingly that a feature is in fact not essential, he may be allowed to retain the unamended claim."
+      ],
+      "examples": [],
+      "reference": "Art. 84, Rule 43(1), Rule 43(3)"
+    },
+    {
+      "rule_id": "independent_claim_essential_features",
+      "title": "Independent claims must define all essential features",
+      "requirement": "The claims, which define the matter for which protection is sought, must be clear, meaning not only that a claim must be comprehensible from a technical point of view, but also that it must define clearly all the essential features of the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84, T 32/82"
+    },
+    {
+      "rule_id": "support_for_essential_features",
+      "title": "Claims must be supported by description regarding essential features",
+      "requirement": "The requirement of Art. 84 that the claims be supported by the description applies to features which are explicitly presented in the description as being essential for carrying out the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 84, T 1055/92"
+    },
+    {
+      "rule_id": "inclusion_of_described_essential_features",
+      "title": "Independent claims should contain features described as necessary",
+      "requirement": "The independent claim(s) should therefore contain all features explicitly described in the description as being necessary to carry out the invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-12"
+    },
+    {
+      "rule_id": "process_claim_consistency",
+      "title": "Process claims must necessarily result in the claimed product",
+      "requirement": "If a claim is to a process for producing the product of the invention, then the process as claimed should be one which, when carried out in a manner which would seem reasonable to a person skilled in the art, necessarily has as its end result that particular product; otherwise there is an internal inconsistency and therefore lack of clarity in the claim.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-12"
+    },
+    {
+      "rule_id": "technical_effect_features_inclusion",
+      "title": "Claims must include features essential for technical effect",
+      "requirement": "Where patentability depends on a technical effect, the claims must be so drafted as to include all the technical features of the invention which are essential for the technical effect.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "T 32/82"
+    },
+    {
+      "rule_id": "generalisation_sufficiency",
+      "title": "Generalised features must allow problem to be solved",
+      "requirement": "A certain degree of generalisation of the claimed features may be permitted, provided that the claimed generalised features as a whole allow the problem to be solved.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 83, F-III, 3"
+    },
+    {
+      "rule_id": "product_claim_modification_identification",
+      "title": "Product claims must identify product and modifications",
+      "requirement": "In the case of a product claim, if the product is of a well-known kind and the invention lies in modifying it in certain respects, it is sufficient that the claim clearly identifies the product and specifies what is modified and in what way.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.5.4"
+    },
+    {
+      "rule_id": "relative_terms_precision_requirement",
+      "title": "Relative terms must have well-recognised meaning",
+      "requirement": "It is preferable not to use a relative or similar term such as 'thin', 'wide' or 'strong' in a claim unless the term has a well-recognised meaning in the particular art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "'high-frequency' in relation to an amplifier"
+      ],
+      "reference": "F-IV, 4.6"
+    },
+    {
+      "rule_id": "relative_terms_replacement_or_retention",
+      "title": "Unclear relative terms must be replaced or retained",
+      "requirement": "Where the term has no well-recognised meaning it should, if possible, be replaced by a more precise wording found elsewhere in the original disclosure. Where there is no basis in the disclosure for a clear definition and the term is not essential having regard to the invention, it should normally be retained in the claim.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.6"
+    },
+    {
+      "rule_id": "unclear_essential_terms_prohibited",
+      "title": "Unclear essential terms are prohibited in claims",
+      "requirement": "An unclear term cannot be allowed in a claim if the term is essential having regard to the invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.6"
+    },
+    {
+      "rule_id": "unclear_terms_for_distinction_prohibited",
+      "title": "Unclear terms cannot distinguish from prior art",
+      "requirement": "An unclear term cannot be used by the applicant to distinguish his invention from the prior art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.6"
+    },
+    {
+      "rule_id": "approximate_terms_clarity_requirement",
+      "title": "Approximate terms must be sufficiently clear",
+      "requirement": "Particular attention is required whenever the word 'about' or similar terms such as 'approximately' or 'substantially' are used. The meaning must be sufficiently clear in the context of the application read as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "'about 200°C'",
+        "'about x to about y'",
+        "'a tray plate with a substantially circular circumference'"
+      ],
+      "reference": "F-IV, 4.7"
+    },
+    {
+      "rule_id": "approximate_terms_tolerance_limit",
+      "title": "Approximate terms must not exceed accepted tolerances",
+      "requirement": "If the use of such a word suggests that deviations are included which are larger than those accepted tolerances, then the wording becomes vague and undefined.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.7"
+    },
+    {
+      "rule_id": "approximate_terms_distinction_requirement",
+      "title": "Approximate terms must allow unambiguous distinction",
+      "requirement": "The word can only be permitted if its presence does not prevent the invention from being unambiguously distinguished from the prior art with respect to novelty and inventive step.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.7"
+    },
+    {
+      "rule_id": "trademarks_in_claims_prohibited",
+      "title": "Trademarks should not be used in claims",
+      "requirement": "The use of trademarks and similar expressions in claims should not be allowed as it may not be guaranteed that the product or feature referred to is not modified while maintaining its name during the term of the patent.",
+      "severity": "prohibited",
+      "exceptions": [
+        "If their use is unavoidable and they are generally recognised as having a precise meaning"
+      ],
+      "examples": [],
+      "reference": "F-IV, 4.8"
+    },
+    {
+      "rule_id": "optional_features_no_limiting_effect",
+      "title": "Optional feature expressions have no limiting effect",
+      "requirement": "Expressions like 'preferably', 'for example', 'such as' or 'more particularly' have no limiting effect on the scope of a claim; that is to say, the feature following any such expression is to be regarded as entirely optional.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "preferably",
+        "for example",
+        "such as",
+        "more particularly"
+      ],
+      "reference": "F-IV, 4.9"
+    },
+    {
+      "rule_id": "result_to_be_achieved_claims_restricted",
+      "title": "Claims defined by result to be achieved are restricted",
+      "requirement": "As a general rule, claims which attempt to define the invention by a result to be achieved should not be allowed, in particular if they only amount to claiming the underlying technical problem.",
+      "severity": "prohibited",
+      "exceptions": [
+        "If the invention can only be defined in such terms",
+        "If it cannot otherwise be defined more precisely without unduly restricting the scope",
+        "If the result can be directly and positively verified by tests or procedures adequately specified in the description or known to the person skilled in the art"
+      ],
+      "examples": [
+        "An ashtray in which a smouldering cigarette end will be automatically extinguished due to the shape and relative dimensions"
+      ],
+      "reference": "F-IV, 4.10"
+    },
+    {
+      "rule_id": "parameter_claims_exceptional_use",
+      "title": "Characterisation by parameters allowed only exceptionally",
+      "requirement": "Characterisation of a product mainly by its parameters should only be allowed in those cases where the invention cannot be adequately defined in any other way, provided that those parameters can be clearly and reliably determined either by indications in the description or by objective procedures which are usual in the art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.11"
+    },
+    {
+      "rule_id": "product_by_process_novelty_requirement",
+      "title": "Product-by-process claims require product novelty",
+      "requirement": "Claims for products defined in terms of a process of manufacture are allowable only if the products as such fulfil the requirements for patentability, i.e. inter alia that they are new and inventive.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.12"
+    },
+    {
+      "rule_id": "product_by_process_construction",
+      "title": "Product-by-process claims construed as product per se",
+      "requirement": "A claim defining a product in terms of a process is to be construed as a claim to the product as such.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.12"
+    },
+    {
+      "rule_id": "apparatus_for_construction",
+      "title": "Apparatus for claims construed as suitable apparatus",
+      "requirement": "If a claim commences with such words as: 'Apparatus for carrying out the process etc...' this must be construed as meaning merely apparatus suitable for carrying out the process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.13"
+    },
+    {
+      "rule_id": "apparatus_claim_suitability_construction",
+      "title": "Apparatus claims construed as suitable for stated purpose",
+      "requirement": "An apparatus claim commencing with words such as 'Apparatus for carrying out the process' must be construed as meaning merely apparatus suitable for carrying out the process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Apparatus for carrying out the process"
+      ],
+      "reference": "Part F - Chapter IV-16"
+    },
+    {
+      "rule_id": "product_for_use_suitability_construction",
+      "title": "Product for use claims construed as suitable for stated use",
+      "requirement": "A claim to a substance or composition for a particular use should be construed as meaning a substance or composition which is in fact suitable for the stated use.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Claims to a known substance or composition for use in a surgical, therapeutic or diagnostic method"
+      ],
+      "examples": [
+        "mold for molten steel"
+      ],
+      "reference": "Part F - Chapter IV-16"
+    },
+    {
+      "rule_id": "method_claim_functional_feature_construction",
+      "title": "Method claims construed as functional features defining steps",
+      "requirement": "In case of a method claim commencing with words such as 'Method for remelting galvanic layers', the part 'for remelting ...' should not be understood as meaning that the process is merely suitable for remelting galvanic layers, but rather as a functional feature concerning the remelting of galvanic layers and, hence, defining one of the method steps of the claimed method.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Method or process aiming at a certain purpose comprising physical steps resulting in production of a product"
+      ],
+      "examples": [
+        "Method for remelting galvanic layers"
+      ],
+      "reference": "Part F - Chapter IV-16"
+    },
+    {
+      "rule_id": "method_for_product_production_suitability",
+      "title": "Method for product production construed as suitable for use",
+      "requirement": "Where a claim is directed to a method or process aiming at a certain purpose, when it comprises physical steps which result in the production of a product, the indication of the intended purpose of the method (production of a product) is to be understood in the sense that the method or process has to be merely suitable for that use, rather than comprising the use as an integral method step.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-16"
+    },
+    {
+      "rule_id": "means_plus_function_data_processing",
+      "title": "Means-plus-function in data processing interpreted as adapted",
+      "requirement": "In the data-processing/computer program field, apparatus features of the means-plus-function type ('means for ...') are interpreted as means adapted to carry out the relevant steps/functions, rather than merely means suitable for carrying them out.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "means for ..."
+      ],
+      "reference": "Part F - Chapter IV-16"
+    },
+    {
+      "rule_id": "claim_clarity_reference_to_second_entity",
+      "title": "Clarity required when defining entity by reference to second entity",
+      "requirement": "Where a claim in respect of a physical entity seeks to define the invention by reference to features relating to the entity's use, particularly specifying its relationship to a second entity which is not part of the claimed entity, a lack of clarity can result. If it is not possible to give a clear definition of the first entity per se, then the claim should be directed to a combination of the first and second entities.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "cylinder head for an engine",
+        "engine with a cylinder head",
+        "engine comprising a cylinder head"
+      ],
+      "reference": "Part F - Chapter IV-17"
+    },
+    {
+      "rule_id": "independent_protection_first_entity",
+      "title": "Applicant entitled to independent protection of first entity",
+      "requirement": "The applicant is normally entitled to independent protection of the first entity per se, even if it was initially defined by its relationship to the second entity. It will usually be possible to obtain independent protection by wording the claims appropriately.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "substituting 'connectable' for 'connected'"
+      ],
+      "reference": "Part F - Chapter IV-17"
+    },
+    {
+      "rule_id": "dimension_reference_to_standardized_entity",
+      "title": "Dimensions may be defined by reference to standardized second entity",
+      "requirement": "It may also be allowable to define the dimensions and/or shape of a first entity in an independent claim by general reference to the dimensions and/or corresponding shape of a second entity which is not part of the claimed first entity but is related to it through use, particularly where the size of the second entity is in some way standardised.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "mounting bracket for a vehicle number-plate"
+      ],
+      "reference": "Part F - Chapter IV-17"
+    },
+    {
+      "rule_id": "no_exact_dimensions_required_for_reference",
+      "title": "Exact dimensions of second entity not required in claim",
+      "requirement": "It is neither necessary for such claims to contain the exact dimensions of the second entity, nor do they have to refer to a combination of the first and second entities.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter IV-17"
+    },
+    {
+      "rule_id": "avoid_ambiguous_in_relationship",
+      "title": "Care required for 'in' defining relationships",
+      "requirement": "To avoid ambiguity, particular care should be exercised when assessing claims which employ the word \"in\" to define a relationship between different physical entities (product, apparatus), or between entities and activities (process, use), or between different activities.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Cylinder head in a four-stroke engine",
+        "In a telephone apparatus with an automatic dialler, dial tone detector and feature controller, the dial tone detector comprising ...",
+        "In a process using an electrode feeding means of an arc-welding apparatus, a method for controlling the arc welding current and voltage comprising the following steps: ...",
+        "In a process/system/apparatus etc. ... the improvement consisting of..."
+      ],
+      "reference": "4.15"
+    },
+    {
+      "rule_id": "clarify_sub_unit_protection_scope",
+      "title": "Claims with sub-units must specify scope",
+      "requirement": "For the sake of clarity, claims of this kind should be directed either to \"a unit with (or comprising) a sub-unit\" (e.g. \"four-stroke engine with a cylinder head\"), or to the sub-unit per se, specifying its purpose (for example, \"cylinder head for a four-stroke engine\").",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "four-stroke engine with a cylinder head",
+        "cylinder head for a four-stroke engine"
+      ],
+      "reference": "4.15"
+    },
+    {
+      "rule_id": "sub_unit_per_se_basis_requirement",
+      "title": "Sub-unit per se claims require basis",
+      "requirement": "The latter course [directing to the sub-unit per se] may be followed only at the applicant's express wish and only if there is a basis for it in the application as filed, in accordance with Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "4.15"
+    },
+    {
+      "rule_id": "clarify_improvement_claims",
+      "title": "Improvement claims must be clear",
+      "requirement": "With claims of the type indicated by example (iv) [\"In a process/system/apparatus etc. ... the improvement consisting of...\"], the use of the word \"in\" sometimes makes it unclear whether protection is sought for the improvement only or for all the features defined in the claim. Here, too, it is essential to ensure that the wording is clear.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In a process/system/apparatus etc. ... the improvement consisting of..."
+      ],
+      "reference": "4.15"
+    },
+    {
+      "rule_id": "no_references_to_description_drawings",
+      "title": "Claims must not rely on description/drawings",
+      "requirement": "The claims must not, in respect of the technical features of the invention, rely on references to the description or drawings \"except where absolutely necessary\". In particular they must not normally rely on such references as \"as described in part ... of the description\", or \"as illustrated in Figure 2 of the drawings\".",
+      "severity": "prohibited",
+      "exceptions": [
+        "where absolutely necessary"
+      ],
+      "examples": [
+        "as described in part ... of the description",
+        "as illustrated in Figure 2 of the drawings"
+      ],
+      "reference": "4.17"
+    },
+    {
+      "rule_id": "no_reliance_on_description_drawings",
+      "title": "Claims must not rely on description or drawings",
+      "requirement": "The claims must not, in respect of the technical features of the invention, rely on references to the description or drawings 'except where absolutely necessary'.",
+      "severity": "prohibited",
+      "exceptions": [
+        "where absolutely necessary",
+        "invention involves some peculiar shape, illustrated in the drawings, but which cannot be readily defined either in words or by a simple mathematical formula",
+        "invention relates to chemical products some of whose features can be defined only by means of graphs or diagrams"
+      ],
+      "examples": [
+        "as described in part ... of the description",
+        "as illustrated in Figure 2 of the drawings"
+      ],
+      "reference": "F-IV, 4.17"
+    },
+    {
+      "rule_id": "parameter_definition_in_claim",
+      "title": "Parameter definition should appear in claim",
+      "requirement": "Provided that the conditions for defining the invention in this way are met, the definition of the invention should appear completely in the claim itself whenever this is reasonably practicable.",
+      "severity": "recommended",
+      "exceptions": [
+        "description of the method is so long that its inclusion would make the claim unclear through lack of conciseness or difficult to understand",
+        "a person skilled in the art would know which method to employ",
+        "all known methods yield the same result"
+      ],
+      "examples": [],
+      "reference": "F-IV, 4.18"
+    },
+    {
+      "rule_id": "reference_signs_placement",
+      "title": "Reference signs should be placed in parentheses",
+      "requirement": "If the application contains drawings, and the comprehension of the claims would be improved by establishing the connection between the features mentioned in the claims and the corresponding reference signs in the drawings, then appropriate reference signs should be placed in parentheses after the features mentioned in the claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.19"
+    },
+    {
+      "rule_id": "reference_signs_two_part_form",
+      "title": "Reference signs in two-part form claims",
+      "requirement": "Where claims are drafted in the two-part form set out in Rule 43(1), the reference signs should be inserted not only in the characterising part but also in the preamble of the claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.19"
+    },
+    {
+      "rule_id": "no_text_added_to_reference_signs",
+      "title": "Text added to reference signs is not permissible",
+      "requirement": "If text is added to reference signs in parentheses in the claims, lack of clarity can arise. Accordingly, such bracketed features are generally not permissible.",
+      "severity": "prohibited",
+      "exceptions": [
+        "additional references to those figures where particular reference signs are to be found, such as '(13 - Figure 3; 14 - Figure 4)'"
+      ],
+      "examples": [
+        "securing means (screw 13, nail 14)",
+        "valve assembly (valve seat 23, valve element 27, valve seat 28)"
+      ],
+      "reference": "F-IV, 4.19"
+    },
+    {
+      "rule_id": "negative_limitations_clarity",
+      "title": "Negative limitations must be clear",
+      "requirement": "It has to be clear what is excluded by means of the disclaimer.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.20"
+    },
+    {
+      "rule_id": "disclaimers_compliance_art84",
+      "title": "Claims with disclaimers must comply with Art 84",
+      "requirement": "A claim containing one or more disclaimers must also fully comply with the clarity and conciseness requirements of Art. 84.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.20"
+    },
+    {
+      "rule_id": "disclaimer_prior_art_indication",
+      "title": "Excluded prior art should be indicated in description",
+      "requirement": "In the interests of the patent's transparency, the excluded prior art should be indicated in the description in accordance with Rule 42(1)(b), and the relation between the prior art and the disclaimer should be shown.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.20"
+    },
+    {
+      "rule_id": "comprising_vs_consisting_interpretation",
+      "title": "Interpretation of 'comprising' vs 'consisting' in claims",
+      "requirement": "In drafting patent claims legal certainty normally requires 'comprising' to be interpreted by the broader meaning 'include', 'contain' or 'comprehend'. If a claim refers to a compound as 'consisting of' components by percentages, the presence of any additional component is excluded and therefore the percentages should add up to 100%.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "claim for a chemical compound refers to it as 'consisting of components A, B and C' by their proportions expressed in percentages"
+      ],
+      "reference": "4.21"
+    },
+    {
+      "rule_id": "functional_definition_clarity_requirement",
+      "title": "Clarity requirement for functional definitions of conditions",
+      "requirement": "When a claim is directed to a further therapeutic application and the condition is defined in functional terms, the claim can be regarded as clear only if instructions, in the form of experimental tests or testable criteria, are available from the patent documents or from the common general knowledge allowing the skilled person to recognise which conditions fall within the functional definition.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "\"any condition susceptible of being improved or prevented by selective occupation of a specific receptor\""
+      ],
+      "reference": "4.22"
+    },
+    {
+      "rule_id": "claims_must_be_clear_as_a_whole",
+      "title": "Claims must be clear individually and as a whole",
+      "requirement": "Art. 84 requires that the claims must be clear not only individually but also as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "4.24"
+    },
+    {
+      "rule_id": "arrangement_of_broadest_claim",
+      "title": "Arrangement of claims with broadest claim first",
+      "requirement": "Where there are a large number of claims, they should be arranged with the broadest claim first. If the broadest of a large number of claims is a long way down, so that it could easily be overlooked, the applicant should be required either to re-arrange the claims in a more logical way or to direct attention to the broadest claim in the introductory part or in the summary of the description.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "4.24"
+    },
+    {
+      "rule_id": "later_broader_claim_must_be_independent",
+      "title": "Later broader claim must be independent",
+      "requirement": "If the broadest claim is not the first one, the later broader claim must also be an independent claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "4.24"
+    },
+    {
+      "rule_id": "claims_must_be_concise",
+      "title": "Requirement for conciseness of claims",
+      "requirement": "The requirement that the claims must be concise refers to the claims in their entirety as well as to the individual claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "5"
+    },
+    {
+      "rule_id": "avoid_undue_repetition_in_claims",
+      "title": "Avoid undue repetition of wording in claims",
+      "requirement": "Undue repetition of wording, e.g. between one claim and another, should be avoided by the use of the dependent form.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "5"
+    },
+    {
+      "rule_id": "objection_to_trivial_dependent_claims",
+      "title": "Objection to multiplicity of trivial dependent claims",
+      "requirement": "While there is no objection to a reasonable number of dependent claims directed to particular preferred features of the invention, the examiner should object to a multiplicity of claims of a trivial nature.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "5"
+    },
+    {
+      "rule_id": "claims_not_unduly_burdensome",
+      "title": "Claims must not be unduly burdensome to determine",
+      "requirement": "The presentation of the claims should not make it unduly burdensome to determine the matter for which protection is sought. Objection may also arise where there is a multiplicity of alternatives within a single claim, if this renders it unduly burdensome to determine the matter for which protection is sought.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "5"
+    },
+    {
+      "rule_id": "claims_supported_by_description",
+      "title": "Claims must be supported by the description",
+      "requirement": "The claims must be supported by the description. This means that there must be a basis in the description for the subject-matter of every claim and that the scope of the claims must not be broader than is justified by the extent of the description and drawings and also the contribution to the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "6.1"
+    },
+    {
+      "rule_id": "claim_support_by_description",
+      "title": "Claims must be supported by the description",
+      "requirement": "A claim should be regarded as supported by the description unless there are well-founded reasons for believing that the skilled person would be unable, on the basis of the information given in the application as filed, to extend the particular teaching of the description to the whole of the field claimed by using routine methods of experimentation or analysis.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A claim relating to a process for treating all kinds of 'plant seedlings' is not supported if the description discloses the process applied to one kind of plant only, unless convincing evidence of general applicability is provided.",
+        "A claim relating to 'synthetic resin mouldings' is not supported if examples relate only to thermoplastic resins and the method appears inappropriate for thermosetting resins, unless evidence of applicability is provided."
+      ],
+      "reference": "F-IV, 6.3"
+    },
+    {
+      "rule_id": "technical_character_of_support",
+      "title": "Support must be of a technical character",
+      "requirement": "Support must be of a technical character; vague statements or assertions having no technical content provide no basis.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A mere assertion that a process is applicable to all plant seedlings is not sufficient support."
+      ],
+      "reference": "F-IV, 6.3"
+    },
+    {
+      "rule_id": "restriction_for_lack_of_support",
+      "title": "Claims must be restricted if unsupported",
+      "requirement": "Unless the applicant can provide convincing evidence that the process is nevertheless generally applicable, he must restrict his claim to the particular kind of plant referred to in the description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "If a claim relates to treating all plant seedlings but description only covers one kind, the claim must be restricted to that kind if general applicability is not proven."
+      ],
+      "reference": "F-IV, 6.3"
+    },
+    {
+      "rule_id": "generic_claim_acceptability",
+      "title": "Generic claims acceptable with fair support",
+      "requirement": "A claim in generic form, i.e. relating to a whole class, e.g. of materials or machines, may be acceptable even if of broad scope, if there is fair support in the description and there is no reason to suppose that the invention cannot be worked through the whole of the field claimed.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 6.3"
+    },
+    {
+      "rule_id": "post_filing_generalization_limit",
+      "title": "Post-filing generalization limited by Art 123(2)",
+      "requirement": "After the date of filing, however, he should be allowed to do so only if this does not contravene Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 6.2"
+    },
+    {
+      "rule_id": "essential_feature_in_claim",
+      "title": "Essential features must be in independent claims",
+      "requirement": "Where a technical feature is described and highlighted in the description as being an essential feature of the invention, to comply with Art. 84 this must also be part of the independent claim(s) defining the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 4.5.1"
+    },
+    {
+      "rule_id": "functional_feature_support",
+      "title": "Functional features require appreciation of alternatives",
+      "requirement": "A claim may broadly define a feature in terms of its function, i.e. as a functional feature, even where only one example of the feature has been given in the description, if the skilled reader would appreciate that other means could be used for the same function.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "\"terminal position detecting means\" in a claim might be supported by a single example comprising a limit switch, it being evident to the skilled person that e.g. a photoelectric cell or a strain gauge could be used instead."
+      ],
+      "reference": "F-IV, 6.5"
+    },
+    {
+      "rule_id": "functional_feature_clarity",
+      "title": "Vague statements of alternative means are insufficient",
+      "requirement": "It may not be sufficient if the description merely states in vague terms that other means may be adopted, if it is not reasonably clear what they might be or how they might be used.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 6.5"
+    },
+    {
+      "rule_id": "dependent_claim_description_amendment",
+      "title": "Amending description for dependent claim subject-matter",
+      "requirement": "Where certain subject-matter is clearly disclosed in a claim of the application as filed, but is not mentioned anywhere in the description, it is permissible to amend the description so that it includes this subject-matter.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-IV, 6.6"
+    },
+    {
+      "rule_id": "essential_feature_inclusion",
+      "title": "Essential features must be included in independent claims",
+      "requirement": "A feature that is essential to the performance of the invention and solves the problem underlying the application must be included in the independent claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Reaction temperature range from 20°C to reflux is essential for yield and purity, hence must be included in the independent claim."
+      ],
+      "reference": "T 488/96"
+    },
+    {
+      "rule_id": "diagnostic_decision_phase_inclusion",
+      "title": "Diagnostic decision phase inclusion in independent claims",
+      "requirement": "If the deductive medical or veterinary decision phase is unambiguously derivable from the application or patent as a whole, it must be included as an essential feature in the independent claim to fulfil the requirements of Art. 84.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Only applies if it is clear from the application/patent as a whole that the inevitable result of the findings leads unambiguously to a particular diagnosis."
+      ],
+      "examples": [
+        "If the inevitable outcome of the first three phases is a specific diagnosis for curative purposes, the decision phase must be included."
+      ],
+      "reference": "G 1/04"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the application contains one or more claims defining the matter for protection.",
+    "Verify that claims are clear, concise, and supported by the description.",
+    "Verify that claims are drafted in terms of technical features, excluding commercial advantages.",
+    "Verify that any functional features can be performed by a skilled person without inventive skill.",
+    "Verify that independent claims use the two-part form where appropriate, with relevant prior art in the preamble.",
+    "Verify that the characterising portion states the features added to the prior art.",
+    "Verify that features known in combination in prior art are transferred to the preamble.",
+    "Verify that the two-part form is avoided if it distorts the invention or if prior art is only Art. 54(3) applications.",
+    "Verify that claims do not contain drawings.",
+    "Verify that tables in claims are used only if desirable for the subject-matter.",
+    "Verify that there is no more than one independent claim per category.",
+    "Verify that dependent claims contain a reference to the parent claim, preferably at the beginning.",
+    "Verify that all subject-matter excluded from search has been removed from the claims."
+  ],
+  "system_prompt_injection": "Adhere strictly to the European Patent Office guidelines on claim structure and drafting as outlined in epo_claim_structure.pdf. Define the matter for protection using clear, concise claims drafted in terms of technical features, ensuring they are supported by the description and free from non-technical statements or drawings. Employ the two-part form wherever appropriate by placing only relevant prior art features in the preamble and added features in the characterising portion, while avoiding this format if it distorts the invention or relies solely on Article 54(3) prior art. Limit independent claims to one per category, combine alternative solutions where possible, and ensure dependent claims reference their parent claims at the beginning. Finally, amend claims to remove any excluded subject-matter and prohibit the admission of amendments containing such excluded content."
+}

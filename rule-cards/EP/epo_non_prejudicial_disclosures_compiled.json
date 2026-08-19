@@ -1,0 +1,76 @@
+{
+  "card_id": "epo_non_prejudicial_disclosures_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_non_prejudicial_disclosures.pdf",
+  "task": "non_prejudicial_disclosures",
+  "task_label": "Non Prejudicial Disclosures",
+  "rules": [
+    {
+      "rule_id": "disclosure_not_state_of_art_conditions",
+      "title": "Conditions for non-prejudicial disclosure",
+      "requirement": "A prior disclosure of the invention is not taken into consideration as part of the state of the art where the disclosure was due to, or in consequence of: (i) an evident abuse in relation to the applicant or his legal predecessor; or (ii) the display of the invention by the applicant or his legal predecessor at an officially recognised international exhibition.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "The invention was derived from the applicant and disclosed against his wish.",
+        "Display of the invention at an officially recognised international exhibition."
+      ],
+      "reference": "G-V, 1"
+    },
+    {
+      "rule_id": "six_month_time_limit",
+      "title": "Six-month time limit for non-prejudicial disclosure",
+      "requirement": "The disclosure must have taken place not earlier than six months preceding the filing of the application. For calculating the six-month period the relevant date is that of the actual filing date of the European patent application, not the priority date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-V, 2"
+    },
+    {
+      "rule_id": "evident_abuse_intent_requirement",
+      "title": "Intent requirement for evident abuse",
+      "requirement": "For 'evident abuse' to be established, there must be, on the part of the person disclosing the invention, either actual intent to cause harm or actual or constructive knowledge that harm would or could ensue from this disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-V, 3"
+    },
+    {
+      "rule_id": "exhibition_filing_deadline",
+      "title": "Filing deadline for exhibition disclosure",
+      "requirement": "The application must be filed within six months of the disclosure of the invention at the exhibition if the display is not to prejudice the application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-V, 4"
+    },
+    {
+      "rule_id": "exhibition_declaration_at_filing",
+      "title": "Declaration of exhibition display at filing",
+      "requirement": "The applicant must state, at the time of filing the application, that the invention has been so displayed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-V, 4"
+    },
+    {
+      "rule_id": "exhibition_certificate_submission",
+      "title": "Submission of supporting certificate for exhibition",
+      "requirement": "The applicant must file a supporting certificate within four months, giving the particulars required by Rule 25.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-V, 4"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the prior disclosure occurred no earlier than six months before the actual filing date.",
+    "Verify that the disclosure was due to or in consequence of an evident abuse in relation to the applicant.",
+    "Verify that the person disclosing the invention had actual intent to cause harm or actual/constructive knowledge of potential harm.",
+    "Verify that the application was filed within six months of the exhibition disclosure date.",
+    "Verify that the applicant stated at the time of filing that the invention had been displayed at the exhibition.",
+    "Verify that a supporting certificate with particulars required by Rule 25 was filed within four months of the filing date."
+  ],
+  "system_prompt_injection": "Apply the European Patent Office guidelines on non-prejudicial disclosures to determine if prior art exceptions apply. Ensure that any disclosure due to evident abuse or an official exhibition occurred within six months preceding the filing date. Verify that evident abuse involves actual intent to cause harm or knowledge that harm would result. For exhibition disclosures, mandate that the applicant declares the display at filing and submits a supporting certificate within four months. Reject any prior disclosures that fail to meet these strict temporal and procedural requirements."
+}

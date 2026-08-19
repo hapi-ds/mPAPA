@@ -1,0 +1,471 @@
+{
+  "card_id": "epo_state_of_art_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_state_of_art.pdf",
+  "task": "state_of_art",
+  "task_label": "State Of Art",
+  "rules": [
+    {
+      "rule_id": "state_of_art_definition",
+      "title": "Definition of state of the art",
+      "requirement": "The 'state of the art' is defined as 'everything made available to the public by means of a written or oral description, by use, or in any other way, before the date of filing of the European patent application'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 1"
+    },
+    {
+      "rule_id": "no_geographical_language_restrictions",
+      "title": "No restrictions on location, language, or manner",
+      "requirement": "There are no restrictions whatever as to the geographical location where or the language or manner in which the relevant information was made available to the public; also no age limit is stipulated for the documents or other sources of the information.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 1"
+    },
+    {
+      "rule_id": "public_availability_criteria",
+      "title": "Criteria for public availability of documents",
+      "requirement": "A written description, i.e. a document, should be regarded as made available to the public if, at the relevant date, it was possible for members of the public to gain knowledge of the content of the document and there was no bar of confidentiality restricting the use or dissemination of such knowledge.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "German utility models ('Gebrauchsmuster') are already publicly available as of their date of entry in the Register of utility models ('Eintragungstag')"
+      ],
+      "reference": "Part G - Chapter IV-1, Section 1"
+    },
+    {
+      "rule_id": "examiner_doubt_handling",
+      "title": "Examiner action when public availability is contested",
+      "requirement": "If the applicant shows sound reasons for doubting whether the document forms part of the 'state of the art' in relation to his application and any further investigation does not produce evidence sufficient to remove that doubt, the examiner should not pursue the matter further.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 1"
+    },
+    {
+      "rule_id": "presumption_of_truth_for_oral_use",
+      "title": "Presumption of truth for documents reproducing oral descriptions or use",
+      "requirement": "In cases where a document reproduces an oral description or gives an account of a prior use, and only the oral description or lecture was publicly available before the 'date of filing', the examiner should start with the assumption that the document gives a true account of the earlier lecture, display or other event and should therefore regard the earlier event as forming part of the 'state of the art'.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 1"
+    },
+    {
+      "rule_id": "contest_truth_of_account",
+      "title": "Examiner action when truth of account is contested",
+      "requirement": "If the applicant gives sound reasons for contesting the truth of the account given in the document, the examiner should not pursue the matter further.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 1"
+    },
+    {
+      "rule_id": "enabling_disclosure_requirement",
+      "title": "Requirement for enabling disclosure in state of the art",
+      "requirement": "Subject-matter can only be regarded as having been made available to the public, and therefore as comprised in the state of the art pursuant to Art. 54(1), if the information given to the skilled person is sufficient to enable him, at the relevant date, to practise the technical teaching which is the subject of the disclosure, taking into account also the general knowledge at that time in the field to be expected of him.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 2"
+    },
+    {
+      "rule_id": "reproducibility_with_common_knowledge",
+      "title": "Reproducibility using common general knowledge",
+      "requirement": "Where a prior art document discloses subject-matter which is relevant to the novelty and/or inventive step of the claimed invention, the disclosure of that document must be such that the skilled person can reproduce that subject-matter using common general knowledge.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 2"
+    },
+    {
+      "rule_id": "common_general_knowledge_limitation",
+      "title": "Limitation on what constitutes common general knowledge",
+      "requirement": "Subject-matter does not necessarily belong to the common general knowledge simply because it has been disclosed in the state of the art: in particular, if the information can only be obtained after a comprehensive search, it cannot be considered to belong to the common general knowledge and cannot be used to complete the disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 2"
+    },
+    {
+      "rule_id": "insufficient_disclosure_exclusion",
+      "title": "Exclusion from state of the art due to insufficient disclosure",
+      "requirement": "If the skilled person cannot obtain starting materials or reagents on the basis of common general knowledge, the document is insufficiently disclosed with respect to that compound. Hence, it is not considered to belong to the state of the art according to Art. 54(2) and consequently it does not prejudice the patentability of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A document discloses a chemical compound but does not indicate how to obtain starting materials, and these are not obtainable from common general knowledge."
+      ],
+      "reference": "Part G - Chapter IV-1, Section 2"
+    },
+    {
+      "rule_id": "sufficient_disclosure_inclusion",
+      "title": "Inclusion in state of the art due to sufficient disclosure",
+      "requirement": "If the skilled person knows how to obtain the starting materials and reagents (e.g. they are commercially available, or are well-known and appear in reference text books), the document is sufficiently disclosed with respect to the compound and therefore belongs to the state of the art according to Art. 54(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-1, Section 2"
+    },
+    {
+      "rule_id": "effective_date_interpretation",
+      "title": "Date of filing interpreted as priority date",
+      "requirement": "\"date of filing\" in Art. 54(2) and (3) is to be interpreted as meaning the date of priority in appropriate cases.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-3, Section 3"
+    },
+    {
+      "rule_id": "novelty_per_claim_alternative",
+      "title": "Novelty assessed per claim or alternative",
+      "requirement": "The question of novelty must be considered against each claim (or part of a claim where a claim specifies a number of alternatives).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-3, Section 3"
+    },
+    {
+      "rule_id": "art_54_3_scope_novelty_only",
+      "title": "Art 54(3) applies only to novelty",
+      "requirement": "Such earlier applications are part of the state of the art only when considering novelty and not when considering inventive step.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-4, Section 5.1"
+    },
+    {
+      "rule_id": "art_54_3_content_definition",
+      "title": "Content of European application definition",
+      "requirement": "By the \"content\" of a European application is meant the whole disclosure, i.e. the description, drawings and claims, including: (i) any matter explicitly disclaimed (with the exception of disclaimers for unworkable embodiments); (ii) any matter for which an allowable reference to other documents is made.",
+      "severity": "mandatory",
+      "exceptions": [
+        "disclaimers for unworkable embodiments"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter IV-4, Section 5.1"
+    },
+    {
+      "rule_id": "art54_3_content_definition",
+      "title": "Definition of content for Art. 54(3) prior art",
+      "requirement": "By the 'content' of a European application is meant the whole disclosure, i.e. the description, drawings and claims, including: (i) any matter explicitly disclaimed (with the exception of disclaimers for unworkable embodiments); (ii) any matter for which an allowable reference to other documents is made; and (iii) prior art insofar as explicitly described.",
+      "severity": "mandatory",
+      "exceptions": [
+        "disclaimers for unworkable embodiments",
+        "priority documents",
+        "abstracts"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5"
+    },
+    {
+      "rule_id": "art54_3_original_text_relevance",
+      "title": "Original text relevance for Art. 54(3) despite translation errors",
+      "requirement": "It is the content of the original text which is relevant for the purposes of Art. 54(3), even if matter is erroneously omitted from the translation in the language of the proceedings and not published under Art. 93 in that language.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5"
+    },
+    {
+      "rule_id": "art54_3_filing_date_requirement",
+      "title": "Filing date requirement for conflicting applications",
+      "requirement": "The filing date of the published European application must be before the filing or valid priority date of the application under examination.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.1"
+    },
+    {
+      "rule_id": "art54_3_publication_date_requirement",
+      "title": "Publication date requirement for conflicting applications",
+      "requirement": "The publication date of the conflicting application must be on or after the filing or valid priority date of the application under examination.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.1"
+    },
+    {
+      "rule_id": "art54_3_priority_date_substitution",
+      "title": "Priority date replaces filing date for Art. 54(3)",
+      "requirement": "If the published European application claims priority, the priority date replaces the filing date (Art. 89) for that subject-matter in the application which corresponds to the priority application.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If a priority claim was abandoned or otherwise lost with effect from a date prior to publication, the filing date and not the priority date is relevant"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.1"
+    },
+    {
+      "rule_id": "art54_3_pending_status_requirement",
+      "title": "Application must be pending at publication for Art. 54(3)",
+      "requirement": "It is required that the conflicting application was still pending at its publication date. Art. 54(3) must be interpreted as referring to the publication of a 'valid' application, i.e. a European patent application in existence at its publication date.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the application was withdrawn or otherwise lost before the date of publication, but published because the preparations for publication had been completed, the publication has no effect under Art. 54(3), but only under Art. 54(2)"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.1"
+    },
+    {
+      "rule_id": "art54_3_post_publication_changes",
+      "title": "Post-publication changes do not affect Art. 54(3) status",
+      "requirement": "Changes taking effect after the date of publication (e.g. withdrawal of a designation or withdrawal of the priority claim or loss of the priority right for other reasons) do not affect the application of Art. 54(3).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.1"
+    },
+    {
+      "rule_id": "examiner_check_filing_date_review",
+      "title": "Examiner check for accorded date of filing under review",
+      "requirement": "The examiner should check whether a final decision on the accorded date of filing has already been taken before considering the documents as being state of the art under Art. 54(3).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.2"
+    },
+    {
+      "rule_id": "temporal_treatment_unestablished_filing_date",
+      "title": "Temporary treatment of documents with unestablished filing date",
+      "requirement": "If the date of filing has not yet been established, the examiner should temporarily deal with the documents (if relevant for assessing the patentability of the claimed subject-matter) as if their accorded date of filing were correct, revisiting the issue at a later point in time.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-5, 5.1.2"
+    },
+    {
+      "rule_id": "pct_art54_3_fee_and_translation",
+      "title": "PCT application inclusion in Art. 54(3) state of the art",
+      "requirement": "A PCT application is not included in the state of the art for the purposes of Art. 54(3) unless the PCT applicant has paid the required filing fee under Rule 159(1)(c) and has supplied the PCT application to the EPO in English, French or German.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "A translation is required where the PCT application was published in Japanese, Chinese, Spanish, Russian, Korean, Portuguese or Arabic"
+      ],
+      "reference": "Part G - Chapter IV-5, 5.2"
+    },
+    {
+      "rule_id": "prior_use_public_availability_test",
+      "title": "Criteria for public availability by use",
+      "requirement": "Subject-matter should be regarded as made available to the public by use or in any other way if, at the relevant date, it was possible for members of the public to gain knowledge.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-7, Section 7.2.1"
+    },
+    {
+      "rule_id": "public_accessibility_test",
+      "title": "Subject-matter made available to public by use",
+      "requirement": "Subject-matter should be regarded as made available to the public by use or in any other way if, at the relevant date, it was possible for members of the public to gain knowledge of the subject-matter and there was no bar of confidentiality restricting the use or dissemination of such knowledge.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "An object is unconditionally sold to a member of the public, since the buyer thereby acquires unlimited possession of any knowledge which may be obtained from the object."
+      ],
+      "reference": "G-IV, 7.2.1"
+    },
+    {
+      "rule_id": "intrinsic_features_availability",
+      "title": "Intrinsic features available via analysis",
+      "requirement": "Even where in such cases the specific features of the object may not be ascertained from an external examination, but only by further analysis, those features are nevertheless to be considered as having been made available to the public.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.2.1"
+    },
+    {
+      "rule_id": "extrinsic_features_exclusion",
+      "title": "Extrinsic characteristics not prior art",
+      "requirement": "Extrinsic characteristics, which are only revealed when the product is exposed to interaction with specifically chosen outside conditions... therefore point beyond the product per se... Thus, such characteristics cannot be considered as already having been made available to the public.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "The first or further application as a pharmaceutical product of a known substance or composition",
+        "The use of a known compound for a particular purpose, based on a new technical effect"
+      ],
+      "reference": "G-IV, 7.2.1"
+    },
+    {
+      "rule_id": "external_examination_availability",
+      "title": "Knowledge from external examination",
+      "requirement": "If an object could be seen in a given place... to which members of the public not bound to secrecy... had access, all knowledge which an expert was able to gain from a purely external examination is to be regarded as having been made available to the public.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.2.1"
+    },
+    {
+      "rule_id": "concealed_features_exclusion",
+      "title": "Concealed features not prior art",
+      "requirement": "In such cases, however, all concealed features which could be ascertained only by dismantling or destroying the object will not be deemed to have been made available to the public.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.2.1"
+    },
+    {
+      "rule_id": "secrecy_agreement_exclusion",
+      "title": "Secrecy agreement excludes prior art",
+      "requirement": "The basic principle to be adopted is that subject-matter has not been made available to the public by use or in any other way if there is an express or tacit agreement on secrecy which has not been broken, or if the circumstances of the case are such that such secrecy derives from a relationship of good faith or trust.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.2.2"
+    },
+    {
+      "rule_id": "non_public_property_exclusion",
+      "title": "Use on non-public property exclusion",
+      "requirement": "As a general rule, use on non-public property, for example in factories and barracks, is not considered as use made available to the public, because company employees and soldiers are usually bound to secrecy, save in cases where the objects or processes used are exhibited, explained or shown to the public in such places, or where specialists not bound to secrecy are able to recognise their essential features from the outside.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Cases where the objects or processes used are exhibited, explained or shown to the public in such places",
+        "Cases where specialists not bound to secrecy are able to recognise their essential features from the outside"
+      ],
+      "examples": [],
+      "reference": "G-IV, 7.2.3"
+    },
+    {
+      "rule_id": "oral_description_public_availability",
+      "title": "Oral description constitutes state of the art",
+      "requirement": "The state of the art is made available to the public by oral description when facts are unconditionally brought to the knowledge of members of the public in the course of a conversation or a lecture or by means of radio, television or sound reproduction equipment.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.3.1"
+    },
+    {
+      "rule_id": "non_prejudicial_oral_secrecy",
+      "title": "Oral descriptions under secrecy are not prior art",
+      "requirement": "The state of the art will not be affected by oral descriptions made by and to persons who were bound to, and preserved, secrecy.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.3.2"
+    },
+    {
+      "rule_id": "non_prejudicial_oral_abuse",
+      "title": "Oral disclosures from evident abuse are not prior art",
+      "requirement": "The state of the art will not be affected by an oral disclosure which was made no earlier than six months before the filing of the European patent application and which derives directly or indirectly from an evident abuse in relation to the applicant or his legal predecessor.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.3.2"
+    },
+    {
+      "rule_id": "internet_disclosure_state_of_art",
+      "title": "Internet disclosures form part of state of the art",
+      "requirement": "As a matter of principle, disclosures on the internet form part of the state of the art according to Art. 54(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.5"
+    },
+    {
+      "rule_id": "internet_public_availability_date",
+      "title": "Internet info available from posting date",
+      "requirement": "Information disclosed on the internet or in online databases is considered to be publicly available as of the date the information was publicly posted.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.5"
+    },
+    {
+      "rule_id": "internet_access_restrictions_irrelevant",
+      "title": "Password or payment does not prevent prior art status",
+      "requirement": "Neither restricting access to a limited circle of people (e.g. by password protection) nor requiring payment for access prevent a web page from forming part of the state of the art, provided it is in principle available without any bar of confidentiality.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-IV, 7.5.1"
+    },
+    {
+      "rule_id": "internet_disclosures_constitute_prior_art",
+      "title": "Internet disclosures constitute prior art",
+      "requirement": "Documents obtained from internet sources such as Usenet discussion groups, blogs, e-mail archives of mailing lists or wiki pages constitute prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Usenet discussion groups",
+        "blogs",
+        "e-mail archives of mailing lists",
+        "wiki pages"
+      ],
+      "reference": "Part G - Chapter IV-14, Section 7.5.3.3"
+    },
+    {
+      "rule_id": "email_content_not_public_if_intercepted",
+      "title": "Email content not public merely due to interception risk",
+      "requirement": "The content of a transmitted e-mail cannot be considered to be public merely for the reason that it could have been intercepted.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-14, Section 7.5.3.3"
+    },
+    {
+      "rule_id": "undated_disclosure_not_prior_art",
+      "title": "Undated internet disclosure cannot be used as prior art",
+      "requirement": "If no date can be obtained (other than the date of retrieval by the examiner, which will be too late for the application in question), the disclosure cannot be used as prior art during examination.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-15, Section 7.5.4"
+    },
+    {
+      "rule_id": "standards_prior_art_status",
+      "title": "Final standards form part of state of the art",
+      "requirement": "Final standards themselves in principle form part of the state of the art under Art. 54(2).",
+      "severity": "mandatory",
+      "exceptions": [
+        "Private standards consortia that do not publish final standards but make them available subject to non-disclosure agreements."
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter IV-17, Section 7.6"
+    },
+    {
+      "rule_id": "preparatory_docs_public_availability",
+      "title": "Preparatory documents must be publicly available",
+      "requirement": "Preparatory documents must have been made available to the public prior to the filing or priority date without any bar of confidentiality in order to qualify as prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-17, Section 7.6"
+    },
+    {
+      "rule_id": "confidentiality_obligation_determination",
+      "title": "Confidentiality obligation determined case by case",
+      "requirement": "The existence of an explicit confidentiality obligation must be determined case by case on the basis of the documents allegedly setting forth this obligation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-17, Section 7.6"
+    },
+    {
+      "rule_id": "general_confidentiality_extension",
+      "title": "General confidentiality must extend to document",
+      "requirement": "In case of a general confidentiality clause, it must be established that the general confidentiality obligation actually extended to the document in question until the relevant point in time.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter IV-17, Section 7.6"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the state of the art includes all information made public before the filing/priority date, regardless of location, language, or manner.",
+    "Confirm that cited documents were accessible to the public at the relevant date and contain enabling disclosure for the skilled person.",
+    "Ensure that subject-matter in prior art is reproducible using common general knowledge without undue burden.",
+    "Check that 'date of filing' is correctly interpreted as the priority date where applicable for novelty assessment.",
+    "Verify that novelty is assessed against each claim or alternative separately.",
+    "Confirm that Art. 54(3) prior art (conflicting applications) is used only for novelty, not inventive step.",
+    "Ensure the content of Art. 54(3) prior art includes the whole disclosure (description, drawings, claims) of the original text.",
+    "Verify that the conflicting application has a filing date before the application under examination.",
+    "Confirm that the conflicting application was published on or after the filing/priority date of the application under examination.",
+    "Check that priority dates are correctly applied to conflicting applications for subject-matter corresponding to the priority claim.",
+    "Verify that oral descriptions or prior use accounts are treated as state of the art only if the reproducing document is truthful and publicly available.",
+    "Ensure that insufficiently disclosed prior art (e.g., unavailable starting materials) is excluded from the state of the art.",
+    "Confirm that no age limits or geographical restrictions are applied to the definition of state of the art."
+  ],
+  "system_prompt_injection": "Adhere strictly to the European Patent Office guidelines for defining the state of the art as all information made available to the public worldwide before the priority date, regardless of language or location. Ensure that prior art documents provide an enabling disclosure that allows a skilled person to reproduce the subject matter using common general knowledge, excluding insufficiently disclosed materials. Assess novelty against each individual claim or alternative, while restricting the application of Article 54(3) conflicting applications to novelty assessments only. Verify that conflicting applications meet the specific filing and publication date requirements, interpreting the relevant dates based on valid priority claims. Disregard contested documents if the applicant provides sound reasons doubting their public availability or truthfulness, and rely on the original text content for Article 54(3) evaluations despite translation errors."
+}

@@ -1,0 +1,576 @@
+{
+  "card_id": "epo_description_format_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_description_format.pdf",
+  "task": "description_format",
+  "task_label": "Description Format",
+  "rules": [
+    {
+      "rule_id": "abstract_must_contain_title",
+      "title": "Abstract must indicate title of invention",
+      "requirement": "The abstract must indicate the title of the invention",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(1)"
+    },
+    {
+      "rule_id": "abstract_must_indicate_technical_field",
+      "title": "Abstract must indicate technical field",
+      "requirement": "The abstract must indicate the technical field to which the invention pertains",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(1)"
+    },
+    {
+      "rule_id": "abstract_must_contain_concise_summary",
+      "title": "Abstract must contain concise summary of disclosure",
+      "requirement": "The abstract must contain a concise summary of the disclosure as contained in the description, claims and drawings, which must be so drafted as to allow a clear understanding of the technical problem, the gist of the solution of that problem through the invention and the principal use of the invention",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(2)"
+    },
+    {
+      "rule_id": "abstract_chemical_formula_recommendation",
+      "title": "Abstract should contain best characterising chemical formula",
+      "requirement": "Where applicable, the abstract should contain the chemical formula which, among those contained in the application, best characterises the invention",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(2)"
+    },
+    {
+      "rule_id": "abstract_prohibit_merits_statements",
+      "title": "Abstract must not contain statements on merits or value",
+      "requirement": "The abstract must not contain statements on the alleged merits or value of the invention or its speculative application",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(3)"
+    },
+    {
+      "rule_id": "abstract_word_count_recommendation",
+      "title": "Abstract preferably not more than 150 words",
+      "requirement": "The abstract preferably not contain more than one hundred and fifty words",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(3)"
+    },
+    {
+      "rule_id": "abstract_must_include_figure_indication",
+      "title": "Abstract must be accompanied by figure indication",
+      "requirement": "The abstract must be accompanied by an indication of the figure or exceptionally more than one figure of the drawings which should accompany the abstract",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(4)"
+    },
+    {
+      "rule_id": "abstract_reference_signs_recommendation",
+      "title": "Abstract main features should be followed by reference signs",
+      "requirement": "Each main feature mentioned in the abstract and illustrated by a drawing, should be followed by a reference sign in parenthesis",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 47(4)"
+    },
+    {
+      "rule_id": "title_must_be_clear_and_concise",
+      "title": "Title should clearly and concisely state technical designation",
+      "requirement": "The title should clearly and concisely state the technical designation of the invention",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "A-III, 7.1"
+    },
+    {
+      "rule_id": "title_exclude_fancy_names",
+      "title": "Title should exclude all fancy names",
+      "requirement": "The title should exclude all fancy names",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "A-III, 7.1"
+    },
+    {
+      "rule_id": "title_clear_concise_technical",
+      "title": "Title must clearly and concisely state technical designation",
+      "requirement": "The title should clearly and concisely state the technical designation of the invention and should exclude all fancy names.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "A-III, 3"
+    },
+    {
+      "rule_id": "sufficiency_of_disclosure",
+      "title": "Application must disclose invention clearly and completely",
+      "requirement": "The application must disclose the invention in a manner sufficiently clear and complete for it to be carried out by a person skilled in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 83, Rule 42"
+    },
+    {
+      "rule_id": "technical_field_specification",
+      "title": "Description must specify technical field",
+      "requirement": "The invention should be placed in its setting by specifying the technical field to which it relates, for example by reproducing the first (\"prior art\") portion of the independent claims in full or in substance or by simply referring to it.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(a)"
+    },
+    {
+      "rule_id": "background_art_mention",
+      "title": "Description should mention background art",
+      "requirement": "The description should also mention any background art of which the applicant is aware, and which can be regarded as useful for understanding the invention and its relationship to the prior art; identification of documents reflecting such art, especially patent specifications, should preferably be included.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(b)"
+    },
+    {
+      "rule_id": "cite_closest_prior_art",
+      "title": "Applicant should cite closest prior art",
+      "requirement": "In principle, when filing an application the applicant should cite in the description the closest prior art known to him.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(b)"
+    },
+    {
+      "rule_id": "insert_subsequent_prior_art_refs",
+      "title": "Insertion of subsequent prior art references required if necessary",
+      "requirement": "The insertion into the statement of prior art of references to documents identified subsequently, for example by the search report, should be required, where necessary, to put the invention into proper perspective.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(b)"
+    },
+    {
+      "rule_id": "prior_art_refs_purely_factual",
+      "title": "Post-filing prior art references must be purely factual",
+      "requirement": "References to the prior art introduced after filing must be purely factual.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(b)"
+    },
+    {
+      "rule_id": "adjust_advantages_for_prior_art",
+      "title": "Alleged advantages must be adjusted in light of prior art",
+      "requirement": "Any alleged advantages of the invention must be adjusted if necessary in the light of the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(b)"
+    },
+    {
+      "rule_id": "new_advantages_no_new_matter",
+      "title": "New advantages must not introduce new matter",
+      "requirement": "New statements of advantage are permissible provided that they do not introduce into the description matter which could not have been deduced from the application as originally filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 123(2)"
+    },
+    {
+      "rule_id": "cite_standard_knowledge_optional",
+      "title": "Citation of standard technical knowledge",
+      "requirement": "The applicant may cite documents in the application which relate to standard technical knowledge (background art neither addressing the same technical problem nor necessary to complete the disclosure of the claimed invention).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "well-known tests for measuring certain parameters",
+        "definitions of terms of established meaning"
+      ],
+      "reference": "Part F- Chapter II-5"
+    },
+    {
+      "rule_id": "in_house_art_clarification",
+      "title": "In-house state of the art clarification",
+      "requirement": "If the applicant indicates that subject-matter initially cited as prior art is only 'in-house state of the art', such prior art may not be used in the assessment of novelty and inventive step. However, it may be allowed to remain in the description, provided the fact that it is only 'in-house state of the art' is made clear.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F- Chapter II-5"
+    },
+    {
+      "rule_id": "art_54_3_explicit_acknowledgment",
+      "title": "Explicit acknowledgment of Art. 54(3) documents",
+      "requirement": "The fact that this document falls under Art. 54(3) must be explicitly acknowledged.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F- Chapter II-5"
+    },
+    {
+      "rule_id": "citation_format_wipo_standards",
+      "title": "Use of WIPO Standards for citations",
+      "requirement": "In citing documents or inserting references, applicants and examiners alike should use codes that allow the references to be retrieved without difficulty. This can be best achieved through consistent use of the WIPO Standards format.",
+      "severity": "recommended",
+      "exceptions": [
+        "in case of deviation from these standards there is no need to correct the codes used, as long as straightforward retrieval of the citation(s) is possible"
+      ],
+      "examples": [
+        "WIPO Standard ST.14 for non-patent literature",
+        "WIPO Standard ST.3 for two-letter country code",
+        "WIPO Standard ST.16 for symbols indicating the type of document"
+      ],
+      "reference": "Part F- Chapter II-5, 4.3.1"
+    },
+    {
+      "rule_id": "no_treatise_or_research_report",
+      "title": "Exclusion of treatise or research report content",
+      "requirement": "The examiner should not require the applicant to insert anything in the nature of a treatise or research report or explanatory matter which is obtainable from textbooks or is otherwise well-known.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F- Chapter II-6, 4.4"
+    },
+    {
+      "rule_id": "no_detailed_prior_art_description",
+      "title": "No detailed description of cited prior documents",
+      "requirement": "The examiner should not require a detailed description of the content of cited prior documents. It is sufficient that the reason for the inclusion of the reference is indicated, unless in a particular case a more detailed description is necessary for a full understanding of the invention of the application.",
+      "severity": "recommended",
+      "exceptions": [
+        "unless in a particular case a more detailed description is necessary for a full understanding of the invention of the application"
+      ],
+      "examples": [],
+      "reference": "Part F- Chapter II-6, 4.4"
+    },
+    {
+      "rule_id": "single_reference_sufficiency",
+      "title": "Sufficiency of single reference for prior art",
+      "requirement": "A list of several reference documents relating to the same feature or aspect of the prior art is not required; only the most appropriate need be referred to.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F- Chapter II-6, 4.4"
+    },
+    {
+      "rule_id": "no_excision_of_unnecessary_matter",
+      "title": "No insistence on excision of unnecessary matter",
+      "requirement": "The examiner should not insist upon the excision of any such unnecessary matter, except when it is very extensive.",
+      "severity": "recommended",
+      "exceptions": [
+        "when it is very extensive"
+      ],
+      "examples": [],
+      "reference": "Part F- Chapter II-6, 4.4"
+    },
+    {
+      "rule_id": "disclosure_of_technical_problem",
+      "title": "Disclosure of technical problem and solution",
+      "requirement": "The invention as claimed should be disclosed in such a way that the technical problem, or problems, with which it deals can be appreciated and the solution can be understood.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F- Chapter II-7, 4.5"
+    },
+    {
+      "rule_id": "disclosure_technical_problem_solution",
+      "title": "Disclosure of technical problem and solution",
+      "requirement": "The invention as claimed should be disclosed in such a way that the technical problem, or problems, with which it deals can be appreciated and the solution can be understood.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "necessary_details_only",
+      "title": "Inclusion of only necessary details",
+      "requirement": "To meet this requirement, only such details should be included as are necessary for elucidating the invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "elucidate_independent_claims",
+      "title": "Elucidation of independent claim solution",
+      "requirement": "To elucidate the nature of the solution according to the independent claims, either the characterising portion of the independent claims is repeated or referred to, or the substance of the features of the solution according to the relevant claims is reproduced.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "dependent_claim_reference_sufficient",
+      "title": "Sufficiency of reference to dependent claims",
+      "requirement": "In cases where the subject-matter of a dependent claim can be understood either by the wording of the claim itself or by the description of a way of performing the invention, no additional explanation of this subject-matter will be necessary. A mention in the description that a particular embodiment of the invention is set out in the dependent claim will then be sufficient.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "state_advantageous_effects",
+      "title": "Statement of advantageous effects",
+      "requirement": "Any advantageous effects which the applicant considers the invention to have in relation to the prior art should be stated.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "no_disparagement_of_prior_art",
+      "title": "Prohibition of disparaging prior art",
+      "requirement": "This should not be done in such a way as to disparage any particular prior product or process.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "no_misleading_references",
+      "title": "Prohibition of misleading references to prior art or invention",
+      "requirement": "Neither the prior art nor the applicant's invention should be referred to in a manner likely to mislead.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "an ambiguous presentation which gives the impression that the prior art had solved less of the problem than was actually the case"
+      ],
+      "reference": "F-II, 7.4.5"
+    },
+    {
+      "rule_id": "brief_description_of_drawings",
+      "title": "Brief description of drawings",
+      "requirement": "If drawings are included they should first be briefly described, in a manner such as: 'Figure 1 is a plan view of the transformer housing; Figure 2 is a side elevation of the housing; Figure 3 is an end elevation looking in the direction of the arrow X of Figure 2; Figure 4 is a cross-section taken through AA of Figure 1.'",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Figure 1 is a plan view of the transformer housing"
+      ],
+      "reference": "F-II, 7.4.7"
+    },
+    {
+      "rule_id": "reference_element_name_and_number",
+      "title": "Reference to elements by name and number",
+      "requirement": "When it is necessary to refer in the description to elements of the drawings, the name of the element should be referred to as well as its number, i.e. the reference should not be in the form: '3 is connected to 5 via 4' but, 'resistor 3 is connected to capacitor 5 via switch 4'.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "resistor 3 is connected to capacitor 5 via switch 4"
+      ],
+      "reference": "F-II, 7.4.7"
+    },
+    {
+      "rule_id": "consistency_of_reference_signs",
+      "title": "Consistency of reference signs between description and drawings",
+      "requirement": "The description and drawings should be consistent with one another, especially in the matter of reference numbers and other signs, and each number or sign must be explained.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.8"
+    },
+    {
+      "rule_id": "all_reference_signs_must_appear_in_drawings",
+      "title": "All reference signs in description/claims must appear in drawings",
+      "requirement": "All reference numbers or signs used in the description or claims must also appear on the drawings.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.8"
+    },
+    {
+      "rule_id": "explicit_industrial_application",
+      "title": "Explicit indication of industrial application",
+      "requirement": "The description should indicate explicitly the way in which the invention is capable of exploitation in industry, if this is not obvious from the description or from the nature of the invention.",
+      "severity": "recommended",
+      "exceptions": [
+        "if this is not obvious from the description or from the nature of the invention"
+      ],
+      "examples": [],
+      "reference": "F-II, 7.4.9"
+    },
+    {
+      "rule_id": "biotech_industrial_application_disclosure",
+      "title": "Disclosure of industrial application for biotechnological sequences",
+      "requirement": "The industrial application of such sequences must be disclosed in the patent application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-II, 7.4.9"
+    },
+    {
+      "rule_id": "manner_and_order_of_presentation",
+      "title": "Manner and order of presentation of description",
+      "requirement": "The manner and order of presentation of the description should be that specified in Rule 42(1), i.e. as set out above, unless, because of the nature of the invention, a different manner or a different order would afford a better understanding and a more economic presentation.",
+      "severity": "recommended",
+      "exceptions": [
+        "because of the nature of the invention, a different manner or a different order would afford a better understanding and a more economic presentation"
+      ],
+      "examples": [],
+      "reference": "F-II, 7.4.10"
+    },
+    {
+      "rule_id": "description_clarity_orderliness",
+      "title": "Description must be clear and orderly",
+      "requirement": "The description is clear and orderly and all the requisite information is present.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Departure from Rule 42(1) is acceptable if the description is clear and orderly and all requisite information is present.",
+        "Requirements of Rule 42(1)(c) may be waived where the invention is based on a fortuitous discovery with useful practical application.",
+        "Requirements of Rule 42(1)(c) may be waived where the invention breaks entirely new ground.",
+        "Technically simple inventions may be fully comprehensible with minimum description and slight reference to prior art."
+      ],
+      "examples": [],
+      "reference": "Rule 42(1)"
+    },
+    {
+      "rule_id": "terminology_consistency",
+      "title": "Terminology and signs must be consistent",
+      "requirement": "Terminology and signs must be consistent throughout the application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section 4.11"
+    },
+    {
+      "rule_id": "computer_program_disclosure",
+      "title": "Computer programs must be disclosed in normal language",
+      "requirement": "The description should be written substantially in normal language, possibly accompanied by flow diagrams or other aids to understanding, so that the invention may be understood by a person skilled in the art.",
+      "severity": "recommended",
+      "exceptions": [
+        "Short excerpts from programs written in commonly used programming languages can be accepted if they serve to illustrate an embodiment of the invention."
+      ],
+      "examples": [],
+      "reference": "Section 4.12"
+    },
+    {
+      "rule_id": "physical_values_units",
+      "title": "Physical values must use internationally recognized units",
+      "requirement": "Physical values must be expressed in the units recognised in international practice, which is generally in the metric system, using SI units and the other units referred to in Chapter I of the Annex to EEC Directive 80/181/EEC.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Any values not meeting this requirement must also be expressed in the units recognised in international practice."
+      ],
+      "examples": [],
+      "reference": "Section 4.13"
+    },
+    {
+      "rule_id": "mathematical_chemical_symbols",
+      "title": "Mathematical and chemical symbols must be generally used",
+      "requirement": "For mathematical formulae the symbols in general use must be employed. For chemical formulae, the symbols, atomic weights and molecular formulae in general use must be employed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 49(10)"
+    },
+    {
+      "rule_id": "trademark_acknowledgment",
+      "title": "Registered trademarks must be acknowledged",
+      "requirement": "It is the applicant's responsibility to ensure that registered trademarks are acknowledged as such in the description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section 4.14"
+    },
+    {
+      "rule_id": "drawing_text_indispensability",
+      "title": "Textual matter on drawings must be indispensable",
+      "requirement": "The textual matter included on the drawings must be absolutely indispensable.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Identifying catchwords for functional integers of complex systems may be regarded as indispensable if necessary to enable a diagram to be interpreted rapidly and clearly."
+      ],
+      "examples": [
+        "magnetic core store",
+        "speed integrator"
+      ],
+      "reference": "Rule 46(2)(f), (h), (i) and (j)"
+    },
+    {
+      "rule_id": "drawing_printing_quality",
+      "title": "Drawings must be of sufficient quality for printing",
+      "requirement": "The examiner must request the applicant to present drawings of sufficient quality for printing if the quality of the original drawings is insufficient.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section 5.2"
+    },
+    {
+      "rule_id": "sequence_listing_fragments_variants",
+      "title": "Sequence listing required for fragments/variants",
+      "requirement": "If the European patent application discloses nucleotide or amino acid sequences that are fragments or variants of a prior-art sequence, a sequence listing complying with WIPO Standard ST.25 has to be filed for these sequence fragments or variants.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 46(2)(j)"
+    },
+    {
+      "rule_id": "prohibited_matter_ordre_public",
+      "title": "Omission of matter contrary to ordre public",
+      "requirement": "The omission, from the publication of the application, is mandatory for the first category [matter contrary to 'ordre public' or morality].",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "incitement to riot or to acts of disorder",
+        "incitement to criminal acts",
+        "racial, religious or similar discriminatory propaganda",
+        "grossly obscene matter"
+      ],
+      "reference": "Rule 48(1)(a)"
+    },
+    {
+      "rule_id": "prohibited_matter_disparaging",
+      "title": "Prohibition of libellous or disparaging statements",
+      "requirement": "Libellous or similarly disparaging statements are not allowed.",
+      "severity": "prohibited",
+      "exceptions": [
+        "fair comment, e.g. in relation to obvious or generally recognised disadvantages, or disadvantages stated to have been found and substantiated by the applicant"
+      ],
+      "examples": [],
+      "reference": "Rule 48(1)(b)"
+    },
+    {
+      "rule_id": "prohibited_matter_irrelevant",
+      "title": "Prohibition of obviously irrelevant matter",
+      "requirement": "Irrelevant matter is specifically prohibited under Rule 48(1)(c) only if it is 'obviously irrelevant or unnecessary', for instance, if it has no bearing on the subject-matter of the invention or its background of relevant prior art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 48(1)(c)"
+    },
+    {
+      "rule_id": "removed_matter_no_reference",
+      "title": "No incorporation of removed matter by reference",
+      "requirement": "When matter is removed from the description, it must not be incorporated into the patent specification by reference to the corresponding matter in the published application or in any other document.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 48"
+    },
+    {
+      "rule_id": "removal_of_prohibited_matter",
+      "title": "Requirement to remove prohibited matter",
+      "requirement": "If any such matter [contrary to ordre public or morality, or disparaging] has not been so recognised and has therefore not been omitted from the publication of the application, it should be required to be removed during examination of the application together with any other prohibited matter.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 48(2) and (3)"
+    }
+  ],
+  "review_checklist": [
+    "Verify the abstract includes the title of the invention.",
+    "Verify the abstract indicates the technical field to which the invention pertains.",
+    "Verify the abstract contains a concise summary allowing clear understanding of the technical problem.",
+    "Verify the abstract excludes statements on alleged merits, value, or speculative applications.",
+    "Verify the abstract is accompanied by an indication of the relevant figure(s) from the drawings.",
+    "Verify the title clearly and concisely states the technical designation without fancy names.",
+    "Verify the description discloses the invention clearly and completely for a person skilled in the art.",
+    "Verify the description specifies the technical field and mentions relevant background art.",
+    "Verify any post-filing prior art references are purely factual and do not introduce new matter.",
+    "Verify alleged advantages are adjusted in light of cited prior art and do not introduce new matter.",
+    "Verify the abstract preferably does not exceed 150 words.",
+    "Verify main features in the abstract are followed by reference signs in parentheses where illustrated.",
+    "Verify the abstract includes the best characterizing chemical formula if applicable.",
+    "Verify the applicant has cited the closest prior art known at filing.",
+    "Verify subsequent prior art references are inserted where necessary to properly contextualize the invention."
+  ],
+  "system_prompt_injection": "Adhere to the European Patent Office guidelines for description formatting by ensuring the abstract includes the invention title, technical field, a concise summary of the disclosure, and an indication of accompanying figures. Strictly prohibit any statements regarding the alleged merits, value, or speculative applications of the invention within the abstract. Draft the title to clearly and concisely state the technical designation while excluding all fancy names. Ensure the application discloses the invention clearly and completely for a person skilled in the art, specifying the technical field and citing the closest prior art. Maintain factual integrity by ensuring any post-filing prior art references are purely factual and that new advantages do not introduce matter beyond the original filing."
+}
