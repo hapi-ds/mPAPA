@@ -1,0 +1,115 @@
+{
+  "card_id": "epo_industrial_application_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_industrial_application.pdf",
+  "task": "industrial_application",
+  "task_label": "Industrial Application",
+  "rules": [
+    {
+      "rule_id": "industrial_application_definition",
+      "title": "Definition of susceptibility of industrial application",
+      "requirement": "An invention shall be considered as susceptible of industrial application if it can be made or used in any kind of industry, including agriculture.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "process for dispersing fog",
+        "process for converting energy from one form to another"
+      ],
+      "reference": "Art. 57"
+    },
+    {
+      "rule_id": "exclusion_physical_laws",
+      "title": "Exclusion of inventions contrary to physical laws",
+      "requirement": "Articles or processes alleged to operate in a manner clearly contrary to well-established physical laws are excluded from patentability under Art. 57.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "perpetual motion machine"
+      ],
+      "reference": "Art. 57"
+    },
+    {
+      "rule_id": "testing_methods_patentability",
+      "title": "Patentability of testing methods",
+      "requirement": "Methods of testing generally should be regarded as inventions susceptible of industrial application and therefore patentable if the test is applicable to the improvement or control of a product, apparatus or process which is itself susceptible of industrial application.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "utilisation of test animals for testing industrial products",
+        "determining water or air pollution"
+      ],
+      "reference": "Part G - Chapter III-1, Section 2"
+    },
+    {
+      "rule_id": "industrial_app_vs_art52",
+      "title": "Industrial application does not override Art. 52(2)",
+      "requirement": "Susceptibility of industrial application is not a requirement that overrides the restriction of Art. 52(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "administrative method of stock control"
+      ],
+      "reference": "Part G - Chapter III-1, Section 3"
+    },
+    {
+      "rule_id": "description_indicate_application",
+      "title": "Description must indicate industrial application",
+      "requirement": "The description must indicate, where this is not apparent, the way in which the invention is susceptible of industrial application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 42(1)(f)"
+    },
+    {
+      "rule_id": "claims_not_restricted_to_app",
+      "title": "Claims need not be restricted to industrial application",
+      "requirement": "The claims need not necessarily be restricted to the industrial application(s).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter III-1, Section 3"
+    },
+    {
+      "rule_id": "gene_sequence_disclosure",
+      "title": "Disclosure of industrial application for gene sequences",
+      "requirement": "The industrial application of a sequence or a partial sequence of a gene must be disclosed in the patent application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 29(3)"
+    },
+    {
+      "rule_id": "gene_sequence_function_specification",
+      "title": "Specification of function for gene sequences producing proteins",
+      "requirement": "In cases where a sequence or partial sequence of a gene is used to produce a protein or a part of a protein, it is necessary to specify which protein or part of a protein is produced and what function this protein or part of a protein performs.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter III-2, Section 4"
+    },
+    {
+      "rule_id": "gene_sequence_non_protein_function",
+      "title": "Indication of function for non-protein gene sequences",
+      "requirement": "When a nucleotide sequence is not used to produce a protein or part of a protein, the function to be indicated could e.g. be that the sequence exhibits a certain transcription promoter activity.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "transcription promoter activity"
+      ],
+      "reference": "Part G - Chapter III-2, Section 4"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the invention can be made or used in any kind of industry, including agriculture.",
+    "Confirm that the invention does not operate in a manner clearly contrary to well-established physical laws.",
+    "Ensure that testing methods are patentable if applicable to the improvement or control of a product or apparatus.",
+    "Check that susceptibility of industrial application does not override the exclusions under Art. 52(2).",
+    "Verify that the description indicates the way in which the invention is susceptible of industrial application where not apparent.",
+    "Confirm that claims are not unnecessarily restricted to specific industrial applications.",
+    "Ensure that the industrial application of any gene sequence or partial sequence is disclosed in the application.",
+    "Verify that for gene sequences producing proteins, the specific protein and its function are specified.",
+    "Check that for non-protein producing nucleotide sequences, a specific function such as transcription promoter activity is indicated."
+  ],
+  "system_prompt_injection": "Adhere to the European Patent Office guidelines on industrial application by ensuring the invention can be made or used in any industry, including agriculture, while strictly excluding processes that contradict well-established physical laws. Mandatorily disclose the specific industrial application in the description if it is not apparent, and for gene sequences, explicitly state the produced protein, its function, or the sequence's specific activity such as promoter function. Recognize that susceptibility of industrial application does not override the exclusions under Article 52(2) of the EPC, and note that claims need not be restricted to specific industrial applications. Treat testing methods as patentable if they contribute to product improvement or control, and ensure all disclosures meet these mandatory requirements to satisfy the industrial application criterion."
+}

@@ -1,0 +1,447 @@
+{
+  "card_id": "epo_added_matter_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_added_matter.pdf",
+  "task": "added_matter",
+  "task_label": "Added Matter",
+  "rules": [
+    {
+      "rule_id": "no_extension_beyond_original_content",
+      "title": "Amendments must not extend beyond content of application as filed",
+      "requirement": "If the applicant seeks to amend the description, the drawings or the claims in such a way that subject-matter which extends beyond the content of the application as filed is thereby introduced, the application as so amended cannot be allowed.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-1, Section 2.1"
+    },
+    {
+      "rule_id": "direct_and_unambiguous_derivability_test",
+      "title": "Amendments must be directly and unambiguously derivable",
+      "requirement": "An amendment should be regarded as introducing subject-matter which extends beyond the content of the application as filed, and therefore unallowable, if the overall change in the content of the application results in the skilled person being presented with information which is not directly and unambiguously derivable from that previously presented by the application, even when account is taken of matter which is implicit to a person skilled in the art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-1, Section 2.1"
+    },
+    {
+      "rule_id": "no_addition_of_undisclosed_subject_matter",
+      "title": "Impermissible to add subject-matter not directly derivable",
+      "requirement": "Under Art. 123(2), it is impermissible to add to a European application subject-matter which the skilled person cannot derive directly and unambiguously, using common general knowledge, from the disclosure of the invention as filed, also taking into account any features implicit to a person skilled in the art in what is expressly mentioned in the document.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-2, Section 2.2"
+    },
+    {
+      "rule_id": "literal_support_not_required",
+      "title": "Literal support not required for Art. 123(2) compliance",
+      "requirement": "Literal support is, however, not required by the wording of Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-2, Section 2.2"
+    },
+    {
+      "rule_id": "implicit_disclosure_definition",
+      "title": "Implicit disclosure limited to clear and unambiguous consequences",
+      "requirement": "The term 'implicit disclosure' means no more than the clear and unambiguous consequence of what is explicitly mentioned in the application as filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-2, Section 2.2"
+    },
+    {
+      "rule_id": "cross_referenced_features_conditions",
+      "title": "Conditions for introducing features from cross-referenced documents",
+      "requirement": "Such an amendment would not contravene Art. 123(2) if the description of the invention as originally filed leaves no doubt to a skilled reader that: (i) protection is or may be sought for such features; (ii) such features contribute to solving the technical problem underlying the invention; (iii) such features at least implicitly clearly belong to the description of the invention contained in the application as filed and thus to the content of the application as filed; and (iv) such features are precisely defined and identifiable within the disclosure of the reference document.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-2, Section 2.2.1"
+    },
+    {
+      "rule_id": "unavailable_public_documents_conditions",
+      "title": "Conditions for considering documents not available to public on filing date",
+      "requirement": "Documents not available to the public on the date of filing of the application can only be considered if: (i) a copy of the document was available to the EPO, or to the receiving Office if the application is a Euro-PCT application which was not filed at the EPO as the receiving Office, on or before the date of filing of the application; and (ii) the document was made available to the public no later than on the date of publication of the application under Art. 93.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-2, Section 2.2.1"
+    },
+    {
+      "rule_id": "no_amendments_from_priority_docs",
+      "title": "Prohibition of amendments relying on priority documents",
+      "requirement": "It is not permissible at later stages of the procedure to rely on the priority documents to correct or amend the application as filed.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Filing of missing parts under Rule 56(3) at the filing stage"
+      ],
+      "examples": [],
+      "reference": "Part H - Chapter IV-3, Section 2.2.2"
+    },
+    {
+      "rule_id": "claims_art_123_2_compliance",
+      "title": "Claims filed after filing date must comply with Art 123(2)",
+      "requirement": "Claims filed after the date of filing under Rule 58 ... must therefore comply with the requirements of Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-3, Section 2.2.3"
+    },
+    {
+      "rule_id": "seq_listing_no_added_matter",
+      "title": "Subsequently filed sequence listing must not add matter",
+      "requirement": "A subsequently filed standardised sequence listing may contain only the sequence information - in a standardised form - already contained in the original application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-3, Section 2.2.4"
+    },
+    {
+      "rule_id": "seq_listing_statement_required",
+      "title": "Statement required for subsequently filed sequence listing",
+      "requirement": "To this end the applicant must file a statement confirming that the subsequently filed standardised sequence listing does not include matter which goes beyond the content of the application as originally filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-3, Section 2.2.4"
+    },
+    {
+      "rule_id": "no_added_matter_from_priority",
+      "title": "Prohibition of adding matter present only in priority document",
+      "requirement": "Under Art. 123(2) it is impermissible to add to a European application matter present only in the priority document for that application.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Unless done under the provisions of Rule 56(3)"
+      ],
+      "examples": [],
+      "reference": "Part H - Chapter IV-3, Section 2.2.5"
+    },
+    {
+      "rule_id": "clarification_must_not_contra_123_2",
+      "title": "Clarification of inconsistencies must not contravene Art 123(2)",
+      "requirement": "The straightforward clarification of an obscurity or the resolution of an inconsistency will normally not be objected to, provided that the clarification does not contravene the requirements of Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-3, Section 2.2.8"
+    },
+    {
+      "rule_id": "trademark_amendment_check_123_2",
+      "title": "Trademark amendments must not conflict with Art. 123(2)",
+      "requirement": "If an amendment is made in order to clarify the meaning of a trademark or to replace a registered trademark with a corresponding technical term, the examiner should be particularly careful to ascertain that the amendment does not conflict with Art. 123(2).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.2.9"
+    },
+    {
+      "rule_id": "late_claims_must_fulfil_123_2",
+      "title": "Claims filed after filing date must fulfil Art. 123(2)",
+      "requirement": "In case (iii) [when filing the European application, indicate the reference to a previously filed application and file the claims after the date of filing], the claims filed after the date of filing will not [form part of the application as originally filed] and will thus have to fulfil the requirements of Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.3.1"
+    },
+    {
+      "rule_id": "divisional_no_extension_beyond_parent",
+      "title": "Divisional subject-matter may not extend beyond parent",
+      "requirement": "Under Art. 76(1), the subject-matter of a divisional application may not extend beyond the parent application as originally filed.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.3.2"
+    },
+    {
+      "rule_id": "divisional_amendments_no_extension",
+      "title": "Divisional amendments may not extend beyond original content",
+      "requirement": "Amendments made to the divisional application subsequent to its filing may not extend beyond the content of the divisional application as originally filed (Art. 123(2)).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.3.2"
+    },
+    {
+      "rule_id": "art_61_app_no_extension_beyond_earlier",
+      "title": "Art. 61 application must not extend beyond earlier application",
+      "requirement": "The new application [filed under Art. 61(1)(b)] must not contain any subject-matter extending beyond the earlier (unentitled) application as originally filed.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.3.3"
+    },
+    {
+      "rule_id": "art_61_amendments_no_extension",
+      "title": "Art. 61 application amendments may not extend beyond original content",
+      "requirement": "Art. 123(2) means that this new application [under Art. 61(1)(b)] may not be amended in such a way as to extend its subject-matter beyond its content as originally filed, even where the subject-matter in question is contained in the earlier application.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.3.3"
+    },
+    {
+      "rule_id": "pct_amendments_must_fulfil_123_2",
+      "title": "PCT phase amendments must fulfil Art. 123(2) in EP phase",
+      "requirement": "Amendments made during the PCT phase (including amended, substitute or rectified sheets, even if attached to the WO publication) or upon entry into the regional phase before the EPO must, if maintained in the European phase, fulfil the requirements of Art. 123(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.3.4"
+    },
+    {
+      "rule_id": "added_ingredient_objection_123_2",
+      "title": "Adding further ingredient normally objected under Art. 123(2)",
+      "requirement": "If an application relates to a rubber composition comprising several ingredients and the applicant seeks to introduce the information that a further ingredient may be added, then this amendment should normally be objected to as offending against Art. 123(2).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.4"
+    },
+    {
+      "rule_id": "specific_support_objection_123_2",
+      "title": "Adding specific support type normally objected under Art. 123(2)",
+      "requirement": "In an application which describes and claims an apparatus 'mounted on resilient supports', without disclosing any particular kind of resilient support, objection should be raised if the applicant seeks to add the specific information that the supports are, or could be, e.g. helical springs.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 2.4"
+    },
+    {
+      "rule_id": "patent_amendments_no_extension_protection",
+      "title": "Patent claims may not be amended to extend protection",
+      "requirement": "In such cases [opposition proceedings or reasoned requests for amendment] the claims of the European patent may not be amended in such a way as to extend the protection conferred by the patent.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "H-IV, 3.1"
+    },
+    {
+      "rule_id": "no_extension_of_protection",
+      "title": "Claims may not be amended to extend protection",
+      "requirement": "In such cases the claims of the European patent may not be amended in such a way as to extend the protection conferred by the patent.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 123(3)"
+    },
+    {
+      "rule_id": "no_extension_via_description_drawings",
+      "title": "Amendments to description/drawings must not extend protection",
+      "requirement": "Since, pursuant to Art. 69(1), amendments to the description and drawings will also influence the interpretation of the claims, and may therefore extend the protection conferred, any such amendments extending protection in this way are not allowable.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 69(1), Art. 123(3)"
+    },
+    {
+      "rule_id": "examination_for_added_matter_and_extension",
+      "title": "Amendments must be examined for Art 123(2) and 123(3) compliance",
+      "requirement": "All amendments made to claims and any connected amendments to the description and drawings in the course of opposition proceedings... must be examined to determine whether such amendments could result in the extension of the subject-matter beyond the content of the application as originally filed (Art. 123(2)) or in the extension of the protection conferred (Art. 123(3)).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 123(2), Art. 123(3)"
+    },
+    {
+      "rule_id": "cut_off_effect_reinsertion",
+      "title": "Deleted subject-matter generally cannot be reinserted",
+      "requirement": "If, in view of Art. 84, the application documents have been adapted to amended claims before grant, thereby deleting part of the subject-matter originally disclosed in order to avoid inconsistencies in the patent specification, as a rule, subject-matter deleted for this reason cannot be reinserted either into the patent specification or into the claims as granted without infringing Art. 123(3) (the cut-off effect).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 123(3), Art. 84"
+    },
+    {
+      "rule_id": "separate_examination_123_2_and_3",
+      "title": "Requirements of Art 123(2) and 123(3) must be dealt with separately",
+      "requirement": "The requirements of Art. 123(2) and Art. 123(3) have to be dealt with separately.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 123(2), Art. 123(3)"
+    },
+    {
+      "rule_id": "revocation_for_conflict_123_2_3",
+      "title": "Patent revoked if conflict between Art 123(2) and 123(3) cannot be resolved",
+      "requirement": "In that case, Art. 123(2) would require deletion of such a feature whereas Art. 123(3) would not allow deletion, as this would extend the protection conferred by the patent as granted. In such a case the patent will have to be revoked under Art. 100(c).",
+      "severity": "mandatory",
+      "exceptions": [
+        "where this feature can be replaced by a feature for which there is a basis in the application as filed and which does not extend the protection conferred by the patent as granted"
+      ],
+      "examples": [],
+      "reference": "Art. 100(c), Art. 123(2), Art. 123(3)"
+    },
+    {
+      "rule_id": "amendment_must_not_extend_protection",
+      "title": "Amended patent must not extend protection conferred",
+      "requirement": "A feature for which there is a basis in the application as filed and which does not extend the protection conferred by the patent as granted, maintenance in this amended form can be allowed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-9"
+    },
+    {
+      "rule_id": "limiting_feature_may_be_maintained",
+      "title": "Limiting feature without technical contribution may be maintained",
+      "requirement": "If the added feature, without providing a technical contribution to the subject-matter of the claimed invention, merely limits the protection conferred by the patent as granted by excluding protection for part of the subject-matter of the claimed invention as covered by the application as filed, this feature may be maintained.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-9"
+    },
+    {
+      "rule_id": "deletion_of_method_features_contradicts_123_3",
+      "title": "Deletion of method features contrary to Art 123(3)",
+      "requirement": "Amendment of the claims as granted by deletion of such 'method features' would be contrary to Art. 123(3).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-9, 3.7"
+    },
+    {
+      "rule_id": "amended_application_must_satisfy_epc",
+      "title": "Amended application must satisfy all EPC requirements",
+      "requirement": "An amended application must of course satisfy all the requirements of the EPC including, in particular, inventive step and the other matters listed in B-XI, 3.6.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.2"
+    },
+    {
+      "rule_id": "proprietor_must_indicate_basis_for_amendments",
+      "title": "Proprietor must indicate basis for amendments in opposition",
+      "requirement": "The proprietor of the patent should, where this is not obvious, indicate the points in the original application documents or claims of the granted patent from which the amendments may be derived.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.3"
+    },
+    {
+      "rule_id": "amendments_must_comply_with_epc",
+      "title": "Amendments must comply with EPC as a whole",
+      "requirement": "It is the amendments introduced into the patent which must be examined as to whether they comply with the EPC as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.3"
+    },
+    {
+      "rule_id": "patent_must_not_contravene_epc_via_amendments",
+      "title": "Patent must not contravene EPC requirements via amendments",
+      "requirement": "The Opposition Division should check that the patent, by the amendments themselves, does not contravene the requirements of the EPC.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Art. 82"
+      ],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.3"
+    },
+    {
+      "rule_id": "formal_requirements_must_be_satisfied",
+      "title": "Formal requirements for amended documents must be satisfied",
+      "requirement": "The formal requirements, in particular Rules 30 to 34 and Rules 42, 43, 46, 48 and 50, must be satisfied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.3"
+    },
+    {
+      "rule_id": "limitation_only_examines_amended_claims",
+      "title": "Limitation proceedings only examine amended claims",
+      "requirement": "Only the amended claims are to be examined with regard to Art. 84, and Art. 123(2) and (3), i.e. what should be considered is whether the requested amendments introduce a deficiency within the meaning of those provisions.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.4"
+    },
+    {
+      "rule_id": "granted_claims_not_examined_anew_in_limitation",
+      "title": "Claims as granted should not be examined anew in limitation",
+      "requirement": "Claims as granted or as maintained should not be examined anew.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.4"
+    },
+    {
+      "rule_id": "amended_claims_must_conform_to_art_84",
+      "title": "Amended claims must conform to Art 84 in limitation",
+      "requirement": "It should also be verified that the amended claims are in conformity with Art. 84.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.4.1"
+    },
+    {
+      "rule_id": "mere_clarifications_not_allowed_in_limitation",
+      "title": "Mere clarifications not allowed unless necessitated by limitation",
+      "requirement": "Mere clarifications made to the claims, in particular to dependent claims, cannot be allowed, unless they are necessitated by the limitation(s) introduced elsewhere in the claims.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Clarifications necessitated by limitations introduced elsewhere in the claims"
+      ],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.4.1"
+    },
+    {
+      "rule_id": "rule_95_2_requires_only_amended_claims_examined",
+      "title": "Rule 95(2) requires only amended claims to be examined",
+      "requirement": "Rule 95(2) requires only the amended claims to be examined in limitation proceedings.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV-10, 4.4.2"
+    },
+    {
+      "rule_id": "clarifications_necessitated_by_limitation",
+      "title": "Clarifications allowed only if necessitated by limitation",
+      "requirement": "Mere clarifications made to the claims, in particular to dependent claims, cannot be allowed, unless they are necessitated by the limitation(s) introduced elsewhere in the claims.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Clarifications necessitated by the limitation(s) introduced elsewhere in the claims"
+      ],
+      "examples": [],
+      "reference": "Part H - Chapter IV, Section 4.4.1"
+    },
+    {
+      "rule_id": "examiner_no_sua_sponte_description",
+      "title": "Examiner may not adapt description of own motion",
+      "requirement": "The examiner may not adapt the description of his own motion.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part H - Chapter IV, Section 4.4.2"
+    },
+    {
+      "rule_id": "no_cosmetic_changes_description",
+      "title": "Cosmetic changes to description not allowed",
+      "requirement": "Amendments made to the description solely in order to improve the patent, or cosmetic changes which are not necessitated by the limited claims, cannot be allowed.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Changes necessitated by the limited claims"
+      ],
+      "examples": [],
+      "reference": "Part H - Chapter IV, Section 4.4.2"
+    }
+  ],
+  "review_checklist": [
+    "Verify that all amendments do not introduce subject-matter extending beyond the application as filed.",
+    "Confirm that amended features are directly and unambiguously derivable by a skilled person using common general knowledge.",
+    "Ensure that implicit disclosures are limited to clear and unambiguous consequences of explicit content.",
+    "Check that no subject-matter present only in priority documents has been added to the application.",
+    "Verify that subsequently filed sequence listings contain only information already present in the original application.",
+    "Confirm that a statement is filed certifying the subsequently filed sequence listing does not add new matter.",
+    "Ensure that claims filed after the filing date comply with Article 123(2) requirements.",
+    "Verify that divisional application subject-matter does not extend beyond the parent application as originally filed.",
+    "Check that amendments to divisional applications do not extend beyond the divisional application as originally filed.",
+    "Ensure that applications under Article 61 do not contain subject-matter extending beyond the earlier application.",
+    "Verify that amendments made during the PCT phase or upon entry into the EP phase comply with Article 123(2).",
+    "Confirm that clarifications of obscurities or inconsistencies do not contravene Article 123(2).",
+    "Check that cross-referenced features are clearly and unambiguously supported by the original description.",
+    "Verify that trademark amendments or replacements with technical terms do not introduce new matter.",
+    "Ensure that documents not public on the filing date are only considered if available to the EPO or receiving Office."
+  ],
+  "system_prompt_injection": "Apply the European Patent Office guidelines on added matter to ensure all amendments strictly comply with Article 123(2) of the EPC. Prohibit any introduction of subject-matter that extends beyond the content of the application as filed, including matter derived solely from priority documents or implicit disclosures that are not clear and unambiguous consequences of the original disclosure. Mandate that all changes, whether in claims, description, drawings, or subsequently filed sequence listings, must be directly and unambiguously derivable by a skilled person using common general knowledge. Ensure that divisional applications, Art. 61 applications, and PCT-phase amendments also adhere to these strict limits relative to their respective original filings. Require explicit confirmation for standardized sequence listings and exercise particular caution when clarifying trademarks or resolving inconsistencies to avoid inadvertent addition of new matter."
+}

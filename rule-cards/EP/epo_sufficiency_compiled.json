@@ -1,0 +1,407 @@
+{
+  "card_id": "epo_sufficiency_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_sufficiency.pdf",
+  "task": "sufficiency",
+  "task_label": "Sufficiency of Disclosure",
+  "rules": [
+    {
+      "rule_id": "detailed_description_required",
+      "title": "Detailed description of at least one way of carrying out invention",
+      "requirement": "A detailed description of at least one way of carrying out the invention must be given.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-1, Section 1"
+    },
+    {
+      "rule_id": "essential_features_disclosure",
+      "title": "Disclosure of essential features for skilled person",
+      "requirement": "The description must disclose any feature essential for carrying out the invention in sufficient detail to render it apparent to the skilled person how to put the invention into practice.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-1, Section 1"
+    },
+    {
+      "rule_id": "broad_claims_exemplification",
+      "title": "Broad claims require multiple examples or embodiments",
+      "requirement": "Where the claims cover a broad field, the application should not usually be regarded as satisfying the requirements of Art. 83 unless the description gives a number of examples or describes alternative embodiments or variations extending over the area protected by the claims.",
+      "severity": "recommended",
+      "exceptions": [
+        "Cases where a very broad field is sufficiently exemplified by a limited number of examples or even one example, provided sufficient information allows performance without undue burden or inventive skill."
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter III-1, Section 1"
+    },
+    {
+      "rule_id": "whole_area_performance",
+      "title": "Performance over whole claimed area without undue burden",
+      "requirement": "The application must contain, in addition to the examples, sufficient information to allow the person skilled in the art, using his common general knowledge, to perform the invention over the whole area claimed without undue burden and without needing inventive skill.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-1, Section 1"
+    },
+    {
+      "rule_id": "function_and_structure_description",
+      "title": "Description of invention in terms of structure and function",
+      "requirement": "It is necessary that the invention is described not only in terms of its structure but also in terms of its function, unless the functions of the various parts are immediately apparent.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Unless the functions of the various parts are immediately apparent."
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter III-1, Section 1"
+    },
+    {
+      "rule_id": "parameter_determination_methods",
+      "title": "Clear description of methods for parameter values",
+      "requirement": "If the claims define the invention, or a feature thereof, in terms of parameters, the application as filed must include a clear description of the methods used to determine the parameter values.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Unless a person skilled in the art would know what method to use.",
+        "Unless all methods would yield the same result."
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter III-2, Section 2"
+    },
+    {
+      "rule_id": "irreparable_insufficiency_refusal",
+      "title": "Refusal for seriously insufficient disclosure",
+      "requirement": "If the disclosure is seriously insufficient, such a deficiency cannot be cured subsequently by adding further examples or features without offending against Art. 123(2)... Therefore, in such circumstances, the application must normally be refused.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the deficiency arises only in respect of some embodiments, it could be remedied by restricting the claims to correspond to the sufficiently described embodiments only."
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter III-2, Section 2"
+    },
+    {
+      "rule_id": "no_chance_dependent_performance",
+      "title": "Invention must not depend on chance",
+      "requirement": "The successful performance of the invention must not be dependent on chance, such that results are unrepeatable or achieved in a totally unreliable way.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Cases where repeated success is assured even though accompanied by a proportion of failures, provided satisfactory parts can be readily sorted by a non-destructive testing procedure."
+      ],
+      "examples": [
+        "Microbiological process involving mutations (if unrepeatable)."
+      ],
+      "reference": "Part F - Chapter III-2, Section 3"
+    },
+    {
+      "rule_id": "no_physically_impossible_invention",
+      "title": "Invention must not be inherently impossible",
+      "requirement": "Successful performance of the invention must not be inherently impossible because it would be contrary to well-established physical laws.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Perpetual motion machine."
+      ],
+      "reference": "Part F - Chapter III-2, Section 3"
+    },
+    {
+      "rule_id": "burden_of_proof_sufficiency",
+      "title": "Burden of proof for performing and repeating invention",
+      "requirement": "If there are serious doubts as regards the possibility of performing the invention and repeating it as described, the burden of proof as regards this possibility, or at least a demonstration that success is credible, rests with the applicant or the proprietor of the patent.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "experiments carried out by the opponent suggest that the subject-matter of the patent does not achieve the desired technical result"
+      ],
+      "reference": "Part F - Chapter III-3, Section 4"
+    },
+    {
+      "rule_id": "deletion_of_non_working_variants",
+      "title": "Deletion of non-performable variants from claims",
+      "requirement": "Those parts of the description relating to the variants of the invention which are incapable of being performed and the relevant claims must, however, then be deleted or marked background information that is not part of the invention at the request of the Division if the deficiency is not remedied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-3, Section 5.1"
+    },
+    {
+      "rule_id": "support_for_remaining_claims",
+      "title": "Remaining claims must be supported by description",
+      "requirement": "The specification must then be so worded that the remaining claims are supported by the description and do not relate to embodiments which have proved to be incapable of being performed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-3, Section 5.1"
+    },
+    {
+      "rule_id": "sufficient_info_for_working_embodiments",
+      "title": "Sufficient info to identify working embodiments in broad claims",
+      "requirement": "In cases where the scope of the claim might encompass a large number of alternatives, some of which correspond to non-working embodiments, the presence of non-working embodiments in the claim is of no harm, provided that the specification contains sufficient information on the relevant criteria to identify the working embodiments within the claimed alternatives.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "claims relating to a combination of ranges",
+        "Markush claims"
+      ],
+      "reference": "Part F - Chapter III-3, Section 5.1"
+    },
+    {
+      "rule_id": "no_need_for_well_known_details",
+      "title": "No need to describe well-known details",
+      "requirement": "For the purposes of sufficient disclosure the specification does not need to describe all the details of the operations to be carried out by the person skilled in the art on the basis of the instructions given, if these details are well-known and clear from the definition of the class of the claims or on the basis of common general knowledge.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-3, Section 5.2"
+    },
+    {
+      "rule_id": "biological_material_disclosure_requirement",
+      "title": "Disclosure requirements for unavailable biological material",
+      "requirement": "If an invention involves the use of or concerns biological material which is not available to the public and which cannot be described in the European patent application in such a manner as to enable the invention to be carried out by a person skilled in the art, the disclosure is not considered to have satisfied the requirements of Art. 83 unless the requirements of Rule 31(1), (2), first and second sentences, and 33(1), first sentence, have been met.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-4, Section 6.1"
+    },
+    {
+      "rule_id": "biological_material_public_availability_assumption",
+      "title": "Assumption of non-availability if info insufficient",
+      "requirement": "If the applicant has given no or insufficient information on public availability and the biological material is a particular strain not falling within the known categories, the examiner must assume that the biological material is not available to the public.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.2"
+    },
+    {
+      "rule_id": "enablement_check_for_biological_material",
+      "title": "Check if biological material enables skilled person",
+      "requirement": "The examiner must also examine whether the biological material could be described in the European patent application in such a manner as to enable the invention to be carried out by a person skilled in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.2"
+    },
+    {
+      "rule_id": "deposit_check_if_not_available_or_describable",
+      "title": "Check deposit requirements if material not available",
+      "requirement": "If the biological material is not available to the public and if it cannot be described in the application in such a manner as to enable the invention to be carried out by a person skilled in the art, the examiner must check: (i) whether the application as filed gives such relevant information as is available to the applicant on the characteristics of the biological material... (ii) whether the name of the depositary institution and the accession number of the deposit were supplied at the date of filing... and (iii) whether the deposit was made by a person other than the applicant and, if so, whether the name and the address of the depositor are stated in the application or were supplied within the relevant period under Rule 31(2).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3"
+    },
+    {
+      "rule_id": "applicant_must_provide_characteristics",
+      "title": "Applicant must provide morphological/biochemical characteristics",
+      "requirement": "For this purpose, the applicant must, to the extent available to him, indicate morphological and biochemical characteristics and the proposed taxonomic description.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(i)"
+    },
+    {
+      "rule_id": "applicant_must_provide_known_info",
+      "title": "Applicant must provide generally known information",
+      "requirement": "The information on the biological material in question which is generally known to the skilled person on the date of filing is as a rule presumed to be available to the applicant and must therefore be provided by him.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(i)"
+    },
+    {
+      "rule_id": "deposit_host_cells_if_required",
+      "title": "Deposit host cells if not sufficiently described",
+      "requirement": "If, for example, other biological material is required, such as host cells or helper viruses, that cannot be sufficiently described or is not available to the public, this material must also be deposited and characterised accordingly.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(i)"
+    },
+    {
+      "rule_id": "indicate_production_process",
+      "title": "Indicate process for producing biological material",
+      "requirement": "In addition, the process for producing the biological material within this biological system must be indicated.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(i)"
+    },
+    {
+      "rule_id": "check_deposit_data_filing_period",
+      "title": "Check deposit data filed within relevant period",
+      "requirement": "If the name of the depositary institution and the accession number of the deposit were submitted later, it should be checked whether they were filed within the relevant period under Rule 31(2).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(ii)"
+    },
+    {
+      "rule_id": "check_deposit_reference_on_filing_date",
+      "title": "Check reference enabling relation to deposit",
+      "requirement": "If that is the case, it should then further be checked whether on the filing date any reference was supplied which enables the deposit to be related to the later filed accession number.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(ii)"
+    },
+    {
+      "rule_id": "check_depositor_details_and_document",
+      "title": "Check depositor details and required document",
+      "requirement": "In such a case, the examiner must also check whether the document fulfilling the requirements mentioned in Rule 31(1)(d) was submitted to the EPO within the same time limit.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 6.3(iii)"
+    },
+    {
+      "rule_id": "biological_deposit_recognised_institution",
+      "title": "Biological material deposit must be at recognised institution",
+      "requirement": "The depositary institution named must be one of the recognised institutions listed in the Official Journal of the EPO.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 31"
+    },
+    {
+      "rule_id": "biological_deposit_timely_info",
+      "title": "Biological material info must be filed within time limit for Art 83",
+      "requirement": "If any of these requirements [including timely filing of deposit information] is not satisfied, the biological material in question cannot be considered as having been disclosed pursuant to Art. 83 by way of reference to the deposit.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 31(2)"
+    },
+    {
+      "rule_id": "priority_deposit_timing",
+      "title": "Priority claim requires deposit no later than priority filing date",
+      "requirement": "The invention is considered disclosed in the previous application for the purpose of the priority claim under Art. 87(1) only if the deposit of the biological material was made no later than the date of filing of the previous application and in accordance with the requirements of the country in which it was filed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 87(1)"
+    },
+    {
+      "rule_id": "priority_deposit_identifiable",
+      "title": "Priority deposit reference must enable identification",
+      "requirement": "The reference to the deposit in the previous application must be made in a manner enabling it to be identified.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 87(1)"
+    },
+    {
+      "rule_id": "pct_deposit_timing",
+      "title": "PCT biological deposit must be made by international filing date",
+      "requirement": "For sufficient disclosure of the material the deposit with a recognised depositary institution must be made not later than the international filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 13bis PCT"
+    },
+    {
+      "rule_id": "trademark_sufficient_identification",
+      "title": "Products identified by trademark must be sufficiently identified for Art 83",
+      "requirement": "If such a word [trademark/trade name] is used, then, where it is necessary in order to satisfy the requirements of Art. 83, the product must be sufficiently identified, without reliance upon the word, to enable the invention to be carried out by the skilled person at the date of filing.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Where such words have become internationally accepted as standard descriptive terms and have acquired a precise meaning"
+      ],
+      "examples": [
+        "\"Bowden\" cable",
+        "\"Belleville\" washer",
+        "\"Panhard\" rod",
+        "\"caterpillar\" belt"
+      ],
+      "reference": "Art. 83"
+    },
+    {
+      "rule_id": "reference_doc_essential_check",
+      "title": "Examiner must check if reference document is essential for Art 83",
+      "requirement": "Where the reference document relates directly to the disclosure of the invention, then the examiner should first consider whether knowing what is in the reference document is in fact essential for carrying out the invention as meant by Art. 83.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 83"
+    },
+    {
+      "rule_id": "self_contained_specification",
+      "title": "Patent specification must be self-contained regarding essential features",
+      "requirement": "the patent specification should, regarding the essential features of the invention, be self-contained, i.e. capable of being understood without reference to any other document.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-8"
+    },
+    {
+      "rule_id": "functional_definition_undue_burden",
+      "title": "Functional definitions must not impose undue burden on skilled person",
+      "requirement": "It would be an undue burden to isolate and characterise all potential compounds (e.g. agonists/antagonists), without any effective pointer to their identity, or to test every known compound and every conceivable future compound for this activity to see if it falls within the scope of the claim.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "An agonist/antagonist to polypeptide X",
+        "An agonist/antagonist to polypeptide X, for use in therapy."
+      ],
+      "reference": "Part F - Chapter III-9"
+    },
+    {
+      "rule_id": "reach_through_claims_limitation",
+      "title": "Reach-through claims must be limited to actual contribution to the art",
+      "requirement": "In the case of such 'reach-through' claims, it is both reasonable and imperative to limit the subject-matter of the claims to the actual contribution to the art",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-9"
+    },
+    {
+      "rule_id": "sufficiency_after_withdrawal",
+      "title": "Invention must remain sufficiently disclosed after withdrawal of missing parts",
+      "requirement": "the examiner must carefully evaluate whether the invention is still sufficiently disclosed without relying on the technical information contained in the withdrawn missing parts.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter III-10"
+    },
+    {
+      "rule_id": "insufficiency_if_impossible_to_carry_out",
+      "title": "Insufficiency if invention impossible to carry out",
+      "requirement": "An ambiguity in a claim will lead to an objection under Art. 83 only if the whole scope of the claim is affected, in the sense that it is impossible to carry out at all the invention defined therein.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 11"
+    },
+    {
+      "rule_id": "ill_defined_parameter_test",
+      "title": "Test for ill-defined parameters under Art. 83",
+      "requirement": "What is decisive for establishing insufficiency within the meaning of Art. 83 is whether the parameter, in the specific case, is so ill-defined that the skilled person is not able, on the basis of the disclosure as a whole and using his common general knowledge, to identify (without undue burden) the technical measures necessary to solve the problem underlying the application at issue.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 11"
+    },
+    {
+      "rule_id": "lack_of_reproducibility_art_83",
+      "title": "Lack of reproducibility as insufficiency",
+      "requirement": "If an invention lacks reproducibility because its desired technical effect as expressed in the claim is not achieved, this results in a lack of sufficient disclosure, which has to be objected to under Art. 83.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-III, 12"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the description provides a detailed account of at least one way of carrying out the invention.",
+    "Confirm that all essential features are disclosed in sufficient detail for a skilled person to practice the invention.",
+    "Ensure that broad claims are supported by multiple examples or embodiments to satisfy sufficiency requirements.",
+    "Check that the application enables performance of the invention over the whole claimed area without undue burden.",
+    "Verify that the invention is described in terms of both structure and function, unless functions are immediately apparent.",
+    "Confirm that clear methods for determining parameter values are described if the invention is defined by such parameters.",
+    "Ensure that the successful performance of the invention is not dependent on chance or unreliable results.",
+    "Verify that the invention is not inherently impossible or contrary to well-established physical laws.",
+    "Check that non-performable variants have been deleted from claims or marked as background information.",
+    "Confirm that remaining claims are fully supported by the description and do not relate to non-working embodiments.",
+    "Verify that biological material unavailable to the public is properly deposited and described with morphological and biochemical characteristics.",
+    "Ensure that sufficient information is provided to identify working embodiments within broad claims encompassing alternatives.",
+    "Confirm that the burden of proof for repeatability is met if serious doubts regarding performance exist."
+  ],
+  "system_prompt_injection": "Apply the European Patent Office’s sufficiency of disclosure guidelines to ensure the application enables a person skilled in the art to carry out the invention without undue burden or reliance on chance. Mandate a detailed description of at least one embodiment, including essential features, structural and functional aspects, and clear methods for determining any claimed parameters. Prohibit claims that encompass inherently impossible or unrepeatable variants, requiring the deletion of non-performable embodiments and ensuring remaining claims are fully supported by the description. Enforce strict deposit and characterization requirements for unavailable biological material, assuming non-availability if public access information is insufficient. Require the applicant to bear the burden of proof for performability and ensure broad claims are supported by multiple examples or sufficient general information to cover the entire claimed scope."
+}

@@ -1,0 +1,1044 @@
+{
+  "card_id": "uspto_enablement_compiled",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": "uspto_enablement.pdf",
+  "task": "enablement",
+  "task_label": "Enablement",
+  "rules": [
+    {
+      "rule_id": "enablement_make_and_use",
+      "title": "Specification must enable making and using the invention",
+      "requirement": "The specification must describe how to make and how to use the invention defined by the claim(s), such that one skilled in the art can make and use the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164"
+    },
+    {
+      "rule_id": "enablement_no_commercial_viability_required",
+      "title": "Commercially viable embodiment not required for enablement",
+      "requirement": "It is not necessary to enable one of ordinary skill in the art to make and use a perfected, commercially viable embodiment absent a claim limitation to that effect.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Claim limitation to a perfected, commercially viable embodiment"
+      ],
+      "examples": [
+        "CFMT, Inc. v. Yieldup Int’l Corp."
+      ],
+      "reference": "MPEP § 2164"
+    },
+    {
+      "rule_id": "enablement_detailed_procedures_not_always_needed",
+      "title": "Detailed procedures not required if description is sufficient",
+      "requirement": "Detailed procedures for making and using the invention may not be necessary if the description of the invention itself is sufficient to permit those skilled in the art to make and use the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164"
+    },
+    {
+      "rule_id": "invalidity_for_lack_of_enablement",
+      "title": "Claim invalid if not supported by enabling disclosure",
+      "requirement": "A patent claim is invalid if it is not supported by an enabling disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164"
+    },
+    {
+      "rule_id": "enablement_standard_undue_experimentation",
+      "title": "Enablement requires no undue experimentation",
+      "requirement": "The disclosure must contain sufficient information regarding the subject matter of the claims as to enable one skilled in the pertinent art to make and use the claimed invention without undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Minerals Separation Ltd. v. Hyde",
+        "In re Wands",
+        "United States v. Telectronics, Inc."
+      ],
+      "reference": "§ 2164.01"
+    },
+    {
+      "rule_id": "genus_claim_enablement_scope",
+      "title": "Genus claims must enable entire class",
+      "requirement": "If a patent claims an entire class of processes, machines, manufactures, or compositions of matter, the patent’s specification must enable a person skilled in the art to make and use the entire class. The more one claims, the more one must enable.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Amgen Inc. et al. v. Sanofi et al."
+      ],
+      "reference": "§ 2164.01"
+    },
+    {
+      "rule_id": "omission_of_well_known_art",
+      "title": "Patent need not teach well-known art",
+      "requirement": "A patent need not teach, and preferably omits, what is well known in the art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "In re Buchner",
+        "Hybritech, Inc. v. Monoclonal Antibodies, Inc.",
+        "Lindemann Maschinenfabrik GMBH v. American Hoist & Derrick Co."
+      ],
+      "reference": "§ 2164.01"
+    },
+    {
+      "rule_id": "enablement_analysis_separate_from_description",
+      "title": "Enablement analyzed separately from written description",
+      "requirement": "Limitations must be analyzed for both enablement and description using their separate and distinct criteria. The fact that an additional limitation to a claim may lack descriptive support in the disclosure as originally filed does not necessarily mean that the limitation is also not enabled.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Vas-Cath, Inc. v. Mahurkar"
+      ],
+      "reference": "§ 2164.01"
+    },
+    {
+      "rule_id": "examiner_must_consall_wands_factors",
+      "title": "Examiner must consider all Wands factors holistically",
+      "requirement": "It is improper to conclude that a disclosure is not enabling based on an analysis of only one of the above factors while ignoring one or more of the others. The examiner’s analysis must consider all the evidence related to each of these factors, and any conclusion of nonenablement must be based on the evidence as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(a)"
+    },
+    {
+      "rule_id": "enablement_full_scope_without_undue_exp",
+      "title": "Specification must enable full scope without undue experimentation",
+      "requirement": "A conclusion of lack of enablement means that, based on the evidence regarding each of the above factors, the specification, at the time the application was filed, would not have taught one skilled in the art how to make and/or use the full scope of the claimed invention without undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(a)"
+    },
+    {
+      "rule_id": "enablement_undue_experimentation_test",
+      "title": "Enablement requires no undue experimentation",
+      "requirement": "The specification must enable one skilled in the art to make and/or use the full scope of the claimed invention without undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(a)"
+    },
+    {
+      "rule_id": "enablement_reasonable_experimentation_allowed",
+      "title": "Reasonable experimentation is permitted",
+      "requirement": "The specification may require a reasonable amount of experimentation to make and use the invention, depending on the nature of the invention and the underlying art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "It may suffice to give an example (or a few examples) if the specification also discloses some general quality running through the class that gives it a peculiar fitness for the particular purpose."
+      ],
+      "reference": "MPEP § 2164.01(a)"
+    },
+    {
+      "rule_id": "enablement_disclosure_of_one_method",
+      "title": "Disclosure of at least one method satisfies enablement",
+      "requirement": "As long as the specification discloses at least one method for making and using the claimed invention that bears a reasonable correlation to the entire scope of the claim, then the enablement requirement of 35 U.S.C. 112 is satisfied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(b)"
+    },
+    {
+      "rule_id": "enablement_no_disclosure_of_all_methods",
+      "title": "Failure to disclose all methods does not invalidate",
+      "requirement": "Failure to disclose other methods by which the claimed invention may be made does not render a claim invalid under 35 U.S.C. 112.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(b)"
+    },
+    {
+      "rule_id": "enablement_unstable_intermediates",
+      "title": "No stable form required for unstable intermediates",
+      "requirement": "For unstable and transitory chemical intermediates, the 'how to make' requirement does not require that the applicant teach how to make the claimed product in stable, permanent or isolatable form.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(b)"
+    },
+    {
+      "rule_id": "enablement_apparatus_disclosure",
+      "title": "Must disclose non-readily available apparatus",
+      "requirement": "If the practice of a method requires a particular apparatus, the application must provide a sufficient disclosure of the apparatus if the apparatus is not readily available.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(b)"
+    },
+    {
+      "rule_id": "enablement_chemical_disclosure",
+      "title": "Must disclose required chemicals if not available",
+      "requirement": "If certain chemicals are required to make a compound or practice a chemical process, the application must provide sufficient disclosure if the chemicals are not readily available.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(b)"
+    },
+    {
+      "rule_id": "enablement_utility_connotes_use",
+      "title": "Utility statement may satisfy use requirement",
+      "requirement": "If a statement of utility in the specification contains within it a connotation of how to use, and/or the art recognizes that standard modes of administration are known and contemplated, 35 U.S.C. 112 is satisfied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(c)"
+    },
+    {
+      "rule_id": "enablement_no_dosage_if_known",
+      "title": "Dosage not required if known without undue experimentation",
+      "requirement": "It is not necessary to specify the dosage or method of use if it is known to one skilled in the art that such information could be obtained without undue experimentation.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.01(c)"
+    },
+    {
+      "rule_id": "dosage_method_not_required_if_known",
+      "title": "Dosage/method not required if known to POSITA",
+      "requirement": "It is not necessary to specify the dosage or method of use if it is known to one skilled in the art that such information could be obtained without undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.01(c)"
+    },
+    {
+      "rule_id": "safety_not_required_for_enablement",
+      "title": "Applicant need not demonstrate complete safety",
+      "requirement": "The applicant need not demonstrate that the invention is completely safe.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.01(c)"
+    },
+    {
+      "rule_id": "use_limited_claim_enablement_scope",
+      "title": "Enablement evaluated based on use limitation",
+      "requirement": "When a compound or composition claim is limited by a particular use, enablement of that claim should be evaluated based on that limitation.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.01(c)"
+    },
+    {
+      "rule_id": "multiple_disclosed_uses_enablement",
+      "title": "Any enabled use suffices if multiple disclosed",
+      "requirement": "If multiple uses for claimed compounds or compositions are disclosed in the application, then an enablement rejection must include an explanation, sufficiently supported by the evidence, why the specification fails to enable each disclosed use. In other words, if any use is enabled when multiple uses are disclosed, the application is enabling for the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.01(c)"
+    },
+    {
+      "rule_id": "prophetic_examples_tense_requirement",
+      "title": "Prophetic examples must use future/present tense",
+      "requirement": "The claims should be drafted in a manner that assists readers in differentiating between actual working examples and prophetic examples (i.e., prophetic examples should not be described using the past tense, but rather in future or present tense).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02"
+    },
+    {
+      "rule_id": "reduction_to_practice_not_required",
+      "title": "Actual reduction to practice not required",
+      "requirement": "An applicant need not have actually reduced the invention to practice prior to filing.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02"
+    },
+    {
+      "rule_id": "example_not_required_if_enabled",
+      "title": "Example not required if enabled without undue experimentation",
+      "requirement": "The specification need not contain an example if the invention is otherwise disclosed in such manner that one skilled in the art will be able to practice it without an undue amount of experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02"
+    },
+    {
+      "rule_id": "all_embodiments_not_required",
+      "title": "Need not describe all actual embodiments",
+      "requirement": "Because only an enabling disclosure is required, applicant need not describe all actual embodiments.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02"
+    },
+    {
+      "rule_id": "prophetic_examples_not_basis_for_rejection",
+      "title": "Prophetic examples alone not basis for rejection",
+      "requirement": "The presence of prophetic examples alone should not be the basis for asserting that a specification is not enabling; rather, a lack of operative embodiments and undue experimentation should be determinative.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02"
+    },
+    {
+      "rule_id": "lack_of_working_example_not_sole_reason",
+      "title": "Lack of working example not sole reason for rejection",
+      "requirement": "Lack of working examples or lack of evidence that the claimed invention works as described should never be the sole reason for rejecting the claimed invention on the grounds of lack of enablement.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02 I"
+    },
+    {
+      "rule_id": "single_working_example_precludes_total_rejection",
+      "title": "Single working example precludes total non-enablement",
+      "requirement": "A single working example in the specification for a claimed invention is enough to preclude a rejection which states that nothing is enabled since at least that embodiment would be enabled.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02 I"
+    },
+    {
+      "rule_id": "single_example_not_sole_reason_for_breadth_rejection",
+      "title": "Single example not sole reason for breadth rejection",
+      "requirement": "The presence of only one working example should never be the sole reason for rejecting claims as being broader than the enabling disclosure, even though it is a factor to be considered along with all the other factors.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02 I"
+    },
+    {
+      "rule_id": "examiner_must_explain_extrapolation_failure",
+      "title": "Examiner must explain why extrapolation fails",
+      "requirement": "To make a valid rejection, the examiner must evaluate all the facts and evidence and state why one would not expect to be able to extrapolate that one example across the entire scope of the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.02 I"
+    },
+    {
+      "rule_id": "examiner_must_evaluate_extrapolation",
+      "title": "Examiner must evaluate facts for enablement rejection",
+      "requirement": "To make a valid rejection, the examiner must evaluate all the facts and evidence and state why one would not expect to be able to extrapolate that one example across the entire scope of the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section I (citing Amgen Inc. et al. v. Sanofi et al.)"
+    },
+    {
+      "rule_id": "examiner_must_weigh_correlation_evidence",
+      "title": "Examiner must weigh evidence for correlation",
+      "requirement": "Even with such evidence, the examiner must weigh the evidence for and against correlation and decide whether one skilled in the art would accept the model as reasonably correlating to the condition.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section II (citing In re Brana)"
+    },
+    {
+      "rule_id": "examiner_must_give_reasons_for_lack_of_correlation",
+      "title": "Examiner must give reasons for lack of correlation",
+      "requirement": "Since the initial burden is on the examiner to give reasons for the lack of enablement, the examiner must also give reasons for a conclusion of lack of correlation for an in vitro or in vivo animal model example.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section II"
+    },
+    {
+      "rule_id": "rigorous_correlation_not_required",
+      "title": "Rigorous correlation not required for enablement",
+      "requirement": "A rigorous or an invariable exact correlation is not required, as stated in Cross v. Iizuka... there is a reasonable correlation between the disclosed in vitro utility and an in vivo activity, and therefore a rigorous correlation is not necessary where the disclosure of pharmacological activity is reasonable based upon the probative evidence.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section II (citing Cross v. Iizuka)"
+    },
+    {
+      "rule_id": "examiner_must_advance_reasons_for_genus_rejection",
+      "title": "Examiner must advance reasons for genus rejection",
+      "requirement": "Proof of enablement will be required for other members of the claimed genus only where adequate reasons are advanced by the examiner to establish that a person skilled in the art could not use the genus as a whole without undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section III"
+    },
+    {
+      "rule_id": "examiner_should_determine_rejection_for_ambiguous_prophetic",
+      "title": "Examiner should determine rejection for ambiguous prophetic examples",
+      "requirement": "If the characterization of the results, when taken in light of the disclosure as a whole, reasonably raises any questions as to whether the results from the examples are actual, the examiner should determine whether to reject the appropriate claims based on an insufficient disclosure under the enablement and/or written description requirements of 35 U.S.C. 112(a).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section IV"
+    },
+    {
+      "rule_id": "applicant_should_reply_with_actual_results",
+      "title": "Applicant should reply with actual test results",
+      "requirement": "When such a rejection(s) is made, the applicant should reply with the results of an actual test or example that has been conducted, or by providing relevant arguments and/or declaration evidence that there is strong reason to believe that the result would be as predicted, being careful not to introduce new matter into the application.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section IV"
+    },
+    {
+      "rule_id": "no_results_represented_as_actual_unless_achieved",
+      "title": "No results should be represented as actual unless achieved",
+      "requirement": "No results should be represented as actual results unless they have actually been achieved.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section IV (citing MPEP § 2004, item 8)"
+    },
+    {
+      "rule_id": "nascent_tech_specific_teaching",
+      "title": "Nascent technology requires specific and useful teaching",
+      "requirement": "Nascent technology, however, must be enabled with a ‘specific and useful teaching.’ The law requires an enabling disclosure for nascent technology because a person of ordinary skill in the art has little or no knowledge independent from the patentee’s instruction.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Chiron Corp. v. Genentech Inc., 363 F.3d 1247, 1254"
+    },
+    {
+      "rule_id": "predictability_inverse_scope",
+      "title": "Enablement scope varies inversely with predictability",
+      "requirement": "The scope of the required enablement varies inversely with the degree of predictability involved, but even in unpredictable arts, a disclosure of every operable species is not required.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Disclosure of every operable species is not required even in unpredictable arts"
+      ],
+      "examples": [],
+      "reference": "MPEP § 2164.03"
+    },
+    {
+      "rule_id": "unpredictable_arts_single_species",
+      "title": "Single species usually insufficient for generic claims in unpredictable arts",
+      "requirement": "In applications directed to inventions in arts where the results are unpredictable, the disclosure of a single species usually does not provide an adequate basis to support generic claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Chemical reactions",
+        "Physiological activity"
+      ],
+      "reference": "In re Soll, 97 F.2d 623, 624"
+    },
+    {
+      "rule_id": "examiner_burden_reasonable_basis",
+      "title": "Examiner must establish reasonable basis to question enablement",
+      "requirement": "In order to make a rejection, the examiner has the initial burden to establish a reasonable basis to question the enablement provided for the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.04"
+    },
+    {
+      "rule_id": "examiner_explain_doubt",
+      "title": "Examiner must explain doubt regarding enablement statements",
+      "requirement": "It is incumbent upon the Patent Office, whenever a rejection on this basis is made, to explain why it doubts the truth or accuracy of any statement in a specification relied on for enabling support.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Marzocchi, 439 F.2d 220, 224"
+    },
+    {
+      "rule_id": "examiner_must_explain_doubt",
+      "title": "Examiner must explain doubt regarding enablement",
+      "requirement": "It is incumbent upon the Patent Office, whenever a rejection on this basis is made, to explain why it doubts the truth or accuracy of any statement in a supporting disclosure and to back up assertions of its own with acceptable evidence or reasoning which is inconsistent with the contested statement.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Marzocchi, 439 F.2d 220, 224"
+    },
+    {
+      "rule_id": "examiner_must_give_reasons_for_uncertainty",
+      "title": "Examiner must give reasons for enablement uncertainty",
+      "requirement": "The minimal requirement is for the examiner to give reasons explaining the uncertainty of the enablement.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Bowen, 492 F.2d 859, 862-63"
+    },
+    {
+      "rule_id": "analysis_must_consider_all_evidence",
+      "title": "Analysis must consider all evidence as a whole",
+      "requirement": "The examiner’s analysis must consider all the evidence related to each of these factors, and any conclusion of nonenablement must be based on the evidence as a whole.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Wands, 858 F.2d 731, 737, 740"
+    },
+    {
+      "rule_id": "prohibited_single_factor_rejection",
+      "title": "Prohibited to reject based on single factor",
+      "requirement": "It is improper to conclude that a disclosure is not enabling based on an analysis of only one of the above factors while ignoring one or more of the others.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.04"
+    },
+    {
+      "rule_id": "examiner_should_identify_missing_info",
+      "title": "Examiner should identify missing information",
+      "requirement": "In such a case, the examiner should specifically identify what information is missing and why one skilled in the art could not supply the information without undue experimentation.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.04"
+    },
+    {
+      "rule_id": "technical_reasons_always_required",
+      "title": "Specific technical reasons always required",
+      "requirement": "Specific technical reasons are always required.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.04"
+    },
+    {
+      "rule_id": "first_action_best_case",
+      "title": "First Office action should present best case",
+      "requirement": "If an enablement rejection is appropriate, the first Office action on the merits should present the best case with all the relevant reasons, issues, and evidence so that all such rejections can be withdrawn if applicant provides appropriate convincing arguments and/or evidence in rebuttal.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.04"
+    },
+    {
+      "rule_id": "examiner_should_note_enabled_limitations",
+      "title": "Examiner should note enabled limitations early",
+      "requirement": "If an enablement rejection is appropriate and the examiner recognizes limitations that would render the claims enabled, the examiner should note such limitations to applicant as early in the prosecution as possible.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.04"
+    },
+    {
+      "rule_id": "applicant_burden_persuasive_arguments",
+      "title": "Applicant burden to present persuasive arguments",
+      "requirement": "Once the examiner has weighed all the evidence and established a reasonable basis to question the enablement provided for the claimed invention, the burden falls on applicant to present persuasive arguments, supported by suitable proofs where necessary, that one skilled in the art would be able to make and use the claimed invention using the application as a guide.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Brandstadter, 484 F.2d 1395, 1406-07"
+    },
+    {
+      "rule_id": "overcome_lack_of_enablement",
+      "title": "Applicant must present argument/evidence to overcome lack of enablement",
+      "requirement": "To overcome a prima facie case of lack of enablement, applicant must present argument and/or evidence that the disclosure would have enabled one of ordinary skill in the art to make and use the claimed invention at the time of filing.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.05"
+    },
+    {
+      "rule_id": "examiner_weigh_evidence",
+      "title": "Examiner must weigh all evidence to decide enablement",
+      "requirement": "The examiner must then weigh all the evidence of record, including the specification, any new evidence supplied by applicant, and any evidence and scientific reasoning previously presented in the rejection and then decide whether the claimed invention is enabled, based on a preponderance of the evidence standard.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.05"
+    },
+    {
+      "rule_id": "no_personal_opinion_determination",
+      "title": "Examiner must not determine enablement based on personal opinion",
+      "requirement": "The examiner should never make this determination based on personal opinion.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.05"
+    },
+    {
+      "rule_id": "specification_enabling_requirement",
+      "title": "Specification must be enabling to person skilled in the art",
+      "requirement": "35 U.S.C. 112(a) requires the specification to be enabling only to a person “skilled in the art to which it pertains, or with which it is most nearly connected.”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.05(a)"
+    },
+    {
+      "rule_id": "state_of_art_at_filing_date",
+      "title": "Enablement determined by state of art at filing date",
+      "requirement": "The state of the art existing at the filing date of the application is used to determine whether a particular disclosure is enabling as of the filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A patent document cannot enable technology that arises after the date of application."
+      ],
+      "reference": "§ 2164.05(a)"
+    },
+    {
+      "rule_id": "no_post_filing_supplementation",
+      "title": "Post-filing publications cannot supplement insufficient disclosure",
+      "requirement": "A later dated publication cannot supplement an insufficient disclosure in a prior dated application to make it enabling.",
+      "severity": "prohibited",
+      "exceptions": [
+        "An applicant can offer the testimony of an expert based on the publication as evidence of the level of skill in the art at the time the application was filed."
+      ],
+      "examples": [],
+      "reference": "§ 2164.05(a)"
+    },
+    {
+      "rule_id": "examiner_post_filing_reference_limitation",
+      "title": "Examiner should not use post-filing references to show non-enablement",
+      "requirement": "In general, the examiner should not use post-filing date references to demonstrate that a patent is not enabled.",
+      "severity": "recommended",
+      "exceptions": [
+        "A later-dated reference provides evidence of what one skilled in the art would have known on or before the effective filing date of the patent application.",
+        "A publication demonstrates that those of ordinary skill in the art would find that a particular invention was not enabled years after the filing date, serving as evidence that the claimed invention was not possible at the time of filing."
+      ],
+      "examples": [
+        "An article published 5 years after the filing date supported the position that physiological activity was sufficiently unpredictable, rendering broader claims nonenabled."
+      ],
+      "reference": "§ 2164.05(a)"
+    },
+    {
+      "rule_id": "enablement_for_multiple_arts",
+      "title": "Specification must enable persons skilled in each relevant art",
+      "requirement": "Where different arts are involved in the invention, the specification is enabling if it enables persons skilled in each art to carry out the aspect of the invention applicable to their specialty.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "If two distinct technologies are relevant, the disclosure is adequate if a person of ordinary skill in each of the two technologies could practice the invention from the disclosures."
+      ],
+      "reference": "§ 2164.05(b)"
+    },
+    {
+      "rule_id": "reasonable_experimentation_allowed",
+      "title": "Specification may call for reasonable amount of experimentation",
+      "requirement": "A specification may call for a reasonable amount of experimentation to make and use a claimed invention, and reasonableness in any case will depend on the nature of the invention and the underlying art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.06"
+    },
+    {
+      "rule_id": "extended_experimentation_with_guidance",
+      "title": "Extended experimentation not undue if guided",
+      "requirement": "An extended period of experimentation may not be undue if the skilled artisan is given sufficient direction or guidance.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2164.06"
+    },
+    {
+      "rule_id": "routine_experimentation_permissible",
+      "title": "Considerable routine experimentation permissible",
+      "requirement": "A considerable amount of experimentation is permissible, if it is merely routine, or if the specification in question provides a reasonable amount of guidance with respect to the direction in which the experimentation should proceed.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2164.06"
+    },
+    {
+      "rule_id": "examiner_identify_missing_info",
+      "title": "Examiner must identify missing enablement info",
+      "requirement": "In such a case, the examiner should specifically identify what information is missing and why the missing information is needed to provide enablement.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2164.06(a)"
+    },
+    {
+      "rule_id": "broad_claims_peril_of_disablement",
+      "title": "Broad claims risk disablement across scope",
+      "requirement": "Broad claim language is used at the peril of losing any claim that cannot be enabled across its full scope.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "MagSil Corp. v. Hitachi Global Storage Technologies, Inc."
+      ],
+      "reference": "2164.06(a)"
+    },
+    {
+      "rule_id": "microorganism_deposit_timing",
+      "title": "Microorganism deposit must be prior to issue",
+      "requirement": "To satisfy the enablement requirement a deposit must be made “prior to issue” but need not be made prior to filing the application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Lundak, 773 F.2d 1216, 1223, 227 USPQ 90, 95 (Fed. Cir. 1985)"
+    },
+    {
+      "rule_id": "examiner_burden_undue_experimentation",
+      "title": "Examiner must show undue experimentation for enablement rejection",
+      "requirement": "To establish a reasonable basis for questioning the adequacy of a disclosure, the examiner must present a factual analysis of a disclosure to show that a person skilled in the art would not be able to make and use the claimed invention without resorting to undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.06(c)"
+    },
+    {
+      "rule_id": "skilled_person_dual_technology",
+      "title": "Skilled person criteria for computer and other technology cases",
+      "requirement": "In cases involving both the art of computer programming, and another technology, the examiner must recognize that the knowledge of persons skilled in both technologies is the appropriate criteria for determining sufficiency.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.06(c)"
+    },
+    {
+      "rule_id": "block_diagram_factual_analysis",
+      "title": "Examiner should analyze block diagram components for enablement",
+      "requirement": "In order to meet the burden of establishing a reasonable basis for questioning the adequacy of such disclosure, the examiner should initiate a factual analysis of the system by focusing on each of the individual block element components. More specifically, such an inquiry should focus on the diverse functions attributed to each block element as well as the teachings in the specification as to how such a component could be implemented.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.06(c)"
+    },
+    {
+      "rule_id": "challenge_undue_experimentation_components",
+      "title": "Challenge enablement if routine experimentation insufficient",
+      "requirement": "If based on such an analysis, the examiner can reasonably contend that more than routine experimentation would be required by one of ordinary skill in the art to implement such a component or components, then enablement of the component or components should specifically be challenged by the examiner as part of a 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, rejection.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.06(c)"
+    },
+    {
+      "rule_id": "determine_complex_assemblage_coordination",
+      "title": "Examiner should determine if components are complex assemblages",
+      "requirement": "Additionally, the examiner should determine whether certain of the hardware or software components depicted as block elements are themselves complex assemblages which have widely differing characteristics and which must be precisely coordinated with other complex assemblages.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.06(c)"
+    },
+    {
+      "rule_id": "enablement_program_scope_commensurate",
+      "title": "Program scope must be commensurate with claimed functions",
+      "requirement": "If a particular program is disclosed in such a system, the program should be carefully reviewed to ensure that its scope is commensurate with the scope of the functions attributed to such a program in the claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "enablement_experimentation_reasonable",
+      "title": "Amount of required experimentation must be reasonable",
+      "requirement": "The amount of required experimentation must, however, be reasonable.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A skilled programmer writing a general computer program within four hours was found reasonable.",
+        "One to two man-years of experimentation for skilled programmers was found to be a clearly unreasonable requirement."
+      ],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "enablement_method_apparatus_disclosure",
+      "title": "Specification must teach how to practice claimed method",
+      "requirement": "USPTO personnel, when analyzing method claims, must recognize that the specification must be adequate to teach how to practice the claimed method. If such practice requires a particular apparatus, then the application must provide a sufficient disclosure of that apparatus if such is not already available.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the required apparatus is already available."
+      ],
+      "examples": [],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "apparatus_disclosure_requirement",
+      "title": "Disclosure of required apparatus for method claims",
+      "requirement": "If such practice requires a particular apparatus, then the application must provide a sufficient disclosure of that apparatus if such is not already available.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Ghiron; In re Gunn"
+    },
+    {
+      "rule_id": "examiner_challenge_basis",
+      "title": "Reasonable basis required for enablement rejection",
+      "requirement": "Unless USPTO personnel present a reasonable basis for challenging the disclosure in view of the record as a whole, a 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, rejection in a computer system or computer programming application may not be sustained on appeal.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Naquin; In re Morehouse"
+    },
+    {
+      "rule_id": "applicant_enablement_burden",
+      "title": "Applicant burden to show enablement without undue experimentation",
+      "requirement": "Once USPTO personnel have advanced a reasonable basis or presented evidence to question the adequacy of a computer system or computer programming disclosure, the applicant must show that the specification would enable one of ordinary skill in the art to make and use the claimed invention without resorting to undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Section III. AFFIDAVIT PRACTICE"
+    },
+    {
+      "rule_id": "affiant_skill_level_analysis",
+      "title": "Critical analysis of affiant skill level in affidavits",
+      "requirement": "In computer cases, affidavits must be critically analyzed. Affidavit practice at the outset usually involves analyzing the skill level and/or qualifications of the affiant, which should be of the person of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "37 CFR 1.132"
+    },
+    {
+      "rule_id": "examiner_challenge_high_skill_affiant",
+      "title": "Challenge affidavit if affiant skill exceeds POSITA",
+      "requirement": "When an affiant’s skill level is higher than that required by the person of ordinary skill in the art for a particular application, an examiner may challenge the affidavit as insufficient should the affiant not submit evidence demonstrating the amount of experimentation required by a person of ordinary skill in the art to implement the invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "37 CFR 1.132"
+    },
+    {
+      "rule_id": "affidavit_must_be_probative_of_skill_at_filing",
+      "title": "Affidavit must be probative of skill level at filing date",
+      "requirement": "For an affidavit to be relevant to the determination of enablement, it must be probative of the level of skill of the person of ordinary skill in the art as of the time the applicant filed his application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Gunn, 537 F.2d 1123, 1128, 190 USPQ 402, 406 (CCPA 1976)"
+      ],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "prior_art_must_precede_filing_date",
+      "title": "Prior art documents must predate effective filing date",
+      "requirement": "Prior art patents and patent application publications relied on to show the state of the art for purposes of enablement must have a publication date earlier than the effective filing date of the application under consideration.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Budnick, 537 F.2d 535, 538, 190 USPQ 422, 424 (CCPA 1976)"
+      ],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "specification_must_integrate_prior_art",
+      "title": "Specification must set forth integration of prior art",
+      "requirement": "The specification in effect must set forth the integration of the prior art; otherwise, it is likely that undue experimentation, or more than routine experimentation would be required to implement the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Scarbrough, 500 F.2d 560, 565, 182 USPQ 298, 301 (CCPA 1974)"
+      ],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "programming_techniques_must_match_complexity",
+      "title": "Cited programming techniques must match disclosed complexity",
+      "requirement": "Any patent or publication cited to provide evidence that a particular programming technique is well-known in the programming art does not demonstrate that one of ordinary skill in the art could make and use correspondingly disclosed programming techniques unless both the known and disclosed programming techniques are of approximately the same degree of complexity.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Knowlton, 500 F.2d 566, 572, 183 USPQ 33, 37 (CCPA 1974)"
+      ],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "counsel_arguments_cannot_replace_evidence",
+      "title": "Counsel arguments cannot replace evidence in record",
+      "requirement": "Arguments of counsel alone cannot take the place of evidence in the record once an examiner has advanced a reasonable basis for questioning the disclosure.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Budnick, 537 F.2d at 538, 190 USPQ at 424",
+        "In re Schulze, 346 F.2d 600, 145 USPQ 716 (CCPA 1965)",
+        "In re Cole, 326 F.2d 769, 140 USPQ 230 (CCPA 1964)"
+      ],
+      "reference": "MPEP § 2164.06(c)"
+    },
+    {
+      "rule_id": "enablement_wands_factors",
+      "title": "Use Wands factors to assess enablement",
+      "requirement": "When considering whether claims in a utility patent application or patent are enabled, USPTO personnel will use the Wands factors to ascertain whether the amount of experimentation required to enable the full scope of the claimed invention is reasonable.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.08"
+    },
+    {
+      "rule_id": "enablement_full_scope",
+      "title": "Enable full scope of claimed invention",
+      "requirement": "The specification must teach those skilled in the art how to make and use the full scope of the claimed invention without 'undue experimentation' or that any experimentation must be 'reasonable'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "AK Steel Corp. v. Sollac: When a range is claimed, there must be reasonable enablement of the scope of the range."
+      ],
+      "reference": "MPEP § 2164.08"
+    },
+    {
+      "rule_id": "enablement_omission_of_well_known",
+      "title": "Omission of well-known information permitted",
+      "requirement": "Not everything necessary to practice the invention need be disclosed. In fact, what is well-known is best omitted.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.08"
+    },
+    {
+      "rule_id": "enablement_reasonable_correlation",
+      "title": "Scope of enablement must correlate with claims",
+      "requirement": "The scope of enablement must only bear a 'reasonable correlation' to the scope of the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2164.08"
+    },
+    {
+      "rule_id": "enablement_commensurate_scope",
+      "title": "Enablement commensurate with claim scope",
+      "requirement": "The scope of enablement provided to one skilled in the art by the disclosure is commensurate with the scope of protection sought by the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Amgen Inc. et al. v. Sanofi et al.: 'The more one claims, the more one must enable.'"
+      ],
+      "reference": "MPEP § 2164.08"
+    },
+    {
+      "rule_id": "enablement_scope_commensurate",
+      "title": "Scope of enablement must be commensurate with claim scope",
+      "requirement": "The scope of enablement provided to one skilled in the art by the disclosure must be commensurate with the scope of protection sought by the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "range_reasonable_enablement",
+      "title": "Reasonable enablement required for claimed ranges",
+      "requirement": "When a range is claimed, there must be reasonable enablement of the scope of the range.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "make_use_without_undue_experimentation",
+      "title": "Skilled person must make and use entire scope without undue experimentation",
+      "requirement": "One skilled in the art must be able to make and use the entire scope of the claimed invention without undue experimentation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "rejection_must_identify_unenabled_subject_matter",
+      "title": "Rejection must identify unenabled subject matter and explain why",
+      "requirement": "A scope of enablement rejection must identify the claimed subject matter for which the specification is not enabling and explain why the specification is not enabling, applying the factors set forth in In re Wands.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "explanation_include_unresolved_questions",
+      "title": "Explanation must include unresolved questions raising doubt",
+      "requirement": "The explanation should include any questions posed by the examiner which were not satisfactorily resolved and consequently raise doubt as to enablement.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "no_recitation_of_ordinary_skill_factors",
+      "title": "Claims need not recite factors within ordinary skill",
+      "requirement": "Claims need not recite factors which must be presumed to be within the level of ordinary skill in the art, where one of ordinary skill in the art would consider them obvious.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "specification_source_of_practice",
+      "title": "Specification is source for how to practice invention",
+      "requirement": "One does not look to the claims but to the specification to find out how to practice the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "examiner_ensure_full_scope_enabled",
+      "title": "Examiner must ensure full scope of claim is enabled",
+      "requirement": "If a reasonable interpretation of the claim is broader than the description in the specification, it is necessary for the examiner to make sure the full scope of the claim is enabled.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "examiner_identify_enabled_subject_matter",
+      "title": "Examiner must identify enabled subject matter in rejection",
+      "requirement": "If a rejection is made based on the view that the enablement is not commensurate in scope with the claim, the examiner should identify the subject matter that is considered to be enabled.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2164.08"
+    },
+    {
+      "rule_id": "single_means_claim_enablement_rejection",
+      "title": "Single means claims subject to enablement rejection",
+      "requirement": "A single means claim, i.e., where a means recitation does not appear in combination with another recited element of means, is subject to an enablement rejection under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Hyatt: A single means claim which covered every conceivable means for achieving the stated purpose was held nonenabling for the scope of the claim because the specification disclosed at most only those means known to the inventor."
+      ],
+      "reference": "§ 2164.08(a)"
+    },
+    {
+      "rule_id": "inoperative_embodiments_standard",
+      "title": "Standard for inoperative embodiments in enablement",
+      "requirement": "The standard is whether a skilled person could determine which embodiments that were conceived, but not yet made, would be inoperative or operative with expenditure of no more effort than is normally required in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Atlas Powder Co. v. E.I. du Pont de Nemours & Co.: prophetic examples do not make the disclosure nonenabling."
+      ],
+      "reference": "§ 2164.08(b)"
+    },
+    {
+      "rule_id": "undue_experimentation_inoperative",
+      "title": "Undue experimentation renders claim non-enabled",
+      "requirement": "The scope of the claim may still not be enabled where undue experimentation is involved in determining those embodiments that are operable.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Angstadt: A disclosure of a large number of operable embodiments and the identification of a single inoperative embodiment did not render a claim broader than the enabled scope because undue experimentation was not involved in determining those embodiments that were operable."
+      ],
+      "reference": "§ 2164.08(b)"
+    },
+    {
+      "rule_id": "critical_feature_rejection",
+      "title": "Rejection for unclaimed critical feature",
+      "requirement": "A feature which is taught as critical in a specification and is not recited in the claims should result in a rejection of such claim under the enablement provision section of 35 U.S.C. 112.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2164.08(c)"
+    },
+    {
+      "rule_id": "preferred_not_critical",
+      "title": "Preferred features are not critical",
+      "requirement": "Features which are merely preferred are not to be considered critical.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2164.08(c)"
+    },
+    {
+      "rule_id": "criticality_clarity_requirement",
+      "title": "Enablement rejection requires clear criticality",
+      "requirement": "An enablement rejection based on the grounds that a disclosed critical limitation is missing from a claim should be made only when the language of the specification makes it clear that the limitation is critical for the invention to function as intended.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2164.08(c)"
+    }
+  ],
+  "review_checklist": [
+    "Verify specification enables making and using the full scope of claimed invention without undue experimentation",
+    "Confirm all Wands factors are considered holistically rather than in isolation",
+    "Ensure genus claims enable the entire class of processes, machines, or compositions",
+    "Check that at least one enabling method is disclosed with reasonable correlation to claim scope",
+    "Verify disclosure of non-readily available apparatus or chemicals required for practice",
+    "Confirm unstable intermediates do not require teaching of stable or isolatable forms",
+    "Ensure dosage or method of use is omitted only if known to POSITA without undue experimentation",
+    "Verify utility statements sufficiently convey how to use the invention if standard modes are known",
+    "Confirm detailed procedures are omitted only if the description itself is sufficient for enablement",
+    "Ensure commercially viable embodiments are not required unless explicitly claimed",
+    "Verify well-known art is omitted from the specification as recommended",
+    "Confirm enablement analysis is distinct from written description support analysis",
+    "Check that failure to disclose alternative methods does not invalidate the claim",
+    "Verify specification enables the invention as of the filing date"
+  ],
+  "system_prompt_injection": "Apply USPTO enablement guidelines to ensure the specification teaches a person skilled in the art to make and use the full scope of the claimed invention without undue experimentation. Evaluate all Wands factors holistically to determine if the disclosure is sufficient, recognizing that reasonable experimentation is permitted while commercial viability or detailed procedures are not strictly required. Ensure genus claims enable the entire class and that any non-readily available apparatus or chemicals are adequately described. Do not require disclosure of well-known art, specific dosages, or stable forms for unstable intermediates if such information can be obtained without undue experimentation. Analyze enablement separately from written description requirements and reject claims only if the specification fails to support the full scope of the invention."
+}

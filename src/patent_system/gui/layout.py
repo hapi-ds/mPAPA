@@ -286,6 +286,16 @@ def create_layout(
             progress_bar_container=progress_bar,
             personality_pref_repo=personality_pref_repo,
             profile_loader=profile_loader,
+            on_review_draft=lambda claims, desc: (
+                tabs.set_value(reviewer_tab),
+                create_reviewer_panel(
+                    reviewer_container,
+                    settings=settings,
+                    topic_id=topic_id,
+                    claims_text=claims,
+                    description_text=desc,
+                ),
+            ),
         )
         create_settings_panel(
             settings_container,

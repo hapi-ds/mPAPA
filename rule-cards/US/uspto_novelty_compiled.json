@@ -1,0 +1,993 @@
+{
+  "card_id": "uspto_novelty_compiled",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": "uspto_novelty.pdf",
+  "task": "novelty",
+  "task_label": "Novelty Assessment",
+  "rules": [
+    {
+      "rule_id": "novelty_sufficient_specificity_ranges",
+      "title": "Sufficient specificity required for range anticipation",
+      "requirement": "In order to anticipate the claims, the claimed subject matter must be disclosed in the reference with “sufficient specificity to constitute an anticipation under the statute.”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "ClearValue Inc. v. Pearl River Polymers Inc.",
+        "Atofina v. Great Lakes Chem. Corp"
+      ],
+      "reference": "§ 2131.03"
+    },
+    {
+      "rule_id": "novelty_non_overlapping_ranges",
+      "title": "Non-overlapping ranges do not anticipate",
+      "requirement": "Prior art which teaches a value or range that is very close to, but does not overlap or touch, the claimed range does not anticipate the claimed range.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Titanium Metals Corp. v. Banner"
+      ],
+      "reference": "§ 2131.03"
+    },
+    {
+      "rule_id": "novelty_exact_disclosure_requirement",
+      "title": "Anticipation requires exact disclosure",
+      "requirement": "Anticipation under § 102 can be found only when the reference discloses exactly what is claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Titanium Metals Corp. v. Banner"
+      ],
+      "reference": "§ 2131.03"
+    },
+    {
+      "rule_id": "novelty_secondary_considerations_irrelevant",
+      "title": "Secondary considerations irrelevant to novelty",
+      "requirement": "Evidence of secondary considerations, such as unexpected results or commercial success, is irrelevant to 35 U.S.C. 102 rejections and thus cannot overcome a rejection so based.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Wiggins"
+      ],
+      "reference": "§ 2131.04"
+    },
+    {
+      "rule_id": "novelty_nonanalogous_art_irrelevant",
+      "title": "Nonanalogous art status irrelevant to novelty",
+      "requirement": "Arguments that the alleged anticipatory prior art is ‘nonanalogous art’ or ‘teaches away from the invention’ or is not recognized as solving the problem solved by the claimed invention, are not ‘germane’ to a rejection under section 102.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Twin Disc, Inc. v. United States",
+        "In re Self",
+        "State Contracting & Eng’ g Corp. v. Condotte America, Inc."
+      ],
+      "reference": "§ 2131.05"
+    },
+    {
+      "rule_id": "novelty_teaching_away_irrelevant",
+      "title": "Teaching away does not negate anticipation",
+      "requirement": "A reference is no less anticipatory if, after disclosing the invention, the reference then disparages it. The question whether a reference “teaches away” from the invention is inapplicable to an anticipation analysis.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Celeritas Technologies Ltd. v. Rockwell International Corp.",
+        "Upsher-Smith Labs. v. Pamlab, LLC",
+        "Atlas Powder Co. v. IRECO, Inc."
+      ],
+      "reference": "§ 2131.05"
+    },
+    {
+      "rule_id": "novelty_inventor_disclosure_exemption",
+      "title": "Inventor's own disclosure not prior art under pre-AIA 102(a)",
+      "requirement": "An inventor's or at least one joint inventor's disclosure of his or her own work within the year before the application filing date cannot be used against the application as prior art under pre-AIA 35 U.S.C. 102(a).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "pre-AIA 35 U.S.C. 102(a); In re Katz, 687 F.2d 450"
+    },
+    {
+      "rule_id": "novelty_derivation_affidavit_requirement",
+      "title": "Affidavit must provide evidence for derivation claim",
+      "requirement": "An affidavit or declaration under 37 CFR 1.132 that is only a naked assertion of inventorship and that fails to provide any context, explanation or evidence to support that assertion is insufficient to show that the relied-upon subject matter was the inventor’s own work.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "EmeraChem Holdings, LLC v. Volkswagen Grp. of Am., Inc., 859 F.3d 1341"
+      ],
+      "reference": "37 CFR 1.132; EmeraChem Holdings, LLC v. Volkswagen Grp. of Am., Inc."
+    },
+    {
+      "rule_id": "novelty_coauthor_refusal_exception",
+      "title": "Rejection stands if co-author refuses to disclaim",
+      "requirement": "If there is evidence that the co-author has refused to disclaim inventorship and believes himself or herself to be an inventor, the inventor's affidavit or declaration will not be enough to establish that the inventor or the at least one joint inventor is the sole inventor of the subject matter in the article and the rejection will stand.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ex parte Kroger, 219 USPQ 370"
+      ],
+      "reference": "Ex parte Kroger, 219 USPQ 370"
+    },
+    {
+      "rule_id": "pre_aia_102b_novelty_bar",
+      "title": "Pre-AIA 35 U.S.C. 102(b) Novelty Bar",
+      "requirement": "A person shall be entitled to a patent unless the invention was patented or described in a printed publication in this or a foreign country or in public use or on sale in this country, more than one year prior to the date of application for patent in the United States.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(b)"
+    },
+    {
+      "rule_id": "grace_period_holiday_extension",
+      "title": "Grace Period Extension for Holidays",
+      "requirement": "Publications, patents, public uses and sales will not bar a patent if the 1-year grace period otherwise ends on a Saturday, Sunday, or federal holiday and the application’s U.S. filing date is the next succeeding business day.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2133 I"
+    },
+    {
+      "rule_id": "one_year_bar_measurement",
+      "title": "One-Year Time Bar Measurement",
+      "requirement": "If one discloses one's own work more than 1 year before the filing of the patent application, that person is barred from obtaining a patent. The 1-year time bar is measured from the U.S. filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2133 II"
+    },
+    {
+      "rule_id": "public_possession_bar",
+      "title": "Bar by Public Possession",
+      "requirement": "Applicant will be barred from obtaining a patent if the public came into possession of the invention on a date before the 1-year grace period ending with the U.S. filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2133 II"
+    },
+    {
+      "rule_id": "obvious_variant_bar",
+      "title": "Bar by Obvious Variant",
+      "requirement": "The prior art need not be identical to the claimed invention but will bar patentability if it is an obvious variant thereof.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2133 II"
+    },
+    {
+      "rule_id": "no_102a_rejection_inventor_disclosure",
+      "title": "No 102(a) rejection for inventor disclosure within 1 year",
+      "requirement": "No rejection under pre-AIA 35 U.S.C. 102(a) should be made if there is evidence that inventor made the invention and only disclosed it to others within the year prior to the effective filing date.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2133.03"
+    },
+    {
+      "rule_id": "novelty_on_sale_bar_inventor_consent",
+      "title": "Inventor consent not required for on-sale bar",
+      "requirement": "If the invention was placed on sale by a third party who obtained the invention from the inventor, a patent is barred even if the inventor did not consent to the sale or have knowledge that the invention was embodied in the sold article.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Electric Storage Battery Co. v. Shimadzu",
+        "In re Blaisdell",
+        "CTS Corp. v. Electro Materials Corp. of America"
+      ],
+      "reference": "MPEP § 2133.03(b) B"
+    },
+    {
+      "rule_id": "novelty_on_sale_objective_evidence",
+      "title": "Objective evidence controls over uncommunicated intent",
+      "requirement": "Objective evidence such as a description of the inventive product in the contract of sale or in another communication with the purchaser controls over an uncommunicated intent by the seller to deliver the inventive product under the contract for sale.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ferag AG v. Quipp, Inc.",
+        "RCA Corp. v. Data Gen. Corp.",
+        "Envirotech Corp. v. Westech Eng’g, Inc."
+      ],
+      "reference": "MPEP § 2133.03(b) C"
+    },
+    {
+      "rule_id": "novelty_third_party_sale_prior_art",
+      "title": "Third party sales may constitute prior art",
+      "requirement": "A sale or offer for sale of the invention by an independent third party more than 1 year before the effective filing date of applicant’s claimed invention may be applied as prior art and may prevent applicant from obtaining a patent.",
+      "severity": "mandatory",
+      "exceptions": [
+        "An exception to this rule exists where a patented method is kept secret and remains secret after a sale of the unpatented product of the method. Such a sale prior to the critical date is a bar if engaged in by the patentee or patent applicant, but not if engaged in by another."
+      ],
+      "examples": [
+        "In re Caveney"
+      ],
+      "reference": "MPEP § 2133.03(b) IV A"
+    },
+    {
+      "rule_id": "novelty_ready_for_patenting_test",
+      "title": "Invention must be ready for patenting for on-sale bar",
+      "requirement": "The on-sale bar applies when two conditions are satisfied before the critical date [more than one year before the effective filing date of the claimed invention]. First, the product must be the subject of a commercial offer for sale…. Second, the invention must be ready for patenting.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Pfaff v. Wells Elecs., Inc.",
+        "Invitrogen Corp. v. Biocrest Manufacturing L.P."
+      ],
+      "reference": "MPEP § 2133.03(c) I"
+    },
+    {
+      "rule_id": "novelty_on_sale_bar_product_requirement",
+      "title": "Product must be subject of commercial offer for sale",
+      "requirement": "The product must be the subject of a commercial offer for sale.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_ready_for_patenting_prong",
+      "title": "Invention must be ready for patenting",
+      "requirement": "The invention must be ready for patenting.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_ready_for_patenting_methods",
+      "title": "Methods to satisfy ready for patenting prong",
+      "requirement": "Ready for patenting may be satisfied in at least two ways: by proof of reduction to practice before the critical date; or by proof that prior to the critical date the inventor had prepared drawings or other descriptions of the invention that were sufficiently specific to enable a person skilled in the art to practice the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "The patent was held invalid because the invention for a computer chip socket was ready for patenting when it was offered for sale more than one year prior to the application filing date.",
+        "The invention was held ready for patenting since the detailed drawings of plastic dispensing caps offered for sale contained each limitation of the claims and were sufficiently specific to enable person skilled in art to practice the invention."
+      ],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_bar_if_reduced_to_practice",
+      "title": "Patent barred if reduced to practice before sale",
+      "requirement": "If the invention had been actually reduced to practice before being sold or offered for sale more than 1 year before filing of the application, a patent will be barred.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Here the pre-critical date sales were of completed cartridges made to specifications that remained unchanged to the present day, showing that any invention embodied in the accused cartridges was reduced to practice before the critical date."
+      ],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_inherent_limitations_on_sale",
+      "title": "Inherent possession of claim limitations triggers on-sale bar",
+      "requirement": "If a product that is offered for sale inherently possesses each of the limitations of the claims, then the invention is on sale, whether or not the parties to the transaction recognize that the product possesses the claimed characteristics.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Claim for a particular anhydrous crystalline form of a pharmaceutical compound was held invalid under the on-sale bar of pre-AIA 35 U.S.C. 102(b), even though the parties to the U.S. sales of the foreign manufactured compound did not know the identity of the particular crystalline form.",
+        "Claim for a lacrosse stick was held invalid under the on-sale bar despite the argument that it was not known at the time of sale whether the sticks possessed the recited improved playing and handling characteristics."
+      ],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_actual_reduction_to_practice_test",
+      "title": "Actual reduction to practice requires demonstration of utility",
+      "requirement": "Actual reduction to practice in the context of an on-sale bar issue usually requires testing under actual working conditions in such a way as to demonstrate the practical utility of an invention for its intended purpose beyond the probability of failure, unless by virtue of the very simplicity of an invention its practical operativeness is clear.",
+      "severity": "mandatory",
+      "exceptions": [
+        "By virtue of the very simplicity of an invention its practical operativeness is clear."
+      ],
+      "examples": [],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_no_commercial_marketing_required",
+      "title": "Satisfactory commercial marketing not required for bar",
+      "requirement": "The invention need not be ready for satisfactory commercial marketing for sale to bar a patent.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_process_sale_distinction",
+      "title": "Sale of know-how is not sale of process invention",
+      "requirement": "Know-how describing what the process consists of and how the process should be carried out may be sold in the sense that the buyer acquires knowledge of the process and obtains the freedom to carry it out pursuant to the terms of the transaction. However, such a transaction is not a sale of the invention within the meaning of [pre-AIA] §102(b) because the process has not been carried out or performed as a result of the transaction.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_sale_of_product_made_by_process",
+      "title": "Sale of product made by process constitutes sale of process",
+      "requirement": "Sale of a product made by the claimed process by the patentee or a licensee would constitute a sale of the process within the meaning of pre-AIA 35 U.S.C. 102(b).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2133.03(c)"
+    },
+    {
+      "rule_id": "novelty_on_sale_bar_process_product",
+      "title": "Sale of product made by claimed process triggers on-sale bar",
+      "requirement": "Sale of a product made by the claimed process by the patentee or a licensee constitutes a sale of the process within the meaning of pre-AIA 35 U.S.C. 102(b).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Sale of a product made by a claimed method before the critical date resulted in a forfeiture of any right to a patent to that method."
+      ],
+      "reference": "pre-AIA 35 U.S.C. 102(b); D.L. Auld Co. v. Chroma Graphics Corp."
+    },
+    {
+      "rule_id": "novelty_on_sale_bar_process_performance",
+      "title": "Performing claimed process for consideration triggers on-sale bar",
+      "requirement": "The application of pre-AIA 35 U.S.C. 102(b) is triggered by actually performing the claimed process itself for consideration.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Patent was held invalid under pre-AIA 35 U.S.C. 102(b) based on patentee’s offer to perform the claimed process for treating oil refinery waste more than one year before filing."
+      ],
+      "reference": "pre-AIA 35 U.S.C. 102(b); Scaltech, Inc. v. Retec/Tetra, L.L.C."
+    },
+    {
+      "rule_id": "novelty_on_sale_bar_device_embodiment",
+      "title": "Sale of device embodying claimed process triggers on-sale bar",
+      "requirement": "The sale of a device embodying a claimed process may trigger the on-sale bar.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Finding a fully operational computer program implementing and thus embodying the claimed method to trigger the on-sale bar."
+      ],
+      "reference": "pre-AIA 35 U.S.C. 102(b); Minton v. National Ass’n. of Securities Dealers, Inc."
+    },
+    {
+      "rule_id": "novelty_on_sale_bar_geographic_scope",
+      "title": "Public use or on sale activity must occur in the United States",
+      "requirement": "For purposes of judging the applicability of the pre-AIA 35 U.S.C. 102(b) bars, public use or on sale activity must take place in the United States.",
+      "severity": "mandatory",
+      "exceptions": [
+        "On sale status can be found if substantial activity prefatory to a sale occurs in the United States, even if sale and delivery take place in a foreign country."
+      ],
+      "examples": [
+        "An offer for sale, made or originating in this country, may be sufficient prefatory activity to bring the offer within the terms of the statute."
+      ],
+      "reference": "pre-AIA 35 U.S.C. 102(b); Gandy v. Main Belting Co.; Robbins Co. v. Lawrence Mfg. Co."
+    },
+    {
+      "rule_id": "novelty_exception_experimental_use",
+      "title": "Experimental use exception to on-sale bar",
+      "requirement": "If the use or sale was experimental, there is no bar under pre-AIA 35 U.S.C. 102(b). Experimentation must be the primary purpose and any commercial exploitation must be incidental.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Commercial exploitation is permitted only if it is merely incidental to the primary purpose of experimentation."
+      ],
+      "examples": [
+        "A use or sale is experimental if it represents a bona fide effort to perfect the invention or to ascertain whether it will answer its intended purpose."
+      ],
+      "reference": "pre-AIA 35 U.S.C. 102(b); LaBounty Mfg. v. United States Int’l Trade Comm’n"
+    },
+    {
+      "rule_id": "experimental_use_no_bar",
+      "title": "Experimental use exception to novelty bar",
+      "requirement": "If the use or sale was experimental, there is no bar under pre-AIA 35 U.S.C. 102(b).",
+      "severity": "mandatory",
+      "exceptions": [
+        "The use or sale must represent a bona fide effort to perfect the invention or to ascertain whether it will answer its intended purpose.",
+        "Any commercial exploitation must be merely incidental to the primary purpose of the experimentation."
+      ],
+      "examples": [],
+      "reference": "35 U.S.C. 102(b)"
+    },
+    {
+      "rule_id": "no_market_testing_exception",
+      "title": "Market testing is not experimental use",
+      "requirement": "The experimental use exception does not include market testing where the inventor is attempting to gauge consumer demand for his claimed invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Activities where the purpose is commercial exploitation and not experimentation."
+      ],
+      "reference": "In re Smith, 714 F.2d 1127"
+    },
+    {
+      "rule_id": "no_commercial_exploitation_before_filing",
+      "title": "Prohibition on commercial exploitation prior to filing",
+      "requirement": "An inventor may not commercially exploit an invention more than 1 year prior to the effective filing date of a claimed invention.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Bona fide experimental activity where commercial exploitation is merely incidental."
+      ],
+      "examples": [
+        "Sales or offers for sale that are an attempt at market penetration."
+      ],
+      "reference": "MPEP § 2133.03(e)(1)"
+    },
+    {
+      "rule_id": "commercial_activity_must_advance_development",
+      "title": "Commercial activity must advance invention development",
+      "requirement": "The commercial activity must legitimately advance development of the invention towards completion.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A sale may be necessary to legitimately advance experimental development if the primary purpose of the sale is experimental."
+      ],
+      "reference": "MPEP § 2133.03(e)(1) I"
+    },
+    {
+      "rule_id": "indicia_of_commercial_exploitation",
+      "title": "Indicia of commercial exploitation intent",
+      "requirement": "The following activities should be used by the examiner as indicia of subjective intent for commercial exploitation: (A) Preparation of commercial documents; (B) Preparation of price lists and distribution of price quotations; (C) Display of samples to prospective customers; (D) Demonstration of models or prototypes; (E) Use of an invention where an admission fee is charged.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Preparation of orders, invoices, receipts, delivery schedules.",
+        "Distribution of price quotations.",
+        "Display of samples to prospective customers.",
+        "Demonstration of models at trade conventions.",
+        "Charging admission fees for use."
+      ],
+      "reference": "MPEP § 2133.03(e)(1) II"
+    },
+    {
+      "rule_id": "novelty_inventor_must_maintain_control",
+      "title": "Inventor must maintain control during testing",
+      "requirement": "THE INVENTOR MUST MAINTAIN SUFFICIENT CONTROL OVER THE INVENTION DURING TESTING BY THIRD PARTIES",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2133.03(e)(5)"
+    },
+    {
+      "rule_id": "novelty_control_awareness_must_be_proven",
+      "title": "Control and customer awareness must be proven",
+      "requirement": "control and customer awareness ordinarily must be proven if experimentation is to be found",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2133.03(e)(5)"
+    },
+    {
+      "rule_id": "novelty_examiner_must_determine_reasonableness",
+      "title": "Examiner must determine reasonableness of activity",
+      "requirement": "the examiner must determine whether the scope and length of the activity were reasonable in terms of the experimental purpose intended by the applicant and the nature of the subject matter involved",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2133.03(e)(4)"
+    },
+    {
+      "rule_id": "pre_aia_102_d_statutory_bar",
+      "title": "Statutory bar for foreign patenting >12 months prior",
+      "requirement": "A person shall be entitled to a patent unless the invention was first patented or caused to be patented, or was the subject of an inventor’s certificate, by the applicant or his legal representatives or assigns in a foreign country prior to the date of the application for patent in this country on an application for patent or inventor’s certificate filed more than twelve months before the filing of the application in the United States.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(d)"
+    },
+    {
+      "rule_id": "pre_aia_102_d_four_conditions",
+      "title": "Four conditions for Pre-AIA 102(d) statutory bar",
+      "requirement": "Pre-AIA 35 U.S.C. 102(d) establishes four conditions which, if all are present, establish a statutory bar against the granting of a patent in this country: (A) The foreign application must be filed more than 12 months before the effective filing date of the claimed invention in the United States; (B) The foreign and United States applications must have been filed by the same applicant or by the same applicant's legal representatives or assigns; (C) The foreign application must have actually issued as a patent or inventor’s certificate before the filing in the United States; (D) The same invention must be involved.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2135 I. GENERAL REQUIREMENTS OF PRE-AIA 35 U.S.C. 102(d)"
+    },
+    {
+      "rule_id": "novelty_102e_prior_art_bar",
+      "title": "Novelty bar for prior US published applications",
+      "requirement": "A person shall be entitled to a patent unless the invention was described in an application for patent, published under section 122(b), by another filed in the United States before the invention by the applicant for patent.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(e)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_entitlement_condition",
+      "title": "Person shall be entitled to patent unless invention described in prior app",
+      "requirement": "A person shall be entitled to a patent unless the invention was described in an application for patent, published under section 122(b), by another filed in the United States before the invention by the applicant for patent or a patent granted on an application for patent by another filed in the United States before the invention by the applicant for patent.",
+      "severity": "mandatory",
+      "exceptions": [
+        "an international application filed under the treaty defined in section 351(a) shall have the effects for the purposes of this subsection of an application filed in the United States only if the international application designated the United States and was published under Article 21(2) of such treaty in the English language"
+      ],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(e)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_intl_app_conditions",
+      "title": "Intl app prior art date requires filing date, US designation, English pub",
+      "requirement": "The prior art date of a reference under pre-AIA 35 U.S.C. 102(e) may be the international filing date if the international filing date was on or after November 29, 2000, the international application designated the United States, and the international application was published by the World Intellectual Property Organization (WIPO) under the Patent Cooperation Treaty (PCT) Article 21(2) in the English language.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_sir_treatment",
+      "title": "Published SIR treated as US patent for defensive purposes",
+      "requirement": "A published SIR will be treated the same as a U.S. patent for all defensive purposes, usable as a reference as of its filing date in the same manner as a U.S. patent.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_different_entity",
+      "title": "Reference entity must be different from applicant entity",
+      "requirement": "In order to apply a reference under pre-AIA 35 U.S.C. 102(e), the inventive entity of the application must be different from that of the cited reference.",
+      "severity": "mandatory",
+      "exceptions": [
+        "where there are joint inventors, only one inventor needs to be different for the inventive entities to be different"
+      ],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_reference_type",
+      "title": "Reference must be US patent, US app pub, or WIPO PCT pub",
+      "requirement": "The potential reference must be a U.S. patent, a U.S. application publication (35 U.S.C. 122(b)) or a WIPO publication of an international application under PCT Article 21(2) in order to apply the reference under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136(I)(A)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_benefit_claim_support",
+      "title": "Benefit claims require proper support in prior application",
+      "requirement": "For all benefit claims, the prior application(s) must properly support the subject matter used to make the rejection in compliance with pre-AIA 35 U.S.C. 112, first paragraph or 35 U.S.C. 112(a).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136(I)(B)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_provisional_support",
+      "title": "Provisional benefit requires claim support in written description",
+      "requirement": "For benefit claims under 35 U.S.C. 119(e), at least one claim of the potential reference must be supported by the written description of the relied upon provisional application in compliance with pre-AIA 35 U.S.C. 112, first paragraph, or 35 U.S.C. 112(a), in order for the potential reference to be usable as prior art under pre-AIA 35 U.S.C. 102(e) as of a relied upon provisional application’s filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136(I)(B)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_intl_benefit_conditions",
+      "title": "Intl app benefit requires meeting 102(e), 119(e), 120, 365(c), 386(c)",
+      "requirement": "If such an international application properly claims benefit to an earlier-filed U.S. or international application, or to an earlier-filed U.S. provisional application, apply the reference under pre-AIA 35 U.S.C. 102(e) as of the earlier filing date, provided all the conditions of pre-AIA 35 U.S.C. 102(e), 119(e), 120, 365(c), or 386(c) are met.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136(I)(C)(1)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102e_intl_benefit_disclosure",
+      "title": "Subject matter must be disclosed in earlier app for earlier date",
+      "requirement": "For all benefit claims, the subject matter used in the rejection must be disclosed in the earlier-filed application in compliance with pre-AIA 35 U.S.C. 112, first paragraph, or 35 U.S.C. 112(a), in order for that subject matter to be entitled to the earlier filing date under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136(I)(C)(1)"
+    },
+    {
+      "rule_id": "novelty_benefit_claim_disclosure_requirement",
+      "title": "Subject matter in benefit claims must be disclosed in earlier application",
+      "requirement": "For all benefit claims, the subject matter used in the rejection must be disclosed in the earlier-filed application in compliance with pre-AIA 35 U.S.C. 112, first paragraph, or 35 U.S.C. 112(a), in order for that subject matter to be entitled to the earlier filing date under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_provisional_support_requirement",
+      "title": "Provisional benefit claims require written description support",
+      "requirement": "For benefit claims under 35 U.S.C. 119(e), at least one claim of the potential reference must be supported by the written description of the relied upon provisional application in compliance with pre-AIA 35 U.S.C. 112, first paragraph, or 35 U.S.C. 112(a), in order for the potential reference to be usable as prior art under pre-AIA 35 U.S.C. 102(e) as of a relied upon provisional application’s filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03"
+    },
+    {
+      "rule_id": "novelty_intl_app_conditions_for_us_date",
+      "title": "International applications must meet three conditions for US filing date",
+      "requirement": "Where the earlier application is an international application, the earlier international application must satisfy the same three conditions (i.e., filed on or after November 29, 2000, designated the U.S., and had been published in English under PCT Article 21(2)) for the earlier international filing date to be a U.S. filing date for prior art purposes under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_intl_app_no_us_designation",
+      "title": "Do not treat non-US designated intl filing date as US prior art date",
+      "requirement": "If the international application was filed on or after November 29, 2000, but did not designate the United States or was not published in English under PCT Article 21(2), do not treat the international filing date as a U.S. filing date for prior art purposes.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_intl_app_no_102e_application",
+      "title": "Do not apply reference as of intl filing date if conditions not met",
+      "requirement": "In this situation, do not apply the reference as of its international filing date, its date of completion of the 35 U.S.C. 371(c)(1), (2) and (4) requirements, or any earlier filing date to which such an international application claims benefit or priority.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_pre_2000_intl_app_publications",
+      "title": "Never apply pre-2000 intl app publications under 102(e)",
+      "requirement": "For U.S. application publications and WIPO publications directly resulting from international applications under PCT Article 21(2), never apply these references under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_foreign_priority_no_102e",
+      "title": "Foreign application filing dates may not be used as 102(e) dates",
+      "requirement": "Foreign application filing dates that are claimed (via 35 U.S.C. 119(a)-(d), (f), or 365(a) or (b)) in applications, which have been published as U.S. or WIPO application publications or patented in the U.S., may not be used as pre-AIA 35 U.S.C. 102(e) dates for prior art purposes.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136"
+    },
+    {
+      "rule_id": "novelty_unpublished_confidentiality_maintenance",
+      "title": "Maintain confidentiality of unpublished applications without commonality",
+      "requirement": "If there is no common assignee, common applicant, or common inventor and the application was not published pursuant to 35 U.S.C. 122(b), the confidential status of applications under 35 U.S.C. 122(a) must be maintained and no rejection can be made relying on the earlier filed, unpublished application, or subject matter not supported in a redacted application publication, as prior art under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.01 I"
+    },
+    {
+      "rule_id": "novelty_unpublished_issue_requirement",
+      "title": "Unpublished application must issue as patent before use as prior art",
+      "requirement": "If the application with the earliest effective U.S. filing date will not be published pursuant to 35 U.S.C. 122(b), it must be allowed to issue once all the statutory requirements are met. After the patent has issued, it may be used as a reference in a rejection under pre-AIA 35 U.S.C. 102(e) in the still pending application as appropriate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.01 I"
+    },
+    {
+      "rule_id": "provisional_rejection_common_ownership",
+      "title": "Provisional rejection for common ownership",
+      "requirement": "if (1) at least one common inventor or applicant exists between the applications or the applications are commonly assigned, and (2) the effective filing dates are different; then a provisional rejection of the later-filed application should be made.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.01"
+    },
+    {
+      "rule_id": "provisional_rejection_confidentiality",
+      "title": "Confidentiality restriction on provisional rejection",
+      "requirement": "provisional rejections over pre-AIA 35 U.S.C. 102(e) are only authorized when there is a common inventor or assignee, otherwise the copending application prior to publication must remain confidential.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.01"
+    },
+    {
+      "rule_id": "entire_disclosure_reliance",
+      "title": "Reliance on entire disclosure for 102(e)",
+      "requirement": "Under pre-AIA 35 U.S.C. 102(e), the entire disclosure of a U.S. patent, a U.S. patent application publication, or an international application publication having an earlier effective U.S. filing date can be relied on to reject the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.02"
+    },
+    {
+      "rule_id": "novelty_disclosure_must_be_in_publication",
+      "title": "Disclosure relied on must be in issued patent or publication",
+      "requirement": "When a U.S. patent, a U.S. patent application publication, or an international application publication is used to reject claims under pre-AIA 35 U.S.C. 102(e), the disclosure relied on in the rejection must be present in the issued patent or application publication.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.02"
+    },
+    {
+      "rule_id": "novelty_canceled_portions_excluded",
+      "title": "Canceled portions cannot be relied on for 102(e) rejection",
+      "requirement": "Portions of the patent application which were canceled are not part of the patent or application publication and thus cannot be relied on in a pre-AIA 35 U.S.C. 102(e) rejection over the issued patent or application publication.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.02"
+    },
+    {
+      "rule_id": "novelty_abandoned_parent_excluded",
+      "title": "Abandoned unpublished parent matter not relied on",
+      "requirement": "Subject matter that is disclosed in an abandoned, unpublished parent application but was not carried over into the child patent or application publication may not be relied on as prior art under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.02"
+    },
+    {
+      "rule_id": "novelty_cip_parent_excluded",
+      "title": "Parent matter not in CIP cannot be relied on",
+      "requirement": "Subject matter which is disclosed in a parent application, but not included in the child continuation-in-part (CIP) cannot be relied on in a pre-AIA 35 U.S.C. 102(e) rejection over the issued or published CIP.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Lund: Subject matter embodied in a canceled example from the parent application could not be relied on as of either parent or child filing date."
+      ],
+      "reference": "MPEP § 2136.02"
+    },
+    {
+      "rule_id": "novelty_provisional_support_required",
+      "title": "Provisional support required for 102(e) date",
+      "requirement": "Where a U.S. patent claims benefit to a provisional application, at least one claim of the patent must be supported by the disclosure of the relied upon provisional application in compliance with pre-AIA 35 U.S.C. 112, first paragraph, in order for the patent to be usable as prior art under pre-AIA 35 U.S.C. 102(e) as of the relied upon provisional application’s filing date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.02"
+    },
+    {
+      "rule_id": "novelty_foreign_priority_not_102e_date",
+      "title": "Foreign priority date cannot be used as 102(e) date",
+      "requirement": "Foreign applications’ filing dates that are claimed (via 35 U.S.C. 119(a)–(d), (f) or 35 U.S.C. 365(a)) in applications, which have been published as U.S. or WIPO application publications or patented in the U.S., may not be used as pre-AIA 35 U.S.C. 102(e) dates for prior art purposes.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Hilmer: The reference’s Swiss priority date could not be relied on in a pre-AIA 35 U.S.C. 102(e) rejection."
+      ],
+      "reference": "MPEP § 2136.03"
+    },
+    {
+      "rule_id": "pct_us_filing_date_conditions",
+      "title": "Conditions for PCT international filing date to be U.S. filing date",
+      "requirement": "If the international application meets the following three conditions: (1) an international filing date on or after November 29, 2000; (2) designated the United States; and (3) published under PCT Article 21(2) in English, the international filing date is a U.S. filing date for prior art purposes under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.A.(A)"
+    },
+    {
+      "rule_id": "pct_earlier_benefit_application_support",
+      "title": "Subject matter disclosure requirement for earlier benefit date",
+      "requirement": "The subject matter relied upon in the rejection must be disclosed in the earlier-filed application in compliance with 35 U.S.C. 112(a) /pre-AIA 35 U.S.C. 112, first paragraph, in order to give that subject matter the benefit of the earlier filing date under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.A.(A)"
+    },
+    {
+      "rule_id": "pct_provisional_support_requirement",
+      "title": "Provisional application support for international benefit",
+      "requirement": "If such an international application properly claims benefit to an earlier-filed U.S. provisional application, apply the reference under pre-AIA 35 U.S.C. 102(e) as of the earlier filing date, provided that the provisional application has proper support for the subject matter as required by 35 U.S.C. 119(e) and that at least one claim of the international application is supported by the written description of the relied upon provisional application in compliance with pre-AIA 35 U.S.C. 112, first paragraph or 35 U.S.C. 112(a).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.A.(A)"
+    },
+    {
+      "rule_id": "pct_earlier_intl_app_conditions",
+      "title": "Earlier international application must meet same conditions",
+      "requirement": "Where the earlier application is an international application, the earlier international application must satisfy the same three conditions (i.e., filed on or after November 29, 2000, designated the U.S., and published in English under PCT Article 21(2)) for the earlier international filing date to be the U.S. filing date for prior art purposes under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.A.(A) Note"
+    },
+    {
+      "rule_id": "pct_no_us_designation_treatment",
+      "title": "Do not treat non-US designated PCT as U.S. filing date",
+      "requirement": "If the international application was filed on or after November 29, 2000, but did not designate the United States or was not published in English under PCT Article 21(2), do not treat the international filing date as a U.S. filing date.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.A.(B)"
+    },
+    {
+      "rule_id": "pct_no_early_date_application",
+      "title": "Do not apply reference as of international filing date if conditions not met",
+      "requirement": "In this situation, do not apply the reference as of its international filing date, its date of completion of the 35 U.S.C. 371(c)(1), (2) and (4) requirements, or any earlier filing date to which such an international application claims benefit or priority.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.A.(B)"
+    },
+    {
+      "rule_id": "pre_aipa_102e_application_rule",
+      "title": "Apply pre-AIPA 102(e) for PCT filed before Nov 29, 2000",
+      "requirement": "If an international application has an international filing date prior to November 29, 2000, the reference should be applied under the provisions of 35 U.S.C. 102 and 374 as in force on November 28, 2000 (prior to the AIPA amendments).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.B"
+    },
+    {
+      "rule_id": "pre_aipa_102e_patent_application_date",
+      "title": "Apply pre-AIPA 102(e) as of earlier completion or US filing date",
+      "requirement": "For U.S. patents, apply the reference under 35 U.S.C. 102(e) as in force on November 28, 2000 as of the earlier of the date of completion of the requirements of 35 U.S.C. 371(c)(1), (2) and (4) or the filing date of the later-filed U.S. application that claimed the benefit of the international application.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.B.(1)"
+    },
+    {
+      "rule_id": "pre_aipa_102e_publication_prohibition",
+      "title": "Never apply PCT publications under pre-AIPA 102(e)",
+      "requirement": "For U.S. application publications and WIPO publications directly resulting from international applications under PCT Article 21(2), never apply these references under 35 U.S.C. 102(e) as in force on November 28, 2000.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.B.(2)"
+    },
+    {
+      "rule_id": "pre_aipa_102e_later_us_filing_date",
+      "title": "Apply pre-AIPA 102(e) as of actual later US filing date",
+      "requirement": "For U.S. application publications of applications that claim the benefit under 35 U.S.C. 120 or 365(c) of an international application filed prior to November 29, 2000, apply the reference under 35 U.S.C. 102(e) as in force on November 28, 2000 as of the actual filing date of the later-filed U.S. application that claimed the benefit of the international application.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 II.B.(3)"
+    },
+    {
+      "rule_id": "novelty_provisional_subject_matter_disclosure",
+      "title": "Provisional must disclose subject matter for rejection",
+      "requirement": "The provisional application must also describe, in compliance with pre-AIA 35 U.S.C. 112, first paragraph, or 35 U.S.C. 112(a), the subject matter relied upon in the reference patent or publication to make the rejection.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 III"
+    },
+    {
+      "rule_id": "novelty_intl_app_bridging_restrictions",
+      "title": "Restrictions on international application bridging",
+      "requirement": "International applications which (1) were filed prior to November 29, 2000, or (2) did not designate the U.S., or (3) were not published in English under PCT Article 21(2) by WIPO, may not be used to reach back (bridge) to an earlier filing date through a priority or benefit claim for prior art purposes under pre-AIA 35 U.S.C. 102(e).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 III"
+    },
+    {
+      "rule_id": "novelty_nonprovisional_support_requirement",
+      "title": "Nonprovisional support for 102(e) date",
+      "requirement": "For prior art purposes, a U.S. patent or patent application publication that claims the benefit of an earlier filing date under 35 U.S.C. 120 of a prior nonprovisional application would be accorded the earlier filing date as its prior art date under pre-AIA 35 U.S.C. 102(e), provided the earlier-filed application properly supports the subject matter relied upon in any rejection in compliance with 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 IV"
+    },
+    {
+      "rule_id": "novelty_102e_filing_date_standard",
+      "title": "102(e) reference date is filing date",
+      "requirement": "When pre-AIA 35 U.S.C. 102(e) applies but not pre-AIA 35 U.S.C. 102(g), the filing date of the prior art patent is the earliest date that can be used to reject or invalidate claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2136.03 V"
+    },
+    {
+      "rule_id": "novelty_correct_inventorship_required",
+      "title": "Requirement for correct inventorship under pre-AIA 102(f)",
+      "requirement": "Pre-AIA 35 U.S.C. 102(f) requires that the correct inventorship of a claimed invention be named in the patent application (and any subsequently issued patent).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(f)"
+    },
+    {
+      "rule_id": "novelty_rejection_for_derivation",
+      "title": "Examiner should reject claims if inventorship is clearly incorrect",
+      "requirement": "In the uncommon situation where it is clear the application does not name the correct inventorship and there has been no request to correct inventorship under 37 CFR 1.48, the examiner should reject the claims under pre-AIA 35 U.S.C. 102(f).",
+      "severity": "recommended",
+      "exceptions": [
+        "Request to correct inventorship under 37 CFR 1.48 has been made"
+      ],
+      "examples": [],
+      "reference": "MPEP § 2137"
+    },
+    {
+      "rule_id": "novelty_derivation_bars_patent",
+      "title": "Derivation bars issuance of patent to deriver",
+      "requirement": "Derivation will bar the issuance of a patent to the deriver.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2137"
+    },
+    {
+      "rule_id": "novelty_affidavit_to_rebut_inventorship",
+      "title": "Applicant must provide affidavit to rebut inventorship inquiry",
+      "requirement": "It is incumbent upon the applicant of the application, in reply to an inquiry regarding the appropriate inventorship under pre-AIA subsection (f), or to rebut a rejection under pre-AIA 35 U.S.C. 102(a) or (e), to provide a satisfactory showing by way of an affidavit or declaration under 37 CFR 1.132 that the inventorship of the application is correct.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2137"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102g_priority_bar",
+      "title": "Pre-AIA 102(g) bar for prior invention by another",
+      "requirement": "A person shall be entitled to a patent unless before such person’s invention thereof, the invention was made in this country by another inventor who had not abandoned, suppressed, or concealed it.",
+      "severity": "prohibited",
+      "exceptions": [
+        "The other inventor abandoned the invention",
+        "The other inventor suppressed the invention",
+        "The other inventor concealed the invention"
+      ],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(g)(2)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102g_interference_bar",
+      "title": "Pre-AIA 102(g) bar based on interference priority",
+      "requirement": "A person shall be entitled to a patent unless during the course of an interference conducted under section 135 or section 291, another inventor involved therein establishes, to the extent permitted in section 104, that before such person’s invention thereof the invention was made by such other inventor and not abandoned, suppressed, or concealed.",
+      "severity": "prohibited",
+      "exceptions": [
+        "The other inventor abandoned the invention",
+        "The other inventor suppressed the invention",
+        "The other inventor concealed the invention"
+      ],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(g)(1)"
+    },
+    {
+      "rule_id": "novelty_pre_aia_102g_diligence_consideration",
+      "title": "Consideration of diligence in determining priority",
+      "requirement": "In determining priority of invention under this subsection, there shall be considered not only the respective dates of conception and reduction to practice of the invention, but also the reasonable diligence of one who was first to conceive and last to reduce to practice, from a time prior to conception by the other.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(g)"
+    },
+    {
+      "rule_id": "pre_aia_102g_bar_issuance",
+      "title": "Pre-AIA 102(g) bars patent issuance for prior invention",
+      "requirement": "Pre-AIA 35 U.S.C. 102(g) bars the issuance of a patent where another made the invention in the United States before the inventor and had not abandoned, suppressed, or concealed it.",
+      "severity": "prohibited",
+      "exceptions": [
+        "abandonment",
+        "suppression",
+        "concealment"
+      ],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(g)"
+    },
+    {
+      "rule_id": "pre_aia_102g_actual_reduction_required",
+      "title": "Evidence of actual reduction to practice required for 102(g)",
+      "requirement": "To qualify as prior art under pre-AIA 35 U.S.C. 102(g), there must be evidence that the subject matter was actually reduced to practice, in that conception alone is not sufficient.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(g)"
+    },
+    {
+      "rule_id": "pre_aia_102g_filing_not_actual_reduction",
+      "title": "Filing application does not prove actual reduction to practice",
+      "requirement": "While the filing of an application for patent is a constructive reduction to practice, the filing of an application does not in itself provide the evidence necessary to show an actual reduction to practice of any of the subject matter disclosed in the application as is necessary to provide the basis for an ex parte rejection under pre-AIA 35 U.S.C. 102(g).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 102(g)"
+    },
+    {
+      "rule_id": "pre_aia_103c_common_ownership_exception",
+      "title": "Common ownership exception to 102(g) preclusion",
+      "requirement": "Pre-AIA 35 U.S.C. 103(c) states that subsection (g) of pre-AIA 35 U.S.C. 102 will not preclude patentability where subject matter developed by another person, that would otherwise qualify under pre-AIA 35 U.S.C. 102(g), and the claimed invention of an application under examination were owned by the same person, subject to an obligation of assignment to the same person, or involved in a joint research agreement, which meets the requirements of pre-AIA 35 U.S.C. 103(c)(2) and (c)(3), at the time the invention was made.",
+      "severity": "mandatory",
+      "exceptions": [
+        "owned by the same person",
+        "subject to an obligation of assignment to the same person",
+        "involved in a joint research agreement meeting 103(c)(2) and (c)(3) requirements"
+      ],
+      "examples": [],
+      "reference": "Pre-AIA 35 U.S.C. 103(c)"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the prior art reference discloses every element of the claimed invention exactly as claimed.",
+    "Confirm that range anticipation is supported by sufficient specificity in the reference.",
+    "Ensure that non-overlapping ranges in the prior art are not used to anticipate the claimed range.",
+    "Exclude secondary considerations such as commercial success or unexpected results from the novelty assessment.",
+    "Disregard arguments regarding nonanalogous art or teaching away when assessing anticipation.",
+    "Verify that the prior art is not the inventor's own disclosure within one year of the filing date under pre-AIA 102(a).",
+    "Confirm that any derivation affidavit provides specific evidence and context rather than naked assertions.",
+    "Check that the one-year grace period is correctly measured from the U.S. filing date, accounting for holidays.",
+    "Ensure that public possession of the invention before the grace period triggers a novelty bar.",
+    "Verify that the on-sale bar applies only if the invention was ready for patenting and subject to a commercial offer for sale.",
+    "Confirm that third-party sales or offers for sale more than one year before filing constitute prior art regardless of inventor consent.",
+    "Ensure that objective evidence of the sale controls over uncommunicated intent regarding the product delivered.",
+    "Verify that obvious variants in the prior art are considered for barring patentability under novelty rules."
+  ],
+  "system_prompt_injection": "Apply USPTO novelty assessment guidelines from uspto_novelty.pdf to evaluate prior art under 35 U.S.C. 102. Require exact disclosure or obvious variants for anticipation, ensuring sufficient specificity for ranges while disregarding non-overlapping ranges, teaching away, and secondary considerations. Enforce the one-year grace period strictly by measuring from the U.S. filing date and barring patents for public use, sale, or publication outside this window, regardless of inventor consent or intent. Reject pre-AIA 102(a) challenges based on the inventor’s own disclosures within the grace period, but uphold rejections if co-authors refuse to disclaim inventorship. Demand substantive evidence for derivation affidavits and prioritize objective commercial evidence over uncommunicated intent in on-sale bar determinations."
+}

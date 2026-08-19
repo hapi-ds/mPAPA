@@ -1,0 +1,638 @@
+{
+  "card_id": "epo_inventive_step_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_inventive_step.pdf",
+  "task": "inventive_step",
+  "task_label": "Inventive Step / Non-Obviousness",
+  "rules": [
+    {
+      "rule_id": "inventive_step_definition",
+      "title": "Invention must not be obvious to skilled person",
+      "requirement": "An invention is considered as involving an inventive step if, having regard to the state of the art, it is not obvious to a person skilled in the Art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 1"
+    },
+    {
+      "rule_id": "novelty_prerequisite",
+      "title": "Inventive step assessment requires novelty",
+      "requirement": "The question – \"is there inventive step?\" – only arises if the invention is novel.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 1"
+    },
+    {
+      "rule_id": "state_of_art_definition",
+      "title": "State of the art definition for inventive step",
+      "requirement": "The \"state of the art\" for the purposes of considering inventive step is as defined in Art. 54(2). It does not include later published European applications referred to in Art. 54(3).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 2"
+    },
+    {
+      "rule_id": "common_general_knowledge_substantiation",
+      "title": "Substantiation of common general knowledge",
+      "requirement": "The state of the art may reside in the relevant common general knowledge, which need not necessarily be in writing and needs substantiation only if challenged.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 2"
+    },
+    {
+      "rule_id": "skilled_person_knowledge_assumption",
+      "title": "Skilled person presumed to know common general knowledge",
+      "requirement": "The \"person skilled in the art\" should be presumed to be a skilled practitioner in the relevant field of technology, who is possessed of average knowledge and ability and is aware of what was common general knowledge in the art at the relevant date.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 3"
+    },
+    {
+      "rule_id": "skilled_person_access_to_prior_art",
+      "title": "Skilled person presumed to have access to state of the art",
+      "requirement": "He should also be presumed to have had access to everything in the \"state of the art\", in particular the documents cited in the search report, and to have had at his disposal the means and capacity for routine work and experimentation which are normal for the field of technology in question.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 3"
+    },
+    {
+      "rule_id": "skilled_person_cross_field_search",
+      "title": "Skilled person may look in other technical fields",
+      "requirement": "He may be expected to look for suggestions in neighbouring and general technical fields or even in remote technical fields, if prompted to do so.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 3"
+    },
+    {
+      "rule_id": "assessment_based_on_specialist_knowledge",
+      "title": "Assessment based on specialist's knowledge",
+      "requirement": "Assessment of whether the solution involves an inventive step must therefore be based on that specialist's knowledge and ability.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 3"
+    },
+    {
+      "rule_id": "single_publication_not_cgk",
+      "title": "Single publication not normally common general knowledge",
+      "requirement": "A single publication (e.g. a patent document, but also the content of a technical journal) cannot normally be considered as common general knowledge.",
+      "severity": "prohibited",
+      "exceptions": [
+        "In special cases, articles in technical journals can be representative of common general knowledge",
+        "Articles providing a broad review or survey of a topic",
+        "Conclusions of research carried out by only a very few manufacturers",
+        "Information in patent specifications or scientific publications in very new fields of research"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter VII-2, Section 3.1"
+    },
+    {
+      "rule_id": "textbook_cgk_status",
+      "title": "Textbooks represent common general knowledge",
+      "requirement": "Basic textbooks and monographs can be considered as representing common general knowledge.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-2, Section 3.1"
+    },
+    {
+      "rule_id": "obviousness_definition",
+      "title": "Definition of obviousness",
+      "requirement": "The term \"obvious\" means that which does not go beyond the normal progress of technology but merely follows plainly or logically from the prior art, i.e. something which does not involve the exercise of any skill or ability beyond that to be expected of the person skilled in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 4"
+    },
+    {
+      "rule_id": "claim_rejection_for_lack_of_inventive_step",
+      "title": "Claim not allowable if obvious",
+      "requirement": "If [it would have been obvious to the person skilled in the art to arrive at something falling within the terms of the claim], the claim is not allowable for lack of inventive step.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 4"
+    },
+    {
+      "rule_id": "construction_of_published_documents",
+      "title": "Construe documents in light of knowledge up to filing date",
+      "requirement": "In considering inventive step, it is fair to construe any published document in the light of knowledge up to and including the day before the filing or priority date valid for the claimed invention and to have regard to all the knowledge generally available to the person skilled in the art up to and including that day.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-1, Section 4"
+    },
+    {
+      "rule_id": "apply_problem_solution_approach",
+      "title": "Problem-and-solution approach should be applied",
+      "requirement": "In order to assess inventive step in an objective and predictable manner, the so-called \"problem-and-solution approach\" should be applied. Thus deviation from this approach should be exceptional.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5"
+    },
+    {
+      "rule_id": "closest_prior_art_selection_criteria",
+      "title": "Closest prior art should be similar purpose/field",
+      "requirement": "In selecting the closest prior art, the first consideration is that it should be directed to a similar purpose or effect as the invention or at least belong to the same or a closely related technical field as the claimed invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.1"
+    },
+    {
+      "rule_id": "closest_prior_art_assessment_date",
+      "title": "Closest prior art must be assessed from skilled person's view",
+      "requirement": "The closest prior art must be assessed from the skilled person's point of view on the day before the filing or priority date valid for the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.1"
+    },
+    {
+      "rule_id": "acknowledge_applicant_known_art",
+      "title": "Account should be taken of applicant's acknowledgements",
+      "requirement": "In identifying the closest prior art, account should be taken of what the applicant himself acknowledges in his description and claims to be known.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.1"
+    },
+    {
+      "rule_id": "non_technical_features_no_inventive_step",
+      "title": "Non-contributing features cannot support inventive step",
+      "requirement": "Features which cannot be seen to make any contribution, either independently or in combination with other features, to the technical character of an invention cannot support the presence of an inventive step.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "if a feature only contributes to the solution of a non-technical problem"
+      ],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "problem_reformulation_no_improvement",
+      "title": "Reformulate problem if no improvement over closest prior art",
+      "requirement": "If there is no evidence that the claimed subject-matter is improved over the closest prior art, the problem has to be reformulated as the provision of an alternative product, process or method.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Originally stated problem is improvement, but evidence only shows improvement over distantly related prior art."
+      ],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "problem_formulation_no_pointers",
+      "title": "Problem formulation must not contain pointers to solution",
+      "requirement": "The objective technical problem must be so formulated as not to contain pointers to the technical solution, since including part of a technical solution offered by an invention in the statement of the problem must, when the state of the art is assessed in terms of that problem, necessarily result in an ex post facto view being taken of inventive activity.",
+      "severity": "prohibited",
+      "exceptions": [
+        "Where the claim refers to an aim to be achieved in a non-technical field, this aim may legitimately appear in the formulation of the problem as part of the framework of the technical problem to be solved, in particular as a constraint that has to be met."
+      ],
+      "examples": [],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "technical_problem_broad_interpretation",
+      "title": "Technical problem interpreted broadly; not necessarily improvement",
+      "requirement": "The expression 'technical problem' should be interpreted broadly; it does not necessarily imply that the technical solution is an improvement to the prior art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Seeking an alternative to a known device or process which provides the same or similar effects or is more cost-effective."
+      ],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "credibility_of_technical_effects",
+      "title": "Technical problem solved only if effects credible for all embodiments",
+      "requirement": "A technical problem may be regarded as being solved only if it is credible that substantially all claimed embodiments exhibit the technical effects upon which the invention is based.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "aggregation_of_partial_problems",
+      "title": "Objective technical problem as aggregation of partial problems",
+      "requirement": "Sometimes, the objective technical problem must be regarded as an aggregation of a plurality of 'partial problems'. This is the case where there is no technical effect achieved by all the distinguishing features taken in combination, but rather a plurality of partial problems is independently solved by different sets of distinguishing features.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "would_not_could_approach",
+      "title": "Assess if skilled person would, not could, arrive at invention",
+      "requirement": "In the third stage the question to be answered is whether there is any teaching in the prior art as a whole that would (not simply could, but would) have prompted the skilled person, faced with the objective technical problem, to modify or adapt the closest prior art while taking account of that teaching, thereby arriving at something falling within the terms of the claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.3"
+    },
+    {
+      "rule_id": "implicit_prompting_sufficient",
+      "title": "Implicit prompting sufficient to show skilled person would combine",
+      "requirement": "Even an implicit prompting or implicitly recognisable incentive is sufficient to show that the skilled person would have combined the elements from the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.3"
+    },
+    {
+      "rule_id": "step_by_step_obviousness",
+      "title": "Invention obvious if step-by-step solution with obvious steps",
+      "requirement": "When an invention requires various steps to arrive at the complete solution of the technical problem, it should nevertheless be regarded as obvious if the technical problem to be solved leads the skilled person to the solution in a step-by-step manner and each individual step is obvious in the light of what has already been accomplished and of the residual task still to be solved.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.3"
+    },
+    {
+      "rule_id": "mixed_features_technical_solution_required",
+      "title": "Inventive step requires non-obvious technical solution to technical problem",
+      "requirement": "In the light of Art. 52(1), (2) and (3), the presence of an inventive step under Art. 56 requires a non-obvious technical solution to a technical problem.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.4"
+    },
+    {
+      "rule_id": "no_technical_contribution_art56_objection",
+      "title": "Art. 56 objection if differences lack technical contribution",
+      "requirement": "If the differences do not make any technical contribution, an objection under Art. 56 is raised. The reasoning for the objection should be that the subject-matter of a claim cannot be inventive if there is no technical contribution to the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.4"
+    },
+    {
+      "rule_id": "obvious_solution_art56_objection",
+      "title": "Art. 56 objection if technical solution is obvious",
+      "requirement": "If the claimed technical solution to the objective technical problem is obvious to the person skilled in the art, an objection under Art. 56 is raised.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.4"
+    },
+    {
+      "rule_id": "objective_problem_technical_nature",
+      "title": "Objective technical problem must be technical",
+      "requirement": "The objective technical problem must be a technical problem which the skilled person in the particular technical field might have been asked to solve at the relevant date.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VII, 5.4.1"
+    },
+    {
+      "rule_id": "problem_formulation_no_solution_knowledge",
+      "title": "Problem formulation must not reveal claimed solution",
+      "requirement": "The objective technical problem should not be formulated in such a way as to refer to matters of which the skilled person would only have become aware by knowledge of the solution claimed.",
+      "severity": "recommended",
+      "exceptions": [
+        "This principle applies to those features of the subject-matter claimed which contribute to the technical character of the invention and hence are part of the technical solution."
+      ],
+      "examples": [],
+      "reference": "G-VII, 5.2"
+    },
+    {
+      "rule_id": "non_technical_aim_as_constraint",
+      "title": "Non-technical aim may be constraint in problem",
+      "requirement": "Where the claim refers to an aim to be achieved in a non-technical field, this aim may legitimately appear in the formulation of the objective technical problem as part of the framework of the technical problem that is to be solved, in particular as a constraint that has to be met.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "T 641/00"
+    },
+    {
+      "rule_id": "careful_analysis_of_technical_character",
+      "title": "Care should be taken to identify technical contributions",
+      "requirement": "When performing the analysis in steps (i) and (iii) above, care should be taken to avoid missing any features that might contribute to the technical character of the claimed subject-matter, in particular if the examiner reproduces his understanding of the subject-matter of the claim in his own words during the analysis.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "T 756/06"
+    },
+    {
+      "rule_id": "technical_effects_derivable_from_application",
+      "title": "Technical effects for problem formulation must be derivable from application as filed",
+      "requirement": "The technical effects used for formulating the objective technical problem have to be derivable from the application as filed when considered in the light of the closest prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-8"
+    },
+    {
+      "rule_id": "non_technical_modification_no_contribution",
+      "title": "Modifications to non-technical schemes aimed at circumventing technical problems do not make a technical contribution",
+      "requirement": "In the case of claims directed to a technical implementation of a non-technical method or scheme, a modification to the underlying non-technical method or scheme aimed at circumventing a technical problem, rather than addressing this problem in an inherently technical way, is not considered to make a technical contribution over the prior art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-8"
+    },
+    {
+      "rule_id": "non_technical_effects_not_for_problem_definition",
+      "title": "Effects inherent in non-technical schemes do not qualify as technical effects for defining objective technical problem",
+      "requirement": "Effects and advantages inherent in the underlying non-technical method or scheme do not qualify as technical effects for the purpose of defining the objective technical problem.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In a game played online over a distributed computer system, the effect of reduction in network traffic obtained by reducing the maximum number of players cannot form the basis for formulating the objective technical problem."
+      ],
+      "reference": "Part G - Chapter VII-8"
+    },
+    {
+      "rule_id": "incompatible_disclosures_not_obvious",
+      "title": "Combining disclosures with inherent incompatibility should not normally be regarded as obvious",
+      "requirement": "If two disclosures considered as a whole could not in practice be readily combined because of inherent incompatibility in disclosed features essential to the invention, the combining of these disclosures should not normally be regarded as obvious.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-9"
+    },
+    {
+      "rule_id": "combine_with_common_general_knowledge",
+      "title": "It is obvious to combine prior art documents with common general knowledge",
+      "requirement": "It would normally be obvious to combine with a prior-art document a well-known textbook or standard dictionary; this is only a special case of the general proposition that it is obvious to combine the teaching of one or more documents with the common general knowledge in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-9"
+    },
+    {
+      "rule_id": "combine_documents_with_clear_reference",
+      "title": "It is generally obvious to combine documents where one contains a clear and unmistakable reference to the other",
+      "requirement": "It would, generally speaking, also be obvious to combine two documents one of which contains a clear and unmistakable reference to the other.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-9"
+    },
+    {
+      "rule_id": "combination_vs_aggregation_test",
+      "title": "Distinction between combination and aggregation of features",
+      "requirement": "The invention claimed must normally be considered as a whole. When a claim consists of a 'combination of features', it is not correct to argue that the separate features of the combination taken by themselves are known or obvious and that 'therefore' the whole subject-matter claimed is obvious. However, where the claim is merely an 'aggregation or juxtaposition of features' and not a true combination, it is enough to show that the individual features are obvious to prove that the aggregation of features does not involve an inventive step.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A set of technical features is regarded as a combination of features if the functional interaction between the features achieves a combined technical effect which is different from, e.g. greater than, the sum of the technical effects of the individual features.",
+        "Transistors interconnected to form a microprocessor synergically interact to achieve technical effects, such as data processing, which are over and above the sum of their respective individual technical effects."
+      ],
+      "reference": "Part G - Chapter VII-10, Section 7"
+    },
+    {
+      "rule_id": "synergistic_effect_requirement",
+      "title": "Requirement of synergistic effect for combination",
+      "requirement": "A set of technical features is regarded as a combination of features if the functional interaction between the features achieves a combined technical effect which is different from, e.g. greater than, the sum of the technical effects of the individual features. In other words, the interactions of the individual features must produce a synergistic effect. If no such synergistic effect exists, there is no more than a mere aggregation of features.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Patentability has been accepted for a preparation in the form of a 'kit-of-parts' in which the individual active compounds, representing known therapeutic agents, are physically separated, provided that the use of those compounds, either simultaneously, separately or sequentially, produces a new and unexpected joint therapeutic effect which cannot be attained by the compounds independently of each other."
+      ],
+      "reference": "Part G - Chapter VII-10, Section 7"
+    },
+    {
+      "rule_id": "avoid_ex_post_facto_analysis",
+      "title": "Prohibition of ex post facto analysis in inventive step assessment",
+      "requirement": "The examiner should be wary of ex post facto analysis of this kind. When combining documents cited in the search report, he should always bear in mind that the documents produced in the search have, of necessity, been obtained with foreknowledge of what matter constitutes the alleged invention. In all cases he should attempt to visualise the overall state of the art confronting the skilled person before the applicant's contribution, and he should seek to make a 'real-life' assessment of this and other relevant factors.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-10, Section 8"
+    },
+    {
+      "rule_id": "consider_technical_value_and_advantage",
+      "title": "Consideration of technical value and surprising advantages",
+      "requirement": "He should take into account all that is known concerning the background of the invention and give fair weight to relevant arguments or evidence submitted by the applicant. If, for example, an invention is shown to be of considerable technical value, and particularly if it provides a technical advantage which is new and surprising and which is not merely achieved as a bonus effect in a 'one-way street' situation, and this technical advantage can convincingly be related to one or more of the features included in the claim defining the invention, the examiner should be hesitant in pursuing an objection that such a claim lacks inventive step.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-10, Section 8"
+    },
+    {
+      "rule_id": "foreseeable_disadvantage_no_inventive_step",
+      "title": "Foreseeable disadvantageous modification lacks inventive step",
+      "requirement": "If the invention is the result of a foreseeable disadvantageous modification of the closest prior art, which the skilled person could clearly predict and correctly assess, and if this predictable disadvantage is not accompanied by an unexpected technical advantage, then the claimed invention does not involve an inventive step. In other words, a mere foreseeable worsening of the prior art does not involve an inventive step.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the worsening is accompanied by an unexpected technical advantage."
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter VII-11, Section 10.1"
+    },
+    {
+      "rule_id": "foreseeable_worsening_no_inventive_step",
+      "title": "Foreseeable worsening without unexpected advantage lacks inventive step",
+      "requirement": "If a disadvantageous modification of the closest prior art is clearly predictable and correctly assessable by the skilled person, and this predictable disadvantage is not accompanied by an unexpected technical advantage, then the claimed invention does not involve an inventive step.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the worsening is accompanied by an unexpected technical advantage, an inventive step might be present."
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter VII-12"
+    },
+    {
+      "rule_id": "unexpected_effect_must_derive_from_claim",
+      "title": "Unexpected technical effect must derive from claimed subject-matter",
+      "requirement": "An unexpected technical effect must derive from the subject-matter as claimed, not merely from some additional features which are mentioned only in the description. The effect must be based on the characterising features of the invention, in combination with the known features of the claim, not merely on features which are already comprised in the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-12"
+    },
+    {
+      "rule_id": "bonus_effect_no_inventive_step",
+      "title": "Bonus effect in one-way street situation does not confer inventiveness",
+      "requirement": "If, having regard to the state of the art, it would already have been obvious for a skilled person to arrive at something falling within the terms of a claim, for example due to a lack of alternatives thereby creating a 'one-way street' situation, the unexpected effect is merely a bonus effect which does not confer inventiveness on the claimed subject-matter.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the skilled person would have to choose from a range of possibilities, there is no one-way street situation and the unexpected effect may very well lead to the recognition of an inventive step."
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter VII-12"
+    },
+    {
+      "rule_id": "unexpected_effect_must_be_precise",
+      "title": "Unexpected property or effect must be described in precise terms",
+      "requirement": "The unexpected property or effect should be described in precise terms. A vague statement such as 'The new compounds have shown unexpectedly good pharmaceutical properties' cannot support the presence of an inventive step.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Vague statement: 'The new compounds have shown unexpectedly good pharmaceutical properties'"
+      ],
+      "reference": "Part G - Chapter VII-12"
+    },
+    {
+      "rule_id": "new_effects_must_be_related_to_initial_problem",
+      "title": "New effects for inventive step must be related to initial technical problem",
+      "requirement": "New effects in support of inventive step can only be taken into account if they are implied by or at least related to the technical problem initially suggested in the originally filed application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Pharmaceutical activity and toxicity are related in the sense that the skilled person would always contemplate the two aspects together."
+      ],
+      "reference": "Part G - Chapter VII-13"
+    },
+    {
+      "rule_id": "selection_invention_inventive_step_criteria",
+      "title": "Selection inventions require particular technical effect and no hints",
+      "requirement": "If a selection is connected to a particular technical effect, and if no hints exist leading the skilled person to the selection, then an inventive step is accepted. It has to be considered whether the skilled person would have made the selection or would have chosen the overlapping range in the hope of solving the underlying technical problem or in expectation of some improvement or advantage. If the answer is negative, then the claimed matter involves an inventive step.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-13"
+    },
+    {
+      "rule_id": "unexpected_effect_must_apply_to_entire_range",
+      "title": "Unexpected technical effect must apply to entire claimed range",
+      "requirement": "The unexpected technical effect must apply to the entire range as claimed. If it occurs in only part of the claimed range, the claimed subject-matter does not solve the specific problem to which the effect relates.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-13"
+    },
+    {
+      "rule_id": "unexpected_effect_entire_range",
+      "title": "Unexpected technical effect must apply to entire claimed range",
+      "requirement": "The unexpected technical effect must apply to the entire range as claimed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "If it occurs in only part of the claimed range, the claimed subject-matter does not solve the specific problem to which the effect relates, but only the more general problem of obtaining, for example, 'a further product X' or 'a further process Y' (see T 939/92)."
+      ],
+      "reference": "Part G - Chapter VII-14"
+    },
+    {
+      "rule_id": "dependent_claims_no_investigation",
+      "title": "No need to investigate dependent claims if independent is inventive",
+      "requirement": "If the subject-matter of an independent claim is new and non-obvious, there is no need to investigate the novelty and non-obviousness of the subject-matter of any claims dependent thereon, except in situations where the subject-matter of a dependent claim has a later effective date than the independent claim and intermediate documents are to be considered.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Situations where the subject-matter of a dependent claim has a later effective date than the independent claim and intermediate documents are to be considered"
+      ],
+      "examples": [],
+      "reference": "Part G - Chapter VII-14, Section 13"
+    },
+    {
+      "rule_id": "process_claims_no_investigation",
+      "title": "No need to investigate process/use claims if product is inventive",
+      "requirement": "If the subject-matter of a claim to a product is new and non-obvious there is no need to investigate the novelty and non-obviousness of the subject-matter of any claims for a process which inevitably results in the manufacture of that product or of any claims for a use of that product.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Cases where the product, process and use claims have different effective dates, a separate examination as to novelty and inventive step may still be necessary in view of intermediate documents."
+      ],
+      "examples": [
+        "Analogy processes, i.e. processes which themselves would otherwise not involve an inventive step, are nevertheless patentable insofar as they provide a novel and inventive product (see T 119/82)."
+      ],
+      "reference": "Part G - Chapter VII-14, Section 13"
+    },
+    {
+      "rule_id": "examiners_avoid_forcing_examples",
+      "title": "Examiners should avoid forcing cases into illustrative examples",
+      "requirement": "Examiners should avoid attempts to fit a particular case into one of these examples if it is not clearly applicable.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-15, Section 14"
+    },
+    {
+      "rule_id": "obvious_filling_gap",
+      "title": "Inventive step ruled out if filling gap is natural to skilled person",
+      "requirement": "Inventions involving the application of known measures in an obvious way and in respect of which an inventive step is therefore to be ruled out: The teaching of a prior document is incomplete and at least one of the possible ways of 'filling the gap' which would naturally or readily occur to the skilled person results in the invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "The invention relates to a building structure made from aluminium. A prior document discloses the same structure and says that it is of light-weight material but fails to mention the use of aluminium."
+      ],
+      "reference": "Part G - Chapter VII-16, Annex 1.1(i)"
+    },
+    {
+      "rule_id": "obvious_well_known_equivalents",
+      "title": "Inventive step ruled out for use of well-known equivalents",
+      "requirement": "Inventions involving the application of known measures in an obvious way and in respect of which an inventive step is therefore to be ruled out: The invention differs from the known art merely in the use of well-known equivalents (mechanical, electrical or chemical).",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "The invention relates to a pump which differs from a known pump solely in that its motive power is provided by a hydraulic motor instead of an electric motor."
+      ],
+      "reference": "Part G - Chapter VII-16, Annex 1.1(ii)"
+    },
+    {
+      "rule_id": "obvious_new_use_known_properties",
+      "title": "Inventive step ruled out for new use employing known properties",
+      "requirement": "Inventions involving the application of known measures in an obvious way and in respect of which an inventive step is therefore to be ruled out: The invention consists merely in a new use of a well-known material employing the known properties of that material.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Washing composition containing as detergent a known compound having the known property of lowering the surface tension of water, this property being known to be an essential one for detergents."
+      ],
+      "reference": "Part G - Chapter VII-16, Annex 1.1(iii)"
+    },
+    {
+      "rule_id": "obvious_analogous_substitution",
+      "title": "Inventive step ruled out for analogous substitution of suitable material",
+      "requirement": "Inventions involving the application of known measures in an obvious way and in respect of which an inventive step is therefore to be ruled out: The invention consists in the substitution in a known device of a recently developed material whose properties make it plainly suitable for that use ('analogous substitution').",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "An electric cable comprises a polyethylene sheath bonded to a metallic shield by an adhesive. The invention lies in the use of a particular newly developed adhesive known to be suitable for polymer-metal bonding."
+      ],
+      "reference": "Part G - Chapter VII-16, Annex 1.1(iv)"
+    },
+    {
+      "rule_id": "obvious_analogous_use",
+      "title": "Inventive step ruled out for use of known technique in analogous situation",
+      "requirement": "Inventions involving the application of known measures in an obvious way and in respect of which an inventive step is therefore to be ruled out: The invention consists merely in the use of a known technique in a closely analogous situation ('analogous use').",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "The invention resides in the application of a pulse control technique to the electric motor driving the auxiliary mechanisms of an industrial truck, such as a fork-lift truck, the use of this technique to control the electric propulsion motor of the truck being already known."
+      ],
+      "reference": "Part G - Chapter VII-16, Annex 1.1(v)"
+    },
+    {
+      "rule_id": "inventive_step_surprising_effect",
+      "title": "Inventive step recognised if known measure yields surprising effect",
+      "requirement": "Inventions involving the application of known measures in a non-obvious way and in respect of which an inventive step is therefore to be recognised: A known working method or means when used for a different purpose involves a new, surprising effect.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "It is known that high-frequency power can be used in inductive butt welding. It should therefore be obvious that high-frequency power could also be used in conductive butt welding with similar effect. However, if high-frequency power were used for the continuous conductive butt welding of coiled strip but without removing scale (such scale removal normally being necessary during conductive welding in order to avoid arcing between the welding contact and the strip), there is the unexpected additional effect that scale removal is found to be unnecessary because at high frequency the current is supplied in a predominantly capacitive manner via the scale which forms a dielectric. In that case, an inventive step would exist."
+      ],
+      "reference": "Part G - Chapter VII-16, Annex 1.2(i)"
+    },
+    {
+      "rule_id": "inventive_step_overcoming_difficulties",
+      "title": "Inventive step recognised if overcoming technical difficulties not resolvable by routine",
+      "requirement": "Inventions involving the application of known measures in a non-obvious way and in respect of which an inventive step is therefore to be recognised: A new use of a known device or material involves overcoming technical difficulties not resolvable by routine techniques.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VII-16, Annex 1.2(ii)"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the invention is novel before assessing inventive step.",
+    "Confirm that the state of the art is defined according to Art. 54(2) and excludes Art. 54(3) documents.",
+    "Ensure the assessment is based on the knowledge and ability of the person skilled in the art.",
+    "Verify that common general knowledge is substantiated if challenged, excluding single publications.",
+    "Confirm that the problem-and-solution approach is applied for the inventive step assessment.",
+    "Check that the closest prior art is selected based on similar purpose, effect, or technical field.",
+    "Verify that the closest prior art is assessed from the skilled person's viewpoint on the filing date.",
+    "Ensure the objective technical problem is formulated without containing pointers to the solution.",
+    "Confirm that the problem is reformulated as providing an alternative if no improvement over closest prior art is shown.",
+    "Verify that non-contributing features are excluded from supporting the presence of an inventive step.",
+    "Check that the solution does not follow plainly or logically from the prior art without inventive effort.",
+    "Ensure that documents are construed in light of knowledge available up to the filing date.",
+    "Verify that the skilled person's potential to look in neighbouring technical fields is considered if prompted.",
+    "Confirm that applicant acknowledgements of known art are taken into account when identifying closest prior art.",
+    "Ensure that basic textbooks are considered as representing common general knowledge where appropriate."
+  ],
+  "system_prompt_injection": "Apply the European Patent Office’s guidelines on inventive step by strictly adhering to the problem-and-solution approach to ensure an objective and predictable assessment. Determine whether the invention is obvious to a person skilled in the art by evaluating the state of the art as defined in Article 54(2), while presuming the skilled person possesses common general knowledge and access to relevant prior art. Formulate the objective technical problem without including pointers to the solution, and reformulate it as providing an alternative if no improvement over the closest prior art is evident. Ensure that only features contributing to the technical character support the presence of an inventive step, and reject claims that merely follow logically from the prior art without involving inventive effort."
+}

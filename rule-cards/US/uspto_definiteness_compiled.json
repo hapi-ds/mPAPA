@@ -1,0 +1,1183 @@
+{
+  "card_id": "uspto_definiteness_compiled",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": "uspto_definiteness.pdf",
+  "task": "definiteness",
+  "task_label": "Definiteness",
+  "rules": [
+    {
+      "rule_id": "claims_must_distinctly_claim",
+      "title": "Specification shall conclude with distinct claims",
+      "requirement": "The specification shall conclude with one or more claims particularly pointing out and distinctly claiming the subject matter which the inventor or a joint inventor regards as the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(b)"
+    },
+    {
+      "rule_id": "claims_must_define_metes_bounds",
+      "title": "Claims must distinctly define metes and bounds",
+      "requirement": "The claims must particularly point out and distinctly define the metes and bounds of the subject matter to be protected by the patent grant.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2171"
+    },
+    {
+      "rule_id": "remove_claim_scope_uncertainties",
+      "title": "Uncertainties of claim scope should be removed",
+      "requirement": "The uncertainties of claim scope should be removed, as much as possible, during the examination process.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2171"
+    },
+    {
+      "rule_id": "examiner_explain_rejection_basis",
+      "title": "Examiner should explain basis of 112(b) rejection",
+      "requirement": "If a rejection is based on 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, the examiner should further explain whether the rejection is based on indefiniteness or on the failure to claim what the inventor or a joint invention regards as the invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2171"
+    },
+    {
+      "rule_id": "claim_must_point_out_invention",
+      "title": "Claims must particularly point out and distinctly claim the invention",
+      "requirement": "35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph requires that a patent claim particularly point out and distinctly claim the subject matter which the inventor or a joint inventor regards as the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173"
+    },
+    {
+      "rule_id": "rejection_must_explain_essentiality",
+      "title": "Rejections for omitted essential matter must explain basis",
+      "requirement": "Rejections under 35 U.S.C. 112(b) (or pre-AIA 35 U.S.C. 112, second paragraph) for failing to claim the subject matter that the inventor or a joint inventor regards as the invention based on the omission of essential matter must explain the basis for concluding that the inventor regards the omitted matter to be essential to the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ex parte Robertson: Rejection reversed because examiner failed to identify where in the specification the unclaimed elements were described as essential.",
+        "Ex parte Mehta: Claims failed to comply because it was clear from the brief that the appellant regarded the invention as including an inert coating."
+      ],
+      "reference": "MPEP § 2172.01"
+    },
+    {
+      "rule_id": "preferred_features_not_essential",
+      "title": "Preferred or illustrative features are not essential",
+      "requirement": "Features described as preferred or illustrative in the specification are not critical or essential.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Goffe: Broad language in the disclosure omitting an allegedly critical feature tends to rebut the argument of criticality; features that are merely preferred are not critical."
+      ],
+      "reference": "MPEP § 2172.01"
+    },
+    {
+      "rule_id": "claims_must_be_definite",
+      "title": "Claims must particularly point out and distinctly claim invention",
+      "requirement": "A patent application specification shall conclude with one or more claims particularly pointing out and distinctly claiming the subject matter which the inventor or a joint inventor regards as the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 112(b)"
+    },
+    {
+      "rule_id": "indefinite_claims_must_be_rejected",
+      "title": "Claims not meeting definiteness standard must be rejected",
+      "requirement": "Claims that do not meet this standard must be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph as indefinite.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173"
+    },
+    {
+      "rule_id": "rejection_must_identify_indefinite_language",
+      "title": "Indefiniteness rejections must clearly identify language and reasoning",
+      "requirement": "Such rejections must clearly identify the language that causes the claim to be indefinite and thoroughly explain the reasoning for the rejection.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173"
+    },
+    {
+      "rule_id": "special_meaning_must_be_clear",
+      "title": "Special meaning assigned to terms must be clearly set forth",
+      "requirement": "Applicants can define in the claims what the inventor or a joint inventor regards as the invention essentially in whatever terms they choose so long as any special meaning assigned to a term is clearly set forth in the specification.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.01"
+    },
+    {
+      "rule_id": "claims_must_be_given_broadest_reasonable_interpretation",
+      "title": "Claims must be given broadest reasonable interpretation during examination",
+      "requirement": "During examination, a claim must be given its broadest reasonable interpretation consistent with the specification as it would be interpreted by one of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.01 I"
+    },
+    {
+      "rule_id": "plain_meaning_presumption",
+      "title": "Claim terms given plain meaning unless inconsistent with specification",
+      "requirement": "Under a broadest reasonable interpretation, words of the claim must be given their plain meaning, unless such meaning is inconsistent with the specification.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Meaning is inconsistent with the specification"
+      ],
+      "examples": [],
+      "reference": "MPEP § 2173.01"
+    },
+    {
+      "rule_id": "special_definition_clear_intentional",
+      "title": "Special definition requires clear and intentional use in specification",
+      "requirement": "The applicant must point to where the specification as filed provides a clear and intentional use of a special definition for the claim term to be treated as having a special definition.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.01"
+    },
+    {
+      "rule_id": "no_post_filing_special_definition",
+      "title": "Applicant may not add special definition after filing date",
+      "requirement": "An applicant may not add a special definition or disavowal after the filing date of the application.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.01"
+    },
+    {
+      "rule_id": "means_plus_function_construction",
+      "title": "112(f) limitations construed to cover corresponding structure",
+      "requirement": "If the claim limitation invokes 35 U.S.C. 112(f) or pre-AIA 35 U.S.C. 112, sixth paragraph, the claim limitation must “be construed to cover the corresponding structure, material, or acts described in the specification and equivalents thereof.”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.01"
+    },
+    {
+      "rule_id": "duty_to_amend_ambiguous_claims",
+      "title": "Applicant has duty to amend ambiguous claims",
+      "requirement": "During prosecution, applicant has an opportunity and a duty to amend ambiguous claims to clearly and precisely define the metes and bounds of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "claim_definiteness_standard",
+      "title": "Claim must inform skilled art of scope with reasonable certainty",
+      "requirement": "A decision on whether a claim is indefinite under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph requires a determination of whether those skilled in the art would understand what is claimed when the claim is read in light of the specification.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "broadest_reasonable_interpretation",
+      "title": "Claims construed under broadest reasonable interpretation during prosecution",
+      "requirement": "During prosecution the Office construes claims by giving them their broadest reasonable interpretation consistent with the specification in an effort to establish a clear record of what the applicant intends to claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "rejection_for_unclear_metes_bounds",
+      "title": "Reject claim if metes and bounds are not clear after BRI",
+      "requirement": "During examination, after applying the broadest reasonable interpretation consistent with the specification to the claim, if the metes and bounds of the claimed invention are not clear, the claim is indefinite and should be rejected.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "claim_indefiniteness_rejection",
+      "title": "Reject indefinite claims",
+      "requirement": "If claims are not clear, the claim is indefinite and should be rejected.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "multiple_interpretation_rejection",
+      "title": "Reject claims with multiple reasonable interpretations",
+      "requirement": "If the language of a claim, given its broadest reasonable interpretation, is such that a person of ordinary skill in the relevant art would read it with more than one reasonable interpretation, then a rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph is appropriate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "allow_clear_claims",
+      "title": "Allow claims with required particularity",
+      "requirement": "When the examiner is satisfied that patentable subject matter is disclosed, and it is apparent to the examiner that the claims are directed to such patentable subject matter, the examiner should allow claims which define the patentable subject matter with the required degree of particularity and distinctness.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "no_insistence_on_preference",
+      "title": "Do not insist on examiner language preferences",
+      "requirement": "Examiners ... should not insist on their own preferences if other modes of expression selected by applicants satisfy the statutory requirement.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "claims_must_be_clear_terms",
+      "title": "Claims required to be in clear terms",
+      "requirement": "Claims are required to be cast in clear—as opposed to ambiguous, vague, indefinite—terms.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "consider_claim_as_whole",
+      "title": "Consider claim as a whole for definiteness",
+      "requirement": "In reviewing a claim for compliance with 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, the examiner must consider the claim as a whole to determine whether the claim apprises one of ordinary skill in the art of its scope and, therefore, serves the notice function required by 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, by providing clear warning to others as to what constitutes infringement of the patent.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "reject_unclear_bounds",
+      "title": "Reject claims where bounds cannot be interpreted",
+      "requirement": "If the language of the claim is such that a person of ordinary skill in the art could not interpret the metes and bounds of the claim so as to understand how to avoid infringement, a rejection of the claim under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, is appropriate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "no_rejection_if_statutory_met",
+      "title": "Must not reject if statutory requirements satisfied",
+      "requirement": "If the language used by applicant satisfies the statutory requirements of 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, the claim must not be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.02"
+    },
+    {
+      "rule_id": "no_per_se_indefiniteness_rules",
+      "title": "Prohibition of per se rules for indefiniteness",
+      "requirement": "Office policy is not to employ per se rules to make technical rejections. Examples of claim language which have been held to be indefinite are fact specific and should not be applied as per se rules.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "examiner_must_explain_rejection",
+      "title": "Examiner must provide clear explanation for rejection",
+      "requirement": "When a rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, is appropriate based on the examiner’s determination that a claim term or phrase is prima facie indefinite, the examiner should clearly communicate in an Office action any findings and reasons which support the rejection and avoid a mere conclusion that the claim term or phrase is indefinite.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "office_action_must_identify_indefinite_term",
+      "title": "Office action must identify specific indefinite term",
+      "requirement": "The Office action must set forth the specific term or phrase that is indefinite and why the metes and bounds are unclear.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "office_action_must_enable_response",
+      "title": "Office action must provide sufficient info for response",
+      "requirement": "The Office action should provide enough information for the applicant to prepare a meaningful response.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "claims_require_clear_precise_terms",
+      "title": "Applicants must use clear and precise terms",
+      "requirement": "To comply with 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, applicants are required to make the terms that are used to define the invention clear and precise, so that the metes and bounds of the subject matter that will be protected by the patent grant can be ascertained.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "examiner_must_detail_indefiniteness_basis",
+      "title": "Examiner must detail why term is indefinite",
+      "requirement": "In making a prima facie case of indefiniteness, the examiner should point out the specific term or phrase that is indefinite, explain in detail why such term or phrase renders the metes and bounds of the claim scope unclear and, whenever practicable, indicate how the indefiniteness issues may be resolved to overcome the rejection.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "examiner_suggest_clarity_not_insist",
+      "title": "Examiner should suggest but not insist on claim language",
+      "requirement": "Examiners are encouraged to suggest claim language to applicants to improve the clarity or precision of the language used, but should not insist on their own preferences if other modes of expression selected by applicants satisfy the statutory requirement.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "examiner_withdraw_rejection_explain",
+      "title": "Examiner should explain withdrawal of indefiniteness rejection",
+      "requirement": "If the examiner considers applicant’s arguments and/or amendments to be persuasive, the examiner should indicate in the next Office communication that the previous rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, has been withdrawn and provide an explanation as to what prompted the change in the examiner’s position.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "examiner_clarify_record_reasoning",
+      "title": "Examiner should make record clear with explicit reasoning",
+      "requirement": "Whenever possible, the examiner should make the record clear by providing explicit reasoning for making or withdrawing any rejection related to 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "examiner_set_forth_claim_interpretation",
+      "title": "Examiner should set forth claim interpretation in reasons for allowance",
+      "requirement": "When allowing a claim based on a claim interpretation which might not be readily apparent from the record of the prosecution as a whole, the examiner should set forth in reasons for allowance the claim interpretation applied in determining that the claim is allowable over the prior art.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02, subsection C"
+    },
+    {
+      "rule_id": "examiner_avoid_unwarranted_interpretations",
+      "title": "Examiner should ensure reasons for allowance do not place unwarranted interpretations",
+      "requirement": "The examiner should ensure, however, that statements of reasons for allowance do not place unwarranted interpretations, whether broad or narrow, upon the claims.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.02, subsection C"
+    },
+    {
+      "rule_id": "specification_clear_support_required",
+      "title": "Claim terms must have clear support in specification",
+      "requirement": "claim terms must find clear support or antecedent basis in the specification so that the meaning of the terms may be ascertainable by reference to the specification.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "37 CFR 1.75(d)(1)"
+    },
+    {
+      "rule_id": "objection_for_lack_of_support",
+      "title": "Object to specification if claim terms lack support",
+      "requirement": "If the specification does not provide the needed support or antecedent basis for the claim terms, the specification should be objected to under 37 CFR 1.75(d)(1).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.03"
+    },
+    {
+      "rule_id": "amendment_required_for_clarity",
+      "title": "Applicant required to amend for clear support",
+      "requirement": "Applicant will be required to make appropriate amendment to the description to provide clear support or antecedent basis for the claim terms provided no new matter is introduced, or amend the claim.",
+      "severity": "mandatory",
+      "exceptions": [
+        "provided no new matter is introduced"
+      ],
+      "examples": [],
+      "reference": "MPEP § 2173.03"
+    },
+    {
+      "rule_id": "interview_substance_on_record",
+      "title": "Interview substance regarding indefiniteness must be recorded",
+      "requirement": "the substance of any interview... must be made of record in the application... Examples of 35 U.S.C. 112 issues that should be made of record after the interview include: why the discussed claim term is or is not sufficiently clear; why the discussed claim term is or is not inconsistent with the specification; why the discussed claim term does or does not invoke 35 U.S.C. 112(f)... and any claim amendments discussed that would resolve identified ambiguities.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "why the discussed claim term is or is not sufficiently clear",
+        "why the discussed claim term is or is not inconsistent with the specification",
+        "any claim amendments discussed that would resolve identified ambiguities"
+      ],
+      "reference": "MPEP § 2173.02"
+    },
+    {
+      "rule_id": "claim_terms_meaning_apparent",
+      "title": "Meaning of every claim term should be apparent",
+      "requirement": "The meaning of every term used in a claim should be apparent from the prior art or from the specification and drawings at the time the application is filed.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(a) I"
+    },
+    {
+      "rule_id": "claim_language_not_ambiguous",
+      "title": "Claim language may not be ambiguous or vague",
+      "requirement": "Claim language may not be “ambiguous, vague, incoherent, opaque, or otherwise unclear in describing and defining the claimed invention.”",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(a) I"
+    },
+    {
+      "rule_id": "new_terms_must_be_clear_precise",
+      "title": "New terms must be clear and precise",
+      "requirement": "Applicants ... are required to make clear and precise the terms that are used to define the invention whereby the metes and bounds of the claimed invention can be ascertained.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(a) I"
+    },
+    {
+      "rule_id": "examine_using_specified_meaning",
+      "title": "Examine claim using specification-defined meaning",
+      "requirement": "When the specification states the meaning that a term in the claim is intended to have, the claim is examined using that meaning, in order to achieve a complete exploration of the applicant’s invention and its relation to the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(a) I"
+    },
+    {
+      "rule_id": "lexicographer_redefinition_requirement",
+      "title": "Terms used contrary to ordinary meaning must be clearly redefined",
+      "requirement": "A patentee or applicant may use terms in a manner contrary to or inconsistent with one or more of their ordinary meanings if the written description clearly redefines the terms so as to put a reasonable competitor or one reasonably skilled in the art on notice that the patentee intended to so redefine that claim term.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "III. TERMS USED CONTRARY TO THEIR ORDINARY MEANING MUST BE CLEARLY REDEFINED IN THE WRITTEN DESCRIPTION"
+    },
+    {
+      "rule_id": "ambiguity_rejection_requirement",
+      "title": "Rejection appropriate until term meaning is clear",
+      "requirement": "Until the meaning of a term or phrase used in a claim is clear, a rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph is appropriate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "III. TERMS USED CONTRARY TO THEIR ORDINARY MEANING MUST BE CLEARLY REDEFINED IN THE WRITTEN DESCRIPTION"
+    },
+    {
+      "rule_id": "relative_terminology_clarity_test",
+      "title": "Relative terminology acceptability depends on skilled person understanding",
+      "requirement": "Acceptability of the claim language using relative terminology depends on whether one of ordinary skill in the art would understand what is claimed, in light of the specification.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2173.05(b) Relative Terminology"
+    },
+    {
+      "rule_id": "terms_of_degree_standard_requirement",
+      "title": "Terms of degree require specification standard or art-recognized standard",
+      "requirement": "When a term of degree is used in the claim, the examiner should determine whether the specification provides some standard for measuring that degree. If the specification does not provide some standard for measuring that degree, a determination must be made as to whether one of ordinary skill in the art could nevertheless ascertain the scope of the claim (e.g., a standard that is recognized in the art for measuring the meaning of the term of degree).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "relatively shallow",
+        "of the order of",
+        "the order of about 5mm",
+        "substantial portion"
+      ],
+      "reference": "I. TERMS OF DEGREE"
+    },
+    {
+      "rule_id": "examiner_reasons_for_indefiniteness",
+      "title": "Examiner must provide reasons for indefiniteness rejection",
+      "requirement": "If the language is not considered as precise as the subject matter permits, the examiner should provide reasons to support the conclusion of indefiniteness and is encouraged to suggest alternatives that would not be subject to rejection.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "II. NEW TERMS"
+    },
+    {
+      "rule_id": "claims_must_provide_objective_boundaries",
+      "title": "Claims must provide objective boundaries for skilled artisan",
+      "requirement": "The claims, when read in light of the specification and the prosecution history, must provide objective boundaries for those of skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Interval Licensing LLC v. AOL, Inc., 766 F.3d 1364, 1371-72 (Fed. Cir. 2014)"
+      ],
+      "reference": "MPEP § 2173.05"
+    },
+    {
+      "rule_id": "indefiniteness_rejection_for_unclear_scope",
+      "title": "Rejection proper if scope of term is unclear",
+      "requirement": "When the scope of the claim is unclear a rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, is proper.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Wiggins, 488 F. 2d 538, 541 (CCPA 1973)"
+      ],
+      "reference": "MPEP § 2173.05"
+    },
+    {
+      "rule_id": "variable_reference_indefiniteness",
+      "title": "Reference to variable object may render claim indefinite",
+      "requirement": "A claim may be rendered indefinite when a limitation of the claim is defined by reference to an object and the relationship between the limitation and the object is not sufficiently defined.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ex parte Miyazaki, 89 USPQ2d 1207 (Bd. Pat. App. & Inter. 2008)",
+        "Ex parte Brummer, 12 USPQ2d 1653 (Bd. Pat. App. & Inter. 1989)"
+      ],
+      "reference": "MPEP § 2173.05(b)"
+    },
+    {
+      "rule_id": "positional_relationship_must_be_ascertainable",
+      "title": "Positional relationship must be readily ascertainable",
+      "requirement": "Where the elements of a claim have two or more plausible constructions such that the examiner cannot readily ascertain positional relationship of the elements, the claim may be rendered indefinite.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ex parte Miyazaki, 89 USPQ2d 1207 (Bd. Pat. App. & Inter. 2008)"
+      ],
+      "reference": "MPEP § 2173.05(b)"
+    },
+    {
+      "rule_id": "about_term_context_dependent",
+      "title": "Term 'about' range determined by context",
+      "requirement": "In determining the range encompassed by the term 'about,' one must consider the context of the term as it is used in the specification and claims of the application.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ortho-McNeil Pharm., Inc. v. Caraco Pharm. Labs., Ltd., 476 F.3d 1321, 1326 (Fed. Cir. 2007)"
+      ],
+      "reference": "MPEP § 2173.05(c)"
+    },
+    {
+      "rule_id": "subjective_terms_require_objective_standard",
+      "title": "Subjective terms must have objective standard",
+      "requirement": "Some objective standard must be provided in order to allow the public to determine the scope of the claim. A claim term that requires the exercise of subjective judgment without restriction may render the claim indefinite.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "aesthetically pleasing",
+        "unobtrusive manner",
+        "comparable",
+        "superior"
+      ],
+      "reference": "§ 2173.05(b)"
+    },
+    {
+      "rule_id": "claim_scope_not_solely_subjective",
+      "title": "Claim scope cannot depend solely on subjective opinion",
+      "requirement": "Claim scope cannot depend solely on the unrestrained, subjective opinion of a particular individual purported to be practicing the invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(b)"
+    },
+    {
+      "rule_id": "examples_insufficient_for_subjective_terms",
+      "title": "Examples alone insufficient for subjective terms",
+      "requirement": "For some facially subjective terms, the definiteness requirement is not satisfied by merely offering examples that satisfy the term within the specification.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(b)"
+    },
+    {
+      "rule_id": "narrow_broader_range_indefiniteness",
+      "title": "Narrow range within broader range in same claim",
+      "requirement": "Use of a narrow numerical range that falls within a broader range in the same claim may render the claim indefinite when the boundaries of the claim are not discernible. In those instances where it is not clear whether the claimed narrower range is a limitation, a rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph should be made.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "a temperature of between 45 and 78 degrees Celsius, preferably between 50 and 60 degrees Celsius",
+        "a predetermined quantity, for example, the maximum capacity"
+      ],
+      "reference": "§ 2173.05(c) I"
+    },
+    {
+      "rule_id": "dependent_narrow_range_permissible",
+      "title": "Dependent claim narrower range is not improper",
+      "requirement": "It is not improper under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, to present a dependent claim that sets forth a narrower range for an element than the range set forth in the claim from which it depends.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Claim 1: resistance is 70-150 ohms; Claim 2: resistance is 70-100 ohms"
+      ],
+      "reference": "§ 2173.05(c) I"
+    },
+    {
+      "rule_id": "open_ended_range_ambiguity",
+      "title": "Open-ended ranges require careful analysis",
+      "requirement": "Open-ended numerical ranges should be carefully analyzed for definiteness. An ambiguity is created with regard to the 'at least' limitation if a dependent claim sets forth specific amounts of other ingredients which add up to 100%, apparently to the exclusion of the open-ended ingredient.",
+      "severity": "recommended",
+      "exceptions": [
+        "unless the percentages of the nonsodium ingredients are based on the weight of the nonsodium ingredients"
+      ],
+      "examples": [
+        "independent claim: 'at least 20% sodium'; dependent claim: specific nonsodium ingredients adding to 100%"
+      ],
+      "reference": "§ 2173.05(c) II"
+    },
+    {
+      "rule_id": "theoretical_impossible_composition",
+      "title": "Theoretical impossible composition not indefinite",
+      "requirement": "A composition claimed to have a theoretical content greater than 100% is not indefinite simply because the claims may be read in theory to include compositions that are impossible in fact to formulate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "20-80% of A, 20-80% of B and 1-25% of C"
+      ],
+      "reference": "§ 2173.05(c) II"
+    },
+    {
+      "rule_id": "maximum_limit_no_minimum",
+      "title": "Maximum limit without minimum is definite",
+      "requirement": "The imposition of a maximum limit on the quantity of one of the reactants without specifying a minimum does not warrant distorting the overall meaning of the claim to preclude performing the claimed process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "amount of one ingredient ... should 'be maintained at less than 7 mole percent'"
+      ],
+      "reference": "§ 2173.05(c) II"
+    },
+    {
+      "rule_id": "effective_amount_test",
+      "title": "Effective amount definiteness test",
+      "requirement": "The proper test for 'an effective amount' is whether or not one skilled in the art could determine specific values for the amount based on the disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(c) III"
+    },
+    {
+      "rule_id": "effective_amount_indefinite_if_ambiguous",
+      "title": "Effective amount indefinite if function unclear",
+      "requirement": "The phrase 'an effective amount' has been held to be indefinite when the claim fails to state the function which is to be achieved and more than one effect can be implied from the specification or the relevant art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(c) III"
+    },
+    {
+      "rule_id": "examples_in_specification_not_claims",
+      "title": "Examples and preferences in specification",
+      "requirement": "Description of examples or preferences is properly set forth in the specification rather than the claims. If stated in the claims, examples and preferences lead to confusion over the intended scope of the claim.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(d)"
+    },
+    {
+      "rule_id": "exemplary_language_clarity_test",
+      "title": "Exemplary language must not obscure claim scope",
+      "requirement": "In those instances where it is not clear whether the claimed narrower range is a limitation, a rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph should be made. The examiner should analyze whether the metes and bounds of the claim are clearly set forth.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "R is halogen, for example, chlorine",
+        "material such as rock wool or asbestos",
+        "lighter hydrocarbons, such, for example, as the vapors or gas produced",
+        "normal operating conditions such as while in the container of a proportioner",
+        "coke, brick, or like material"
+      ],
+      "reference": "2173.05(d)"
+    },
+    {
+      "rule_id": "antecedent_basis_clarity_requirement",
+      "title": "Claims must have clear antecedent basis",
+      "requirement": "A claim is indefinite when it contains words or phrases whose meaning is unclear. The lack of clarity could arise where a claim refers to 'said lever' or 'the lever,' where the claim contains no earlier recitation or limitation of a lever and where it would be unclear as to what element the limitation was making reference.",
+      "severity": "mandatory",
+      "exceptions": [
+        "If the scope of a claim would be reasonably ascertainable by those skilled in the art, then the claim is not indefinite.",
+        "Inherent components of elements recited have antecedent basis in the recitation of the elements themselves."
+      ],
+      "examples": [
+        "said lever (where no lever is previously recited)",
+        "said aluminum lever (where only 'a lever' is recited)"
+      ],
+      "reference": "2173.05(e)"
+    },
+    {
+      "rule_id": "examiner_correction_duty",
+      "title": "Examiner should suggest corrections for antecedent issues",
+      "requirement": "The examiner’s task of making sure the claim language complies with the requirements of the statute should be carried out in a positive and constructive way, so that minor problems can be identified and easily corrected.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2173.05(e) I"
+    },
+    {
+      "rule_id": "specification_matching_not_required",
+      "title": "Claim terms need not match specification exactly",
+      "requirement": "There is no requirement that the words in the claim must match those used in the specification disclosure. Applicants are given a great deal of latitude in how they choose to define their invention so long as the terms and phrases used define the invention with a reasonable degree of clarity and precision.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2173.05(e) II"
+    },
+    {
+      "rule_id": "preamble_body_element_consistency",
+      "title": "Body elements not in preamble do not render claim indefinite",
+      "requirement": "The mere fact that the body of a claim recites additional elements which do not appear in the claim’s preamble does not render the claim indefinite under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "2173.05(e) III"
+    },
+    {
+      "rule_id": "markush_open_list_indefinite",
+      "title": "Markush group comprising open list is indefinite",
+      "requirement": "If a Markush grouping requires a material selected from an open list of alternatives (e.g., selected from the group “comprising” or “consisting essentially of” the recited alternatives), the claim should generally be rejected under 35 U.S.C. 112(b) as indefinite because it is unclear what other alternatives are intended to be encompassed by the claim.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "a selection from the group comprising a person, an animal, an animated character, a creature, an alien, a toy, a structure, a vegetable, and a fruit"
+      ],
+      "reference": "§ 2173.05(h)"
+    },
+    {
+      "rule_id": "negative_limitation_basis_in_disclosure",
+      "title": "Negative limitations must have basis in original disclosure",
+      "requirement": "Any negative limitation or exclusionary proviso must have basis in the original disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(i)"
+    },
+    {
+      "rule_id": "reject_claim_lacking_negative_basis",
+      "title": "Reject claims with unsupported negative limitations",
+      "requirement": "Any claim containing a negative limitation which does not have basis in the original disclosure should be rejected under 35 U.S.C. 112(a) or pre-AIA 35 U.S.C. 112, first paragraph, as failing to comply with the written description requirement.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(i)"
+    },
+    {
+      "rule_id": "no_rejection_old_combination",
+      "title": "Claims should not be rejected on ground of old combination",
+      "requirement": "A CLAIM SHOULD NOT BE REJECTED ON THE GROUND OF OLD COMBINATION",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(j)"
+    },
+    {
+      "rule_id": "no_rejection_aggregation",
+      "title": "Claims should not be rejected on ground of aggregation",
+      "requirement": "A claim should not be rejected on the ground of “aggregation.”",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(k)"
+    },
+    {
+      "rule_id": "reject_prolix_claims",
+      "title": "Reject prolix claims rendering scope indefinite",
+      "requirement": "Examiners should reject claims as prolix only when they contain such long recitations or unimportant details that the scope of the claimed invention is rendered indefinite thereby.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(m)"
+    },
+    {
+      "rule_id": "claims_must_be_distinct",
+      "title": "Multiple claims must differ substantially",
+      "requirement": "More than one claim may be presented provided they differ substantially from each other and are not unduly multiplied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "37 CFR 1.75(b)"
+    },
+    {
+      "rule_id": "specification_must_conclude_with_claims",
+      "title": "Specification must conclude with distinct claims",
+      "requirement": "The specification must conclude with a claim particularly pointing out and distinctly claiming the subject matter which the applicant regards as his invention or discovery.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "37 CFR 1.75(a)"
+    },
+    {
+      "rule_id": "claims_must_not_be_unduly_multiplied",
+      "title": "Claims must not be unduly multiplied",
+      "requirement": "More than one claim may be presented provided they differ substantially from each other and are not unduly multiplied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "37 CFR 1.75(b)"
+    },
+    {
+      "rule_id": "undue_multiplicity_rejection_criteria",
+      "title": "Undue multiplicity rejection for confusing claims",
+      "requirement": "Where, in view of the nature and scope of applicant’s invention, applicant presents an unreasonable number of claims which are repetitious and multiplied, the net result of which is to confuse rather than to clarify, a rejection on undue multiplicity based on 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, may be appropriate.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(n)"
+    },
+    {
+      "rule_id": "undue_multiplicity_rejection_judicious",
+      "title": "Undue multiplicity rejections should be rare",
+      "requirement": "Undue multiplicity rejections based on 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, should be applied judiciously and should be rare.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(n)"
+    },
+    {
+      "rule_id": "examiner_phone_contact_multiplicity",
+      "title": "Examiner must contact applicant for undue multiplicity",
+      "requirement": "If an undue multiplicity rejection under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, is appropriate, the examiner should contact applicant by telephone explaining that the claims are unduly multiplied and will be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(n)"
+    },
+    {
+      "rule_id": "request_claim_selection_multiplicity",
+      "title": "Examiner should request claim selection",
+      "requirement": "The examiner should also request that applicant select a specified number of claims for purpose of examination.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(n)"
+    },
+    {
+      "rule_id": "rejection_if_no_claim_selection",
+      "title": "Reject all claims if applicant refuses selection",
+      "requirement": "If applicant refuses to comply with the telephone request, an undue multiplicity rejection of all the claims based on 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, should be made in the next Office action.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(n)"
+    },
+    {
+      "rule_id": "reply_must_include_claim_selection",
+      "title": "Reply must include selected claims for examination",
+      "requirement": "Applicant’s reply must include a selection of claims for purpose of examination, the number of which may not be greater than the number specified by the examiner.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(n)"
+    },
+    {
+      "rule_id": "double_inclusion_indefiniteness_test",
+      "title": "Evaluate double inclusion for indefiniteness",
+      "requirement": "The facts in each case must be evaluated to determine whether or not the multiple inclusion of one or more elements in a claim gives rise to indefiniteness in that claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(o)"
+    },
+    {
+      "rule_id": "markush_double_inclusion_clear",
+      "title": "Markush group double inclusion is not indefinite",
+      "requirement": "The mere fact that a compound may be embraced by more than one member of a Markush group recited in the claim does not lead to any uncertainty as to the scope of that claim for either examination or infringement purposes.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(o)"
+    },
+    {
+      "rule_id": "device_double_inclusion_indefinite",
+      "title": "Device claim double inclusion may be indefinite",
+      "requirement": "Where a claim directed to a device can be read to include the same element twice, the claim may be indefinite.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(o)"
+    },
+    {
+      "rule_id": "product_by_process_clarity",
+      "title": "Product-by-process claim must be clear",
+      "requirement": "A claim to a device, apparatus, manufacture, or composition of matter may contain a reference to the process in which it is intended to be used without being objectionable under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, so long as it is clear that the claim is directed to the product and not the process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(p)"
+    },
+    {
+      "rule_id": "single_claim_product_process_indefinite",
+      "title": "Single claim claiming both apparatus and method steps is indefinite",
+      "requirement": "A single claim which claims both an apparatus and the method steps of using the apparatus is indefinite under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A system with an interface means for providing automated voice messages…to certain of said individual callers, wherein said certain of said individual callers digitally enter data",
+        "A claim directed to an automatic transmission workstand and the method of using it"
+      ],
+      "reference": "§ 2173.05(o)"
+    },
+    {
+      "rule_id": "use_claim_without_steps_indefinite",
+      "title": "Process claim reciting use without active steps is indefinite",
+      "requirement": "Attempts to claim a process without setting forth any steps involved in the process generally raises an issue of indefiniteness under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A process for using monoclonal antibodies of claim 4 to isolate and purify human fibroblast interferon"
+      ],
+      "reference": "§ 2173.05(q)"
+    },
+    {
+      "rule_id": "omnibus_claim_indefinite",
+      "title": "Omnibus claims are indefinite for failing to point out scope",
+      "requirement": "An omnibus claim reading 'A device substantially as shown and described' should be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, because it is indefinite in that it fails to point out what is included or excluded by the claim language.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A device substantially as shown and described."
+      ],
+      "reference": "§ 2173.05(r)"
+    },
+    {
+      "rule_id": "omnibus_claims_rejection",
+      "title": "Omnibus claims must be rejected for indefiniteness",
+      "requirement": "A claim that fails to point out what is included or excluded by the claim language (omnibus claim) should be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, because it is indefinite.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "See Ex parte Fressola, 27 USPQ2d 1608 (Bd. Pat. App. & Inter. 1993)"
+      ],
+      "reference": "§ 2173.05(r)"
+    },
+    {
+      "rule_id": "incorporation_by_reference_exception",
+      "title": "Incorporation by reference permitted only in exceptional circumstances",
+      "requirement": "Incorporation by reference to a specific figure or table is permitted only in exceptional circumstances where there is no practical way to define the invention in words and where it is more concise to incorporate by reference than duplicating a drawing or table into the claim.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Where there is no practical way to define the invention in words",
+        "Where it is more concise to incorporate by reference than duplicating a drawing or table"
+      ],
+      "examples": [
+        "Ex parte Fressola, 27 USPQ2d 1608, 1609 (Bd. Pat. App. & Inter. 1993)"
+      ],
+      "reference": "§ 2173.05(s)"
+    },
+    {
+      "rule_id": "chemical_formula_not_indefinite",
+      "title": "Chemical formulas not indefinite absent evidence of error",
+      "requirement": "Chemical structures depicted in claims should not be considered indefinite nor speculative in the absence of evidence that the assigned formula is in error. The absence of corroborating spectroscopic or other data cannot be the basis for finding the structure indefinite.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Evidence that the assigned formula is in error"
+      ],
+      "examples": [
+        "Ex parte Morton, 134 USPQ 407 (Bd. App. 1961)",
+        "Ex parte Sobin, 139 USPQ 528 (Bd. App. 1962)"
+      ],
+      "reference": "§ 2173.05(t)"
+    },
+    {
+      "rule_id": "partial_chemical_structure_not_indefinite",
+      "title": "Partial chemical structure does not render claim indefinite",
+      "requirement": "A claim to a chemical compound is not indefinite merely because a structure is not presented or because a partial structure is presented.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Fisher, 427 F.2d 833, 166 USPQ 18 (CCPA 1970)"
+      ],
+      "reference": "§ 2173.05(t)"
+    },
+    {
+      "rule_id": "trademark_as_limitation_rejection",
+      "title": "Trademark used as limitation renders claim indefinite",
+      "requirement": "If a trademark or trade name is used in a claim as a limitation to identify or describe a particular material or product, the claim does not comply with the requirements of 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, and should be rejected.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Ex parte Simpson, 218 USPQ 1020 (Bd. App. 1982)",
+        "Eli Lilly & Co. v. Apotex, Inc., 837 Fed. Appx. 780 (Fed. Cir. 2020)"
+      ],
+      "reference": "§ 2173.05(u)"
+    },
+    {
+      "rule_id": "trademark_causing_confusion_rejection",
+      "title": "Trademark causing confusion renders claim indefinite",
+      "requirement": "If a trademark or trade name appears in a claim and is not intended as a limitation, but its presence causes confusion as to the scope of the claim, the claim should be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2173.05(u)"
+    },
+    {
+      "rule_id": "trademark_clarity_rejection",
+      "title": "Reject claims with confusing trademarks",
+      "requirement": "If a trademark or trade name appears in a claim and is not intended as a limitation in the claim, the question of why it is in the claim should be addressed. If its presence in the claim causes confusion as to the scope of the claim, then the claim should be rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05"
+    },
+    {
+      "rule_id": "no_rejection_inherent_function",
+      "title": "No rejection for inherent machine function",
+      "requirement": "Process or method claims are not subject to rejection by U.S. Patent and Trademark Office examiners under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, solely on the ground that they define the inherent function of a disclosed machine or apparatus.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.05(v)"
+    },
+    {
+      "rule_id": "interpret_indefinite_terms",
+      "title": "Explain interpretation of indefinite terms",
+      "requirement": "When the examiner determines that a claim term or phrase renders the claim indefinite, the examiner should make a rejection based on indefiniteness under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, as well as a rejection(s) in view of the prior art under 35 U.S.C. 102 or 103 that renders the prior art applicable based on the examiner’s interpretation of the claim. When making a rejection over prior art in these circumstances, it is important that the examiner state on the record how the claim term or phrase is being interpreted with respect to the prior art applied in the rejection.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.06"
+    },
+    {
+      "rule_id": "no_rejection_great_uncertainty",
+      "title": "No prior art rejection for great uncertainty",
+      "requirement": "Where there is a great deal of confusion and uncertainty as to the proper interpretation of the limitations of a claim, it would not be proper to reject such a claim on the basis of prior art. A rejection under 35 U.S.C. 103 should not be based on considerable speculation about the meaning of terms employed in a claim or assumptions that must be made as to the scope of the claims.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2173.06"
+    },
+    {
+      "rule_id": "lexicographer_clear_redefinition",
+      "title": "Clear redefinition required for applicant-defined terms",
+      "requirement": "Where applicant acts as his or her own lexicographer to specifically define a term of a claim contrary to its ordinary meaning, the written description must clearly redefine the claim term and set forth the uncommon definition so as to put one reasonably skilled in the art on notice that the applicant intended to so redefine that claim term.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 7.34.02"
+    },
+    {
+      "rule_id": "relative_term_standard_required",
+      "title": "Relative terms must provide standard for degree",
+      "requirement": "A relative term renders a claim indefinite if the term is not defined by the claim, the specification does not provide a standard for ascertaining the requisite degree, and one of ordinary skill in the art would not be reasonably apprised of the scope of the invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 7.34.03"
+    },
+    {
+      "rule_id": "broad_narrow_range_clarity",
+      "title": "Broad and narrow ranges must clearly set forth metes and bounds",
+      "requirement": "A broad range or limitation together with a narrow range or limitation that falls within the broad range or limitation (in the same claim) may be considered indefinite if the resulting claim does not clearly set forth the metes and bounds of the patent protection desired.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 7.34.04"
+    },
+    {
+      "rule_id": "antecedent_basis_indeterminacy",
+      "title": "Lack of antecedent basis must not make scope indeterminate",
+      "requirement": "Lack of antecedent basis in the claims renders a claim indefinite in aggravated situations where the lack of antecedent basis makes the scope of the claim indeterminate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 7.34.05"
+    },
+    {
+      "rule_id": "antecedent_basis_aggravated",
+      "title": "Antecedent basis must be clear in aggravated situations",
+      "requirement": "This form paragraph should ONLY be used in aggravated situations where the lack of antecedent basis makes the scope of the claim indeterminate.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.06"
+    },
+    {
+      "rule_id": "literal_translation_indefinite",
+      "title": "Claims must not be literal translations with grammatical errors",
+      "requirement": "The claims are generally narrative and indefinite, failing to conform with current U.S. practice. They appear to be a literal translation into English from a foreign document and are replete with grammatical and idiomatic errors.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.07"
+    },
+    {
+      "rule_id": "phrase_for_example_indefinite",
+      "title": "Phrase 'for example' renders claim indefinite",
+      "requirement": "The phrase 'for example' renders the claim indefinite because it is unclear whether the limitation(s) following the phrase are part of the claimed invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.08"
+    },
+    {
+      "rule_id": "phrase_or_the_like_indefinite",
+      "title": "Phrase 'or the like' renders claim indefinite",
+      "requirement": "The phrase 'or the like' renders the claim(s) indefinite because the claim(s) include(s) elements not actually disclosed (those encompassed by 'or the like'), thereby rendering the scope of the claim(s) unascertainable.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.09"
+    },
+    {
+      "rule_id": "phrase_such_as_indefinite",
+      "title": "Phrase 'such as' renders claim indefinite",
+      "requirement": "The phrase 'such as' renders the claim indefinite because it is unclear whether the limitations following the phrase are part of the claimed invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.10"
+    },
+    {
+      "rule_id": "essential_steps_omitted",
+      "title": "Claims must not omit essential steps",
+      "requirement": "Claim [1] rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, as being incomplete for omitting essential steps, such omission amounting to a gap between the steps.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.12"
+    },
+    {
+      "rule_id": "essential_elements_omitted",
+      "title": "Claims must not omit essential elements",
+      "requirement": "Claim [1] rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, as being incomplete for omitting essential elements, such omission amounting to a gap between the elements.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.13"
+    },
+    {
+      "rule_id": "essential_cooperative_relationships_omitted",
+      "title": "Claims must not omit essential cooperative relationships",
+      "requirement": "Claim [1] rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph, as being incomplete for omitting essential structural cooperative relationships of elements, such omission amounting to a gap between the necessary structural connections.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.14"
+    },
+    {
+      "rule_id": "pro_se_claim_structure",
+      "title": "Pro se claims must clearly specify structure and be one sentence",
+      "requirement": "The structure which goes to make up the device must be clearly and positively specified. The structure must be organized and correlated in such a manner as to present a complete operative device. The claim(s) must be in one sentence form only.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.34.15"
+    },
+    {
+      "rule_id": "trademark_as_limitation_indefinite",
+      "title": "Trademarks cannot be used as claim limitations",
+      "requirement": "Where a trademark or trade name is used in a claim as a limitation to identify or describe a particular material or product, the claim does not comply with the requirements of 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph. The claim scope is uncertain since the trademark or trade name cannot be used properly to identify any particular material or product.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "7.35.01"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the specification concludes with one or more distinct claims.",
+    "Confirm that claims particularly point out and distinctly define the metes and bounds of the invention.",
+    "Ensure claims are construed under the broadest reasonable interpretation consistent with the specification.",
+    "Check that claim terms are given their plain meaning unless inconsistent with the specification.",
+    "Verify that any special meaning assigned to a term is clearly set forth in the claims.",
+    "Confirm that special definitions are supported by clear and intentional use in the specification as filed.",
+    "Ensure no special definitions or disavowals were added after the filing date.",
+    "Verify that features described as preferred or illustrative are not treated as essential.",
+    "Confirm that 35 U.S.C. 112(f) limitations are construed to cover corresponding structure, material, or acts.",
+    "Ensure indefinite claims are rejected under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph.",
+    "Verify that rejections clearly identify the indefinite language and thoroughly explain the reasoning.",
+    "Confirm that rejections for omitted essential matter explain the basis for the rejection.",
+    "Ensure the examiner explains whether a 112(b) rejection is based on indefiniteness or failure to claim.",
+    "Verify that the claim scope is understandable to one of ordinary skill in the art with reasonable certainty."
+  ],
+  "system_prompt_injection": "Apply the United States Patent and Trademark Office definiteness guidelines to ensure claims distinctly define the metes and bounds of the invention under 35 U.S.C. 112(b). Interpret all claims using the broadest reasonable interpretation consistent with the specification, assigning plain meanings to terms unless a clear, intentional special definition is provided in the original filing. Reject any claims that fail to inform a person skilled in the art of the scope with reasonable certainty, and clearly identify the indefinite language and reasoning in every rejection. Prohibit the addition of special definitions or disavowals after the filing date, and require applicants to amend ambiguous claims to resolve uncertainties. Ensure that any features described as preferred or illustrative are not treated as essential, and strictly construe 112(f) limitations to cover only the corresponding structure, material, or acts described in the specification."
+}

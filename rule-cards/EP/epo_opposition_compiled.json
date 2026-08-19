@@ -1,0 +1,238 @@
+{
+  "card_id": "epo_opposition_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_opposition.pdf",
+  "task": "opposition",
+  "task_label": "Opposition",
+  "rules": [
+    {
+      "rule_id": "unity_not_opposition_ground",
+      "title": "Absence of unity is not a ground for opposition",
+      "requirement": "Pursuant to Art. 100, the absence of unity of invention is not a ground for opposition.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part D - Chapter V-2"
+    },
+    {
+      "rule_id": "unity_not_examined_by_division",
+      "title": "Unity of patent subject-matter may not be examined",
+      "requirement": "the unity of the subject-matter of the European patent may not be examined by the Opposition Division, even of its own motion.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part D - Chapter V-2"
+    },
+    {
+      "rule_id": "examination_confined_to_opposed_grounds",
+      "title": "Examination confined to grounds brought forward",
+      "requirement": "as a general rule the Opposition Division will confine its examination to those grounds for opposition brought forward by the opponent.",
+      "severity": "recommended",
+      "exceptions": [
+        "if facts have come to its notice which, prima facie, wholly or partially prejudice the maintenance of the patent"
+      ],
+      "examples": [],
+      "reference": "Part D - Chapter V-1, 2.2"
+    },
+    {
+      "rule_id": "examine_prejudicial_grounds_own_motion",
+      "title": "Examine prejudicial grounds of own motion",
+      "requirement": "If that is the case, these grounds should generally be examined by the Opposition Division of its own motion pursuant to Rule 81(1).",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part D - Chapter V-2"
+    },
+    {
+      "rule_id": "examine_withdrawn_opposition_grounds",
+      "title": "Examine grounds from withdrawn opposition",
+      "requirement": "Under Art. 114(1), such prejudicial grounds put forward in an opposition which has been withdrawn should also generally be examined by the Opposition Division of its own motion.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part D - Chapter V-2"
+    },
+    {
+      "rule_id": "parties_must_comment_on_grounds",
+      "title": "Parties must be given opportunity to comment",
+      "requirement": "If the decision is to be based on grounds to be taken into account pursuant to Art. 114(1) or Rule 81(1), the parties must be given the opportunity to comment.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part D - Chapter V-2"
+    },
+    {
+      "rule_id": "proprietor_prove_common_knowledge",
+      "title": "Proprietor must prove common general knowledge",
+      "requirement": "The proprietor has to provide proof of what was common general knowledge at the filing date (or the date of the earliest priority if priority has been claimed).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "The proprietor replied that the process could be put into practice without undue burden by the skilled person, also taking common general knowledge into account"
+      ],
+      "reference": "Part D - Chapter V-2"
+    },
+    {
+      "rule_id": "unity_of_invention_not_examined",
+      "title": "Unity of invention may not be examined in opposition",
+      "requirement": "The unity of the subject-matter of the European patent may not be examined by the Opposition Division, even of its own motion.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 81(1), Art. 82, G 1/91"
+    },
+    {
+      "rule_id": "no_further_unity_examination_amended",
+      "title": "No further unity examination for amended patents",
+      "requirement": "Where the facts, evidence and arguments which come to light in the opposition proceedings lead to the maintenance of the European patent in amended form, there should be no further examination as to whether the remaining subject-matter of the patent contains a single invention or more than one.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 81(1), Art. 82, G 1/91"
+    },
+    {
+      "rule_id": "lack_of_unity_accepted",
+      "title": "Any lack of unity must be accepted",
+      "requirement": "Any lack of unity must be accepted.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 1/91"
+    },
+    {
+      "rule_id": "sufficient_disclosure_requirement",
+      "title": "Patent must disclose invention sufficiently clearly",
+      "requirement": "Pursuant to Art. 100(b), the patent has to disclose the invention in a manner sufficiently clear and complete for it to be carried out by persons skilled in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 100(b)"
+    },
+    {
+      "rule_id": "remedy_disclosure_no_extension",
+      "title": "Remedy for insufficient disclosure subject to Art 123(2)/(3)",
+      "requirement": "If the patent specification does not disclose the invention sufficiently clearly to enable it to be carried out in accordance with Art. 100(b), this may be remedied, provided the original documents contained a sufficient disclosure, but subject to the condition that, as required under Art. 123(2), the subject-matter of the European patent does not extend beyond the content of the application as filed and, as required under Art. 123(3), the protection conferred is not extended.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 100(b), Art. 123(2), Art. 123(3)"
+    },
+    {
+      "rule_id": "clarity_not_ground_for_opposition",
+      "title": "Clarity is not a ground for opposition",
+      "requirement": "Clarity is not a ground for opposition.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 3/14"
+    },
+    {
+      "rule_id": "claims_not_to_be_regarded_continuation",
+      "title": "Opposition not to be regarded as continuation of examination",
+      "requirement": "Opposition proceedings are not to be regarded as a continuation of examination proceedings.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 3/14"
+    },
+    {
+      "rule_id": "art_84_exam_only_if_introduced",
+      "title": "Art 84 compliance examined only if introduced by amendment",
+      "requirement": "In considering whether, for the purpose of Art. 101(3), a patent as amended meets the requirements of the EPC, the claims of the patent may be examined for compliance with the requirements of Article 84 only when, and then only to the extent that, an amendment introduces non-compliance with Article 84.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 101(3), G 3/14, T 301/87"
+    },
+    {
+      "rule_id": "pre_existing_clarity_not_introduced",
+      "title": "Pre-existing clarity problem not considered introduced",
+      "requirement": "A lack of compliance with Article 84 cannot be seen as having been introduced by an amendment if a clarity problem already present in the claims as granted is only brought into notice, highlighted or made visible by the amendment.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 3/14, T 301/87"
+    },
+    {
+      "rule_id": "no_reexamination_unamended_parts",
+      "title": "No re-examination of unamended parts of patent",
+      "requirement": "The amendment of one claim or part of a patent cannot lead to a re-examination of other parts of the patent which have not been amended.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 3/14"
+    },
+    {
+      "rule_id": "deletion_does_not_permit_art_84_exam",
+      "title": "Deletion of claims does not permit Art 84 examination",
+      "requirement": "The deletion of an independent claim with its dependent claims or the deletion of a dependent claim leaving the independent claims and other dependent claims intact does not permit examination of the remaining claims for compliance with Article 84.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G 3/14"
+    },
+    {
+      "rule_id": "subject_matter_may_not_extend",
+      "title": "Subject-matter may not extend beyond application as filed",
+      "requirement": "The subject-matter of a European patent may not extend beyond the content of the application as filed.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 100(c), Art. 123(2)"
+    },
+    {
+      "rule_id": "subject_matter_no_extension",
+      "title": "Subject-matter must not extend beyond original disclosure",
+      "requirement": "the subject-matter of a European patent may not extend beyond the content of the application as filed",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 100(c), Art. 123(2)"
+    },
+    {
+      "rule_id": "divisional_no_extension_earlier",
+      "title": "Divisional patent must not extend beyond earlier application",
+      "requirement": "the subject-matter must not extend beyond the content of the earlier application as filed",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 76(1)"
+    },
+    {
+      "rule_id": "divisional_no_extension_divisional",
+      "title": "Divisional patent must not extend beyond divisional application",
+      "requirement": "it must not extend beyond the content of the divisional application as filed",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 123(2)"
+    },
+    {
+      "rule_id": "original_text_basis_non_official_lang",
+      "title": "Original text constitutes basis for non-official language apps",
+      "requirement": "the original text will, as provided for in Art. 70(2), constitute the basis for determining whether the subject-matter of the European patent extends beyond the content of the application as filed",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 70(2)"
+    }
+  ],
+  "review_checklist": [
+    "Verify that unity of invention is not raised as a ground for opposition or examined by the Division.",
+    "Confirm that the examination is confined to the grounds for opposition brought forward by the opponent.",
+    "Ensure that any prejudicial grounds taken into account of own motion under Rule 81(1) or Art. 114(1) are examined.",
+    "Verify that parties are given the opportunity to comment on any grounds the Division intends to rely on of its own motion.",
+    "Check that the proprietor has provided proof of common general knowledge at the filing or priority date.",
+    "Confirm that the patent discloses the invention sufficiently clearly and completely for it to be carried out by a person skilled in the art.",
+    "Verify that any remedy for insufficient disclosure does not extend beyond the content of the application as filed.",
+    "Ensure that clarity (Art. 84) is not examined as a standalone ground for opposition.",
+    "Confirm that Art. 84 compliance is only examined if non-compliance was introduced by an amendment.",
+    "Verify that pre-existing clarity problems in the granted claims are not treated as introduced by amendments.",
+    "Ensure that unamended parts of the patent are not re-examined due to amendments in other parts.",
+    "Confirm that the deletion of claims does not trigger an examination of the clarity of remaining claims.",
+    "Verify that the subject-matter of the amended patent does not extend beyond the content of the application as filed.",
+    "Ensure that opposition proceedings are not treated as a continuation of examination proceedings."
+  ],
+  "system_prompt_injection": "Adhere to the European Patent Office opposition guidelines by strictly prohibiting the examination of unity of invention and clarity as grounds for opposition, while ensuring that proceedings are not treated as a continuation of initial examination. Confine your analysis primarily to the grounds raised by the opponent, but proactively examine prejudicial grounds of your own motion or from withdrawn oppositions, always granting parties the opportunity to comment on such considerations. Mandate that the patent proprietor proves common general knowledge and that the invention is sufficiently disclosed, while strictly preventing any amendment from extending the subject-matter beyond the application as filed. Furthermore, restrict the examination of Article 84 compliance to issues introduced by amendments, explicitly forbidding the re-examination of unamended parts or the penalization of pre-existing clarity defects."
+}

@@ -1,0 +1,467 @@
+{
+  "card_id": "epo_unity_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_unity.pdf",
+  "task": "unity",
+  "task_label": "Unity of Invention",
+  "rules": [
+    {
+      "rule_id": "unity_single_inventive_concept",
+      "title": "Application must relate to one invention or single general inventive concept",
+      "requirement": "A European application must 'relate to one invention only or to a group of inventions so linked as to form a single general inventive concept'.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Art. 82"
+    },
+    {
+      "rule_id": "unity_lack_of_clarity_insufficient",
+      "title": "Lack of clarity alone is not sufficient grounds for lack of unity",
+      "requirement": "When determining unity of invention, a finding of lack of clarity of the claims is on its own not sufficient grounds for a finding of lack of unity.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-1, Section 1"
+    },
+    {
+      "rule_id": "unity_classification_groups_irrelevant",
+      "title": "Different classification groups do not imply lack of unity",
+      "requirement": "The fact that the claimed separate inventions belong to different groups of the classification is not in itself a reason for a finding of lack of unity.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-1, Section 1"
+    },
+    {
+      "rule_id": "unity_multiple_categories_permissible",
+      "title": "Multiple claim categories not inherently lacking unity if Art 82/Rule 44 met",
+      "requirement": "An application may contain claims of different categories, or several independent claims of the same category. This is not in itself a reason for an objection of lack of unity of invention if the requirements of Art. 82 and Rule 44 are otherwise met.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-1, Section 1"
+    },
+    {
+      "rule_id": "unity_special_technical_features_definition",
+      "title": "Link must be expressed via same or corresponding special technical features",
+      "requirement": "The link between the inventions required by Art. 82 must be a technical relationship which finds expression in the claims in terms of the same or corresponding special technical features.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In one claim the special technical feature which provides resilience is a metal spring, whereas in another claim it is a block of rubber."
+      ],
+      "reference": "Rule 44(1)"
+    },
+    {
+      "rule_id": "unity_special_technical_features_contribution",
+      "title": "Special technical features define contribution over prior art",
+      "requirement": "The expression 'special technical features' means, in any one claim, the particular technical feature or features that define a contribution that the claimed invention considered as a whole makes over the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 44(1)"
+    },
+    {
+      "rule_id": "unity_permitted_claim_combinations",
+      "title": "Permitted combinations of independent claims in different categories",
+      "requirement": "Rule 44(1) should be construed as permitting the inclusion of any one of the following combinations of claims of different categories in the same application: (i) product, process for manufacture, and use; (ii) process and apparatus for carrying out process; (iii) product, process for manufacture, and apparatus for carrying out process.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 44(1)"
+    },
+    {
+      "rule_id": "unity_proliferation_exceptional",
+      "title": "Proliferation of independent claim sets allowed only exceptionally",
+      "requirement": "A plurality of such sets of independent claims in one European patent application can only be allowed if the specific circumstances defined in Rule 43(2)(a) to (c) apply and the requirements of Art. 82 and 84 are met. The proliferation of independent claims arising out of a combined effect of this kind may therefore be allowed only exceptionally.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Specific circumstances defined in Rule 43(2)(a) to (c) apply",
+        "Requirements of Art. 82 and 84 are met"
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter V-2, Section 2"
+    },
+    {
+      "rule_id": "unity_specially_adapted_not_sufficient",
+      "title": "Expressions like 'specially adapted' do not necessarily imply unity",
+      "requirement": "The presence in each claim of expressions such as 'specially adapted' or 'specifically designed' does not necessarily imply that a single general inventive concept is present.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-2, Section 2"
+    },
+    {
+      "rule_id": "unity_process_product_relationship",
+      "title": "Process specially adapted if it results in claimed product",
+      "requirement": "The process is specially adapted for the manufacture of the product if the claimed process results in the claimed product, i.e. if the process is actually suited to making the claimed product accessible and thereby defines a technical relationship as defined in Rule 44(1) between the claimed product and the claimed process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-2, Section 2"
+    },
+    {
+      "rule_id": "unity_process_not_restricted_to_product",
+      "title": "Process not lacking unity if not restricted to claimed product",
+      "requirement": "A manufacturing process and its product may not be regarded as lacking unity simply by virtue of the fact that the manufacturing process is not restricted to the manufacture of the claimed product.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-2, Section 2"
+    },
+    {
+      "rule_id": "unity_apparatus_process_relationship",
+      "title": "Apparatus specifically designed if suitable for carrying out process",
+      "requirement": "The apparatus or means is specifically designed for carrying out the process if the apparatus or means is suitable for carrying out the process and thereby defines a technical relationship as defined in Rule 44(1) between the claimed apparatus or means and the claimed process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-2, Section 2"
+    },
+    {
+      "rule_id": "apparatus_process_unity_requirement",
+      "title": "Apparatus specifically designed for process",
+      "requirement": "The apparatus or means is specifically designed for carrying out the process if the apparatus or means is suitable for carrying out the process and thereby defines a technical relationship as defined in Rule 44(1) between the claimed apparatus or means and the claimed process.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "apparatus_mere_capability_insufficient",
+      "title": "Mere capability insufficient for unity",
+      "requirement": "It is not sufficient for unity that the apparatus or means is merely capable of being used in carrying out the process.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "intermediate_final_product_unity_criteria",
+      "title": "Unity criteria for intermediate and final products",
+      "requirement": "Unity of invention should be considered to be present in the context of intermediate and final products where: (i) the intermediate and final products have the same essential structural element, i.e. their basic chemical structures are the same or their chemical structures are technically closely inter-related, the intermediate incorporating an essential structural element into the final product, and (ii) the intermediate and final products are technically inter-related, i.e. the final product is manufactured directly from the intermediate or is separated from it by a small number of intermediates all containing the same essential structural element.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "unknown_structure_unity_evidence",
+      "title": "Evidence required for unknown structure unity",
+      "requirement": "In such cases, there should be sufficient evidence to lead one to conclude that the intermediate and final products are technically closely inter-related as, for example, when the intermediate contains the same essential element as the final product or incorporates an essential element into the final product.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "different_intermediates_unity_condition",
+      "title": "Unity for different intermediates in different processes",
+      "requirement": "Different intermediate products used in different processes for the preparation of the final product may be claimed provided that they have the same essential structural element.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "intermediate_separation_by_non_new",
+      "title": "Prohibition of separation by non-new intermediate",
+      "requirement": "The intermediate and final products should not be separated, in the process leading from one to the other, by an intermediate which is not new.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "different_intermediates_different_parts_no_unity",
+      "title": "No unity for intermediates of different structural parts",
+      "requirement": "Where different intermediates for different structural parts of the final product are claimed, unity should not be regarded as being present between the intermediates.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "markush_family_correspondence",
+      "title": "Correspondence required for Markush families",
+      "requirement": "If the intermediate and final products are families of compounds, each intermediate compound should correspond to a compound claimed in the family of the final products.",
+      "severity": "recommended",
+      "exceptions": [
+        "some of the final products may have no corresponding compound in the family of the intermediate products, so the two families need not be absolutely congruent"
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "intermediate_other_effects_no_prejudice",
+      "title": "Other effects of intermediates do not prejudice unity",
+      "requirement": "The mere fact that, besides the ability to be used to produce final products, the intermediates also exhibit other possible effects or activities should not prejudice unity of invention.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-3"
+    },
+    {
+      "rule_id": "alternatives_unity_criteria_application",
+      "title": "Same criteria for alternatives in single or multiple claims",
+      "requirement": "In either case, however, the same criteria should be applied in deciding whether or not there is unity of invention, and lack of unity of invention may then also exist within a single claim.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-4"
+    },
+    {
+      "rule_id": "markush_unity_similar_nature",
+      "title": "Markush unity requires similar nature",
+      "requirement": "Where a single claim defines (chemical or non-chemical) alternatives, i.e. a so-called \"Markush grouping\", unity of invention should be considered to be present if the alternatives are of a similar nature.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-4"
+    },
+    {
+      "rule_id": "chemical_markush_similar_nature_criteria",
+      "title": "Criteria for similar nature in chemical Markush groups",
+      "requirement": "When the Markush grouping is for alternatives of chemical compounds, they should be regarded as being of a similar nature where: (i) all alternatives have a common property or activity, and (ii) a common structure is present, i.e. a significant structural element is shared by all of the alternatives, or all alternatives belong to a recognised class of chemical compounds in the art to which the invention pertains.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-4"
+    },
+    {
+      "rule_id": "significant_structural_element_definition",
+      "title": "Definition of significant structural element",
+      "requirement": "A \"significant structural element is shared by all of the alternatives\" where the compounds share a common chemical structure which occupies a large portion of their structures, or, in case the compounds have in common only a small portion of their structures, the commonly shared structure constitutes a structurally distinctive portion in view of existing prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-4"
+    },
+    {
+      "rule_id": "recognized_class_definition",
+      "title": "Definition of recognized class of compounds",
+      "requirement": "The alternatives belong to a \"recognised class of chemical compounds\" if there is an expectation from the knowledge in the art that members of the class will behave in the same way in the context of the claimed invention, i.e. that each member could be substituted one for the other, with the expectation that the same intended result would be achieved.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-4"
+    },
+    {
+      "rule_id": "markush_novelty_relative_to_activity",
+      "title": "Markush structural element novelty relative to activity",
+      "requirement": "Rather, this expression means that in relation to the common property or activity there must be a common part of the chemical structure which distinguishes the claimed compounds from any known compounds having the same property or activity.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-4"
+    },
+    {
+      "rule_id": "markush_unity_reconsideration",
+      "title": "Reconsider unity if Markush alternative lacks novelty",
+      "requirement": "If it can be shown that at least one Markush alternative is not novel, unity of invention should be reconsidered.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5"
+    },
+    {
+      "rule_id": "disregard_art_54_3_docs",
+      "title": "Disregard Art 54(3) documents in unity evaluation",
+      "requirement": "Documents cited under Art. 54(3) should be disregarded in the evaluation of unity of invention, since they cannot anticipate the inventive concept of the application under examination.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 7"
+    },
+    {
+      "rule_id": "raise_objection_clear_cases",
+      "title": "Raise unity objection in clear cases",
+      "requirement": "The objection [of lack of unity] should certainly be made and amendment insisted upon in clear cases.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8"
+    },
+    {
+      "rule_id": "avoid_narrow_literal_approach",
+      "title": "Do not raise unity objection on narrow basis",
+      "requirement": "The objection [of lack of unity] should neither be raised nor persisted in on the basis of a narrow, literal or academic approach.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8"
+    },
+    {
+      "rule_id": "consider_case_on_merits",
+      "title": "Consider unity cases on their merits",
+      "requirement": "Each case should be considered on its merits, the benefit of any doubt being given to the applicant.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8"
+    },
+    {
+      "rule_id": "provide_technical_reasoning",
+      "title": "Provide technical reasoning for lack of unity",
+      "requirement": "An objection of lack of unity should consist of logically presented, technical reasoning containing the basic considerations behind the finding of lack of unity.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8.1"
+    },
+    {
+      "rule_id": "highlight_technical_problems",
+      "title": "Highlight technical problems in unity objection",
+      "requirement": "The reasons should highlight the technical problem(s) addressed by the different inventions, unless it is perfectly clear from the remainder of the argumentation that the different inventions could not possibly be subsumed under an overall problem.",
+      "severity": "recommended",
+      "exceptions": [
+        "It is perfectly clear from the remainder of the argumentation that the different inventions could not possibly be subsumed under an overall problem"
+      ],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8.1"
+    },
+    {
+      "rule_id": "specify_special_features",
+      "title": "Specify special features in unity objection",
+      "requirement": "For each invention or group of inventions the reasons should also specify the special technical features making a contribution over the art or the common general inventive concept, as appropriate.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8.1"
+    },
+    {
+      "rule_id": "identify_relevant_passages",
+      "title": "Identify relevant passages in cited documents",
+      "requirement": "When the objection is based on a document, the relevant passages are appropriately identified.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part F - Chapter V-5, Section 8.1"
+    },
+    {
+      "rule_id": "no_apriori_objection_dependent",
+      "title": "No a priori unity objection for dependent claims",
+      "requirement": "No objection on account of lack of unity a priori is justified in respect of a dependent claim and the claim on which it depends, on the ground that the general concept they have in common is the subject-matter of the independent claim, which is also contained in the dependent claim.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Claim 1 claims a turbine rotor blade shaped in a specified manner, while claim 2 is for a 'turbine rotor blade as claimed in claim 1 and produced from alloy Z'."
+      ],
+      "reference": "Part F - Chapter V-5, Section 9"
+    },
+    {
+      "rule_id": "search_division_no_refusal_unity",
+      "title": "Search Division may not refuse for lack of unity",
+      "requirement": "The Search Division may neither refuse the application for lack of unity nor require limitation of the claims, but must inform the applicant that, if the search report is to be drawn up to cover those inventions present other than the first mentioned, then further search fees must be paid within two months.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 64(1), Rule 164(1)"
+    },
+    {
+      "rule_id": "examining_division_must_consider_unity",
+      "title": "Examining Division must always consider unity",
+      "requirement": "Whether or not the question of unity of invention has been raised by the Search Division, it must always be considered by the Examining Division.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-V, 11.1"
+    },
+    {
+      "rule_id": "require_limitation_for_lack_of_unity",
+      "title": "Applicant required to limit claims if unity lacking",
+      "requirement": "Whenever unity is found to be lacking, the applicant should be required to limit his claims in such a way as to overcome the objection, which means restricting them to a single searched invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-V, 11.1"
+    },
+    {
+      "rule_id": "refund_fees_if_unity_established",
+      "title": "Refund further search fees if unity given",
+      "requirement": "Insofar as the Examining Division finds that unity of invention is given, if the applicant has paid the further search fee(s) and requested a full or partial refund thereof, the Examining Division will order refund of the relevant further search fee(s).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "F-V, 11.3"
+    },
+    {
+      "rule_id": "issue_invitation_for_unsearched_inventions",
+      "title": "Issue invitation to pay fees for unsearched inventions",
+      "requirement": "If, during the international search, an objection of lack of unity has been raised and the applicant has neither taken the opportunity to have the other invention(s) searched by paying additional search fees for them, nor amended the claims so that they are limited to the invention searched, and the examiner agrees with the objection of the ISA, he will then proceed to issue an invitation under Rule 164(2) to pay search fees for any claimed invention in the application documents for which no additional search fee has been paid to the EPO, where it has acted as the ISA.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 164(2), F-V, 13.1"
+    },
+    {
+      "rule_id": "unity_independent_claims_category",
+      "title": "Unity requirement for independent claims in same category",
+      "requirement": "The requirement of unity has to be met by the subject-matter of the independent claims in the same category.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(2), Art. 82"
+    },
+    {
+      "rule_id": "special_technical_features_presence",
+      "title": "Special technical features must be present in each independent claim",
+      "requirement": "Special technical features relating to the single general inventive concept within the meaning of Rule 44 must be either implicitly or explicitly present in each of the independent claims.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(2), Art. 82, Rule 44"
+    },
+    {
+      "rule_id": "unity_interrelated_subject_matter",
+      "title": "Unity for interrelated subject-matter with same or corresponding features",
+      "requirement": "Several independent claims in the same category directed to interrelated subject-matter may meet the requirement of unity even if it appears that the claimed subject-matter is quite different, provided that the special technical features making a contribution over the prior art are the same or corresponding within the meaning of Rule 44.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "a transmitter claimed together with a corresponding receiver",
+        "a plug claimed with a corresponding socket"
+      ],
+      "reference": "Rule 43(2), Art. 82, Rule 44"
+    },
+    {
+      "rule_id": "unity_combination_subcombinations",
+      "title": "Lack of unity may arise for combination and sub-combination claims",
+      "requirement": "Even if the claimed sub-combinations define patentable subject-matter, and the combination claim includes all the features of the claimed sub-combinations, lack of unity of invention may still arise.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "claims characterised by a combination of elements (e.g. A+B+C), accompanied by claims relating to sub-combinations (e.g. A+B, A+C, B+C or A, B, C separately)"
+      ],
+      "reference": "Rule 43(2), Art. 82"
+    },
+    {
+      "rule_id": "objection_priority_rule43_art82",
+      "title": "Applicant cannot contest priority of Rule 43(2) vs Art 82 objections",
+      "requirement": "The applicant cannot contest which of these objections has priority.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Rule 43(2), Art. 82, T 1073/98"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the application relates to one invention or a group of inventions forming a single general inventive concept.",
+    "Confirm that the link between inventions is expressed via the same or corresponding special technical features.",
+    "Ensure special technical features define the contribution over the prior art for each claim.",
+    "Check that lack of clarity in claims is not used as the sole ground for rejecting unity.",
+    "Verify that different classification groups do not automatically imply a lack of unity.",
+    "Confirm that multiple claim categories are permitted if they meet Article 82 and Rule 44 requirements.",
+    "Ensure proliferation of independent claim sets is justified by specific circumstances under Rule 43(2).",
+    "Verify that expressions like 'specially adapted' are supported by actual technical suitability, not just wording.",
+    "Confirm that a manufacturing process is specially adapted if it results in the claimed product.",
+    "Check that a manufacturing process is not rejected for unity solely because it is not restricted to the claimed product.",
+    "Verify that an apparatus is specifically designed for a process if it is suitable for carrying it out, not merely capable.",
+    "Ensure intermediate and final products share the same essential structural element to establish unity.",
+    "Confirm that no non-new intermediate separates the claimed intermediate and final products in the process chain.",
+    "Verify that different intermediates for different structural parts of a final product are not claimed together for unity.",
+    "Check that Markush family intermediates correspond to compounds in the claimed final product family."
+  ],
+  "system_prompt_injection": "Apply the European Patent Office guidelines on unity of invention to ensure applications relate to a single general inventive concept linked by the same or corresponding special technical features. Determine unity based on technical relationships rather than classification groups, claim categories, or clarity issues, which alone do not justify objections. Require that processes, apparatuses, and products demonstrate specific adaptation or design suitability, rejecting mere capability or generic expressions like \"specially adapted\" as sufficient proof of unity. Strictly limit the proliferation of independent claim sets to exceptional circumstances defined in Rule 43 and ensure intermediate and final products share essential structural elements without non-new intervening steps. Enforce these mandatory and prohibited criteria to maintain rigorous compliance with Article 82 and Rule 44."
+}

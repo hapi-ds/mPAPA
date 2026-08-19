@@ -237,8 +237,69 @@ src/patent_system/
 ├── parsers/             # Source-specific parsers (DEPATISnet, ArXiv, etc.)
 ├── export/              # DOCX exporter with template support
 ├── monitoring/          # Background prior art monitoring scheduler
+├── reviewer/            # Independent Patent Reviewer (Rule Card system)
 └── gui/                 # NiceGUI web interface panels
 ```
+
+---
+
+## Patent Reviewer (Independent Module)
+
+mPAPA includes a standalone **Patent Reviewer** that evaluates patent applications against official examination guidelines — completely independent of the main drafting workflow.
+
+### How it works
+
+Pre-compiled **Rule Cards** (JSON) contain structured rules extracted from official patent office guidelines (EPO Guidelines for Examination, USPTO MPEP, etc.). When you review a patent, the local LLM receives the relevant rules in its system prompt — grounding it in the correct legal framework without hallucination.
+
+```
+Your patent text  →  Rule Card (e.g. EPO Claim Structure)  →  Local LLM  →  Findings report
+```
+
+### Available Rule Cards
+
+| Card | Jurisdiction | Rules | Coverage |
+|------|-------------|-------|----------|
+| `epo_claim_structure` | EP | 12 | Two-part form, Art. 84, Rule 43, dependent claims, clarity |
+| `epo_novelty` | EP | 9 | Art. 54, single-document test, ranges, selection, 2nd medical use |
+| `uspto_subject_matter` | US | 7 | §101, Alice/Mayo Step 1→2A→2B, software, natural products |
+| `uspto_novelty` | US | 8 | §102, anticipation, all-elements test, inherency, AIA grace period |
+
+More cards are produced by running the batch compiler against guideline PDFs (see `scripts/compile_rule_cards/`).
+
+### Usage
+
+1. Open the **Patent Review** tab in mPAPA
+2. Paste your claims/description, import a file, or click "Use Current Draft" (after the main workflow)
+3. Select which Rule Cards to apply (by jurisdiction/task)
+4. Click **Start Review** — findings appear with severity levels, suggestions, and legal references
+5. Export the review report as Markdown or DOCX
+
+The reviewer also integrates with the main workflow via the **"Review Draft"** button in the Draft Panel.
+
+### For developers: Producing new Rule Cards
+
+Rule Cards are compiled from official guideline PDFs using a local LLM (Qwen3.6-27B via vLLM). This is a maintainer tool — users just download pre-built cards.
+
+**The pipeline: Download → Translate → Compile → Review → Commit**
+
+Sources are always downloaded in their **original language** (German for DPMA, Japanese for JPO, Chinese for CNIPA, Korean for KIPO). Translation to English is handled automatically by the compiler LLM during extraction — no waiting for official English editions.
+
+```bash
+# 1. Download all guideline PDFs (checks for updates, skips unchanged)
+uv run python scripts/compile_rule_cards/download_sources.py
+
+# 2. Start vLLM with 27B model
+./scripts/start-vllm-27b.sh
+
+# 3. Compile a card (auto-translates non-English sources to English)
+uv run python scripts/compile_cards.py --jurisdiction EP --task inventive_step
+```
+
+**Configuration**: Edit `scripts/compile_rule_cards/sources.toml` to enable/disable jurisdictions or individual chapters.
+
+**Supported languages**: en, de, ja, zh, ko, fr (translation to English is automatic during compilation).
+
+See `TODO.md` for the full development roadmap.
 
 ---
 

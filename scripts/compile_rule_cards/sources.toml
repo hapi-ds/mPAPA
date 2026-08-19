@@ -1,0 +1,45 @@
+# Patent Examination Guidelines — Download & Compile Configuration
+#
+# Simple two-section config:
+#   [jurisdictions] — which countries to include (true/false)
+#   [chapters]      — which topics to include (true/false)
+#
+# The downloader fetches the COMBINATION: for each enabled jurisdiction × enabled chapter,
+# it looks up the actual URL in the internal registry (source_registry.py) and downloads it.
+#
+# Example: EP enabled + novelty enabled → downloads EPO Guidelines Part G Ch.VI
+#          JP enabled + novelty enabled → downloads JPO 審査基準 Part III Ch.2 (Japanese)
+#
+# Sources are always in their ORIGINAL language. Translation to English happens
+# automatically during rule card compilation.
+
+[jurisdictions]
+EP = true       # European Patent Office (English)
+US = true       # USPTO (English)
+PCT = true      # WIPO PCT Guidelines (English)
+JP = true       # Japan Patent Office (Japanese → translated to English)
+CN = false      # CNIPA China (Chinese → translated; URLs require manual acquisition)
+KR = false      # KIPO Korea (Korean → translated; URLs require manual acquisition)
+IN = false      # IPO India (English; dated 2019 manual)
+DE = false      # DPMA Germany (German → translated; largely overlaps with EPO)
+
+[chapters]
+novelty = true
+inventive_step = true
+claim_structure = true
+sufficiency = true
+unity = true
+subject_matter = true
+obviousness = true          # US-specific (maps to inventive_step for EP)
+written_description = true  # US-specific (maps to sufficiency for EP)
+enablement = true
+definiteness = true
+added_matter = true         # EP-specific (Art. 123(2))
+priority = true
+industrial_application = true
+double_patenting = true     # US-specific
+restriction = true          # US-specific
+opposition = true           # EP-specific
+description_format = true   # How to write description, drawings, abstract
+state_of_art = true         # What counts as prior art, effective dates
+non_prejudicial_disclosures = true  # Grace period / exceptions to prior art
