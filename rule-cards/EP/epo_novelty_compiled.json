@@ -1,0 +1,345 @@
+{
+  "card_id": "epo_novelty_compiled",
+  "jurisdiction": "EP",
+  "office": "EPO",
+  "source_document": "epo_novelty.pdf",
+  "task": "novelty",
+  "task_label": "Novelty Assessment",
+  "rules": [
+    {
+      "rule_id": "novelty_no_combination_prior_art",
+      "title": "Prohibition on combining separate prior art items",
+      "requirement": "It is not permissible to combine separate items of prior art together when considering novelty.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VI, 1"
+    },
+    {
+      "rule_id": "novelty_no_combination_embodiments",
+      "title": "Prohibition on combining embodiments without suggestion",
+      "requirement": "It is not permissible to combine separate items belonging to different embodiments described in one and the same document, unless such combination has specifically been suggested.",
+      "severity": "prohibited",
+      "exceptions": [
+        "unless such combination has specifically been suggested"
+      ],
+      "examples": [],
+      "reference": "G-VI, 1"
+    },
+    {
+      "rule_id": "novelty_implicit_features_disclosure",
+      "title": "Novelty destroyed by directly and unambiguously derivable subject-matter",
+      "requirement": "A document takes away the novelty of any claimed subject-matter derivable directly and unambiguously from that document including any features implicit to a person skilled in the art in what is expressly mentioned in the document.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "a disclosure of the use of rubber in circumstances where clearly its elastic properties are used even if this is not explicitly stated takes away the novelty of the use of an elastic material"
+      ],
+      "reference": "G-VI, 2"
+    },
+    {
+      "rule_id": "novelty_no_well_known_equivalents",
+      "title": "Prohibition on interpreting teaching as embracing well-known equivalents",
+      "requirement": "When considering novelty, it is not correct to interpret the teaching of a document as embracing well-known equivalents which are not disclosed in the documents.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VI, 2"
+    },
+    {
+      "rule_id": "novelty_enabling_disclosure_requirement",
+      "title": "Requirement for enabling disclosure to constitute state of the art",
+      "requirement": "Subject-matter described in a document can only be regarded as having been made available to the public, and therefore as comprised in the state of the art, if the information given therein to the skilled person is sufficient to enable him, at the relevant date of the document, to practise the technical teaching which is the subject of the document.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VI, 4"
+    },
+    {
+      "rule_id": "novelty_chemical_compound_preparation",
+      "title": "Chemical compound novelty requires preparation or separation enablement",
+      "requirement": "A chemical compound, the name or formula of which is mentioned in a prior-art document, is not thereby considered as known, unless the information in the document, together, where appropriate, with knowledge generally available on the relevant date of the document, enables it to be prepared and separated or, for instance in the case of a product of nature, only to be separated.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VI, 4"
+    },
+    {
+      "rule_id": "novelty_specific_disclosure_generic_claim",
+      "title": "Specific disclosure destroys novelty of generic claim",
+      "requirement": "A specific disclosure takes away the novelty of a generic claim embracing that disclosure.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "a disclosure of copper takes away the novelty of metal as a generic concept",
+        "one of rivets takes away the novelty of fastening means as a generic concept"
+      ],
+      "reference": "G-VI, 5"
+    },
+    {
+      "rule_id": "novelty_generic_disclosure_specific_example",
+      "title": "Generic disclosure does not usually destroy novelty of specific example",
+      "requirement": "A generic disclosure does not usually take away the novelty of any specific example falling within the terms of that disclosure.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "a disclosure of copper ... [does not take away] the novelty of any metal other than copper"
+      ],
+      "reference": "G-VI, 5"
+    },
+    {
+      "rule_id": "novelty_implicit_parameters_no_doubt",
+      "title": "Lack of novelty objection for implicit parameters requires no reasonable doubt",
+      "requirement": "An objection of lack of novelty based on implicit disclosure (where the skilled person would inevitably arrive at a result falling within the terms of the claim) should be raised by the examiner only where there can be no reasonable doubt as to the practical effect of the prior teaching.",
+      "severity": "recommended",
+      "exceptions": [
+        "for a second non-medical use, however, see G-VI, 7"
+      ],
+      "examples": [],
+      "reference": "G-VI, 6"
+    },
+    {
+      "rule_id": "novelty_parameters_burden_of_proof",
+      "title": "Burden of proof for distinguishing features in parameter-defined claims",
+      "requirement": "The burden of proof for an alleged distinguishing feature lies with the applicant. No benefit of doubt can be accorded if the applicant does not provide evidence in support of the allegations.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VI, 6"
+    },
+    {
+      "rule_id": "novelty_disregard_non_distinctive_use",
+      "title": "Disregard non-distinctive characteristics of intended use",
+      "requirement": "In determining novelty of the subject-matter of claims, particularly for claims directed to a physical entity, non-distinctive characteristics of a particular intended use should be disregarded.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "G-VI, 7"
+    },
+    {
+      "rule_id": "novelty_purity_conventional_means",
+      "title": "Known compound not novel due to purity if conventional",
+      "requirement": "A known compound is not rendered novel merely because it is available with a different degree of purity if the purity can be achieved by conventional means.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-3, Section 7"
+    },
+    {
+      "rule_id": "novelty_second_medical_use_exception",
+      "title": "Exception for second or further medical use under Art 54(5)",
+      "requirement": "Where a substance or composition is already known to have been used in a 'first medical use', it may still be patentable under Art. 54(5) for any second or further use in a method according to Art. 53(c), provided that said use is novel and inventive.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-3, Section 7.1"
+    },
+    {
+      "rule_id": "novelty_swiss_type_claim_date_limit",
+      "title": "Swiss-type claims prohibited for applications filed on or after 29 Jan 2011",
+      "requirement": "For applications filed on or after that date [29 January 2011], if the invention is characterised by a second (or further) therapeutic use of a medicament, such an invention cannot be expressed as a 'Swiss-type' claim.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-3, Section 7.1"
+    },
+    {
+      "rule_id": "novelty_medical_use_claim_formulation",
+      "title": "Formulation of further therapeutic use claims",
+      "requirement": "A claim directed to the further therapeutic use of a substance/composition should indicate the illness/disease to be treated, the nature of the therapeutic compound used for that purpose and, if relevant for establishing novelty and inventive step, the subject to be treated. If the further therapeutic use relates to a different therapy of the same disease using the same substance/composition, the claim should also define all technical features of the therapy giving rise to the desired technical effect.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-5, 7.1.2"
+    },
+    {
+      "rule_id": "novelty_mandatory_for_use_term",
+      "title": "Mandatory 'for use' term in medical use claims",
+      "requirement": "The presence of the term 'for use' is mandatory, to closely adhere to the wording of Art. 54(5).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-5, 7.1.2"
+    },
+    {
+      "rule_id": "novelty_lack_of_novelty_prior_art_disclosure",
+      "title": "Lack of novelty if prior art discloses suitable product",
+      "requirement": "If the prior art discloses either the product per se in a form which could be considered suitable for the claimed use, or its first medical application, claims 1 to 4 would lack novelty.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-7"
+    },
+    {
+      "rule_id": "novelty_purpose_related_product_construction",
+      "title": "Construction of purpose-related product claims lacking excluded use",
+      "requirement": "Purpose-related product claims which do not define a diagnostic use excluded from patentability under Art. 53(c) should be construed as claims directed to a product per se which is suitable for the claimed use.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Substance X or Composition comprising X for use in the diagnosis of disease Y, or for use in the 'in vitro'/'ex vivo' diagnosis of disease Y",
+        "Substance X or Composition comprising X for use as a contrast agent for imaging blood flow"
+      ],
+      "reference": "Part G - Chapter VI-8, Section 7.1.3"
+    },
+    {
+      "rule_id": "novelty_surgical_use_product_construction",
+      "title": "Construction of purpose-related product claims lacking excluded surgical use",
+      "requirement": "Purpose-related product claims which do not define a surgical use excluded from patentability under Art. 53(c) should be construed as claims directed to a product per se which is suitable for the claimed use.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Substance X or Composition comprising X for use in a method for hair removal by laser radiation"
+      ],
+      "reference": "Part G - Chapter VI-8, Section 7.1.4"
+    },
+    {
+      "rule_id": "novelty_dependent_claim_dependency",
+      "title": "Dependency wording in dependent claims under Art 54(5)",
+      "requirement": "The wording of the dependent claims must clearly reflect their dependency on the independent claim.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Substance X or Composition comprising X for use in the therapy of disease Y according to claim #",
+        "Substance X or Composition comprising X for use according to characterised in that/wherein other features claim #"
+      ],
+      "reference": "Part G - Chapter VI-8, Section 7.1.5"
+    },
+    {
+      "rule_id": "novelty_dependent_claim_reformulation",
+      "title": "Reformulation of incorrectly formulated dependent claims",
+      "requirement": "The claim should be reformulated as indicated above by inserting 'for use' between 'Composition' and 'according'.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Claim 1: Composition comprising X for use in the treatment of Y. Claim 2: Composition according to claim 1, comprising 5 mg X."
+      ],
+      "reference": "Part G - Chapter VI-8, Section 7.1.5"
+    },
+    {
+      "rule_id": "novelty_second_non_medical_use_technical_effect",
+      "title": "Novelty of second non-medical use based on technical effect",
+      "requirement": "A claim to the use of a known compound for a particular purpose (second non-medical use) which is based on a technical effect should be interpreted as including that technical effect as a functional technical feature. Accordingly, said claim is not open to objection under Art. 54(1), provided that such technical feature has not previously been made available to the public.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-9, Section 7.2"
+    },
+    {
+      "rule_id": "novelty_use_for_production_of_known_product",
+      "title": "Novelty of use for production of known product",
+      "requirement": "The novelty of the use of the known compound for the known production of a known product cannot be deduced from a new property of the produced product. In such a case, the use of a compound for the production of a product has to be interpreted as a process for production of the product with the compound. It can be regarded as novel only if the process of production as such is novel.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-9, Section 7.2"
+    },
+    {
+      "rule_id": "novelty_selection_individualised_disclosure",
+      "title": "Selection from single list lacks novelty",
+      "requirement": "A selection from a single list of specifically disclosed elements does not confer novelty.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-10, 8(i)"
+    },
+    {
+      "rule_id": "novelty_two_lists_principle",
+      "title": "Selection from two or more lists confers novelty",
+      "requirement": "If a selection from two or more lists of a certain length has to be made in order to arrive at a specific combination of features then the resulting combination of features, not specifically disclosed in the prior art, confers novelty.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "individual chemical compounds from a known generic formula whereby the compound selected results from the selection of specific substituents from two or more 'lists' of substituents",
+        "specific mixtures resulting from the selection of individual components from lists of components",
+        "starting materials for the manufacture of a final product",
+        "sub-ranges of several parameters from corresponding known ranges"
+      ],
+      "reference": "Part G - Chapter VI-10, 8(i)"
+    },
+    {
+      "rule_id": "novelty_subrange_criteria",
+      "title": "Criteria for novelty of selected sub-range",
+      "requirement": "A sub-range selected from a broader numerical range of the prior art is considered novel, if each of the following three criteria is satisfied: (a) the selected sub-range is narrow compared to the known range; (b) the selected sub-range is sufficiently far removed from any specific examples disclosed in the prior art and from the end-points of the known range; (c) the selected range is not an arbitrary specimen of the prior art, i.e. not a mere embodiment of the prior art, but another invention (purposive selection, new technical teaching).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-10, 8(ii)"
+    },
+    {
+      "rule_id": "novelty_effect_not_sufficient",
+      "title": "Effect alone does not confer novelty on sub-range",
+      "requirement": "An effect occurring only in the claimed sub-range cannot in itself confer novelty on that sub-range.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-10, 8(ii)"
+    },
+    {
+      "rule_id": "novelty_hidden_matter_not_prior_art",
+      "title": "Hidden matter not considered made available",
+      "requirement": "Matter that is 'hidden' in a prior art document, in the sense of being reconditely submerged rather than deliberately concealed, is not considered to have been made available to the public.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-11, 8(iii)"
+    },
+    {
+      "rule_id": "novelty_overlap_explicit_values",
+      "title": "Novelty destroyed by explicit values in overlap",
+      "requirement": "As to overlapping ranges or numerical ranges of physical parameters, novelty is destroyed by an explicitly mentioned end-point of the known range, explicitly mentioned intermediate values or a specific example of the prior art in the overlap.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-11, 8(iii)"
+    },
+    {
+      "rule_id": "novelty_overlap_skilled_person_contemplation",
+      "title": "Novelty lacking if skilled person seriously contemplates overlap",
+      "requirement": "If it can be fairly assumed that the skilled person, in the light of the technical facts and taking into account the general knowledge in the field to be expected from him, would seriously contemplate applying the technical teaching of the prior art document in the range of overlap, it must be concluded that no novelty exists.",
+      "severity": "prohibited",
+      "exceptions": [
+        "The prior art surprisingly contains a reasoned statement clearly dissuading the skilled person from choosing said range."
+      ],
+      "examples": [
+        "T 26/85: skilled person could not seriously contemplate working in the area of overlap due to reasoned statement dissuading from choosing said range."
+      ],
+      "reference": "Part G - Chapter VI-11, 8(iii)"
+    },
+    {
+      "rule_id": "novelty_chemical_formula_overlap",
+      "title": "Novelty for overlapping chemical formulae",
+      "requirement": "As far as overlapping chemical formulae are concerned, novelty is acknowledged if the claimed subject-matter is distinguished from the prior art in the range of overlap by a new technical element (new technical teaching), for example a specifically selected chemical residue which is covered in general terms by the prior art in the overlapping area, but which is not individualised in the prior art document.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-11, 8(iii)"
+    },
+    {
+      "rule_id": "novelty_chemical_overlap_implicit_disclosure",
+      "title": "Novelty lacking if overlap implicitly disclosed",
+      "requirement": "If the claimed subject-matter is not distinguished by a new technical element, it must be considered whether the skilled person would seriously contemplate working in the range of overlap and/or would accept that the area of overlap is directly and unambiguously disclosed in an implicit manner in the prior art. If the answer is yes, then novelty is lacking.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Part G - Chapter VI-11, 8(iii)"
+    }
+  ],
+  "review_checklist": [
+    "Verify that prior art items are not combined to assess novelty unless specifically suggested in the same document.",
+    "Confirm that novelty is destroyed only by subject-matter directly and unambiguously derivable from the prior art.",
+    "Ensure that well-known equivalents not disclosed in the prior art are not used to destroy novelty.",
+    "Check that the prior art document provides an enabling disclosure for the subject-matter to constitute state of the art.",
+    "Verify that chemical compounds are only considered known if their preparation or separation is enabled in the prior art.",
+    "Confirm that specific disclosures in prior art destroy the novelty of generic claims embracing those disclosures.",
+    "Ensure that generic disclosures in prior art do not automatically destroy the novelty of specific examples.",
+    "Verify that objections based on implicit parameters are raised only when there is no reasonable doubt.",
+    "Check that the applicant has provided evidence for any alleged distinguishing features in parameter-defined claims.",
+    "Ensure that non-distinctive characteristics of intended use are disregarded for physical entity claims.",
+    "Verify that known compounds are not considered novel solely due to purity achievable by conventional means.",
+    "Confirm that second medical use claims use the mandatory 'for use' wording and comply with Art 54(5).",
+    "Ensure that Swiss-type claims are not used for applications filed on or after 29 January 2011.",
+    "Verify that dependent claims under Art 54(5) clearly reflect their dependency on the independent claim."
+  ],
+  "system_prompt_injection": "Adhere strictly to the European Patent Office guidelines on novelty assessment by prohibiting the combination of separate prior art items or embodiments without explicit suggestion, and by rejecting interpretations that embrace undisclosed well-known equivalents. Ensure that novelty is only destroyed by subject-matter directly and unambiguously derivable from the prior art, including implicit features, while verifying that chemical compounds are enabled for preparation or separation. Apply the principle that specific disclosures destroy generic claims but generic disclosures usually do not destroy specific examples, and disregard non-distinctive intended use characteristics for physical entities. For medical use claims filed on or after 29 January 2011, prohibit Swiss-type claims and mandate the use of \"for use\" wording under Article 54(5), ensuring dependent claims clearly reflect their dependency. Place the burden of proof on the applicant for distinguishing features in parameter-defined claims and reject novelty objections based on implicit parameters unless there is no reasonable doubt."
+}
