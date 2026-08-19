@@ -292,10 +292,7 @@ uv run python scripts/compile_rule_cards/download_sources.py
 ./scripts/start-vllm-27b.sh
 
 # 3. Compile a card (auto-translates non-English sources to English)
-uv run python scripts/compile_cards.py \
-    --jurisdiction JP --task novelty_inventive_step \
-    --source scripts/compile_rule_cards/sources/JP/jpo_novelty_inventive_step.pdf \
-    --card-id jpo_novelty --language ja
+uv run python scripts/compile_cards.py --jurisdiction EP --task inventive_step
 ```
 
 **Configuration**: Edit `scripts/compile_rule_cards/sources.toml` to enable/disable jurisdictions or individual chapters.
