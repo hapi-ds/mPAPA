@@ -1,0 +1,134 @@
+{
+  "card_id": "uspto_novelty",
+  "version": "2026.1",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": {
+    "title": "Manual of Patent Examining Procedure (MPEP)",
+    "edition": "9th Edition, Rev. 07.2024",
+    "part": "Chapter 2100",
+    "chapter": "2131-2138",
+    "url": "https://www.uspto.gov/web/offices/pac/mpep/mpep-2100.html"
+  },
+  "task": "novelty",
+  "task_label": "Novelty / Anticipation (35 U.S.C. §102)",
+  "language": "en",
+  "translated_from": null,
+  "last_updated": "2026-08-19",
+  "tags": ["novelty", "102", "anticipation", "prior-art", "AIA", "first-to-file"],
+  "rules": [
+    {
+      "rule_id": "USPTO-102-1",
+      "title": "Novelty Requirement Under AIA §102(a)(1)",
+      "requirement": "A person shall be entitled to a patent unless the claimed invention was patented, described in a printed publication, or in public use, on sale, or otherwise available to the public before the effective filing date of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Grace period: Disclosures made within 1 year before filing by the inventor or by one who obtained the subject matter from the inventor do not constitute prior art (§102(b)(1))"
+      ],
+      "examples": null,
+      "reference": "35 U.S.C. §102(a)(1); MPEP §2152"
+    },
+    {
+      "rule_id": "USPTO-102-2",
+      "title": "Anticipation Standard — All Elements",
+      "requirement": "A claim is anticipated under §102 only if each and every element of the claim is found, either expressly or inherently, in a single prior art reference. It is NOT permitted to combine references to establish anticipation — that is an obviousness (§103) analysis.",
+      "severity": "mandatory",
+      "exceptions": [
+        "A reference that incorporates another by reference effectively becomes a single reference for anticipation purposes"
+      ],
+      "examples": {
+        "compliant": "Reference D1 explicitly describes elements A, B, C, and D of the claim in a single embodiment — claim is anticipated.",
+        "non_compliant": "Reference D1 shows A+B, reference D2 shows C+D — combining them is §103 obviousness, not §102 anticipation."
+      },
+      "reference": "MPEP §2131; In re Bond, 910 F.2d 831"
+    },
+    {
+      "rule_id": "USPTO-102-3",
+      "title": "Inherent Anticipation",
+      "requirement": "A prior art reference may anticipate a claim even without explicitly disclosing a feature, if that feature is necessarily present (inherent) in the reference's disclosure. The inherent feature must inevitably result from the disclosed process or composition — mere possibility is insufficient.",
+      "severity": "mandatory",
+      "exceptions": [
+        "The inherent feature need not be recognized or appreciated by the prior art author",
+        "Inherency cannot be based on what might result — only on what MUST result"
+      ],
+      "examples": {
+        "compliant": "Prior art describes alloy with exact composition X — the inevitable crystal structure is inherently disclosed even if not mentioned.",
+        "non_compliant": "Prior art describes a general process that might sometimes produce product Y — this is not inherent anticipation."
+      },
+      "reference": "MPEP §2112; Schering Corp. v. Geneva Pharms., 339 F.3d 1373"
+    },
+    {
+      "rule_id": "USPTO-102-4",
+      "title": "Printed Publication as Prior Art",
+      "requirement": "A reference qualifies as a 'printed publication' if it was sufficiently accessible to the public interested in the art. Factors include: indexing in a library, availability on the internet, distribution at a conference, or accessibility through commercial databases.",
+      "severity": "mandatory",
+      "exceptions": [
+        "A thesis stored in a university library is a printed publication if it is catalogued and publicly accessible",
+        "A document with restricted access (under NDA, internal corporate memo) is NOT a printed publication"
+      ],
+      "examples": null,
+      "reference": "MPEP §2128; In re Klopfenstein, 380 F.3d 1345"
+    },
+    {
+      "rule_id": "USPTO-102-5",
+      "title": "AIA §102(a)(2) — Earlier-Filed Applications",
+      "requirement": "A claimed invention is unpatentable if it was described in a patent or published application naming another inventor, filed before the effective filing date. This includes provisionals (for their disclosure content), PCT applications designating the US, and granted patents.",
+      "severity": "mandatory",
+      "exceptions": [
+        "§102(b)(2) exceptions: (A) disclosure obtained from inventor, (B) prior public disclosure by inventor, (C) common ownership/obligation to assign before filing"
+      ],
+      "examples": null,
+      "reference": "35 U.S.C. §102(a)(2); MPEP §2154"
+    },
+    {
+      "rule_id": "USPTO-102-6",
+      "title": "Effective Filing Date",
+      "requirement": "The effective filing date of a claimed invention is the earlier of: (a) the actual filing date of the application, or (b) the filing date of a prior application to which priority/benefit is claimed, if the prior application provides written description support for the claim under §112(a).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": {
+        "compliant": "Application filed 2025-06-01 claims priority to provisional filed 2024-06-01 which fully supports the claims — effective filing date is 2024-06-01.",
+        "non_compliant": "Priority claimed to a provisional that does not describe the specific claimed embodiment — effective filing date remains the actual filing date."
+      },
+      "reference": "35 U.S.C. §100(i); MPEP §2152.01"
+    },
+    {
+      "rule_id": "USPTO-102-7",
+      "title": "Genus-Species / Broad-Narrow Claims",
+      "requirement": "A prior art reference disclosing a species anticipates a genus claim encompassing that species. Conversely, a generic disclosure does NOT normally anticipate a specific species claim unless the species is clearly identified.",
+      "severity": "mandatory",
+      "exceptions": [
+        "A small genus (e.g., 3-4 members explicitly listed) may anticipate any one member",
+        "A 'picture claim' describing exactly the prior art embodiment is anticipated"
+      ],
+      "examples": {
+        "compliant": "Prior art discloses 'sodium chloride solution at 0.9%' — this anticipates a generic claim to 'saline solutions' encompassing 0.9% NaCl.",
+        "non_compliant": "Prior art generically discloses 'halide salts' — a specific claim to 'potassium iodide at pH 7.2' is not anticipated."
+      },
+      "reference": "MPEP §2131.02; In re Slayter, 276 F.2d 408"
+    },
+    {
+      "rule_id": "USPTO-102-8",
+      "title": "Enablement of Anticipating Reference",
+      "requirement": "A prior art reference must enable the subject matter it describes in order to anticipate. If a person skilled in the art could not make or use the disclosed invention without undue experimentation, the reference does not qualify as anticipating prior art.",
+      "severity": "mandatory",
+      "exceptions": [
+        "The reference need not enable the CLAIMED invention — only its own disclosure"
+      ],
+      "examples": null,
+      "reference": "MPEP §2131; In re LeGrice, 301 F.2d 929"
+    }
+  ],
+  "review_checklist": [
+    "Does each anticipation rejection identify a SINGLE reference containing ALL claim elements?",
+    "Is the effective filing date correctly determined (considering priority/provisional)?",
+    "Is the 1-year grace period properly accounted for (inventor's own disclosures)?",
+    "For inherent anticipation — is the feature shown to NECESSARILY result (not merely possibly)?",
+    "Is the prior art reference properly qualified (printed publication, patent, public use)?",
+    "For genus-species issues — is the direction of anticipation correct?",
+    "Does the anticipating reference enable its own disclosure?",
+    "Are §102(a)(2) prior art exceptions (common ownership, prior inventor disclosure) checked?",
+    "Is each claim element mapped to a specific passage in the reference?"
+  ],
+  "system_prompt_injection": "You are a senior USPTO patent examiner assessing novelty under 35 U.S.C. §102 (AIA). Apply the strict 'all elements' test: every limitation of the claim must be found in a SINGLE prior art reference, either expressly or inherently. Never combine references for a §102 rejection — that belongs under §103. Check the effective filing date carefully (priority claims, provisionals). Apply the 1-year grace period where the inventor's own disclosure predates filing. For inherent anticipation, the feature must necessarily be present — possibility is not enough. Map each claim element to a specific passage in the reference."
+}
