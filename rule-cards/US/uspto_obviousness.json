@@ -1,0 +1,1545 @@
+{
+  "card_id": "uspto_obviousness",
+  "jurisdiction": "US",
+  "office": "USPTO",
+  "source_document": "uspto_obviousness.pdf",
+  "task": "obviousness",
+  "task_label": "Obviousness",
+  "rules": [
+    {
+      "rule_id": "objective_evidence_evaluation",
+      "title": "Objective evidence must be evaluated by Office personnel",
+      "requirement": "Objective evidence relevant to the issue of obviousness must be evaluated by Office personnel.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "evidence of commercial success",
+        "long-felt but unsolved needs",
+        "failure of others",
+        "unexpected results"
+      ],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "graham_inquiries_analysis",
+      "title": "Graham factual inquiries must be analyzed",
+      "requirement": "These factual inquiries, as well as secondary considerations when present, must be analyzed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Determining the scope and content of the prior art",
+        "Ascertaining the differences between the claimed invention and the prior art",
+        "Resolving the level of ordinary skill in the pertinent art"
+      ],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "written_record_factual_findings",
+      "title": "Written record must include findings of fact",
+      "requirement": "When making an obviousness rejection, Office personnel must therefore ensure that the written record includes findings of fact concerning the state of the art and the teachings of the references applied.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "explanation_for_rejection",
+      "title": "Explanation must support obviousness rejection",
+      "requirement": "Once the findings of fact are articulated, Office personnel must provide an explanation to support an obviousness rejection under 35 U.S.C. 103.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "applicant_notification_reasons",
+      "title": "Applicant must be notified of rejection reasons",
+      "requirement": "35 U.S.C. 132 requires that the applicant be notified of the reasons for the rejection of the claim so that the applicant can decide how best to proceed.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "claim_scope_determination",
+      "title": "Scope of claimed invention must be clearly determined",
+      "requirement": "The scope of the claimed invention must be clearly determined by giving the claims the “broadest reasonable interpretation consistent with the specification.”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "search_scope_determination",
+      "title": "Office personnel must determine search scope",
+      "requirement": "Once the scope of the claimed invention is determined, Office personnel must then determine what to search for and where to search.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "obviousness_rejection_skill_level_indication",
+      "title": "Obviousness rejection must indicate level of ordinary skill",
+      "requirement": "Any obviousness rejection should include, either explicitly or implicitly in view of the prior art applied, an indication of the level of ordinary skill.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.03"
+    },
+    {
+      "rule_id": "obviousness_determination_post_graham",
+      "title": "Must determine obviousness after Graham inquiries",
+      "requirement": "Once the Graham factual inquiries are resolved, Office personnel must determine whether the claimed invention would have been obvious as of the relevant time to one of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141 III"
+    },
+    {
+      "rule_id": "must_determine_obviousness_post_graham",
+      "title": "Determine obviousness after Graham inquiries",
+      "requirement": "Once the Graham factual inquiries are resolved, Office personnel must determine whether the claimed invention would have been obvious as of the relevant time to one of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "must_explain_differences_obvious",
+      "title": "Explain why differences are obvious",
+      "requirement": "Office personnel must explain why the difference(s) between the prior art and the claimed invention would have been obvious to one of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "must_articulate_reasoning",
+      "title": "Articulate reasoning for obviousness",
+      "requirement": "Rejections on obviousness cannot be sustained by mere conclusory statements; instead, there must be some articulated reasoning with some rational underpinning to support the legal conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "should_consider_other_rationales",
+      "title": "Consider other rationales for obviousness",
+      "requirement": "Office personnel should also consider whether one or more of the other rationales set forth below supports a conclusion of obviousness.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141"
+    },
+    {
+      "rule_id": "prior_art_102_includes_103",
+      "title": "Prior art under § 102 is available for § 103 rejections",
+      "requirement": "Subject matter that is prior art under 35 U.S.C. 102 can be used to support a rejection under section 103.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "admitted_prior_art_obviousness",
+      "title": "Admitted prior art usable for obviousness",
+      "requirement": "Admitted prior art can be relied upon for both anticipation and obviousness determinations, regardless of whether the admitted prior art would otherwise qualify as prior art under the statutory categories of 35 U.S.C. 102.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "non_prior_art_excluded_103",
+      "title": "Non-prior art cannot be used for obviousness",
+      "requirement": "If it is established that a disclosure does not qualify as prior art under an appropriate section of 35 U.S.C. 102, then the disclosure is also not prior art that can be used in an obviousness rejection.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "A 35 U.S.C. 102(a)(2) reference overcome by submitting a declaration under 37 CFR 1.130(a) cannot be used in an obviousness rejection.",
+        "A pre-AIA 35 U.S.C. 102(a) reference overcome by submitting a declaration under 37 CFR 1.131 cannot be used in an obviousness rejection."
+      ],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "avoid_hindsight_temporal_focus",
+      "title": "Determine prior art content at relevant time to avoid hindsight",
+      "requirement": "The content of the prior art is determined at the relevant time (before the effective filing date for AIA; at the time the invention was made for pre-AIA) to avoid impermissible hindsight.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "pre_aia_common_ownership_burden",
+      "title": "Burden to establish common ownership for pre-AIA § 103(c)",
+      "requirement": "An applicant subject to pre-AIA 35 U.S.C. 102 who wants to rely on pre-AIA 35 U.S.C. 103(c) to overcome an obviousness rejection has the burden of establishing that subject matter which only qualifies as prior art under subsection (e), (f) or (g) of pre-AIA 35 U.S.C. 102 used in a rejection under pre-AIA 35 U.S.C. 103(a) and the claimed invention were, at the time the invention was made, owned by the same person or subject to an obligation of assignment to the same person.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "pre_aia_joint_research_burden",
+      "title": "Burden to establish joint research for pre-AIA § 103(c)",
+      "requirement": "An applicant who wants to rely on the joint research provisions of pre-AIA 35 U.S.C. 103(c) has the burden of establishing the conditions of pre-AIA 35 U.S.C. 103(c).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "joint_research_agreement_requirements",
+      "title": "Requirements to establish joint research agreement under pre-AIA 103(c)",
+      "requirement": "An applicant who wants to rely on the joint research provisions of pre-AIA 35 U.S.C. 103(c) has the burden of establishing that: (A) the claimed invention was made by or on behalf of parties to a joint research agreement that was in effect on or before the date the claimed invention was made; (B) the claimed invention was made as a result of activities undertaken within the scope of the joint research agreement; and (C) the application for patent for the claimed invention discloses or is amended to disclose the names of the parties to the joint research agreement.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "pre-AIA 35 U.S.C. 103(c)"
+    },
+    {
+      "rule_id": "reference_must_be_analogous_art",
+      "title": "Reference must be analogous art for 35 U.S.C. 103 rejection",
+      "requirement": "In order for a reference to be proper for use in an obviousness rejection under 35 U.S.C. 103, the reference must be analogous art to the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "non_analogous_art_prohibited",
+      "title": "Non-analogous art may not be used in 35 U.S.C. 103 rejection",
+      "requirement": "If a reference is not analogous art to the claimed invention, it may not be used in an obviousness rejection under 35 U.S.C. 103.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "examiner_must_determine_analogous_art",
+      "title": "Examiner must determine if reference is analogous art",
+      "requirement": "The examiner must determine whether a reference is analogous art to the claimed invention when analyzing the obviousness of the subject matter under examination.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "examiner_should_consider_application_disclosure",
+      "title": "Examiner should consider application disclosure for field of endeavor",
+      "requirement": "When determining whether the “relevant field of endeavor” test is met, the examiner should consider “explanations of the invention’s subject matter in the patent application, including the embodiments, function, and structure of the claimed invention.”",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "examiner_must_consider_reference_disclosure",
+      "title": "Examiner must consider reference disclosure in view of circumstances",
+      "requirement": "The examiner must consider the disclosure of each reference “in view of the ‘the reality of the circumstances.’”",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.01"
+    },
+    {
+      "rule_id": "reasonably_pertinent_test",
+      "title": "Reference must be reasonably pertinent to problem",
+      "requirement": "In order for a reference to be 'reasonably pertinent' to the problem, it must 'logically [] have commended itself to an inventor's attention in considering his problem.'",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2141.01(a)"
+    },
+    {
+      "rule_id": "outside_field_pertinence",
+      "title": "Outside field reference pertinence test",
+      "requirement": "A reference outside of the field of endeavor is reasonably pertinent if a person of ordinary skill would have consulted it and applied its teachings when faced with the problem that the inventor was trying to solve.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2141.01(a)"
+    },
+    {
+      "rule_id": "non_analogous_art_rejection",
+      "title": "Non-analogous art cannot be used for rejection",
+      "requirement": "A prior art reference not in the same field of endeavor as the claimed invention must be reasonably pertinent to the problem to be solved in order to qualify as analogous art and be applied in an obviousness rejection.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2141.01(a)"
+    },
+    {
+      "rule_id": "consider_invention_as_whole",
+      "title": "Claimed invention must be considered as a whole",
+      "requirement": "In determining the differences between the prior art and the claims, the question under 35 U.S.C. 103 is not whether the differences themselves would have been obvious, but whether the claimed invention as a whole would have been obvious.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Schenck v. Nortron Corp.: Claims directed to a vibratory testing machine comprising a holding structure, a base structure, and a supporting means which form 'a single integral and gaplessly continuous piece.' The court held that because the insight to eliminate dampening via a one-piece structure was contrary to expectations, the structure would not have been obvious.",
+        "In re Hirao: A three-step process for preparing sweetened foods where the first two steps were nonobvious. The court held that due to the admitted unobviousness of the first two steps, the subject matter as a whole would not have been obvious."
+      ],
+      "reference": "MPEP § 2141.02 I"
+    },
+    {
+      "rule_id": "prohibit_distilling_invention_gist",
+      "title": "Distilling invention to gist disregards as-a-whole requirement",
+      "requirement": "Distilling an invention down to the 'gist' or 'thrust' of an invention disregards the requirement of analyzing the subject matter 'as a whole.'",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "W.L. Gore & Assoc., Inc. v. Garlock, Inc.: Restricting consideration of the claims to a 10% per second rate of stretching of unsintered PTFE and disregarding other limitations resulted in treating claims as though they read differently than allowed.",
+        "Bausch & Lomb v. Barnes-Hind/Hydrocurve, Inc.: Focusing on the concept of forming ridgeless depressions while disregarding express limitations regarding the material and surface resulted in improper analysis.",
+        "Jones v. Hardy: Treating the advantage as the invention disregards the statutory requirement that the invention be viewed 'as a whole'.",
+        "Panduit Corp. v. Dennison Mfg. Co.: District court improperly distilled claims down to a one word solution to a problem."
+      ],
+      "reference": "MPEP § 2141.02 II"
+    },
+    {
+      "rule_id": "include_problem_source_in_whole_inquiry",
+      "title": "Discovering source of problem is part of as-a-whole inquiry",
+      "requirement": "A patentable invention may lie in the discovery of the source of a problem even though the remedy may be obvious once the source of the problem is identified. This is part of the 'subject matter as a whole' which should always be considered in determining obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141.02 III"
+    },
+    {
+      "rule_id": "discover_source_problem_whole_inquiry",
+      "title": "Discovery of problem source is part of 'as a whole' inquiry",
+      "requirement": "The discovery of the source of a problem is part of the 'subject matter as a whole' which should always be considered in determining the obviousness of an invention under 35 U.S.C. § 103.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Sponnoble: Inventor discovered cause of moisture transmission was through center plug, not just the remedy."
+      ],
+      "reference": "III. DISCOVERING SOURCE/CAUSE OF A PROBLEM IS PART OF “AS A WHOLE” INQUIRY"
+    },
+    {
+      "rule_id": "substantiate_discovery_source_problem",
+      "title": "Applicants must substantiate discovery of problem source",
+      "requirement": "Applicants who allege the inventor discovered the source of a problem must provide evidence substantiating the allegation, either by way of affidavits or declarations, or by way of a clear and persuasive assertion in the specification.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Wiseman: Unsubstantiated statement of counsel was insufficient.",
+        "In re Kaslow: Specification did not support argument that appellant discovered source of problem."
+      ],
+      "reference": "IV. APPLICANTS ALLEGING DISCOVERY OF A SOURCE OF A PROBLEM MUST PROVIDE SUBSTANTIATING EVIDENCE"
+    },
+    {
+      "rule_id": "inherent_properties_whole_inquiry",
+      "title": "Disclosed inherent properties are part of 'as a whole' inquiry",
+      "requirement": "In determining whether the invention as a whole would have been obvious under 35 U.S.C. 103, one must look not only to the subject matter literally recited in the claim but also to those properties of the subject matter which are inherent in the subject matter and are disclosed in the specification.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Antonie: Invention as a whole included inherent property that claimed devices maximized treatment capacity."
+      ],
+      "reference": "V. DISCLOSED INHERENT PROPERTIES ARE PART OF “AS A WHOLE” INQUIRY"
+    },
+    {
+      "rule_id": "no_obviousness_on_unknown_inherency",
+      "title": "Obviousness cannot be predicated on later-established inherency",
+      "requirement": "Obviousness cannot be predicated on what is not known at the relevant time, even if the inherency of a certain feature is later established.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Rijckaert"
+      ],
+      "reference": "V. DISCLOSED INHERENT PROPERTIES ARE PART OF “AS A WHOLE” INQUIRY"
+    },
+    {
+      "rule_id": "prior_art_considered_in_its_entirety",
+      "title": "Prior art must be considered in its entirety",
+      "requirement": "A prior art reference must be considered in its entirety, i.e., as a whole, including portions that would lead away from the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "W.L. Gore & Assoc., Inc. v. Garlock, Inc., 721 F.2d 1540, 220 USPQ 303 (Fed. Cir. 1983)"
+      ],
+      "reference": "MPEP § 2141.02"
+    },
+    {
+      "rule_id": "examiner_must_ascertain_posk",
+      "title": "Examiner must ascertain obviousness to POSITA",
+      "requirement": "The examiner must ascertain what would have been obvious as of the relevant time to one of ordinary skill in the art, and not to the inventor, a judge, a layman, those skilled in remote arts, or to geniuses in the art at hand.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2141.03"
+    },
+    {
+      "rule_id": "examiner_must_set_prima_facie_case",
+      "title": "Examiner must set forth prima facie case",
+      "requirement": "The patent examiner must first set forth a prima facie case, supported by evidence, showing why the claims at issue would have been obvious in light of the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2142"
+    },
+    {
+      "rule_id": "examiner_must_assume_pos_of_ordinary_skill",
+      "title": "Examiner must step into shoes of person of ordinary skill in the art",
+      "requirement": "To reach a proper determination under 35 U.S.C. 103, the examiner must step backward in time and into the shoes worn by the hypothetical “person of ordinary skill in the art”.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 103"
+    },
+    {
+      "rule_id": "examiner_must_determine_obviousness_as_a_whole",
+      "title": "Examiner must determine if claimed invention as a whole would have been obvious",
+      "requirement": "In view of all factual information, the examiner must then make a determination whether the claimed invention “as a whole” would have been obvious at that time to a hypothetical person of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 103"
+    },
+    {
+      "rule_id": "examiner_must_avoid_impermissible_hindsight",
+      "title": "Impermissible hindsight must be avoided in obviousness determination",
+      "requirement": "However, impermissible hindsight must be avoided and the legal conclusion must be reached on the basis of the facts gleaned from the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 103"
+    },
+    {
+      "rule_id": "examiner_must_present_convincing_reasoning",
+      "title": "Examiner must present convincing line of reasoning for obviousness",
+      "requirement": "To support the conclusion that the claimed invention is directed to obvious subject matter, either the references must expressly or impliedly suggest the claimed invention or the examiner must present a convincing line of reasoning as to why the artisan would have found the claimed invention to have been obvious in light of the teachings of the references.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Ex parte Clapp, 227 USPQ 972, 973"
+    },
+    {
+      "rule_id": "examiner_should_set_forth_rejection_details",
+      "title": "Examiner should set forth relevant teachings, differences, and rationale",
+      "requirement": "After indicating that the rejection is under 35 U.S.C. 103, the examiner should set forth in the Office action: (A) the relevant teachings of the prior art relied upon, preferably with reference to the relevant column or page number(s) and line number(s) where appropriate, (B) the difference or differences in the claim over the applied reference(s), (C) the proposed modification of the applied reference(s) necessary to arrive at the claimed subject matter, and (D) an explanation as to why the claimed invention would have been obvious to one of ordinary skill in the art at the relevant time.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "35 U.S.C. 103"
+    },
+    {
+      "rule_id": "reference_should_be_positively_included",
+      "title": "Relied upon reference should be positively included in rejection statement",
+      "requirement": "Where a reference is relied on to support a rejection, whether or not in a minor capacity, that reference should be positively included in the statement of the rejection.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Hoch, 428 F.2d 1341, 1342 n.3"
+    },
+    {
+      "rule_id": "explicit_articulation_of_reasons",
+      "title": "Analysis supporting rejection under 35 U.S.C. 103 should be made explicit",
+      "requirement": "The analysis supporting a rejection under 35 U.S.C. 103 should be made explicit.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "no_conclusory_statements",
+      "title": "Rejections must have articulated reasoning with rational underpinning",
+      "requirement": "Rejections on obviousness cannot be sustained with mere conclusory statements; instead, there must be some articulated reasoning with some rational underpinning to support the legal conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "consider_evidence_of_patentability",
+      "title": "Examiner must consider evidence supporting patentability",
+      "requirement": "If the examiner determines there is factual support for rejecting the claimed invention under 35 U.S.C. 103, the examiner must then consider any evidence supporting the patentability of the claimed invention, such as any evidence in the specification or any other evidence submitted by the applicant.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "preponderance_of_evidence_standard",
+      "title": "Examiner must provide evidence showing prima facie case is more probable than not",
+      "requirement": "With regard to rejections under 35 U.S.C. 103, the examiner must provide evidence which as a whole shows that the legal determination sought to be proved (i.e., a prima facie case of obviousness has been established) is more probable than not.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "consider_applicant_submitted_evidence",
+      "title": "Examiner must consider patentability in light of applicant's evidence",
+      "requirement": "When an applicant properly submits evidence, whether in the specification as originally filed, prior to a rejection, or in reply to a rejection, the examiner must consider the patentability of the claims in light of the evidence.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "decision_based_on_all_evidence",
+      "title": "Decision on patentability must be based on consideration of all evidence",
+      "requirement": "The decision on patentability must be made based upon consideration of all the evidence, including the evidence submitted by the examiner and the evidence submitted by the applicant.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "rejection_based_on_totality_of_evidence",
+      "title": "Decision to maintain rejection must show basis on totality of evidence",
+      "requirement": "A decision to make or maintain a rejection in the face of all the evidence must show that it was based on the totality of the evidence.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "evaluate_rebuttal_with_facts",
+      "title": "Rebuttal evidence must be evaluated along with facts of obviousness",
+      "requirement": "Facts established by rebuttal evidence must be evaluated along with the facts on which the conclusion of obviousness was reached, not against the conclusion itself.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2142"
+    },
+    {
+      "rule_id": "provide_reasoned_explanation",
+      "title": "Office personnel must provide reasoned explanation for rejection",
+      "requirement": "When setting forth a rejection, Office personnel are to continue to make appropriate findings of fact as explained in MPEP § 2141 and § 2143, and must provide a reasoned explanation as to why the invention as claimed would have been obvious.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "provide_reasoned_explanation_obviousness",
+      "title": "Requirement for reasoned explanation of obviousness",
+      "requirement": "Office personnel... must provide a reasoned explanation as to why the invention as claimed would have been obvious to a person of ordinary skill in the art at the relevant time.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "rationale_must_link_facts_to_conclusion",
+      "title": "Rationale must link factual findings to legal conclusion",
+      "requirement": "Any rationale employed must provide a link between the factual findings and the legal conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "factual_findings_required_for_rationales",
+      "title": "Appropriate factual findings required to apply rationales",
+      "requirement": "It remains Office policy that appropriate factual findings are required in order to apply the enumerated rationales properly.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "resolve_graham_inquiries_for_combination",
+      "title": "Resolve Graham inquiries for combination rationale",
+      "requirement": "To reject a claim based on this rationale, Office personnel must resolve the Graham factual inquiries.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 A"
+    },
+    {
+      "rule_id": "articulate_prior_art_elements_finding",
+      "title": "Articulate finding that prior art included each element",
+      "requirement": "Office personnel must articulate... a finding that the prior art included each element claimed, although not necessarily in a single prior art reference, with the only difference between the claimed invention and the prior art being the lack of actual combination of the elements in a single prior art reference;",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 A(1)"
+    },
+    {
+      "rule_id": "articulate_combination_by_known_methods",
+      "title": "Articulate finding of combination by known methods",
+      "requirement": "Office personnel must articulate... a finding that one of ordinary skill in the art could have combined the elements as claimed by known methods, and that in combination, each element merely performs the same function as it does separately;",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 A(2)"
+    },
+    {
+      "rule_id": "articulate_predictable_results_finding",
+      "title": "Articulate finding that results were predictable",
+      "requirement": "Office personnel must articulate... a finding that one of ordinary skill in the art would have recognized that the results of the combination were predictable;",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 A(3)"
+    },
+    {
+      "rule_id": "articulate_additional_graham_findings",
+      "title": "Articulate additional necessary Graham findings",
+      "requirement": "Office personnel must articulate... whatever additional findings based on the Graham factual inquiries may be necessary, in view of the facts of the case under consideration, to explain a conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 A(4)"
+    },
+    {
+      "rule_id": "predictable_results_required_for_combination",
+      "title": "Combination rejection requires predictable results",
+      "requirement": "A proper rejection based on the rationale that the claimed invention is a combination of prior art elements also includes a finding that results flowing from the combination would have been predictable to a person of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143, subsection I.A.(3)"
+    },
+    {
+      "rule_id": "prohibit_rejection_if_unpredictable",
+      "title": "Do not enter rejection if results unpredictable",
+      "requirement": "If results would not have been predictable, Office personnel should not enter an obviousness rejection using the combination of prior art elements rationale, and should withdraw such a rejection if it has been made.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143, subsection I.A.(3)"
+    },
+    {
+      "rule_id": "articulate_reasoning_for_rejection",
+      "title": "Must articulate reasoning for obviousness rejection",
+      "requirement": "Office personnel should continue to provide a reasoned explanation for every obviousness rejection.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2141, subsection III"
+    },
+    {
+      "rule_id": "resolve_graham_inquiries_substitution",
+      "title": "Must resolve Graham inquiries for substitution rationale",
+      "requirement": "To reject a claim based on this rationale, Office personnel must resolve the Graham factual inquiries.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "articulate_substitution_findings",
+      "title": "Must articulate specific findings for substitution",
+      "requirement": "Then, Office personnel must articulate the following: (1) a finding that the prior art contained a device (method, product, etc.) which differed from the claimed device by the substitution of some components (step, element, etc.) with other components; (2) a finding that the substituted components and their functions were known in the art; (3) a finding that one of ordinary skill in the art could have substituted one known element for another, and the results of the substitution would have been predictable; and (4) whatever additional findings based on the Graham factual inquiries may be necessary, in view of the facts of the case under consideration, to explain a conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "prohibit_substitution_without_findings",
+      "title": "Cannot use substitution rationale if findings missing",
+      "requirement": "If any of these findings cannot be made, then this rationale cannot be used to support a conclusion that the claim would have been obvious to one of ordinary skill in the art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143"
+    },
+    {
+      "rule_id": "motivation_to_modify_lead_compound",
+      "title": "Motivation required to modify lead compound",
+      "requirement": "Obviousness based on structural similarity can be proved by identification of some motivation that would have led one of ordinary skill in the art to select and then modify a known compound (i.e. a lead compound) in a particular way to achieve the claimed compound.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Eisai, 533 F.3d at 1357"
+    },
+    {
+      "rule_id": "sufficiently_close_relationship_expectation",
+      "title": "Sufficiently close relationship creates expectation",
+      "requirement": "It is sufficient to show that the claimed and prior art compounds possess a ‘sufficiently close relationship . . . to create an expectation,’ in light of the totality of the prior art, that the new compound will have ‘similar properties’ to the old.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Eisai, 533 F.3d at 1357"
+    },
+    {
+      "rule_id": "reason_to_select_lead_compound",
+      "title": "Reason required to select specific lead compound",
+      "requirement": "There must be some reason for starting with that particular lead compound other than the mere fact that the “lead compound” exists.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "Altana Pharma AG v. Teva Pharm. USA, Inc., 566 F.3d 999, 1007"
+    },
+    {
+      "rule_id": "resolve_graham_inquiries_for_improvement",
+      "title": "Resolve Graham inquiries for known technique improvement",
+      "requirement": "To reject a claim based on the rationale of using a known technique to improve similar devices, Office personnel must resolve the Graham factual inquiries.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 C"
+    },
+    {
+      "rule_id": "articulate_base_device_finding",
+      "title": "Find prior art base device for improvement",
+      "requirement": "Office personnel must articulate a finding that the prior art contained a 'base' device (method, or product) upon which the claimed invention can be seen as an 'improvement.'",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 C(1)"
+    },
+    {
+      "rule_id": "articulate_comparable_device_finding",
+      "title": "Find comparable device improved in same way",
+      "requirement": "Office personnel must articulate a finding that the prior art contained a 'comparable' device (method, or product that is not the same as the base device) that has been improved in the same way as the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 C(2)"
+    },
+    {
+      "rule_id": "articulate_predictable_application_finding",
+      "title": "Find predictable application of improvement technique",
+      "requirement": "Office personnel must articulate a finding that one of ordinary skill in the art could have applied the known 'improvement' technique in the same way to the 'base' device (method, or product) and the results would have been predictable to one of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 C(3)"
+    },
+    {
+      "rule_id": "prohibit_obviousness_if_beyond_skill",
+      "title": "Not obvious if application beyond skill of artisan",
+      "requirement": "If the actual application of the technique would have been beyond the skill of one of ordinary skill in the art, then using the technique would not have been obvious.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 C (citing KSR)"
+    },
+    {
+      "rule_id": "prohibit_rationale_if_findings_missing",
+      "title": "Cannot use rationale if findings cannot be made",
+      "requirement": "If any of the required findings (base device, comparable device, predictable application, additional Graham findings) cannot be made, then this rationale cannot be used to support a conclusion that the claim would have been obvious to one of ordinary skill in the art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 C"
+    },
+    {
+      "rule_id": "apply_known_technique_predictable_results",
+      "title": "Rationale for applying known technique to known device",
+      "requirement": "To reject a claim based on this rationale, Office personnel must resolve the Graham factual inquiries. Then, Office personnel must articulate the following: (1) a finding that the prior art contained a “base” device (method, or product) upon which the claimed invention can be seen as an “improvement;” (2) a finding that the prior art contained a known technique that is applicable to the base device (method, or product); (3) a finding that one of ordinary skill in the art would have recognized that applying the known technique would have yielded predictable results and resulted in an improved system; and (4) whatever additional findings based on the Graham factual inquiries may be necessary, in view of the facts of the case under consideration, to explain a conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Dann v. Johnston: Applying account number tracking technique to bank check processing system to track expenditure categories."
+      ],
+      "reference": "MPEP § 2143 D"
+    },
+    {
+      "rule_id": "known_technique_ordinary_capability",
+      "title": "Known technique as ordinary capability of POSITA",
+      "requirement": "The rationale to support a conclusion that the claim would have been obvious is that a particular known technique was recognized as part of the ordinary capabilities of one skilled in the art. One of ordinary skill in the art would have been capable of applying this known technique to a known device (method, or product) that was ready for improvement and the results would have been predictable to one of ordinary skill in the art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 D"
+    },
+    {
+      "rule_id": "rationale_failure_if_findings_missing",
+      "title": "Prohibition of rationale if required findings absent",
+      "requirement": "If any of these findings cannot be made, then this rationale cannot be used to support a conclusion that the claim would have been obvious to one of ordinary skill in the art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 D"
+    },
+    {
+      "rule_id": "obvious_to_try_rationale_requirements",
+      "title": "Requirements for 'Obvious to Try' Obviousness Rejection",
+      "requirement": "To reject a claim based on this rationale, Office personnel must resolve the Graham factual inquiries. Then, Office personnel must articulate the following: (1) a finding that at the relevant time, there had been a recognized problem or need in the art, which may include a design need or market pressure to solve a problem; (2) a finding that there had been a finite number of identified, predictable potential solutions to the recognized need or problem; (3) a finding that one of ordinary skill in the art could have pursued the known potential solutions with a reasonable expectation of success; and (4) whatever additional findings based on the Graham factual inquiries may be necessary, in view of the facts of the case under consideration, to explain a conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 E"
+    },
+    {
+      "rule_id": "obvious_to_try_failure_condition",
+      "title": "Prohibition of 'Obvious to Try' Rationale if Findings Fail",
+      "requirement": "If any of these findings cannot be made, then this rationale cannot be used to support a conclusion that the claim would have been obvious to one of ordinary skill in the art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143 E"
+    },
+    {
+      "rule_id": "common_sense_reasoned_explanation",
+      "title": "Reasoned explanation required for common sense",
+      "requirement": "A reasoned explanation that avoids conclusory generalizations is required to use common sense in an obviousness analysis.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "B/E Aerospace, Inc. v. C&D Zodiac, Inc. (properly accompanied by reasoned analysis and evidentiary support)",
+        "Arendi v. Apple (finding that the Board had not provided a reasoned analysis)"
+      ],
+      "reference": "In re Kahn, 441 F.3d 977; DyStar Textilfarben GmbH v. C.H. Patrick Co., 464 F.3d 1356"
+    },
+    {
+      "rule_id": "common_sense_evidentiary_support",
+      "title": "Evidentiary support required for common sense",
+      "requirement": "The invocation of common sense must be supported by the evidence of record to show why it would be obvious.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "B/E Aerospace, Inc. v. C&D Zodiac, Inc. (invocation properly accompanied by evidentiary support)"
+      ],
+      "reference": "B/E Aerospace, Inc. v. C&D Zodiac, Inc., 962 F.3d 1373"
+    },
+    {
+      "rule_id": "design_incentives_graham_inquiries",
+      "title": "Resolve Graham inquiries for design incentives",
+      "requirement": "To reject a claim based on design incentives or market forces, Office personnel must resolve the Graham factual inquiries.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 F"
+    },
+    {
+      "rule_id": "design_incentives_articulate_findings",
+      "title": "Articulate specific findings for design incentives",
+      "requirement": "Office personnel must articulate findings that: (1) prior art included a similar device; (2) design incentives or market forces prompted adaptation; (3) differences were encompassed in known variations; (4) one of ordinary skill could have implemented the variation predictably; and (5) any additional necessary findings.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Dann v. Johnston (artisan recognized similar class of problem and known solutions)",
+        "Leapfrog Enterprises, Inc. v. Fisher-Price, Inc."
+      ],
+      "reference": "MPEP § 2143 F"
+    },
+    {
+      "rule_id": "design_incentives_predictability",
+      "title": "Variation must be predictable to POSITA",
+      "requirement": "The claimed variation of the prior art must be predictable to one of ordinary skill in the art in view of the identified design incentives or other market forces.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 F"
+    },
+    {
+      "rule_id": "design_incentives_failure_to_find",
+      "title": "Rationale invalid if findings cannot be made",
+      "requirement": "If any of the required findings regarding design incentives or market forces cannot be made, then this rationale cannot be used to support a conclusion that the claim would have been obvious.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143 F"
+    },
+    {
+      "rule_id": "resolve_graham_factual_inquiries",
+      "title": "Office personnel must resolve Graham factual inquiries",
+      "requirement": "To reject a claim based on this rationale, Office personnel must resolve the Graham factual inquiries.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143.01"
+    },
+    {
+      "rule_id": "articulate_tsm_and_expectation",
+      "title": "Must articulate TSM, expectation of success, and additional findings",
+      "requirement": "Then, Office personnel must articulate the following: (1) a finding that there was some teaching, suggestion, or motivation, either in the references themselves or in the knowledge generally available to one of ordinary skill in the art, to modify the reference or to combine reference teachings; (2) a finding that there was reasonable expectation of success; and (3) whatever additional findings based on the Graham factual inquiries may be necessary, in view of the facts of the case under consideration, to explain a conclusion of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143.01"
+    },
+    {
+      "rule_id": "rationale_invalid_if_findings_missing",
+      "title": "Rationale cannot be used if required findings cannot be made",
+      "requirement": "If any of these findings cannot be made, then this rationale cannot be used to support a conclusion that the claim would have been obvious to one of ordinary skill in the art.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143.01"
+    },
+    {
+      "rule_id": "weigh_conflicting_prior_art",
+      "title": "Examiner must weigh suggestive power of conflicting references",
+      "requirement": "Where the teachings of two or more prior art references conflict, the examiner must weigh the power of each reference to suggest solutions to one of ordinary skill in the art, considering the degree to which one reference might accurately discredit another.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Young, 927 F.2d 588 (Fed. Cir. 1991)"
+      ],
+      "reference": "MPEP § 2143.01 II"
+    },
+    {
+      "rule_id": "reasonable_expectation_of_success_required",
+      "title": "Obviousness requires reasonable expectation of success",
+      "requirement": "Where there is a reason to modify or combine the prior art to achieve the claimed invention, the claims may be rejected as prima facie obvious provided there is also a reasonable expectation of success.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Merck & Co., Inc., 800 F.2d 1091 (Fed. Cir. 1986)",
+        "Ex parte Blanc, 13 USPQ2d 1383 (Bd. Pat. App. & Inter. 1989)"
+      ],
+      "reference": "MPEP § 2143.02"
+    },
+    {
+      "rule_id": "obviousness_inclusion_reasonable_expectation",
+      "title": "Obviousness rejection must indicate reasonable expectation of success",
+      "requirement": "Any obviousness rejection should include, either explicitly or implicitly, an indication of a reasonable expectation of success.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143.02"
+    },
+    {
+      "rule_id": "predictability_degree_required",
+      "title": "At least some degree of predictability is required for obviousness",
+      "requirement": "Obviousness does not require absolute predictability, but at least some degree of predictability is required.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143.02"
+    },
+    {
+      "rule_id": "consider_all_claim_limitations",
+      "title": "Examiners must consider all claim limitations",
+      "requirement": "Examiners must consider all claim limitations when determining patentability of an invention over the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2143.03"
+    },
+    {
+      "rule_id": "indefinite_limitations_must_be_considered",
+      "title": "Indefinite claim limitations must be considered in obviousness analysis",
+      "requirement": "A claim limitation which is considered indefinite cannot be disregarded. If a claim is subject to more than one interpretation, at least one of which would render the claim unpatentable over the prior art, the examiner should reject the claim as indefinite under 35 U.S.C. 112(b) or pre-AIA 35 U.S.C. 112, second paragraph and should reject the claim over the prior art based on the interpretation of the claim that renders the prior art applicable.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143.03 I"
+    },
+    {
+      "rule_id": "no_speculative_interpretation_for_obviousness",
+      "title": "Examiners must not base obviousness rejections on speculative interpretations",
+      "requirement": "An examiner should not simply speculate about the meaning of the claim language and then enter an obviousness rejection in view of that speculative interpretation. A claim should not be rejected over prior art just because it is indefinite. Although a claim that is indefinite because it is susceptible to more than one interpretation may be rejected over prior art, an examiner should not base a prior art rejection on a claim interpretation that is not reasonable.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143.03 I"
+    },
+    {
+      "rule_id": "unsupported_limitations_must_be_considered",
+      "title": "Limitations lacking specification support must be considered for obviousness",
+      "requirement": "When evaluating claims for obviousness under 35 U.S.C. 103, all the limitations of the claims must be considered and given weight, including limitations which do not find support in the specification as originally filed (i.e., new matter).",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2143.03 II"
+    },
+    {
+      "rule_id": "rationale_must_be_explained",
+      "title": "Obviousness rationales must be explained and applied to facts",
+      "requirement": "Such rationales should not be treated as per se rules, but rather must be explained and shown to apply to the facts at hand.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Automating a manual activity",
+        "Making portable",
+        "Making separable",
+        "Reversing or duplicating parts",
+        "Purifying an old product"
+      ],
+      "reference": "MPEP § 2144"
+    },
+    {
+      "rule_id": "consistent_application_of_law",
+      "title": "Examiner must apply law consistently to each application",
+      "requirement": "The examiner must apply the law consistently to each application after considering all the relevant facts.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144 III"
+    },
+    {
+      "rule_id": "official_notice_instant_demonstration",
+      "title": "Official notice requires instant and unquestionable demonstration",
+      "requirement": "Official notice unsupported by documentary evidence may be taken by the examiner where the facts asserted to be well-known, or to be common knowledge in the art, are 'capable of such instant and unquestionable demonstration as to defy dispute.'",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "It is old to adjust intensity of a flame in accordance with the heat requirement.",
+        "Tape recorders commonly erase tape automatically when new 'audio information' is recorded on a tape which already has a recording on it."
+      ],
+      "reference": "MPEP § 2144.03"
+    },
+    {
+      "rule_id": "no_official_notice_disputable_facts",
+      "title": "No official notice for facts not beyond dispute",
+      "requirement": "It would not be appropriate for the examiner to take official notice of facts without citing a prior art reference where the facts asserted to be well known are not beyond dispute, or are not capable of instant and unquestionable demonstration as being well-known.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03"
+    },
+    {
+      "rule_id": "esoteric_tech_requires_citation",
+      "title": "Esoteric technology facts must be cited",
+      "requirement": "Assertions of technical facts in the areas of esoteric technology or specific knowledge of the prior art must always be supported by citation to some reference work recognized as standard in the pertinent art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03"
+    },
+    {
+      "rule_id": "chemical_theory_evidentiary_support",
+      "title": "Chemical theory requires evidentiary support",
+      "requirement": "When the PTO seeks to rely upon a chemical theory, in establishing a prima facie case of obviousness, it must provide evidentiary support for the existence and meaning of that theory.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03"
+    },
+    {
+      "rule_id": "no_sole_reliance_common_knowledge",
+      "title": "Cannot rely solely on common knowledge",
+      "requirement": "It is never appropriate to rely solely on 'common knowledge' in the art without evidentiary support in the record, as the principal evidence upon which a rejection was based.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03"
+    },
+    {
+      "rule_id": "concrete_evidence_for_common_sense",
+      "title": "Common sense findings require concrete evidence",
+      "requirement": "The Board must point to some concrete evidence in the record in support of findings based on basic knowledge or common sense, rather than simply reaching conclusions based on its own understanding or experience.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03"
+    },
+    {
+      "rule_id": "board_must_cite_concrete_evidence",
+      "title": "Board must cite concrete evidence for common sense findings",
+      "requirement": "The Board must point to some concrete evidence in the record in support of findings regarding basic knowledge or common sense.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.03"
+    },
+    {
+      "rule_id": "official_notice_reasoning_must_be_clear",
+      "title": "Official notice reasoning must be clear and unmistakable",
+      "requirement": "If official notice is taken of a fact unsupported by documentary evidence, the technical line of reasoning underlying a decision to take such notice must be clear and unmistakable.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.03 B"
+    },
+    {
+      "rule_id": "examiner_must_provide_factual_findings",
+      "title": "Examiner must provide factual findings for common knowledge",
+      "requirement": "The examiner must provide specific factual findings predicated on sound technical and scientific reasoning to support the conclusion of common knowledge.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.03 B"
+    },
+    {
+      "rule_id": "examiner_must_provide_evidence_after_traverse",
+      "title": "Examiner must provide evidence if applicant traverses notice",
+      "requirement": "If applicant adequately traverses the examiner’s assertion of official notice, the examiner must provide documentary evidence in the next Office action if the rejection is to be maintained.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.03 C"
+    },
+    {
+      "rule_id": "examiner_must_provide_affidavit_for_personal_knowledge",
+      "title": "Examiner must provide affidavit for personal knowledge reliance",
+      "requirement": "If the examiner is relying on personal knowledge to support the finding of what is known in the art, the examiner must provide an affidavit or declaration setting forth specific factual statements and explanation to support the finding.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.03 C"
+    },
+    {
+      "rule_id": "examiner_must_not_rely_on_other_teachings_in_final",
+      "title": "Examiner must not rely on other teachings in final action",
+      "requirement": "If no amendments are made to the claims, the examiner must not rely on any other teachings in the reference if the rejection is made final.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.03 D"
+    },
+    {
+      "rule_id": "no_final_rejection_without_amendment",
+      "title": "Examiner must not rely on other teachings if no amendments made",
+      "requirement": "If no amendments are made to the claims, the examiner must not rely on any other teachings in the reference if the rejection is made final.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03(d)"
+    },
+    {
+      "rule_id": "no_final_rejection_new_ground",
+      "title": "Rejection may not be final if new ground not necessitated by amendment",
+      "requirement": "If the newly cited reference is added for reasons other than to support the prior common knowledge statement or a new ground of rejection is introduced by the examiner that is not necessitated by applicant’s amendment of the claims, the rejection may not be made final.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03(d)"
+    },
+    {
+      "rule_id": "common_knowledge_evidence_required",
+      "title": "Common knowledge assertions require documentary evidence",
+      "requirement": "Any rejection based on assertions that a fact is well-known or is common knowledge in the art without documentary evidence to support the examiner’s conclusion should be judiciously applied.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03(E)"
+    },
+    {
+      "rule_id": "common_knowledge_not_sole_basis",
+      "title": "Common knowledge may not be sole principal evidence",
+      "requirement": "It is never appropriate to rely solely on common knowledge in the art without evidentiary support in the record as the principal evidence upon which a rejection was based.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.03(E)"
+    },
+    {
+      "rule_id": "legal_precedent_rationale_explanation",
+      "title": "Examiner must explain legal precedent rationale",
+      "requirement": "In formulating any rejection invoking legal precedent, the examiner must take care to ensure that the rationale is explained and shown to apply to the facts at hand.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.04"
+    },
+    {
+      "rule_id": "no_case_law_if_criticality_shown",
+      "title": "Case law may not be sole rationale if criticality demonstrated",
+      "requirement": "If the applicant has demonstrated the criticality of a specific limitation, it would not be appropriate to rely solely on case law as the rationale to support an obviousness rejection.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.04"
+    },
+    {
+      "rule_id": "routine_optimization_not_inventive",
+      "title": "Routine optimization of ranges is not inventive",
+      "requirement": "Where the general conditions of a claim are disclosed in the prior art, it is not inventive to discover the optimum or workable ranges by routine experimentation.",
+      "severity": "mandatory",
+      "exceptions": [
+        "Evidence indicating such concentration or temperature is critical"
+      ],
+      "examples": [
+        "In re Aller: Claimed process performed at temperature between 40°C and 80°C and acid concentration between 25% and 70% held prima facie obvious over reference process performed at 100°C and 10% acid concentration."
+      ],
+      "reference": "MPEP § 2144.05 II.A"
+    },
+    {
+      "rule_id": "articulated_rationale_required",
+      "title": "Examiner must articulate rationale for routine optimization",
+      "requirement": "In order to properly support a rejection on the basis that an invention is the result of 'routine optimization', the examiner must make findings of relevant facts, and present the underpinning reasoning in sufficient detail.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.05 II.B"
+    },
+    {
+      "rule_id": "rationale_must_explain_expectation_of_success",
+      "title": "Rationale must explain expectation of success",
+      "requirement": "The articulated rationale must include an explanation of why it would have been routine optimization to arrive at the claimed invention and why a person of ordinary skill in the art would have had a reasonable expectation of success to formulate the claimed range.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.05 II.B"
+    },
+    {
+      "rule_id": "common_sense_not_substitute_for_analysis",
+      "title": "Common sense cannot substitute for reasoned analysis",
+      "requirement": "References to 'common sense' cannot be used as a wholesale substitute for reasoned analysis and evidentiary support.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "In re Van Os: Absent some articulated rationale, a finding that a combination of prior art would have been 'common sense' or 'intuitive' is no different than merely stating the combination 'would have been obvious.'"
+      ],
+      "reference": "MPEP § 2144.05 II.B"
+    },
+    {
+      "rule_id": "applicant_articulate_non_result_effective",
+      "title": "Applicant must articulate why variable is not result-effective",
+      "requirement": "Applicants must articulate why the variable at issue would not have been recognized in the prior art as result-effective.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2144.05"
+    },
+    {
+      "rule_id": "equivalency_must_be_art_recognized",
+      "title": "Equivalency for obviousness must be recognized in prior art",
+      "requirement": "In order to rely on equivalence as a rationale supporting an obviousness rejection, the equivalency must be recognized in the prior art, and cannot be based on applicant’s disclosure or the mere fact that the components at issue are functional or mechanical equivalents.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "The mere fact that components are claimed as members of a Markush group cannot be relied upon to establish the equivalency of these components."
+      ],
+      "reference": "§ 2144.06"
+    },
+    {
+      "rule_id": "no_per_se_obviousness_rules",
+      "title": "Prohibition of per se rules for obviousness",
+      "requirement": "Use of per se rules by Office personnel is improper for determining whether claimed subject matter would have been obvious under 35 U.S.C. 103.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II"
+    },
+    {
+      "rule_id": "genus_not_sufficient_for_prima_facie",
+      "title": "Genus disclosure insufficient for prima facie obviousness",
+      "requirement": "The fact that a claimed species or subgenus is encompassed by a prior art genus is not sufficient by itself to establish a prima facie case of obviousness.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II"
+    },
+    {
+      "rule_id": "graham_factors_required",
+      "title": "Requirement to consider Graham factors",
+      "requirement": "Office personnel must consider the factors set out by the Supreme Court in Graham v. John Deere in order to establish a prima facie case of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II.A"
+    },
+    {
+      "rule_id": "determine_scope_content_prior_art",
+      "title": "Determine scope and content of prior art",
+      "requirement": "To make out a case of obviousness, one must determine the scope and contents of the prior art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II.A (A)"
+    },
+    {
+      "rule_id": "ascertain_differences_prior_art_claims",
+      "title": "Ascertain differences between prior art and claims",
+      "requirement": "To make out a case of obviousness, one must ascertain the differences between the prior art and the claims in issue.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II.A (B)"
+    },
+    {
+      "rule_id": "determine_level_ordinary_skill",
+      "title": "Determine level of ordinary skill in the art",
+      "requirement": "To make out a case of obviousness, one must determine the level of ordinary skill in the pertinent art.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II.A (C)"
+    },
+    {
+      "rule_id": "evaluate_secondary_considerations",
+      "title": "Evaluate evidence of secondary considerations",
+      "requirement": "To make out a case of obviousness, one must evaluate any evidence of secondary considerations.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II.A (D)"
+    },
+    {
+      "rule_id": "evaluate_rebuttal_evidence",
+      "title": "Evaluate rebuttal evidence and argument",
+      "requirement": "Office personnel should evaluate, when appropriate, the totality of the facts and all of the evidence to determine whether they still support a conclusion that the claimed invention would have been obvious to one of ordinary skill in the art at the relevant time.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2144.08 II.A"
+    },
+    {
+      "rule_id": "consider_express_teachings",
+      "title": "Consider express teachings for selecting claimed species",
+      "requirement": "If the prior art reference expressly teaches a particular reason to select the claimed species or subgenus, Office personnel should point out the express disclosure and explain why it would have been obvious to one of ordinary skill in the art to select the claimed invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Merck & Co. v. Biocraft Labs., 874 F.2d 804 (Fed. Cir. 1989)",
+        "In re Kemps, 97 F.3d 1427 (Fed. Cir. 1996)"
+      ],
+      "reference": "§ 2144.08(b)"
+    },
+    {
+      "rule_id": "consider_structural_similarity",
+      "title": "Consider teachings of structural similarity",
+      "requirement": "Consider any teachings of a “typical,” “preferred,” or “optimum” species or subgenus within the disclosed genus. If such a prior art species or subgenus is structurally similar to that claimed, its disclosure may provide a reason for one of ordinary skill in the art to choose the claimed species or subgenus from the genus, based on the reasonable expectation that structurally similar species usually have similar properties.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Dillon, 919 F.2d 693",
+        "In re Deuel, 51 F.3d 1552 (Fed. Cir. 1995)"
+      ],
+      "reference": "§ 2144.08(c)"
+    },
+    {
+      "rule_id": "consider_variables_and_differences",
+      "title": "Consider number of variables and nature of differences",
+      "requirement": "In making an obviousness determination, Office personnel should consider the number of variables which must be selected or modified, and the nature and significance of the differences between the prior art and the claimed invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "In re Jones, 958 F.2d 347 (Fed. Cir. 1992)",
+        "In re Susi, 440 F.2d 442 (CCPA 1971)"
+      ],
+      "reference": "§ 2144.08(c)"
+    },
+    {
+      "rule_id": "homology_isomerism_consideration",
+      "title": "Homology and isomerism must be considered in obviousness",
+      "requirement": "Homology and isomerism involve close structural similarity which must be considered with all other relevant facts in determining the issue of obviousness.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "In re Mills, 281 F.2d 218, 126 USPQ 513 (CCPA 1960)",
+        "In re Wiechert, 370 F.2d 927, 152 USPQ 247 (CCPA 1967)"
+      ],
+      "reference": "MPEP § 2144.08, subsection II"
+    },
+    {
+      "rule_id": "homology_not_auto_obvious",
+      "title": "Homology should not be automatically equated with prima facie obviousness",
+      "requirement": "Homology should not be automatically equated with prima facie obviousness because the claimed invention and the prior art must each be viewed “as a whole.”",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "In re Langer, 465 F.2d 896, 175 USPQ 169 (CCPA 1972)"
+      ],
+      "reference": "MPEP § 2144.08, subsection II"
+    },
+    {
+      "rule_id": "examiner_consider_all_evidence",
+      "title": "Examiners must consider all evidence of obviousness and nonobviousness",
+      "requirement": "Examiners should consider all evidence of obviousness and nonobviousness of record before making a determination under 35 U.S.C. 103.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "office_consider_rebuttal_arguments",
+      "title": "Office personnel must consider all rebuttal arguments and evidence",
+      "requirement": "Office personnel should consider all rebuttal arguments and evidence presented by applicants.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [
+        "Error not to consider evidence presented in the specification (In re Soni)",
+        "Error not to consider secondary considerations when present (In re Kao)"
+      ],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "fact_finder_consider_all_evidence",
+      "title": "Fact finder must consider all evidence before determination",
+      "requirement": "A fact finder must consider all evidence of obviousness and nonobviousness before reaching a determination.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Cyclobenzaprine Hydrochloride Extended-Release Capsule Patent Litig., 676 F.3d 1063, 1077"
+    },
+    {
+      "rule_id": "unexpected_results_require_evidence",
+      "title": "Unexpected results must be based on evidence, not argument",
+      "requirement": "A showing of unexpected results must be based on evidence, not argument or speculation.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "Conclusory statements regarding unusually low immune response or unexpected biological activity unsupported by comparative data are insufficient (In re Mayne)"
+      ],
+      "reference": "In re Mayne, 104 F.3d 1339, 1343-44"
+    },
+    {
+      "rule_id": "obviousness_enabling_requirement",
+      "title": "References must be enabling for obviousness conclusion",
+      "requirement": "A conclusion of obviousness requires that the reference(s) relied upon, together with the knowledge of a person skilled in the art, be enabling in that it put the public in possession of the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "absence_of_process_overcomes_presumption",
+      "title": "Absence of known process overcomes obviousness presumption",
+      "requirement": "If the prior art of record fails to disclose or render obvious a method for making a claimed compound, at the time the invention was made, it may not be legally concluded that the compound itself is in the possession of the public.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145 (citing In re Hoeksema)"
+    },
+    {
+      "rule_id": "failure_to_disclose_method_precludes_obviousness",
+      "title": "Failure to disclose method precludes composition obviousness",
+      "requirement": "Failure of the prior art to disclose or render obvious a method for making any composition of matter, whether a compound or a mixture of compounds like a zeolite, precludes a conclusion that the composition would have been obvious.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145 (citing In re Grose)"
+    },
+    {
+      "rule_id": "nexus_required_for_substantial_weight",
+      "title": "Nexus required for substantial weight of rebuttal evidence",
+      "requirement": "To be entitled to substantial weight, the applicant should establish a nexus between the rebuttal evidence and the claimed invention, i.e., objective evidence of nonobviousness must be attributable to the claimed invention.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "evidence_commensurate_in_scope",
+      "title": "Evidence must be commensurate in scope with claims",
+      "requirement": "The evidence must be reasonably commensurate in scope with the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "secondary_considerations_nexus_requirement",
+      "title": "Nexus required for secondary considerations",
+      "requirement": "In order for evidence of secondary considerations to be accorded substantial weight, there must be a nexus, i.e., a legally and factually sufficient connection or correspondence between the submitted evidence and the claimed invention.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [
+        "A presumption of nexus requires both that the product embodies the invention and is coextensive with it."
+      ],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "unexpected_results_scope_limitation",
+      "title": "No requirement for unexpected results over entire range",
+      "requirement": "Office personnel should not require the applicant to show unexpected results over the entire range of properties possessed by a chemical compound or composition.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [
+        "Evidence that the compound or composition possesses superior and unexpected properties in one of a spectrum of common properties can be sufficient to rebut a prima facie case of obviousness."
+      ],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "secondary_considerations_mandatory_consideration",
+      "title": "Secondary considerations must be taken into account",
+      "requirement": "Evidence pertaining to secondary considerations must be taken into account whenever it has been properly presented.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "no_knockdown_evaluation_prohibition",
+      "title": "Prohibition on knockdown evaluation of rebuttal",
+      "requirement": "Office personnel should not evaluate rebuttal evidence for its “knockdown” value against the prima facie case, or summarily dismiss it as not compelling or insufficient.",
+      "severity": "prohibited",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "preponderance_standard_for_obviousness",
+      "title": "Preponderance standard for obviousness determination",
+      "requirement": "Office personnel should weigh all relevant evidence of record in order to determine whether the claims would have been obvious based on a preponderance (more likely than not) standard, and then explain their conclusions.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "reweighing_evidence_principle",
+      "title": "All evidence must be reweighed for nonobviousness",
+      "requirement": "When evidence has been presented to rebut an obviousness rejection, it should not be evaluated simply for its “knockdown” value. Rather, all evidence must be reweighed to determine whether the claims are nonobvious.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "reweigh_evidence_rebuttal",
+      "title": "Evidence must be reweighed when rebutting obviousness",
+      "requirement": "When evidence has been presented to rebut an obviousness rejection, all evidence must be reweighed to determine whether the claims are nonobvious.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "§ 2145"
+    },
+    {
+      "rule_id": "consider_rebuttal_evidence",
+      "title": "Board must consider rebuttal evidence to prima facie case",
+      "requirement": "Even if the Board has shown a prima facie case of obviousness, the extensive rebuttal evidence must be considered.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Sullivan"
+    },
+    {
+      "rule_id": "consider_unexpected_properties",
+      "title": "Unexpected properties relevant to obviousness must be considered",
+      "requirement": "The unexpected property is relevant and thus the declarations describing it should have been considered.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "In re Sullivan"
+    },
+    {
+      "rule_id": "consider_all_properly_presented_evidence",
+      "title": "All properly presented evidence must be considered",
+      "requirement": "All evidence must be considered when properly presented.",
+      "severity": "mandatory",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "do_not_ignore_timely_evidence",
+      "title": "Timely presented evidence should not be ignored",
+      "requirement": "Evidence that has been presented in a timely manner should not be ignored, but rather should be considered on the record.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "weigh_evidence_for_obviousness_rejection",
+      "title": "Obviousness rejection only if evidence outweighs nonobviousness",
+      "requirement": "An obviousness rejection should be made or maintained only if evidence of obviousness outweighs evidence of nonobviousness.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 2145"
+    },
+    {
+      "rule_id": "reject_if_more_likely_than_not_unpatentable",
+      "title": "Reject claim if more likely than not unpatentable",
+      "requirement": "An examiner should reject a claim if, in view of the prior art and evidence of record, it is more likely than not that the claim is unpatentable.",
+      "severity": "recommended",
+      "exceptions": [],
+      "examples": [],
+      "reference": "MPEP § 706, subsection I"
+    }
+  ],
+  "review_checklist": [
+    "Verify that the scope of the claimed invention is determined using the broadest reasonable interpretation consistent with the specification.",
+    "Verify that the written record includes specific findings of fact concerning the state of the art and the teachings of the applied references.",
+    "Verify that the rejection analyzes the Graham factual inquiries, including the level of ordinary skill in the art.",
+    "Verify that the rejection provides articulated reasoning with rational underpinning, avoiding mere conclusory statements.",
+    "Verify that the rejection explains why the differences between the prior art and the claimed invention would have been obvious.",
+    "Verify that objective evidence relevant to obviousness has been evaluated by Office personnel.",
+    "Verify that all references used in the rejection qualify as prior art under 35 U.S.C. 102.",
+    "Verify that the content of the prior art is determined at the relevant time to avoid impermissible hindsight.",
+    "Verify that the applicant is notified of the reasons for the rejection to allow for an informed response.",
+    "Verify that any reliance on pre-AIA 35 U.S.C. 103(c) includes established proof of common ownership or joint research agreement.",
+    "Verify that admitted prior art is properly relied upon for the obviousness determination.",
+    "Verify that the rejection indicates the level of ordinary skill in the art, either explicitly or implicitly.",
+    "Verify that the determination of obviousness is made after resolving the Graham factual inquiries.",
+    "Verify that the search scope was determined based on the clearly defined scope of the claimed invention.",
+    "Verify that other rationales for obviousness were considered if applicable."
+  ],
+  "system_prompt_injection": "Adhere to the USPTO guidelines for obviousness under 35 U.S.C. 103 by strictly analyzing Graham factual inquiries and evaluating all relevant objective evidence. Determine the scope of the claimed invention using the broadest reasonable interpretation consistent with the specification and ensure the written record includes specific findings of fact regarding the state of the art. Provide articulated reasoning with rational underpinning to support any rejection, explicitly explaining why differences between the prior art and the claimed invention would have been obvious to a person of ordinary skill in the art. Notify the applicant of the rejection reasons and strictly prohibit the use of non-prior art disclosures in obviousness determinations."
+}

@@ -304,35 +304,54 @@ class RuleExtractor:
         return "\n".join(section_pages)
 
     def _extract_mpep_section(self, pages: list[str], task: str) -> str | None:
-        """Extract MPEP sections by section number range.
+        """Extract MPEP sections by detecting section numbers in page footers.
 
-        MPEP has clear section numbers (2131, 2141, etc.) as page headers.
+        MPEP PDFs have footers like:
+            Rev. 01.2024, November   2024
+            2100-261
+            § 2141
+            PATENTABILITY
+
+        We map each page to its section via the '§ XXXX' footer line,
+        then extract all pages belonging to the target section range.
         """
         section_range = MPEP_SECTIONS_MAP.get(task)
         if not section_range:
             return None
 
         start_section, end_section = section_range
-        start_page = None
-        end_page = None
+        footer_pattern = re.compile(r"§\s*(\d{4})")
 
+        # Map each page to its top-level section number from footer
+        target_pages: list[int] = []
         for i, page_text in enumerate(pages):
-            # Look for section numbers in page headers/content
-            for match in MPEP_SECTION_PATTERN.finditer(page_text):
-                section_num = int(match.group(1).split(".")[0])
-                if start_page is None and section_num >= start_section:
-                    start_page = i
-                if section_num > end_section and end_page is None:
-                    end_page = i
+            # Check last 8 lines for the section marker
+            lines = page_text.split("\n")
+            for line in reversed(lines[-10:]):
+                m = footer_pattern.search(line.strip())
+                if m:
+                    section_num = int(m.group(1))
+                    if start_section <= section_num <= end_section:
+                        target_pages.append(i)
                     break
 
-        if start_page is None:
-            # Fallback: search for section number as plain text
-            for i, page_text in enumerate(pages):
-                if str(start_section) in page_text and start_page is None:
-                    start_page = i
-                if end_page is None and start_page is not None and str(end_section + 1) in page_text:
-                    end_page = i
+        if not target_pages:
+            logger.warning("Could not find MPEP §%d-§%d in PDF footers", start_section, end_section)
+            return None
+
+        # Extract text from target pages
+        section_text = "\n".join(pages[p] for p in sorted(target_pages))
+
+        logger.info(
+            "MPEP §%d-§%d: %d pages (p%d-p%d), %d chars",
+            start_section, end_section, len(target_pages),
+            min(target_pages) + 1, max(target_pages) + 1, len(section_text),
+        )
+        return section_text
+
+    # ------------------------------------------------------------------
+    # HTML extraction
+    # ------------------------------------------------------------------
 
         if start_page is None:
             logger.warning("Could not find MPEP section %d", start_section)
